@@ -82,7 +82,9 @@ could be covered in subsequent documents.
 
 # Security Considerations
 
-TODO Security
+IND-CCA, LEAK-BIND-K-PK, etc, as well as security
+properties unique to hybrid KEMs (component key material reuse between hybrid and non-hybrid uses or
+between multiple hybrids, one component is malicious while the other is honest, etc)
 
 
 # IANA Considerations
