@@ -7,7 +7,7 @@ docname: draft-irtf-cfrg-hybrid-kems-latest
 submissiontype: IRTF
 consensus: false
 v: 3
-workgroup: Crypto Forum Research Group
+workgroup: "Crypto Forum"
 
 author:
  -
