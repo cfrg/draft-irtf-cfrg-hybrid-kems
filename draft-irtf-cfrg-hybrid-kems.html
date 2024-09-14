@@ -1029,7 +1029,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 16 March 2025</td>
+<td class="center">Expires 18 March 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1042,12 +1042,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-09-12" class="published">12 September 2024</time>
+<time datetime="2024-09-14" class="published">14 September 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-03-16">16 March 2025</time></dd>
+<dd class="expires"><time datetime="2025-03-18">18 March 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1100,7 +1100,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 16 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 18 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1156,7 +1156,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">we propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">We propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">(A) Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
 security properties (eg. IND-CCA, LEAK-BIND-K-PK, HON-BIND-K-CT, etc), as well as security
 properties unique to hybrid KEMs (component key material reuse between hybrid and non-hybrid uses or
@@ -1176,16 +1176,13 @@ baseline set in (A), in a separate document, and should include:<a href="#sectio
 </pre><a href="#section-1-5" class="pilcrow">¶</a>
 </div>
 <p id="section-1-6">These hybrids should be accompanied by pseudocode and test vectors.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">This list includes two options at the ~128-bit security level (due to
-current implementation/deployment trends) and one at a higher level.<a href="#section-1-7" class="pilcrow">¶</a></p>
-<p id="section-1-8">The DT would be happy for the RG to omit C(I) above should there not be
-significant implementations for which C(II) and C(III) are hard. The DT
-did not attempt to survey implementations to determine this.<a href="#section-1-8" class="pilcrow">¶</a></p>
-<p id="section-1-9">There is demand for other hybrid variants that either use different
+<p id="section-1-7">This list includes two options at the ~128-bit security level (due to current
+implementation/deployment trends) and one at a higher level.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8">There is demand for other hybrid variants that either use different
 primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that
 use a combiner optimized for a specific use case. The DT recommends the
 work outlined in (C) is done in a first document, and other use cases
-could be covered in subsequent documents.<a href="#section-1-9" class="pilcrow">¶</a></p>
+could be covered in subsequent documents.<a href="#section-1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1204,9 +1201,9 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-security-considerations">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-3-1">IND-CCA, LEAK-BIND-K-PK, etc, as well as security
-properties unique to hybrid KEMs (component key material reuse between hybrid and non-hybrid uses or
-between multiple hybrids, one component is malicious while the other is honest, etc)<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">IND-CCA, LEAK-BIND-K-PK, etc, as well as security properties unique to hybrid KEMs (component key
+material reuse between hybrid and non-hybrid uses or between multiple hybrids, one component is
+malicious while the other is honest, etc)<a href="#section-3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">

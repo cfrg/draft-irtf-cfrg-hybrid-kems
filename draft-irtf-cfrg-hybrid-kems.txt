@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                          B. E. Westerbaan
-Expires: 16 March 2025                                        Cloudflare
+Expires: 18 March 2025                                        Cloudflare
                                                                  B. Hale
                                                Naval Postgraduate School
-                                                       12 September 2024
+                                                       14 September 2024
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 March 2025.
+   This Internet-Draft will expire on 18 March 2025.
 
 Copyright Notice
 
@@ -69,7 +69,7 @@ Table of Contents
 
 1.  Introduction
 
-   we propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will
+   We propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will
    cover the following.
 
    (A) Identify which KEM security properties are IETF-relevant, and
@@ -97,10 +97,6 @@ Table of Contents
 
    This list includes two options at the ~128-bit security level (due to
    current implementation/deployment trends) and one at a higher level.
-
-   The DT would be happy for the RG to omit C(I) above should there not
-   be significant implementations for which C(II) and C(III) are hard.
-   The DT did not attempt to survey implementations to determine this.
 
    There is demand for other hybrid variants that either use different
    primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or
