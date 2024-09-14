@@ -40,7 +40,7 @@ TODO Abstract
 
 # Introduction
 
-we propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.
+We propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.
 
 (A) Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
 security properties (eg. IND-CCA, LEAK-BIND-K-PK, HON-BIND-K-CT, etc), as well as security
@@ -62,12 +62,8 @@ baseline set in (A), in a separate document, and should include:
 
 These hybrids should be accompanied by pseudocode and test vectors.
 
-This list includes two options at the ~128-bit security level (due to
-current implementation/deployment trends) and one at a higher level.
-
-The DT would be happy for the RG to omit C(I) above should there not be
-significant implementations for which C(II) and C(III) are hard. The DT
-did not attempt to survey implementations to determine this.
+This list includes two options at the ~128-bit security level (due to current
+implementation/deployment trends) and one at a higher level.
 
 There is demand for other hybrid variants that either use different
 primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that
@@ -82,9 +78,9 @@ could be covered in subsequent documents.
 
 # Security Considerations
 
-IND-CCA, LEAK-BIND-K-PK, etc, as well as security
-properties unique to hybrid KEMs (component key material reuse between hybrid and non-hybrid uses or
-between multiple hybrids, one component is malicious while the other is honest, etc)
+IND-CCA, LEAK-BIND-K-PK, etc, as well as security properties unique to hybrid KEMs (component key
+material reuse between hybrid and non-hybrid uses or between multiple hybrids, one component is
+malicious while the other is honest, etc)
 
 
 # IANA Considerations
