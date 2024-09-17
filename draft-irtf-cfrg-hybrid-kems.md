@@ -33,17 +33,27 @@ informative:
 
 --- abstract
 
-This memo defines the security properties and generic techniques to achive hybrid pq/t 
-key encapsulation mechanisms (KEMs) from post-quantum and traditional component algorithms. 
-Concrete instatiations of techniques are located in another document.
+This document defines  and generic techniques to achive hybrid pq/t 
+key encapsulation mechanisms (KEMs) from post-quantum and traditional
+component algorithms that meet specified security properties. Concrete
+instatiations of techniques are located in another document.
 
 --- middle
 
-# Introduction
+# Introduction {#intro}
 
-We propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.
+## Motivation {#motivation}
 
-## Design Goals
+There are many choices that can be made when specifying a hybrid KEM:
+the constituent KEMs; their security levels; the combiner; and the hash
+within, to name but a few. Having too many similar options are a burden
+to the ecosystem.
+
+The aim of this document is provide a small set of techniques for constructing
+hybrid KEMs designed to achieve specific security properties given conforming
+component algorithms,  that should be suitable for the vast majority of use cases.
+
+## Design goals {#goals}
 
 (A) Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
 security properties (eg. IND-CCA, LEAK-BIND-K-PK, HON-BIND-K-CT, etc), as well as security
