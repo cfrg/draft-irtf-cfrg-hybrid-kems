@@ -33,14 +33,17 @@ informative:
 
 --- abstract
 
-TODO Abstract
-
+This memo defines the security properties and generic techniques to achive hybrid pq/t 
+key encapsulation mechanisms (KEMs) from post-quantum and traditional component algorithms. 
+Concrete instatiations of techniques are located in another document.
 
 --- middle
 
 # Introduction
 
 We propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.
+
+## Design Goals
 
 (A) Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
 security properties (eg. IND-CCA, LEAK-BIND-K-PK, HON-BIND-K-CT, etc), as well as security
@@ -65,16 +68,48 @@ These hybrids should be accompanied by pseudocode and test vectors.
 This list includes two options at the ~128-bit security level (due to current
 implementation/deployment trends) and one at a higher level.
 
+
+
+
+
+
+
+### Non-iteractive 
+
+These KEMs are a non-interactive means to establish a shared secret. 
+Using KEMs in place of Diffie-Hellman key exchange can be done in some settings
+but not all.
+
+### Not authenticated
+
+These KEMs are not _authenticated_.
+
+## Design Non-Goals
+
 There is demand for other hybrid variants that either use different
 primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that
-use a combiner optimized for a specific use case. The DT recommends the
-work outlined in (C) is done in a first document, and other use cases
-could be covered in subsequent documents.
+use a combiner optimized for a specific use case. Other use cases
+could be covered in subsequent documents and not included here.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
+
+# Hybrid KEM Security Properties
+
+Component KEMs MUST 
+
+# Hybrid KEM Construction Techniques
+
+Kitchen Sink construction: 
+- KDF
+- label
+- 
+
+# Hybrid KEM Instatiations
+
+See the other document.
 
 # Security Considerations
 
