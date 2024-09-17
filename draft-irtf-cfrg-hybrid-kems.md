@@ -33,7 +33,7 @@ informative:
 
 --- abstract
 
-This document defines  and generic techniques to achive hybrid pq/t 
+This document defines generic techniques to achive hybrid PQ/T 
 key encapsulation mechanisms (KEMs) from post-quantum and traditional
 component algorithms that meet specified security properties. Concrete
 instatiations of techniques are located in another document.
@@ -78,12 +78,6 @@ These hybrids should be accompanied by pseudocode and test vectors.
 This list includes two options at the ~128-bit security level (due to current
 implementation/deployment trends) and one at a higher level.
 
-
-
-
-
-
-
 ### Non-iteractive 
 
 These KEMs are a non-interactive means to establish a shared secret. 
@@ -105,17 +99,82 @@ could be covered in subsequent documents and not included here.
 
 {::boilerplate bcp14-tagged}
 
+# Conventions and Definitions
+
+This document is consistent with all terminology defined in
+{{I-D.driscoll-pqt-hybrid-terminology}}.
+
+The following terms are used throughout this document to describe the
+operations, roles, and behaviors of HPKE:
+
+- `concat(x0, ..., xN)`: returns the concatenation of byte
+  strings. `concat(0x01, 0x0203, 0x040506) = 0x010203040506`.
+- `random(n)`: return a pseudorandom byte string of length `n` bytes produced by
+  a cryptographically-secure random number generator.
+
+---
 
 # Hybrid KEM Security Properties
 
-Component KEMs MUST 
+Hybrid KEM constructions ideally provide at least:
+
+## IND-CCA security
+
+Also known as IND-CCA1 security for general public key encryption, for KEMs that
+encapsulate a new random 'message' each time, 
+
+## LEAK-BIND-K-PK security
+
+## LEAK-BIND-K-CT security
+
+The shared secret 
+
+---
 
 # Hybrid KEM Construction Techniques
 
-Kitchen Sink construction: 
-- KDF
+Requirements:
+
+## KDF as a secure PRF
+
+## IND-CCA-secure PQ KEM
+
+
+## 'Kitchen Sink' construction: 
+
+Ingredients:
+
+- KDF F
 - label
-- 
+- PQ-CT
+- PQ-PK
+- PQ-SS
+- T-PK
+- T-CT
+- T-SS
+
+~~~
+def SharedSecret():
+    return F(concat(label, T_SS, PQ_SS, T_CT, PQ_CT, T_PK, PQ_PK))
+~~~  
+
+Label varies per combos such that the label will vary as the lengths and other properties of the 
+component algorithms vary. Otherwise we'd have to hash the inputs to fixed lengths or encode lengths
+into the input.
+  
+## 'X-Wing' construction
+
+Inspired by [XWING] which leverages the security properties of a KEM like ML-KEM to 
+elide other public data from the KDF input.
+
+~~~
+def SharedSecret():
+    return F(concat(label, T_SS, PQ_SS, T_CT, T_PK))
+~~~  
+
+Relies on PQ KEM having LEAK-BIND-K-CT and LEAK-BIND-K-PK security, which is 
+related to the collision-freeness of the underlying PKE scheme of a FO-transform
+KEM like ML-KEM.
 
 # Hybrid KEM Instatiations
 
