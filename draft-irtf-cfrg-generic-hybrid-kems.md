@@ -32,6 +32,8 @@ instatiations of techniques are located in another document.
 
 # Introduction {#intro}
 
+TODO
+
 ## Motivation {#motivation}
 
 There are many choices that can be made when specifying a hybrid KEM:
