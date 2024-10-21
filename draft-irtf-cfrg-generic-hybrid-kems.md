@@ -15,17 +15,6 @@ author:
     organization: SandboxAQ
     email: durumcrustulum@gmail.com
 
- <!-- - -->
- <!--    ins: B.E. Westerbaan -->
- <!--    fullname: Bas Westerbaan -->
- <!--    organization: Cloudflare -->
- <!--    email: bas@cloudflare.com -->
-
- <!-- - -->
- <!--    name: Britta Hale -->
- <!--    org:  Naval Postgraduate School -->
- <!--    email: britta.hale@nps.edu -->
-
 normative:
 
 informative:
