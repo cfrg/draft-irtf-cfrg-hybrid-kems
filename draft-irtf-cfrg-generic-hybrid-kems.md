@@ -1,9 +1,9 @@
 ---
-title: "Hybrid PQ/T Key Encapsulation Mechanisms"
-abbrev: hybrid-kems
+title: "Generic Hybrid PQ/T Key Encapsulation Mechanisms"
+abbrev: generic-hybrid-kems
 category: info
 
-docname: draft-irtf-cfrg-hybrid-kems-latest
+docname: draft-irtf-cfrg-generic-hybrid-kems-latest
 submissiontype: IRTF
 consensus: false
 v: 3
@@ -15,16 +15,16 @@ author:
     organization: SandboxAQ
     email: durumcrustulum@gmail.com
 
- -
-    ins: B.E. Westerbaan
-    fullname: Bas Westerbaan
-    organization: Cloudflare
-    email: bas@cloudflare.com
+ <!-- - -->
+ <!--    ins: B.E. Westerbaan -->
+ <!--    fullname: Bas Westerbaan -->
+ <!--    organization: Cloudflare -->
+ <!--    email: bas@cloudflare.com -->
 
- -
-    name: Britta Hale
-    org:  Naval Postgraduate School
-    email: britta.hale@nps.edu
+ <!-- - -->
+ <!--    name: Britta Hale -->
+ <!--    org:  Naval Postgraduate School -->
+ <!--    email: britta.hale@nps.edu -->
 
 normative:
 
@@ -33,7 +33,7 @@ informative:
 
 --- abstract
 
-This document defines generic techniques to achive hybrid PQ/T 
+This document defines generic techniques to achive hybrid PQ/T
 key encapsulation mechanisms (KEMs) from post-quantum and traditional
 component algorithms that meet specified security properties. Concrete
 instatiations of techniques are located in another document.
@@ -78,9 +78,9 @@ These hybrids should be accompanied by pseudocode and test vectors.
 This list includes two options at the ~128-bit security level (due to current
 implementation/deployment trends) and one at a higher level.
 
-### Non-iteractive 
+### Non-iteractive
 
-These KEMs are a non-interactive means to establish a shared secret. 
+These KEMs are a non-interactive means to establish a shared secret.
 Using KEMs in place of Diffie-Hellman key exchange can be done in some settings
 but not all.
 
@@ -121,13 +121,13 @@ Hybrid KEM constructions ideally provide at least:
 ## IND-CCA security
 
 Also known as IND-CCA1 security for general public key encryption, for KEMs that
-encapsulate a new random 'message' each time, 
+encapsulate a new random 'message' each time,
 
 ## LEAK-BIND-K-PK security
 
 ## LEAK-BIND-K-CT security
 
-The shared secret 
+The shared secret
 
 ---
 
@@ -140,39 +140,40 @@ Requirements:
 ## IND-CCA-secure PQ KEM
 
 
-## 'Kitchen Sink' construction: 
+## 'Kitchen Sink' construction:
 
 Ingredients:
 
-- KDF F
-- label
-- PQ-CT
-- PQ-PK
-- PQ-SS
-- T-PK
-- T-CT
-- T-SS
+* KDF `F`
+* label
+* PQ-CT
+* PQ-PK
+* PQ-SS
+* T-PK
+* T-CT
+* T-SS
+
 
 ~~~
 def SharedSecret():
-    return F(concat(label, T_SS, PQ_SS, T_CT, PQ_CT, T_PK, PQ_PK))
-~~~  
+    return F(concat(PQ_SS, T_SS, PQ_CT, PQ_PK, T_CT, T_PK, label))
+~~~
 
-Label varies per combos such that the label will vary as the lengths and other properties of the 
-component algorithms vary. Otherwise we'd have to hash the inputs to fixed lengths or encode lengths
-into the input.
-  
+Label varies per combos such that the label will vary as the lengths and
+other properties of the component algorithms vary. Otherwise we'd have to
+hash the inputs to fixed lengths or encode lengths into the input.
+
 ## 'X-Wing' construction
 
-Inspired by [XWING] which leverages the security properties of a KEM like ML-KEM to 
-elide other public data from the KDF input.
+Inspired by [XWING] which leverages the security properties of a KEM like
+ML-KEM to elide other public data from the KDF input.
 
 ~~~
 def SharedSecret():
     return F(concat(label, T_SS, PQ_SS, T_CT, T_PK))
-~~~  
+~~~
 
-Relies on PQ KEM having LEAK-BIND-K-CT and LEAK-BIND-K-PK security, which is 
+Relies on PQ KEM having LEAK-BIND-K-CT and LEAK-BIND-K-PK security, which is
 related to the collision-freeness of the underlying PKE scheme of a FO-transform
 KEM like ML-KEM.
 
