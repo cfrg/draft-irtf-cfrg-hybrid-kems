@@ -1,7 +1,7 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-20T01:05:24.988866+00:00",
-  "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
+  "timestamp": "2024-10-22T01:01:07.297515+00:00",
+  "repo": "cfrg/draft-irtf-cfrg-generic-hybrid-kems",
   "labels": [
     {
       "name": "bug",
