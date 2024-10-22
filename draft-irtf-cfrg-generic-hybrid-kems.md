@@ -16,23 +16,21 @@ author:
     email: durumcrustulum@gmail.com
 
 normative:
+    FIPS203: DOI.10.6028/NIST.FIPS.203
 
 informative:
   I-D.driscoll-pqt-hybrid-terminology:
 
-
 --- abstract
 
-This document defines generic techniques to achive hybrid PQ/T
-key encapsulation mechanisms (KEMs) from post-quantum and traditional
-component algorithms that meet specified security properties. Concrete
-instatiations of techniques are located in another document.
+This document defines generic techniques to achive hybrid PQ-T key
+encapsulation mechanisms (KEMs) from post-quantum and traditional component
+algorithms that meet specified security properties. Concrete instatiations of
+techniques are located in another document.
 
 --- middle
 
 # Introduction {#intro}
-
-TODO
 
 ## Motivation {#motivation}
 
@@ -47,18 +45,18 @@ component algorithms,  that should be suitable for the vast majority of use case
 
 ## Design goals {#goals}
 
-(A) Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
+* Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
 security properties (eg. IND-CCA, LEAK-BIND-K-PK, HON-BIND-K-CT, etc), as well as security
 properties unique to hybrid KEMs (component key material reuse between hybrid and non-hybrid uses or
 between multiple hybrids, one component is malicious while the other is honest, etc) with reference
 to literature, and put into context with real-world attacks. From that, give guidance on a sensible
 baseline.
 
-(B) Provide a terse overview of well-reviewed techniques that are options to safely produce the
+* Provide a terse overview of well-reviewed techniques that are options to safely produce the
 concrete combinations in (C), and which security properties are achieved given those of the
 constituents.
 
-(C) Provide an initial number of explicit PQ/T hybrid KEMs using techniques from (B) that reach the
+* Provide an initial number of explicit PQ/T hybrid KEMs using techniques from (B) that reach the
 baseline set in (A), in a separate document, and should include:
 
        (I)  a hybrid of P-256 and ML-KEM-768,
@@ -104,7 +102,6 @@ operations, roles, and behaviors of HPKE:
 - `random(n)`: return a pseudorandom byte string of length `n` bytes produced by
   a cryptographically-secure random number generator.
 
----
 
 # Hybrid KEM Security Properties
 
@@ -112,8 +109,8 @@ Hybrid KEM constructions ideally provide at least:
 
 ## IND-CCA security
 
-Also known as IND-CCA1 security for general public key encryption, for KEMs that
-encapsulate a new random 'message' each time,
+Also known as IND-CCA1 security for general public key encryption, for KEMs
+that encapsulate a new random 'message' each time,
 
 ## LEAK-BIND-K-PK security
 
@@ -121,7 +118,6 @@ encapsulate a new random 'message' each time,
 
 The shared secret
 
----
 
 # Hybrid KEM Construction Techniques
 
@@ -166,8 +162,8 @@ def SharedSecret():
 ~~~
 
 Relies on PQ KEM having LEAK-BIND-K-CT and LEAK-BIND-K-PK security, which is
-related to the collision-freeness of the underlying PKE scheme of a FO-transform
-KEM like ML-KEM.
+related to the collision-freeness of the underlying PKE scheme of a
+FO-transform KEM like ML-KEM.
 
 # Hybrid KEM Instatiations
 
@@ -175,9 +171,10 @@ See the other document.
 
 # Security Considerations
 
-IND-CCA, LEAK-BIND-K-PK, etc, as well as security properties unique to hybrid KEMs (component key
-material reuse between hybrid and non-hybrid uses or between multiple hybrids, one component is
-malicious while the other is honest, etc)
+IND-CCA, LEAK-BIND-K-PK, etc, as well as security properties unique to hybrid
+KEMs (component key material reuse between hybrid and non-hybrid uses or
+between multiple hybrids, one component is malicious while the other is
+honest, etc)
 
 
 # IANA Considerations
