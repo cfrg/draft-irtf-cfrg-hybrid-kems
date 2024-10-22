@@ -4,31 +4,32 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Hybrid PQ/T Key Encapsulation Mechanisms</title>
+<title>Generic Hybrid PQ/T Key Encapsulation Mechanisms</title>
 <meta content="Deirdre Connolly" name="author">
-<meta content="Bas Westerbaan" name="author">
-<meta content="Britta Hale" name="author">
 <meta content="
-       TODO Abstract 
+       This document defines generic techniques to achive hybrid PQ-T key
+encapsulation mechanisms (KEMs) from post-quantum and traditional component
+algorithms that meet specified security properties. Concrete instatiations of
+techniques are located in another document. 
     " name="description">
-<meta content="xml2rfc 3.23.0" name="generator">
-<meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
+<meta content="xml2rfc 3.23.2" name="generator">
+<meta content="draft-irtf-cfrg-generic-hybrid-kems-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.23.0
-    Python 3.12.3
+  xml2rfc 3.23.2
+    Python 3.12.7
     ConfigArgParse 1.7
-    google-i18n-address 3.1.0
+    google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.4
     lxml 4.9.4
-    platformdirs 4.2.2
+    platformdirs 4.3.6
     pycountry 22.3.5
     PyYAML 6.0.1
     requests 2.32.3
     setuptools 70.3.0
     wcwidth 0.2.13
 -->
-<link href="draft-irtf-cfrg-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-irtf-cfrg-generic-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1024,12 +1025,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">hybrid-kems</td>
-<td class="right">September 2024</td>
+<td class="center">generic-hybrid-kems</td>
+<td class="right">October 2024</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Connolly, et al.</td>
-<td class="center">Expires 18 March 2025</td>
+<td class="left">Connolly</td>
+<td class="center">Expires 25 April 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1039,36 +1040,31 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Crypto Forum</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
+<dd class="internet-draft">draft-irtf-cfrg-generic-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-09-14" class="published">14 September 2024</time>
+<time datetime="2024-10-22" class="published">22 October 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-03-18">18 March 2025</time></dd>
-<dt class="label-authors">Authors:</dt>
+<dd class="expires"><time datetime="2025-04-25">25 April 2025</time></dd>
+<dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">D. Connolly</div>
 <div class="org">SandboxAQ</div>
 </div>
-<div class="author">
-      <div class="author-name">B. E. Westerbaan</div>
-<div class="org">Cloudflare</div>
-</div>
-<div class="author">
-      <div class="author-name">B. Hale</div>
-<div class="org">Naval Postgraduate School</div>
-</div>
 </dd>
 </dl>
 </div>
-<h1 id="title">Hybrid PQ/T Key Encapsulation Mechanisms</h1>
+<h1 id="title">Generic Hybrid PQ/T Key Encapsulation Mechanisms</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document defines generic techniques to achive hybrid PQ-T key
+encapsulation mechanisms (KEMs) from post-quantum and traditional component
+algorithms that meet specified security properties. Concrete instatiations of
+techniques are located in another document.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1100,7 +1096,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 25 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1127,62 +1123,178 @@ svg :is([fill="white"], [fill^="#fff"]) {
         </h2>
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-motivation" class="internal xref">Motivation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-design-goals" class="internal xref">Design goals</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.1">
+                    <p id="section-toc.1-1.1.2.2.2.1.1" class="keepWithNext"><a href="#section-1.2.1" class="auto internal xref">1.2.1</a>.  <a href="#name-non-iteractive" class="internal xref">Non-iteractive</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.2">
+                    <p id="section-toc.1-1.1.2.2.2.2.1" class="keepWithNext"><a href="#section-1.2.2" class="auto internal xref">1.2.2</a>.  <a href="#name-not-authenticated" class="internal xref">Not authenticated</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-design-non-goals" class="internal xref">Design Non-Goals</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-conventions-and-definitions-2" class="internal xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-hybrid-kem-security-propert" class="internal xref">Hybrid KEM Security Properties</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-ind-cca-security" class="internal xref">IND-CCA security</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-leak-bind-k-pk-security" class="internal xref">LEAK-BIND-K-PK security</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-leak-bind-k-ct-security" class="internal xref">LEAK-BIND-K-CT security</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-hybrid-kem-construction-tec" class="internal xref">Hybrid KEM Construction Techniques</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-kdf-as-a-secure-prf" class="internal xref">KDF as a secure PRF</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-ind-cca-secure-pq-kem" class="internal xref">IND-CCA-secure PQ KEM</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-kitchen-sink-construction" class="internal xref">'Kitchen Sink' construction:</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-x-wing-construction" class="internal xref">'X-Wing' construction</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-hybrid-kem-instatiations" class="internal xref">Hybrid KEM Instatiations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
 </section>
 </div>
-<div id="introduction">
+<div id="intro">
 <section id="section-1">
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">We propose "Hybrid PQ/T Key Encapsulation Mechanisms", which will cover the following.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">(A) Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
+<div id="motivation">
+<section id="section-1.1">
+        <h3 id="name-motivation">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-motivation" class="section-name selfRef">Motivation</a>
+        </h3>
+<p id="section-1.1-1">There are many choices that can be made when specifying a hybrid KEM:
+the constituent KEMs; their security levels; the combiner; and the hash
+within, to name but a few. Having too many similar options are a burden
+to the ecosystem.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">The aim of this document is provide a small set of techniques for constructing
+hybrid KEMs designed to achieve specific security properties given conforming
+component algorithms,  that should be suitable for the vast majority of use cases.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="goals">
+<section id="section-1.2">
+        <h3 id="name-design-goals">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-design-goals" class="section-name selfRef">Design goals</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-1.2-1.1">
+            <p id="section-1.2-1.1.1">Identify which KEM security properties are IETF-relevant, and provide a terse overview of those
 security properties (eg. IND-CCA, LEAK-BIND-K-PK, HON-BIND-K-CT, etc), as well as security
 properties unique to hybrid KEMs (component key material reuse between hybrid and non-hybrid uses or
 between multiple hybrids, one component is malicious while the other is honest, etc) with reference
 to literature, and put into context with real-world attacks. From that, give guidance on a sensible
-baseline.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">(B) Provide a terse overview of well-reviewed techniques that are options to safely produce the
+baseline.<a href="#section-1.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-1.2">
+            <p id="section-1.2-1.2.1">Provide a terse overview of well-reviewed techniques that are options to safely produce the
 concrete combinations in (C), and which security properties are achieved given those of the
-constituents.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">(C) Provide an initial number of explicit PQ/T hybrid KEMs using techniques from (B) that reach the
-baseline set in (A), in a separate document, and should include:<a href="#section-1-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-1-5">
+constituents.<a href="#section-1.2-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-1.3">
+            <p id="section-1.2-1.3.1">Provide an initial number of explicit PQ/T hybrid KEMs using techniques from (B) that reach the
+baseline set in (A), in a separate document, and should include:<a href="#section-1.2-1.3.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2-1.3.2">
 <pre>
-   (I)  a hybrid of P-256 and ML-KEM-768,
-   (II)  a hybrid of X25519 and ML-KEM-768, and,
-   (III) a hybrid of P-384 and ML-KEM-1024.
-</pre><a href="#section-1-5" class="pilcrow">¶</a>
+ (I)  a hybrid of P-256 and ML-KEM-768,
+ (II)  a hybrid of X25519 and ML-KEM-768, and,
+ (III) a hybrid of P-384 and ML-KEM-1024.
+</pre><a href="#section-1.2-1.3.2" class="pilcrow">¶</a>
 </div>
-<p id="section-1-6">These hybrids should be accompanied by pseudocode and test vectors.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">This list includes two options at the ~128-bit security level (due to current
-implementation/deployment trends) and one at a higher level.<a href="#section-1-7" class="pilcrow">¶</a></p>
-<p id="section-1-8">There is demand for other hybrid variants that either use different
+</li>
+        </ul>
+<p id="section-1.2-2">These hybrids should be accompanied by pseudocode and test vectors.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">This list includes two options at the ~128-bit security level (due to current
+implementation/deployment trends) and one at a higher level.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<div id="non-iteractive">
+<section id="section-1.2.1">
+          <h4 id="name-non-iteractive">
+<a href="#section-1.2.1" class="section-number selfRef">1.2.1. </a><a href="#name-non-iteractive" class="section-name selfRef">Non-iteractive</a>
+          </h4>
+<p id="section-1.2.1-1">These KEMs are a non-interactive means to establish a shared secret.
+Using KEMs in place of Diffie-Hellman key exchange can be done in some settings
+but not all.<a href="#section-1.2.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="not-authenticated">
+<section id="section-1.2.2">
+          <h4 id="name-not-authenticated">
+<a href="#section-1.2.2" class="section-number selfRef">1.2.2. </a><a href="#name-not-authenticated" class="section-name selfRef">Not authenticated</a>
+          </h4>
+<p id="section-1.2.2-1">These KEMs are not <em>authenticated</em>.<a href="#section-1.2.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="design-non-goals">
+<section id="section-1.3">
+        <h3 id="name-design-non-goals">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-design-non-goals" class="section-name selfRef">Design Non-Goals</a>
+        </h3>
+<p id="section-1.3-1">There is demand for other hybrid variants that either use different
 primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that
-use a combiner optimized for a specific use case. The DT recommends the
-work outlined in (C) is done in a first document, and other use cases
-could be covered in subsequent documents.<a href="#section-1-8" class="pilcrow">¶</a></p>
+use a combiner optimized for a specific use case. Other use cases
+could be covered in subsequent documents and not included here.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1196,39 +1308,208 @@ described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</s
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security-considerations">
+<div id="conventions-and-definitions-1">
 <section id="section-3">
-      <h2 id="name-security-considerations">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      <h2 id="name-conventions-and-definitions-2">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-conventions-and-definitions-2" class="section-name selfRef">Conventions and Definitions</a>
       </h2>
-<p id="section-3-1">IND-CCA, LEAK-BIND-K-PK, etc, as well as security properties unique to hybrid KEMs (component key
-material reuse between hybrid and non-hybrid uses or between multiple hybrids, one component is
-malicious while the other is honest, etc)<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">This document is consistent with all terminology defined in
+<span>[<a href="#I-D.driscoll-pqt-hybrid-terminology" class="cite xref">I-D.driscoll-pqt-hybrid-terminology</a>]</span>.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">The following terms are used throughout this document to describe the
+operations, roles, and behaviors of HPKE:<a href="#section-3-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-3.1">
+          <p id="section-3-3.1.1"><code>concat(x0, ..., xN)</code>: returns the concatenation of byte
+strings. <code>concat(0x01, 0x0203, 0x040506) = 0x010203040506</code>.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-3.2">
+          <p id="section-3-3.2.1"><code>random(n)</code>: return a pseudorandom byte string of length <code>n</code> bytes produced by
+a cryptographically-secure random number generator.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+</section>
+</div>
+<div id="hybrid-kem-security-properties">
+<section id="section-4">
+      <h2 id="name-hybrid-kem-security-propert">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-hybrid-kem-security-propert" class="section-name selfRef">Hybrid KEM Security Properties</a>
+      </h2>
+<p id="section-4-1">Hybrid KEM constructions ideally provide at least:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="ind-cca-security">
+<section id="section-4.1">
+        <h3 id="name-ind-cca-security">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-ind-cca-security" class="section-name selfRef">IND-CCA security</a>
+        </h3>
+<p id="section-4.1-1">Also known as IND-CCA1 security for general public key encryption, for KEMs
+that encapsulate a new random 'message' each time,<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="leak-bind-k-pk-security">
+<section id="section-4.2">
+        <h3 id="name-leak-bind-k-pk-security">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-leak-bind-k-pk-security" class="section-name selfRef">LEAK-BIND-K-PK security</a>
+      </h3>
+</section>
+</div>
+<div id="leak-bind-k-ct-security">
+<section id="section-4.3">
+        <h3 id="name-leak-bind-k-ct-security">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-leak-bind-k-ct-security" class="section-name selfRef">LEAK-BIND-K-CT security</a>
+        </h3>
+<p id="section-4.3-1">The shared secret<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="hybrid-kem-construction-techniques">
+<section id="section-5">
+      <h2 id="name-hybrid-kem-construction-tec">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hybrid-kem-construction-tec" class="section-name selfRef">Hybrid KEM Construction Techniques</a>
+      </h2>
+<p id="section-5-1">Requirements:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<div id="kdf-as-a-secure-prf">
+<section id="section-5.1">
+        <h3 id="name-kdf-as-a-secure-prf">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-kdf-as-a-secure-prf" class="section-name selfRef">KDF as a secure PRF</a>
+      </h3>
+</section>
+</div>
+<div id="ind-cca-secure-pq-kem">
+<section id="section-5.2">
+        <h3 id="name-ind-cca-secure-pq-kem">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-ind-cca-secure-pq-kem" class="section-name selfRef">IND-CCA-secure PQ KEM</a>
+      </h3>
+</section>
+</div>
+<div id="kitchen-sink-construction">
+<section id="section-5.3">
+        <h3 id="name-kitchen-sink-construction">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-kitchen-sink-construction" class="section-name selfRef">'Kitchen Sink' construction:</a>
+        </h3>
+<p id="section-5.3-1">Ingredients:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.3-2.1">
+            <p id="section-5.3-2.1.1">KDF <code>F</code><a href="#section-5.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.2">
+            <p id="section-5.3-2.2.1">label<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.3">
+            <p id="section-5.3-2.3.1">PQ-CT<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.4">
+            <p id="section-5.3-2.4.1">PQ-PK<a href="#section-5.3-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.5">
+            <p id="section-5.3-2.5.1">PQ-SS<a href="#section-5.3-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.6">
+            <p id="section-5.3-2.6.1">T-PK<a href="#section-5.3-2.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.7">
+            <p id="section-5.3-2.7.1">T-CT<a href="#section-5.3-2.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.8">
+            <p id="section-5.3-2.8.1">T-SS<a href="#section-5.3-2.8.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<div class="alignLeft art-text artwork" id="section-5.3-3">
+<pre>
+def SharedSecret():
+    return F(concat(PQ_SS, T_SS, PQ_CT, PQ_PK, T_CT, T_PK, label))
+</pre><a href="#section-5.3-3" class="pilcrow">¶</a>
+</div>
+<p id="section-5.3-4">Label varies per combos such that the label will vary as the lengths and
+other properties of the component algorithms vary. Otherwise we'd have to
+hash the inputs to fixed lengths or encode lengths into the input.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="x-wing-construction">
+<section id="section-5.4">
+        <h3 id="name-x-wing-construction">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-x-wing-construction" class="section-name selfRef">'X-Wing' construction</a>
+        </h3>
+<p id="section-5.4-1">Inspired by [XWING] which leverages the security properties of a KEM like
+ML-KEM to elide other public data from the KDF input.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.4-2">
+<pre>
+def SharedSecret():
+    return F(concat(label, T_SS, PQ_SS, T_CT, T_PK))
+</pre><a href="#section-5.4-2" class="pilcrow">¶</a>
+</div>
+<p id="section-5.4-3">Relies on PQ KEM having LEAK-BIND-K-CT and LEAK-BIND-K-PK security, which is
+related to the collision-freeness of the underlying PKE scheme of a
+FO-transform KEM like ML-KEM.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="hybrid-kem-instatiations">
+<section id="section-6">
+      <h2 id="name-hybrid-kem-instatiations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-hybrid-kem-instatiations" class="section-name selfRef">Hybrid KEM Instatiations</a>
+      </h2>
+<p id="section-6-1">See the other document.<a href="#section-6-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-7">
+      <h2 id="name-security-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-7-1">IND-CCA, LEAK-BIND-K-PK, etc, as well as security properties unique to hybrid
+KEMs (component key material reuse between hybrid and non-hybrid uses or
+between multiple hybrids, one component is malicious while the other is
+honest, etc)<a href="#section-7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-4">
+<section id="section-8">
       <h2 id="name-iana-considerations">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-4-1">This document has no IANA actions.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">This document has no IANA actions.<a href="#section-8-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sec-normative-references">
-<section id="section-5">
-      <h2 id="name-normative-references">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<div id="sec-combined-references">
+<section id="section-9">
+      <h2 id="name-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
+<section id="section-9.1">
+        <h3 id="name-normative-references">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
 <dl class="references">
+<dt id="FIPS203">[FIPS203]</dt>
+        <dd>
+<span class="refTitle">"Module-Lattice-Based Key-Encapsulation Mechanism Standard"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.203</span>, <time datetime="2024-08" class="refDate">August 2024</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.203">https://doi.org/10.6028/nist.fips.203</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-    <dd>
+      <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-9.2">
+        <h3 id="name-informative-references">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.driscoll-pqt-hybrid-terminology">[I-D.driscoll-pqt-hybrid-terminology]</dt>
+      <dd>
+<span class="refAuthor">D, F.</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-driscoll-pqt-hybrid-terminology-02</span>, <time datetime="2023-03-07" class="refDate">7 March 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-hybrid-terminology-02">https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-hybrid-terminology-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
 </section>
 </div>
 <div id="acknowledgments">
@@ -1241,8 +1522,8 @@ malicious while the other is honest, etc)<a href="#section-3-1" class="pilcrow">
 </div>
 <div id="authors-addresses">
 <section id="appendix-B">
-      <h2 id="name-authors-addresses">
-<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Deirdre Connolly</span></div>
@@ -1250,22 +1531,6 @@ malicious while the other is honest, etc)<a href="#section-3-1" class="pilcrow">
 <div class="email">
 <span>Email:</span>
 <a href="mailto:durumcrustulum@gmail.com" class="email">durumcrustulum@gmail.com</a>
-</div>
-</address>
-<address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Bas Westerbaan</span></div>
-<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
-<div class="email">
-<span>Email:</span>
-<a href="mailto:bas@cloudflare.com" class="email">bas@cloudflare.com</a>
-</div>
-</address>
-<address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Britta Hale</span></div>
-<div dir="auto" class="left"><span class="org">Naval Postgraduate School</span></div>
-<div class="email">
-<span>Email:</span>
-<a href="mailto:britta.hale@nps.edu" class="email">britta.hale@nps.edu</a>
 </div>
 </address>
 </section>
