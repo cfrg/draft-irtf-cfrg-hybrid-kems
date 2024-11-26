@@ -1,17 +1,17 @@
-# Generic Hybrid PQ/T Key Encapsulation Mechanisms
+# Hybrid PQ/T Key Encapsulation Mechanisms
 
-This is the working area for the individual Internet-Draft, "Generic Hybrid PQ/T Key Encapsulation Mechanisms".
+This is the working area for the individual Internet-Draft, "Hybrid PQ/T Key Encapsulation Mechanisms".
 
-* [Editor's Copy](https://cfrg.github.io/draft-irtf-cfrg-generic-hybrid-kems/#go.draft-irtf-cfrg-generic-hybrid-kems.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-irtf-cfrg-generic-hybrid-kems)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-generic-hybrid-kems)
-* [Compare Editor's Copy to Individual Draft](https://cfrg.github.io/draft-irtf-cfrg-generic-hybrid-kems/#go.draft-irtf-cfrg-generic-hybrid-kems.diff)
+* [Editor's Copy](https://cfrg.github.io/draft-irtf-cfrg-hybrid-kems/#go.draft-irtf-cfrg-hybrid-kems.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-irtf-cfrg-hybrid-kems)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems)
+* [Compare Editor's Copy to Individual Draft](https://cfrg.github.io/draft-irtf-cfrg-hybrid-kems/#go.draft-irtf-cfrg-hybrid-kems.diff)
 
 
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/cfrg/draft-irtf-cfrg-generic-hybrid-kems/blob/main/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/blob/main/CONTRIBUTING.md).
 
 Contributions can be made by creating pull requests.
 The GitHub interface supports creating pull requests using the Edit (✏) button.

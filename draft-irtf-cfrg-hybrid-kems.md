@@ -1,9 +1,9 @@
 ---
-title: "Generic Hybrid PQ/T Key Encapsulation Mechanisms"
-abbrev: generic-hybrid-kems
+title: "Hybrid PQ/T Key Encapsulation Mechanisms"
+abbrev: hybrid-kems
 category: info
 
-docname: draft-irtf-cfrg-generic-hybrid-kems-latest
+docname: draft-irtf-cfrg-hybrid-kems-latest
 submissiontype: IRTF
 consensus: false
 v: 3
@@ -154,7 +154,8 @@ informative:
 This document defines generic techniques to achive hybrid
 post-quantum/traditional (PQ/T) key encapsulation mechanisms (KEMs) from
 post-quantum and traditional component algorithms that meet specified
-security properties.
+security properties. It then uses those generic techniques to construct
+several concrete instances of hybrid KEMs.
 
 --- middle
 
