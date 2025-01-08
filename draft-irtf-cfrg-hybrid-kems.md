@@ -66,8 +66,6 @@ informative:
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
   FIPS186: DOI.10.6028/NIST.FIPS.186-5 #https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
-  #FIPS202: DOI.10.6028/NIST.FIPS.202
-  #FIPS203: DOI.10.6028/NIST.FIPS.203
   GHP2018:
     title: "KEM Combiners"
     target: https://eprint.iacr.org/2018/024.pdf
