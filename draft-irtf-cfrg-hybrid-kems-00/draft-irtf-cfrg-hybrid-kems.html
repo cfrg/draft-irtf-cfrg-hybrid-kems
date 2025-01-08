@@ -1,0 +1,3067 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Hybrid PQ/T Key Encapsulation Mechanisms</title>
+<meta content="Deirdre Connolly" name="author">
+<meta content="
+       This document defines generic techniques to achive hybrid
+post-quantum/traditional (PQ/T) key encapsulation mechanisms (KEMs) from
+post-quantum and traditional component algorithms that meet specified
+security properties. It then uses those generic techniques to construct
+several concrete instances of hybrid KEMs. 
+    " name="description">
+<meta content="xml2rfc 3.25.0" name="generator">
+<meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.25.0
+    Python 3.12.8
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.5
+    lxml 5.3.0
+    platformdirs 4.3.6
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.3
+    setuptools 70.3.0
+    wcwidth 0.2.13
+-->
+<link href="draft-irtf-cfrg-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">hybrid-kems</td>
+<td class="right">January 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Connolly</td>
+<td class="center">Expires 12 July 2025</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Crypto Forum</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-01-08" class="published">8 January 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2025-07-12">12 July 2025</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">D. Connolly</div>
+<div class="org">SandboxAQ</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Hybrid PQ/T Key Encapsulation Mechanisms</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document defines generic techniques to achive hybrid
+post-quantum/traditional (PQ/T) key encapsulation mechanisms (KEMs) from
+post-quantum and traditional component algorithms that meet specified
+security properties. It then uses those generic techniques to construct
+several concrete instances of hybrid KEMs.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Discussion of this document takes place on the
+    Crypto Forum Research Group mailing list (cfrg@ietf.org),
+    which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/cfrg">https://mailarchive.ietf.org/arch/browse/cfrg</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/cfrg/draft-irtf-cfrg-pq1">https://github.com/cfrg/draft-irtf-cfrg-pq1</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 12 July 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-motivation" class="internal xref">Motivation</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-requirements-notation" class="internal xref">Requirements Notation</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-notation" class="internal xref">Notation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-key-encapsulation-mechanism" class="internal xref">Key encapsulation mechanisms</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-hybrid-kem-security-propert" class="internal xref">Hybrid KEM Security Properties</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-hybrid-security" class="internal xref">Hybrid Security</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-ind-cca-security" class="internal xref">IND-CCA security</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-ciphertext-second-preimage-" class="internal xref">Ciphertext second preimage resistant (C2PRI) security / ciphertext collision resistance (CCR)</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-binding-properties" class="internal xref">Binding properties</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.1">
+                    <p id="section-toc.1-1.4.2.4.2.1.1"><a href="#section-4.4.1" class="auto internal xref">4.4.1</a>.  <a href="#name-x-bind-k-pk-security" class="internal xref">X-BIND-K-PK security</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.2">
+                    <p id="section-toc.1-1.4.2.4.2.2.1"><a href="#section-4.4.2" class="auto internal xref">4.4.2</a>.  <a href="#name-x-bind-k-ct-security" class="internal xref">X-BIND-K-CT security</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-cryptographic-dependencies" class="internal xref">Cryptographic Dependencies</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-xof" class="internal xref"><code>XOF</code></a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-key-derivation-function-kdf" class="internal xref">Key Derivation Function <code>KDF</code></a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-post-quantum-kem" class="internal xref">Post-Quantum KEM</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.1">
+                    <p id="section-toc.1-1.5.2.3.2.1.1"><a href="#section-5.3.1" class="auto internal xref">5.3.1</a>.  <a href="#name-post-quantum-kem-ciphertext" class="internal xref">Post-quantum KEM ciphertext <code>pq_CT</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.2">
+                    <p id="section-toc.1-1.5.2.3.2.2.1"><a href="#section-5.3.2" class="auto internal xref">5.3.2</a>.  <a href="#name-post-quantum-kem-public-enc" class="internal xref">Post-quantum KEM public encapsulation key <code>pq_PK</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.3">
+                    <p id="section-toc.1-1.5.2.3.2.3.1"><a href="#section-5.3.3" class="auto internal xref">5.3.3</a>.  <a href="#name-post-quantum-kem-shared-sec" class="internal xref">Post-quantum KEM shared secret <code>pq_SS</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.4">
+                    <p id="section-toc.1-1.5.2.3.2.4.1"><a href="#section-5.3.4" class="auto internal xref">5.3.4</a>.  <a href="#name-traditional-kem-ciphertext-" class="internal xref">Traditional KEM ciphertext <code>trad_CT</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.5">
+                    <p id="section-toc.1-1.5.2.3.2.5.1"><a href="#section-5.3.5" class="auto internal xref">5.3.5</a>.  <a href="#name-traditional-kem-public-enca" class="internal xref">Traditional KEM public encapsulation key <code>trad_PK</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.6">
+                    <p id="section-toc.1-1.5.2.3.2.6.1"><a href="#section-5.3.6" class="auto internal xref">5.3.6</a>.  <a href="#name-traditional-kem-shared-secr" class="internal xref">Traditional KEM shared secret <code>trad_SS</code></a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-nominal-diffie-hellman-grou" class="internal xref">Nominal Diffie-Hellman Group</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-other" class="internal xref">Other</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-label" class="internal xref"><code>label</code></a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-hybrid-kem-generic-construc" class="internal xref">Hybrid KEM Generic Constructions</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-common-security-requirement" class="internal xref">Common security requirements</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.1">
+                    <p id="section-toc.1-1.7.2.1.2.1.1"><a href="#section-7.1.1" class="auto internal xref">7.1.1</a>.  <a href="#name-kdf-as-a-secure-prf" class="internal xref">KDF as a secure PRF</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.2">
+                    <p id="section-toc.1-1.7.2.1.2.2.1"><a href="#section-7.1.2" class="auto internal xref">7.1.2</a>.  <a href="#name-ind-cca-secure-post-quantum" class="internal xref">IND-CCA-secure Post-Quantum KEM</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.3">
+                    <p id="section-toc.1-1.7.2.1.2.3.1"><a href="#section-7.1.3" class="auto internal xref">7.1.3</a>.  <a href="#name-ind-cca-secure-traditional-" class="internal xref">IND-CCA-secure traditional KEM</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.4">
+                    <p id="section-toc.1-1.7.2.1.2.4.1"><a href="#section-7.1.4" class="auto internal xref">7.1.4</a>.  <a href="#name-fixed-lengths" class="internal xref">Fixed lengths</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-key-generation" class="internal xref">Key Generation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-kitchen-sink-construction" class="internal xref">'Kitchen Sink' construction:</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3.2.1">
+                    <p id="section-toc.1-1.7.2.3.2.1.1"><a href="#section-7.3.1" class="auto internal xref">7.3.1</a>.  <a href="#name-security-properties" class="internal xref">Security properties</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-qsf-construction" class="internal xref">'QSF' construction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4.2.1">
+                    <p id="section-toc.1-1.7.2.4.2.1.1"><a href="#section-7.4.1" class="auto internal xref">7.4.1</a>.  <a href="#name-requirements" class="internal xref">Requirements</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-concrete-hybrid-kem-instanc" class="internal xref">Concrete Hybrid KEM Instances</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-qsf-sha3-256-ml-kem-768-p-2" class="internal xref"><code>QSF-SHA3-256-ML-KEM-768-P-256</code>  TODO: include the XOF??</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1.2.1">
+                    <p id="section-toc.1-1.8.2.1.2.1.1"><a href="#section-8.1.1" class="auto internal xref">8.1.1</a>.  <a href="#name-key-generation-2" class="internal xref">Key generation</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-shared-secret" class="internal xref">Shared secret</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-encapsulation" class="internal xref">Encapsulation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.1">
+                    <p id="section-toc.1-1.8.2.3.2.1.1"><a href="#section-8.3.1" class="auto internal xref">8.3.1</a>.  <a href="#name-derandomized" class="internal xref">Derandomized</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
+                <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-decapsulation" class="internal xref">Decapsulation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4.2.1">
+                    <p id="section-toc.1-1.8.2.4.2.1.1"><a href="#section-8.4.1" class="auto internal xref">8.4.1</a>.  <a href="#name-security-properties-2" class="internal xref">Security properties</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5">
+                <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-kitchensink-hkdf-sha-256-ml" class="internal xref"><code>KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519</code>  TODO: include the XOF??</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.1">
+                    <p id="section-toc.1-1.8.2.5.2.1.1"><a href="#section-8.5.1" class="auto internal xref">8.5.1</a>.  <a href="#name-key-generation-3" class="internal xref">Key generation</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.6">
+                <p id="section-toc.1-1.8.2.6.1"><a href="#section-8.6" class="auto internal xref">8.6</a>.  <a href="#name-shared-secret-2" class="internal xref">Shared secret</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7">
+                <p id="section-toc.1-1.8.2.7.1"><a href="#section-8.7" class="auto internal xref">8.7</a>.  <a href="#name-encapsulation-2" class="internal xref">Encapsulation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7.2.1">
+                    <p id="section-toc.1-1.8.2.7.2.1.1"><a href="#section-8.7.1" class="auto internal xref">8.7.1</a>.  <a href="#name-derandomized-2" class="internal xref">Derandomized</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.8">
+                <p id="section-toc.1-1.8.2.8.1"><a href="#section-8.8" class="auto internal xref">8.8</a>.  <a href="#name-decapsulation-2" class="internal xref">Decapsulation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.8.2.1">
+                    <p id="section-toc.1-1.8.2.8.2.1.1"><a href="#section-8.8.1" class="auto internal xref">8.8.1</a>.  <a href="#name-security-properties-3" class="internal xref">Security properties</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.9">
+                <p id="section-toc.1-1.8.2.9.1"><a href="#section-8.9" class="auto internal xref">8.9</a>.  <a href="#name-qsf-sha3-256-ml-kem-1024-p-" class="internal xref"><code>QSF-SHA3-256-ML-KEM-1024-P-384</code>  TODO: include the XOF??</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.9.2.1">
+                    <p id="section-toc.1-1.8.2.9.2.1.1"><a href="#section-8.9.1" class="auto internal xref">8.9.1</a>.  <a href="#name-key-generation-4" class="internal xref">Key generation</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.10">
+                <p id="section-toc.1-1.8.2.10.1"><a href="#section-8.10" class="auto internal xref">8.10</a>. <a href="#name-shared-secret-3" class="internal xref">Shared secret</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.11">
+                <p id="section-toc.1-1.8.2.11.1"><a href="#section-8.11" class="auto internal xref">8.11</a>. <a href="#name-encapsulation-3" class="internal xref">Encapsulation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.11.2.1">
+                    <p id="section-toc.1-1.8.2.11.2.1.1"><a href="#section-8.11.1" class="auto internal xref">8.11.1</a>.  <a href="#name-derandomized-3" class="internal xref">Derandomized</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.12">
+                <p id="section-toc.1-1.8.2.12.1"><a href="#section-8.12" class="auto internal xref">8.12</a>. <a href="#name-decapsulation-3" class="internal xref">Decapsulation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.12.2.1">
+                    <p id="section-toc.1-1.8.2.12.2.1.1"><a href="#section-8.12.1" class="auto internal xref">8.12.1</a>.  <a href="#name-security-properties-4" class="internal xref">Security properties</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-random-scalar-generation" class="internal xref">Random Scalar Generation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-rejection-sampling" class="internal xref">Rejection Sampling</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-wide-reduction" class="internal xref">Wide Reduction</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-fixed-length" class="internal xref">Fixed-length</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-out-of-scope" class="internal xref">Out of Scope</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-more-than-two-component-kem" class="internal xref">More than two component KEMs</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-parameterized-output-length" class="internal xref">Parameterized output length</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#section-11.3" class="auto internal xref">11.3</a>.  <a href="#name-protocol-specific-labels-in" class="internal xref">Protocol-specific labels / info</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.4">
+                <p id="section-toc.1-1.11.2.4.1"><a href="#section-11.4" class="auto internal xref">11.4</a>.  <a href="#name-other-component-primitives" class="internal xref">Other Component Primitives</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#section-12.1" class="auto internal xref">12.1</a>.  <a href="#name-hpke" class="internal xref">HPKE</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
+                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="auto internal xref">13.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
+                <p id="section-toc.1-1.13.2.2.1"><a href="#section-13.2" class="auto internal xref">13.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="intro">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<div id="motivation">
+<section id="section-1.1">
+        <h3 id="name-motivation">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-motivation" class="section-name selfRef">Motivation</a>
+        </h3>
+<p id="section-1.1-1">There are many choices that can be made when specifying a hybrid KEM: the
+constituent KEMs; their security levels; the combiner; and the hash within,
+to name but a few. Having too many similar options are a burden to the
+ecosystem.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">The aim of this document is provide a small set of techniques for
+constructing hybrid KEMs designed to achieve specific security properties
+given conforming component algorithms, that should be suitable for the vast
+majority of use cases.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="requirements-notation">
+<section id="section-2">
+      <h2 id="name-requirements-notation">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-requirements-notation" class="section-name selfRef">Requirements Notation</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="notation">
+<section id="section-3">
+      <h2 id="name-notation">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-notation" class="section-name selfRef">Notation</a>
+      </h2>
+<p id="section-3-1">This document is consistent with all terminology defined in
+<span>[<a href="#I-D.driscoll-pqt-hybrid-terminology" class="cite xref">I-D.driscoll-pqt-hybrid-terminology</a>]</span>.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">The following terms are used throughout this document:<a href="#section-3-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-3.1">
+          <p id="section-3-3.1.1"><code>random(n)</code>: return a pseudorandom byte string of length <code>n</code> bytes produced
+by a cryptographically-secure random number generator.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-3.2">
+          <p id="section-3-3.2.1"><code>concat(x0, ..., xN)</code>: Concatenation of byte strings.  <code>concat(0x01,
+0x0203, 0x040506) = 0x010203040506</code>.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-3.3">
+          <p id="section-3-3.3.1"><code>I2OSP(n, w)</code>: Convert non-negative integer <code>n</code> to a <code>w</code>-length, big-endian
+byte string, as described in <span>[<a href="#RFC8017" class="cite xref">RFC8017</a>]</span>.<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-3.4">
+          <p id="section-3-3.4.1"><code>OS2IP(x)</code>: Convert byte string <code>x</code> to a non-negative integer, as described
+in <span>[<a href="#RFC8017" class="cite xref">RFC8017</a>]</span>, assuming big-endian byte order.<a href="#section-3-3.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<div id="kems">
+<section id="section-3.1">
+        <h3 id="name-key-encapsulation-mechanism">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-key-encapsulation-mechanism" class="section-name selfRef">Key encapsulation mechanisms</a>
+        </h3>
+<p id="section-3.1-1">Key encapsulation mechanisms (KEMs) are cryptographic schemes that consist of
+three algorithms:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1-2.1">
+            <p id="section-3.1-2.1.1"><code>KeyGen() -&gt; (pk, sk)</code>: A probabilistic key generation algorithm, which
+generates a public encapsulation key <code>pk</code> and a secret decapsulation key
+<code>sk</code>.<a href="#section-3.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-2.2">
+            <p id="section-3.1-2.2.1"><code>Encaps(pk) -&gt; (ct, shared_secret)</code>: A probabilistic encapsulation
+algorithm, which takes as input a public encapsulation key <code>pk</code> and outputs
+a ciphertext <code>ct</code> and shared secret <code>shared_secret</code>.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-2.3">
+            <p id="section-3.1-2.3.1"><code>Decaps(sk, ct) -&gt; shared_secret</code>: A decapsulation algorithm, which takes
+as input a secret decapsulation key <code>sk</code> and ciphertext <code>ct</code> and outputs a
+shared secret <code>shared_secret</code>.<a href="#section-3.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="hybrid-kem-security-properties">
+<section id="section-4">
+      <h2 id="name-hybrid-kem-security-propert">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-hybrid-kem-security-propert" class="section-name selfRef">Hybrid KEM Security Properties</a>
+      </h2>
+<p id="section-4-1">Hybrid KEM constructions aim to provide security by combining two or more
+schemes so that security is preserved if all but one schemes are replaced by
+an arbitrarily bad scheme.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="hybrid-security">
+<section id="section-4.1">
+        <h3 id="name-hybrid-security">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-hybrid-security" class="section-name selfRef">Hybrid Security</a>
+        </h3>
+<p id="section-4.1-1">Informally, hybrid KEMs are secure if the <code>KDF</code> is secure, and if any one of
+the components KEMs is secure: this is the 'hybrid' property.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ind-cca-security">
+<section id="section-4.2">
+        <h3 id="name-ind-cca-security">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-ind-cca-security" class="section-name selfRef">IND-CCA security</a>
+        </h3>
+<p id="section-4.2-1">Also known as IND-CCA2 security for general public key encryption, for KEMs
+that encapsulate a new random 'message' each time.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">The notion of INDistinguishability against Chosen-Ciphertext Attacks
+(IND-CCA) [RS92] is now widely accepted as the standard security notion for
+asymmetric encryption schemes. IND-CCA security requires that no efficient
+adversary can recognize which of two messages is encrypted in a given
+ciphertext, even if the two candidate messages are chosen by the adversary
+himself.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ciphertext-second-preimage-resistant-c2pri-security-ciphertext-collision-resistance-ccr">
+<section id="section-4.3">
+        <h3 id="name-ciphertext-second-preimage-">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-ciphertext-second-preimage-" class="section-name selfRef">Ciphertext second preimage resistant (C2PRI) security / ciphertext collision resistance (CCR)</a>
+        </h3>
+<p id="section-4.3-1">The notion where, even if a KEM has broken IND-CCA security (either due to
+construction, implementation, or other), its internal structure, based on the
+Fujisaki-Okamoto transform, guarantees that it is impossible to find a second
+ciphertext that decapsulates to the same shared secret <code>K</code>: this notion is
+known as ciphertext second preimage resistance (C2SPI) for KEMs
+<span>[<a href="#XWING" class="cite xref">XWING</a>]</span>. The same notion has also been described as chosen ciphertext
+resistance elsewhere <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="binding-properties">
+<section id="section-4.4">
+        <h3 id="name-binding-properties">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-binding-properties" class="section-name selfRef">Binding properties</a>
+        </h3>
+<div id="x-bind-k-pk-security">
+<section id="section-4.4.1">
+          <h4 id="name-x-bind-k-pk-security">
+<a href="#section-4.4.1" class="section-number selfRef">4.4.1. </a><a href="#name-x-bind-k-pk-security" class="section-name selfRef">X-BIND-K-PK security</a>
+        </h4>
+</section>
+</div>
+<div id="x-bind-k-ct-security">
+<section id="section-4.4.2">
+          <h4 id="name-x-bind-k-ct-security">
+<a href="#section-4.4.2" class="section-number selfRef">4.4.2. </a><a href="#name-x-bind-k-ct-security" class="section-name selfRef">X-BIND-K-CT security</a>
+          </h4>
+<p id="section-4.4.2-1">Ciphertext second preimage resistance for KEMs ([C2PRI]<span>[<a href="#XWING" class="cite xref">XWING</a>]</span>). Related to
+the ciphertext collision-freeness of the underlying PKE scheme of a
+FO-transform KEM. Also called ciphertext collision resistance.<a href="#section-4.4.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="cryptographic-deps">
+<section id="section-5">
+      <h2 id="name-cryptographic-dependencies">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-cryptographic-dependencies" class="section-name selfRef">Cryptographic Dependencies</a>
+      </h2>
+<p id="section-5-1">The generic hybrid PQ/T KEM constructions we define depend on the the
+following cryptographic primitives:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-2.1">
+          <p id="section-5-2.1.1">Extendable Output Function <a href="#xof" class="auto internal xref">Section 5.1</a><a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-2.2">
+          <p id="section-5-2.2.1">Key Derivation Function <a href="#kdf" class="auto internal xref">Section 5.2</a><a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-2.3">
+          <p id="section-5-2.3.1">Post-Quantum-secure KEM <a href="#pq-kem" class="auto internal xref">Section 5.3</a><a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-2.4">
+          <p id="section-5-2.4.1">Nominal Diffie-Hellman Group <a href="#group" class="auto internal xref">Section 5.4</a><a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<div id="xof">
+<section id="section-5.1">
+        <h3 id="name-xof">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-xof" class="section-name selfRef"><code>XOF</code></a>
+        </h3>
+<p id="section-5.1-1">Extendable-output function (XOF). A function on bit strings in which the
+output can be extended to any desired length. Ought to satisfy the following
+properties as long as the specified output length is sufficiently long to
+prevent trivial attacks:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.1-2">
+<li id="section-5.1-2.1">
+            <p id="section-5.1-2.1.1">(One-way) It is computationally infeasible to find any input that maps to
+any new pre-specified output.<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.1-2.2">
+            <p id="section-5.1-2.2.1">(Collision-resistant) It is computationally infeasible to find any two
+distinct inputs that map to the same output.<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-5.1-3"><span class="bcp14">MUST</span> provide the bit-security required to source input randomness for PQ/T
+components from a seed that is expanded to a output length, of which a subset
+is passed to the component key generation algorithms.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="kdf">
+<section id="section-5.2">
+        <h3 id="name-key-derivation-function-kdf">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-key-derivation-function-kdf" class="section-name selfRef">Key Derivation Function <code>KDF</code></a>
+        </h3>
+<p id="section-5.2-1">A secure key derivation function (KDF) that is modeled as a secure
+pseudorandom function (PRF) in the standard model <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span> and independent
+random oracle in the random oracle model (ROM).<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="pq-kem">
+<section id="section-5.3">
+        <h3 id="name-post-quantum-kem">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-post-quantum-kem" class="section-name selfRef">Post-Quantum KEM</a>
+        </h3>
+<p id="section-5.3-1">An IND-CCA KEM that is resilient against post-quantum attacks. It fulfills
+the scheme API in {kems}.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<div id="post-quantum-kem-ciphertext-pqct">
+<section id="section-5.3.1">
+          <h4 id="name-post-quantum-kem-ciphertext">
+<a href="#section-5.3.1" class="section-number selfRef">5.3.1. </a><a href="#name-post-quantum-kem-ciphertext" class="section-name selfRef">Post-quantum KEM ciphertext <code>pq_CT</code></a>
+          </h4>
+<p id="section-5.3.1-1">The ciphertext produced from one encapsulation from the post-quantum
+component KEM.<a href="#section-5.3.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="post-quantum-kem-public-encapsulation-key-pqpk">
+<section id="section-5.3.2">
+          <h4 id="name-post-quantum-kem-public-enc">
+<a href="#section-5.3.2" class="section-number selfRef">5.3.2. </a><a href="#name-post-quantum-kem-public-enc" class="section-name selfRef">Post-quantum KEM public encapsulation key <code>pq_PK</code></a>
+          </h4>
+<p id="section-5.3.2-1">The public encapsulation key produced by one key generation from the
+post-quantum component KEM.<a href="#section-5.3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="post-quantum-kem-shared-secret-pqss">
+<section id="section-5.3.3">
+          <h4 id="name-post-quantum-kem-shared-sec">
+<a href="#section-5.3.3" class="section-number selfRef">5.3.3. </a><a href="#name-post-quantum-kem-shared-sec" class="section-name selfRef">Post-quantum KEM shared secret <code>pq_SS</code></a>
+          </h4>
+<p id="section-5.3.3-1">The shared secret produced from one encapsulation/decapsulation from the
+post-quantum component KEM.<a href="#section-5.3.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="traditional-kem-ciphertext-tradct">
+<section id="section-5.3.4">
+          <h4 id="name-traditional-kem-ciphertext-">
+<a href="#section-5.3.4" class="section-number selfRef">5.3.4. </a><a href="#name-traditional-kem-ciphertext-" class="section-name selfRef">Traditional KEM ciphertext <code>trad_CT</code></a>
+          </h4>
+<p id="section-5.3.4-1">The ciphertext (or equivalent) produced from one encapsulation from the
+traditional component KEM. For the constructions in this document, this is a
+Diffie-Hellman group element.<a href="#section-5.3.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="traditional-kem-public-encapsulation-key-tradpk">
+<section id="section-5.3.5">
+          <h4 id="name-traditional-kem-public-enca">
+<a href="#section-5.3.5" class="section-number selfRef">5.3.5. </a><a href="#name-traditional-kem-public-enca" class="section-name selfRef">Traditional KEM public encapsulation key <code>trad_PK</code></a>
+          </h4>
+<p id="section-5.3.5-1">The public encapsulation key produced by one key generation from the
+traditional component KEM. For the constructions in this document, this is a
+Diffie-Hellman group element.<a href="#section-5.3.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="traditional-kem-shared-secret-tradss">
+<section id="section-5.3.6">
+          <h4 id="name-traditional-kem-shared-secr">
+<a href="#section-5.3.6" class="section-number selfRef">5.3.6. </a><a href="#name-traditional-kem-shared-secr" class="section-name selfRef">Traditional KEM shared secret <code>trad_SS</code></a>
+          </h4>
+<p id="section-5.3.6-1">The shared secret produced from one encapsulation/decapsulation from the
+traditional component KEM. For the constructions in this document, this is a
+Diffie-Hellman group element.<a href="#section-5.3.6-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="group">
+<section id="section-5.4">
+        <h3 id="name-nominal-diffie-hellman-grou">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-nominal-diffie-hellman-grou" class="section-name selfRef">Nominal Diffie-Hellman Group</a>
+        </h3>
+<p id="section-5.4-1">The traditional DH-KEM construction depends on an abelian group of order
+<code>order</code>. We represent this group as the object <code>G</code> that additionally defines
+helper functions described below. The group operation for <code>G</code> is addition <code>+</code>
+with identity element <code>I</code>. For any elements <code>A</code> and <code>B</code> of the group <code>G</code>,
+<code>A + B = B + A</code> is also a member of <code>G</code>. Also, for any <code>A</code> in <code>G</code>, there
+exists an element <code>-A</code> such that <code>A + (-A) = (-A) + A = I</code>. For convenience,
+we use <code>-</code> to denote subtraction, e.g., <code>A - B = A + (-B)</code>.  Integers, taken
+modulo the group order <code>order</code>, are called scalars; arithmetic operations on
+scalars are implicitly performed modulo <code>order</code>. Scalar multiplication is
+equivalent to the repeated application of the group operation on an element
+<code>A</code> with itself <code>r-1</code> times, denoted as <code>ScalarMult(A, r)</code>. We denote the
+sum, difference, and product of two scalars using the <code>+</code>, <code>-</code>, and <code>*</code>
+operators, respectively. (Note that this means <code>+</code> may refer to group element
+addition or scalar addition, depending on the type of the operands.) For any
+element <code>A</code>, <code>ScalarMult(A, order) = I</code>.  We denote <code>B</code> as a fixed generator
+of the group. Scalar base multiplication is equivalent to the repeated
+application of the group operation on <code>B</code> with itself <code>r-1</code> times, this is
+denoted as <code>ScalarBaseMult(r)</code>. The set of scalars corresponds to
+<code>GF(order)</code>, which we refer to as the scalar field. It is assumed that group
+element addition, negation, and equality comparison can be efficiently
+computed for arbitrary group elements.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-2">This document uses types <code>Element</code> and <code>Scalar</code> to denote elements of the
+group <code>G</code> and its set of scalars, respectively. We denote <code>Scalar(x)</code> as the
+conversion of integer input <code>x</code> to the corresponding <code>Scalar</code> value with the
+same numeric value. For example, <code>Scalar(1)</code> yields a <code>Scalar</code> representing
+the value 1.  We denote equality comparison of these types as <code>==</code> and
+assignment of values by <code>=</code>. When comparing Scalar values, e.g., for the
+purposes of sorting lists of Scalar values, the least nonnegative
+representation mod <code>order</code> is used.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
+<p id="section-5.4-3">We now detail a number of member functions that can be invoked on <code>G</code>.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.4-4.1">
+            <p id="section-5.4-4.1.1">Order(): Outputs the order of <code>G</code> (i.e., <code>order</code>).<a href="#section-5.4-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.2">
+            <p id="section-5.4-4.2.1">Identity(): Outputs the identity <code>Element</code> of the group (i.e., <code>I</code>).<a href="#section-5.4-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.3">
+            <p id="section-5.4-4.3.1">RandomScalar(): Outputs a random <code>Scalar</code> element in GF(order), i.e., a
+random scalar in [0, order - 1].<a href="#section-5.4-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.4">
+            <p id="section-5.4-4.4.1">ScalarMult(A, k): Outputs the scalar multiplication between Element <code>A</code> and
+Scalar <code>k</code>.<a href="#section-5.4-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.5">
+            <p id="section-5.4-4.5.1">ScalarBaseMult(k): Outputs the scalar multiplication between Scalar <code>k</code> and
+the group generator <code>B</code>.<a href="#section-5.4-4.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.6">
+            <p id="section-5.4-4.6.1">SerializeElement(A): Maps an <code>Element</code> <code>A</code> to a canonical byte array <code>buf</code>
+of fixed length <code>Ne</code>. This function raises an error if <code>A</code> is the identity
+element of the group.<a href="#section-5.4-4.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.7">
+            <p id="section-5.4-4.7.1">DeserializeElement(buf): Attempts to map a byte array <code>buf</code> to an <code>Element</code>
+              <code>A</code>, and fails if the input is not the valid canonical byte representation
+of an element of the group. This function raises an error if
+deserialization fails or if <code>A</code> is the identity element of the group.<a href="#section-5.4-4.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.8">
+            <p id="section-5.4-4.8.1">SerializeScalar(s): Maps a Scalar <code>s</code> to a canonical byte array <code>buf</code> of
+fixed length <code>Ns</code>.<a href="#section-5.4-4.8.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.4-4.9">
+            <p id="section-5.4-4.9.1">DeserializeScalar(buf): Attempts to map a byte array <code>buf</code> to a <code>Scalar</code>
+              <code>s</code>.  This function raises an error if deserialization fails.<a href="#section-5.4-4.9.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="other">
+<section id="section-6">
+      <h2 id="name-other">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-other" class="section-name selfRef">Other</a>
+      </h2>
+<div id="label">
+<section id="section-6.1">
+        <h3 id="name-label">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-label" class="section-name selfRef"><code>label</code></a>
+        </h3>
+<p id="section-6.1-1">ASCII-encoded bytes that provide oracle cloning <span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in the security
+game via domain separation. The IND-CCA security of hybrid KEMs often
+relies on the KDF function <code>KDF</code> to behave as an independent
+random oracle, which the inclusion of the <code>label</code> achieves via domain
+separation <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">By design, the calls to <code>KDF</code> in these constructions and usage anywhere else
+in higher level protoocl use separate input domains unless intentionally
+duplicating the 'label' per concrete instance with fixed paramters. This
+justifies modeling them as independent functions even if instantiated by the
+same KDF. This domain separation is achieved by using prefix-free sets of
+<code>label</code> values. Recall that a set is prefix-free if no element is a prefix of
+another within the set.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.1-3">Length diffentiation is sometimes used to achieve domain separation but as a
+technique it is [brittle and prone to misuse]<span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in practice so we
+favor the use of an explicit post-fix label.<a href="#section-6.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="hybrid-kem-generic-constructions">
+<section id="section-7">
+      <h2 id="name-hybrid-kem-generic-construc">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-hybrid-kem-generic-construc" class="section-name selfRef">Hybrid KEM Generic Constructions</a>
+      </h2>
+<div id="common-security-requirements">
+<section id="section-7.1">
+        <h3 id="name-common-security-requirement">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-common-security-requirement" class="section-name selfRef">Common security requirements</a>
+        </h3>
+<div id="kdf-as-a-secure-prf">
+<section id="section-7.1.1">
+          <h4 id="name-kdf-as-a-secure-prf">
+<a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-kdf-as-a-secure-prf" class="section-name selfRef">KDF as a secure PRF</a>
+          </h4>
+<p id="section-7.1.1-1">A key derivation function (KDF) that is modeled as a secure pseudorandom
+function (PRF) in the standard model <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span> and independent random oracle
+in the random oracle model (ROM).<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ind-cca-secure-post-quantum-kem">
+<section id="section-7.1.2">
+          <h4 id="name-ind-cca-secure-post-quantum">
+<a href="#section-7.1.2" class="section-number selfRef">7.1.2. </a><a href="#name-ind-cca-secure-post-quantum" class="section-name selfRef">IND-CCA-secure Post-Quantum KEM</a>
+          </h4>
+<p id="section-7.1.2-1">A component post-quantum KEM that has IND-CCA security.<a href="#section-7.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ind-cca-secure-traditional-kem">
+<section id="section-7.1.3">
+          <h4 id="name-ind-cca-secure-traditional-">
+<a href="#section-7.1.3" class="section-number selfRef">7.1.3. </a><a href="#name-ind-cca-secure-traditional-" class="section-name selfRef">IND-CCA-secure traditional KEM</a>
+          </h4>
+<p id="section-7.1.3-1">A component traditional KEM that has IND-CCA security.<a href="#section-7.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="fixed-lengths">
+<section id="section-7.1.4">
+          <h4 id="name-fixed-lengths">
+<a href="#section-7.1.4" class="section-number selfRef">7.1.4. </a><a href="#name-fixed-lengths" class="section-name selfRef">Fixed lengths</a>
+          </h4>
+<p id="section-7.1.4-1">Every instantiation in concrete parameters of the generic constructions is
+for fixed parameter sizes, KDF choice, and label, allowing the lengths to not
+also be encoded into the generic construction. The label/KDF/component
+algorithm parameter sets <span class="bcp14">MUST</span> be disjoint and non-colliding.<a href="#section-7.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.4-2">This document assumes and requires that the length of each public key,
+ciphertext, and shared secret is fixed once the algorithm is fixed in the
+concrete instantiations. This is the case for all concrete instantiations in
+this document.<a href="#section-7.1.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="keygen">
+<section id="section-7.2">
+        <h3 id="name-key-generation">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-key-generation" class="section-name selfRef">Key Generation</a>
+        </h3>
+<p id="section-7.2-1">We specify a common generic key generation scheme for all generic
+constructions. This requires the component key generation algorithns to
+accept the sufficient random seed, possibly according to their parameter set.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-2">### Key derivation {#derive-key-pair}<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="kitchen-sink-construction">
+<section id="section-7.3">
+        <h3 id="name-kitchen-sink-construction">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-kitchen-sink-construction" class="section-name selfRef">'Kitchen Sink' construction:</a>
+        </h3>
+<p id="section-7.3-1">As indicated by the name, the <code>KitchenSink</code> construction puts 'the whole
+transcript' through the KDF. This relies on the minimum security properties
+of its component algorithms at the cost of more bytes needing to be processed
+by the KDF.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.3-2">
+<pre>
+def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK):
+    return KDF(concat(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label))
+</pre><a href="#section-7.3-2" class="pilcrow">¶</a>
+</div>
+<div id="security-properties">
+<section id="section-7.3.1">
+          <h4 id="name-security-properties">
+<a href="#section-7.3.1" class="section-number selfRef">7.3.1. </a><a href="#name-security-properties" class="section-name selfRef">Security properties</a>
+          </h4>
+<p id="section-7.3.1-1">Because the entire hybrid KEM ciphertext and encapsulation key material are
+included in the KDF preimage, the <code>KitchenSink</code> construction is resilient
+against implementation errors in the component algorithms.<a href="#section-7.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.3.1-2"></p>
+<p id="section-7.3.1-3"></p>
+<p id="section-7.3.1-4"></p>
+</section>
+</div>
+</section>
+</div>
+<div id="QSF">
+<section id="section-7.4">
+        <h3 id="name-qsf-construction">
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-qsf-construction" class="section-name selfRef">'QSF' construction</a>
+        </h3>
+<p id="section-7.4-1">Inspired by the generic QSF (Quantum Superiority Fighter) framework in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>,
+which leverages the security properties of a KEM like ML-KEM and an inlined instance
+of DH-KEM, to elide other public data like the PQ ciphertext and encapsulation key from
+the KDF input:<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.4-2">
+<pre>
+def QSF-KEM.SharedSecret(pq_SS, trad_SS, trad_CT, trad_PK):
+    return KDF(concat(pq_SS, trad_SS, trad_CT, trad_PK, label))
+</pre><a href="#section-7.4-2" class="pilcrow">¶</a>
+</div>
+<div id="requirements">
+<section id="section-7.4.1">
+          <h4 id="name-requirements">
+<a href="#section-7.4.1" class="section-number selfRef">7.4.1. </a><a href="#name-requirements" class="section-name selfRef">Requirements</a>
+          </h4>
+<div id="nominal-diffie-hellman-group-with-strong-diffie-hellman-security">
+<section id="section-7.4.1.1">
+            <h5 id="name-nominal-diffie-hellman-group">
+<a href="#section-7.4.1.1" class="section-number selfRef">7.4.1.1. </a><a href="#name-nominal-diffie-hellman-group" class="section-name selfRef">Nominal Diffie-Hellman Group with strong Diffie-Hellman security</a>
+            </h5>
+<p id="section-7.4.1.1-1">A cryptographic group modelable as a nominal group where the strong
+Diffie-Hellman assumption holds {XWING}. Specically regarding a nominal
+group, this means that especially the QSF construction's security is
+based on a computational-Diffie-Hellman-like problem, but no assumption is
+made about the format of the generated group element - no assumption is made
+that the shared group element is indistinguishable from random bytes.<a href="#section-7.4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.4.1.1-2">The concrete instantiations in this document use elliptic curve groups that
+have been modeled as nominal groups in the literature.<a href="#section-7.4.1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="post-quantum-ind-cca-kem-with-ciphertext-second-preimage-resistance">
+<section id="section-7.4.1.2">
+            <h5 id="name-post-quantum-ind-cca-kem-wi">
+<a href="#section-7.4.1.2" class="section-number selfRef">7.4.1.2. </a><a href="#name-post-quantum-ind-cca-kem-wi" class="section-name selfRef">Post-quantum IND-CCA KEM with ciphertext second preimage resistance</a>
+            </h5>
+<p id="section-7.4.1.2-1">The QSF relies the post-quantum KEM component having IND-CCA security against
+a post-quantum attacker, and ciphertext second preimage resistance (C2SPI,
+also known as chosen ciphertext resistance, CCR). C2SPI/CCR is <span><a href="#CDM23" class="internal xref">equivalent to
+LEAK-BIND-K,PK-CT security</a> [<a href="#CDM23" class="cite xref">CDM23</a>]</span><a href="#section-7.4.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="kdf-is-a-secure-post-quantum-prf-modelable-as-a-random-oracle">
+<section id="section-7.4.1.3">
+            <h5 id="name-kdf-is-a-secure-post-quantu">
+<a href="#section-7.4.1.3" class="section-number selfRef">7.4.1.3. </a><a href="#name-kdf-is-a-secure-post-quantu" class="section-name selfRef">KDF is a secure (post-quantum) PRF, modelable as a random oracle</a>
+            </h5>
+<p id="section-7.4.1.3-1">Indistinguishability of the final shared secret from a random key is
+established by modeling the key-derivation function as a random
+oracle <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>.<a href="#section-7.4.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="concrete-hybrid-kem-instances">
+<section id="section-8">
+      <h2 id="name-concrete-hybrid-kem-instanc">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-concrete-hybrid-kem-instanc" class="section-name selfRef">Concrete Hybrid KEM Instances</a>
+      </h2>
+<div id="qsf-sha3-256-ml-kem-768-p-256-todo-include-the-xof-">
+<section id="section-8.1">
+        <h3 id="name-qsf-sha3-256-ml-kem-768-p-2">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-qsf-sha3-256-ml-kem-768-p-2" class="section-name selfRef"><code>QSF-SHA3-256-ML-KEM-768-P-256</code></a>
+        </h3>
+<p id="section-8.1-1">Also known as <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> but with P-256 instead of X25519.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.1-2.1">
+            <p id="section-8.1-2.1.1"><code>label</code>: <code>QSF-SHA3-256-ML-KEM-768-P-256</code><a href="#section-8.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.2">
+            <p id="section-8.1-2.2.1"><code>XOF</code>: [SHAKE-256][FIPS202]<a href="#section-8.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.3">
+            <p id="section-8.1-2.3.1"><code>KDF</code>: [SHA3-256][FIPS202]<a href="#section-8.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.4">
+            <p id="section-8.1-2.4.1">PQ KEM: <span><a href="#FIPS203" class="internal xref">ML-KEM-768</a> [<a href="#FIPS203" class="cite xref">FIPS203</a>]</span><a href="#section-8.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.5">
+            <p id="section-8.1-2.5.1">Group: [P-256]<span>[<a href="#FIPS186" class="cite xref">FIPS186</a>]</span> (secp256r1) <span>[<a href="#ANSIX9.62" class="cite xref">ANSIX9.62</a>]</span>, where Ne = 33 and Ns = 32.<a href="#section-8.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-8.1-3">This instantiation uses P-256 for the Group.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.1-4.1">
+            <p id="section-8.1-4.1.1">Group: P-256<a href="#section-8.1-4.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.1-4.1.2.1">
+                <p id="section-8.1-4.1.2.1.1">Order(): Return
+0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.<a href="#section-8.1-4.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.1-4.1.2.2">
+                <p id="section-8.1-4.1.2.2.1">Identity(): As defined in <span>[<a href="#ANSIX9.62" class="cite xref">ANSIX9.62</a>]</span>.<a href="#section-8.1-4.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.1-4.1.2.3">
+                <p id="section-8.1-4.1.2.3.1">RandomScalar(): Implemented by returning a uniformly random Scalar in the
+range [0, <code>G.Order()</code> - 1]. Refer to <a href="#random-scalar" class="auto internal xref">Section 9</a> for
+implementation guidance.<a href="#section-8.1-4.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.1-4.1.2.4">
+                <p id="section-8.1-4.1.2.4.1">SerializeElement(A): Implemented using the compressed
+Elliptic-Curve-Point-to-Octet-String method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>,
+yielding a 33-byte output. Additionally, this function validates that the
+input element is not the group identity element.<a href="#section-8.1-4.1.2.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.1-4.1.2.5">
+                <p id="section-8.1-4.1.2.5.1">DeserializeElement(buf): Implemented by attempting to deserialize a
+33-byte input string to a public key using the compressed
+Octet-String-to-Elliptic-Curve-Point method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>, and
+then performs public-key validation as defined in section 3.2.2.1 of
+<span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>.  This includes checking that the coordinates of the resulting
+point are in the correct range, that the point is on the curve, and that
+the point is not the point at infinity. (As noted in the specification,
+validation of the point order is not required since the cofactor is 1.)
+If any of these checks fail, deserialization returns an error.<a href="#section-8.1-4.1.2.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.1-4.1.2.6">
+                <p id="section-8.1-4.1.2.6.1">SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
+conversion according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>.<a href="#section-8.1-4.1.2.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.1-4.1.2.7">
+                <p id="section-8.1-4.1.2.7.1">DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
+from a 32-byte string using Octet-String-to-Field-Element from
+<span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>. This function can fail if the input does not represent a Scalar
+in the range [0, <code>G.Order()</code> - 1].<a href="#section-8.1-4.1.2.7.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+        </ul>
+<div id="key-generation">
+<section id="section-8.1.1">
+          <h4 id="name-key-generation-2">
+<a href="#section-8.1.1" class="section-number selfRef">8.1.1. </a><a href="#name-key-generation-2" class="section-name selfRef">Key generation</a>
+          </h4>
+<p id="section-8.1.1-1">A keypair (decapsulation key, encapsulation key) is generated as follows.<a href="#section-8.1.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.1.1-2">
+<pre>
+def expandDecapsulationKey(sk):
+  expanded = SHAKE256(sk, 96)
+  (pk_M, sk_M) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
+  sk_G = Scalar(expanded[64:96])
+  pk_G = ScalarMultBase(sk_G)
+  return (sk_M, sk_G, pk_M, pk_G)
+
+def GenerateKeyPair():
+  sk = random(32)
+  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
+  return sk, concat(pk_M, pk_G)
+</pre><a href="#section-8.1.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.1.1-3"><code>GenerateKeyPair()</code> returns the 32 byte secret decapsulation key <code>sk</code> and the
+1217 byte encapsulation key <code>pk</code>.<a href="#section-8.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.1.1-4">For testing, it is convenient to have a deterministic version of key
+generation. An implementation <span class="bcp14">MAY</span> provide the following derandomized variant
+of key generation.<a href="#section-8.1.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.1.1-5">
+<pre>
+def GenerateKeyPairDerand(sk):
+  sk_M, sk_G, pk_M, pk_G = expandDecapsulationKey(sk)
+  return sk, concat(pk_M, pk_X)
+</pre><a href="#section-8.1.1-5" class="pilcrow">¶</a>
+</div>
+<p id="section-8.1.1-6"><code>sk</code> <span class="bcp14">MUST</span> be 32 bytes.<a href="#section-8.1.1-6" class="pilcrow">¶</a></p>
+<p id="section-8.1.1-7"><code>GenerateKeyPairDerand()</code> returns the 32 byte secret decapsulation key <code>sk</code>
+and the 1217 byte encapsulation key <code>pk</code>.<a href="#section-8.1.1-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="shared-secret">
+<section id="section-8.2">
+        <h3 id="name-shared-secret">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-shared-secret" class="section-name selfRef">Shared secret</a>
+        </h3>
+<p id="section-8.2-1">Given 32-byte strings <code>ss_M</code>, <code>ss_G</code>, and the 33-byte strings <code>ct_G</code>, <code>pk_G</code>,
+representing the ML-KEM-768 shared secret, P-256 shared secret, P-256
+ciphertext (ephemeral public key) and P-256 public key respectively, the 32
+byte combined shared secret is given by:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.2-2">
+<pre>
+def SharedSecret(ss_M, ss_G, ct_G, pk_G):
+  return SHA3-256(concat(
+    ss_M,
+    ss_X,
+    ct_G,
+    pk_G,
+    `label`
+  ))
+</pre><a href="#section-8.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.2-3">where <code>label</code> is the instance <code>label</code>. In hex <code>label</code> is given by <code>TODO</code>.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="encapsulation">
+<section id="section-8.3">
+        <h3 id="name-encapsulation">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-encapsulation" class="section-name selfRef">Encapsulation</a>
+        </h3>
+<p id="section-8.3-1">Given an encapsulation key <code>pk</code>, encapsulation proceeds as follows.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.3-2">
+<pre>
+def Encapsulate(pk):
+  pk_M = pk[0:1184]
+  pk_G = pk[1184:1217]
+  ek_G = RandomScalar()
+  ct_G = ScalarMultBase(ek_G)
+  ss_G = ScalarMult(ek_G, pk_G)
+  (ss_M, ct_M) = ML-KEM-768.Encaps(pk_M)
+  ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
+  ct = concat(ct_M, ct_G)
+  return (ss, ct)
+</pre><a href="#section-8.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.3-3"><code>pk</code> is a 1217 byte X-Wing encapsulation key resulting from
+<code>GeneratePublicKey()</code><a href="#section-8.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.3-4"><code>Encapsulate()</code> returns the 32 byte shared secret <code>ss</code> and the 1121 byte
+ciphertext <code>ct</code>.<a href="#section-8.3-4" class="pilcrow">¶</a></p>
+<p id="section-8.3-5">Note that <code>Encapsulate()</code> may raise an error if the ML-KEM encapsulation does
+not pass the check of <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span> §7.2.<a href="#section-8.3-5" class="pilcrow">¶</a></p>
+<div id="derandomized">
+<section id="section-8.3.1">
+          <h4 id="name-derandomized">
+<a href="#section-8.3.1" class="section-number selfRef">8.3.1. </a><a href="#name-derandomized" class="section-name selfRef">Derandomized</a>
+          </h4>
+<p id="section-8.3.1-1">For testing, it is convenient to have a deterministic version of
+encapsulation. An implementation <span class="bcp14">MAY</span> provide the following derandomized
+function.<a href="#section-8.3.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.3.1-2">
+<pre>
+def EncapsulateDerand(pk, eseed):
+  pk_M = pk[0:1184]
+  pk_G = pk[1184:1217]
+  ek_G = eseed[32:65]
+  ct_G = ScalarMultBase(ek_G)
+  ss_G = ScalarMult(ek_G, pk_G)
+
+  (ss_M, ct_M) = ML-KEM-768.EncapsDerand(pk_M, eseed[0:32])
+  ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
+  ct = concat(ct_M, ct_G)
+  return (ss, ct)
+</pre><a href="#section-8.3.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.3.1-3"><code>pk</code> is a 1217 byte X-Wing encapsulation key resulting from
+<code>GeneratePublicKey()</code> <code>eseed</code> <span class="bcp14">MUST</span> be 65 bytes.<a href="#section-8.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.3.1-4"><code>EncapsulateDerand()</code> returns the 32 byte shared secret <code>ss</code> and the 1121
+byte ciphertext <code>ct</code>.<a href="#section-8.3.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="decapsulation">
+<section id="section-8.4">
+        <h3 id="name-decapsulation">
+<a href="#section-8.4" class="section-number selfRef">8.4. </a><a href="#name-decapsulation" class="section-name selfRef">Decapsulation</a>
+        </h3>
+<div class="alignLeft art-text artwork" id="section-8.4-1">
+<pre>
+def Decapsulate(ct, sk):
+  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
+  ct_M = ct[0:1088]
+  ct_G = ct[1088:1121]
+  ss_M = ML-KEM-768.Decapsulate(ct_M, sk_M)
+  ss_G = ScalarMult(sk_G, ct_G)
+  return SharedSecret(ss_M, ss_G, ct_G, pk_G)
+</pre><a href="#section-8.4-1" class="pilcrow">¶</a>
+</div>
+<p id="section-8.4-2"><code>ct</code> is the 1121 byte ciphertext resulting from <code>Encapsulate()</code> <code>sk</code> is a 32
+byte decapsulation key resulting from <code>GenerateKeyPair()</code><a href="#section-8.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.4-3"><code>Decapsulate()</code> returns the 32 byte shared secret.<a href="#section-8.4-3" class="pilcrow">¶</a></p>
+<div id="security-properties-1">
+<section id="section-8.4.1">
+          <h4 id="name-security-properties-2">
+<a href="#section-8.4.1" class="section-number selfRef">8.4.1. </a><a href="#name-security-properties-2" class="section-name selfRef">Security properties</a>
+          </h4>
+<div id="binding">
+<section id="section-8.4.1.1">
+            <h5 id="name-binding">
+<a href="#section-8.4.1.1" class="section-number selfRef">8.4.1.1. </a><a href="#name-binding" class="section-name selfRef">Binding</a>
+            </h5>
+<p id="section-8.4.1.1-1">The inlined DH-KEM is instantiated over the elliptic curve group P-256: as
+shown in <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>, this gives the traditional KEM maximum binding
+properties (MAL-BIND-K-CT, MAL-BIND-K-PK).<a href="#section-8.4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.4.1.1-2">ML-KEM-768 as standardized in <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span>, when using the 64-byte seed key
+format as is here, provides MAL-BIND-K-CT security and LEAK-BIND-K-PK
+security, as demonstrated in <span>[<a href="#SCHMIEG2024" class="cite xref">SCHMIEG2024</a>]</span>.<a href="#section-8.4.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.4.1.1-3">Therefore this concrete instance provides MAL-BIND-K-PK and MAL-BIND-K-CT
+security.<a href="#section-8.4.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.4.1.1-4">This implies via <span>[<a href="#KSMW2024" class="cite xref">KSMW2024</a>]</span> that this instance also satisfies<a href="#section-8.4.1.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.4.1.1-5.1">
+                <p id="section-8.4.1.1-5.1.1">MAL-BIND-K,CT-PK<a href="#section-8.4.1.1-5.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.2">
+                <p id="section-8.4.1.1-5.2.1">MAL-BIND-K,PK-CT<a href="#section-8.4.1.1-5.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.3">
+                <p id="section-8.4.1.1-5.3.1">LEAK-BIND-K-PK<a href="#section-8.4.1.1-5.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.4">
+                <p id="section-8.4.1.1-5.4.1">LEAK-BIND-K-CT<a href="#section-8.4.1.1-5.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.5">
+                <p id="section-8.4.1.1-5.5.1">LEAK-BIND-K,CT-PK<a href="#section-8.4.1.1-5.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.6">
+                <p id="section-8.4.1.1-5.6.1">LEAK-BIND-K,PK-CT<a href="#section-8.4.1.1-5.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.7">
+                <p id="section-8.4.1.1-5.7.1">HON-BIND-K-PK<a href="#section-8.4.1.1-5.7.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.8">
+                <p id="section-8.4.1.1-5.8.1">HON-BIND-K-CT<a href="#section-8.4.1.1-5.8.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.9">
+                <p id="section-8.4.1.1-5.9.1">HON-BIND-K,CT-PK<a href="#section-8.4.1.1-5.9.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.1.1-5.10">
+                <p id="section-8.4.1.1-5.10.1">HON-BIND-K,PK-CT<a href="#section-8.4.1.1-5.10.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="kitchensink-hkdf-sha-256-ml-kem-768-x25519-todo-include-the-xof-">
+<section id="section-8.5">
+        <h3 id="name-kitchensink-hkdf-sha-256-ml">
+<a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-kitchensink-hkdf-sha-256-ml" class="section-name selfRef"><code>KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519</code></a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-8.5-1.1">
+            <p id="section-8.5-1.1.1"><code>label</code>: <code>KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519</code><a href="#section-8.5-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.5-1.2">
+            <p id="section-8.5-1.2.1"><code>XOF</code>: [SHAKE-256][FIPS202]<a href="#section-8.5-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.5-1.3">
+            <p id="section-8.5-1.3.1"><code>KDF</code>: <span><a href="#HKDF" class="internal xref">HKDF-SHA-256</a> [<a href="#HKDF" class="cite xref">HKDF</a>]</span><a href="#section-8.5-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-8.5-2">HKDF is comprised of <code>HKDF-Extract</code> and <code>HKDF-Expand</code>. We compose them as one
+function here:<a href="#section-8.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.5-3"></p>
+<div class="alignLeft art-text artwork" id="section-8.5-4">
+<pre>
+def LabeledExtract(salt, label, ikm):
+  labeled_ikm = concat("Hybrid", suite_id, label, ikm)
+  return HDKF-Extract(salt, labeled_ikm)
+
+def LabeledExpand(prk, label, info, L):
+  labeled_info = concat(I2OSP(L, 2), "Hybrid", suite_id,
+                        label, info)
+  return HKDF-Expand(prk, labeled_info, L)
+
+
+def HKDF(preimage):
+  prk = LabeledExtract("", "hybrid_prk", preimage)
+  shared_secret = LabeledExpand(prk, "shared_secret", "", 32)
+  return shared_secret
+</pre><a href="#section-8.5-4" class="pilcrow">¶</a>
+</div>
+<ul class="normal">
+<li class="normal" id="section-8.5-5.1">
+            <p id="section-8.5-5.1.1">PQ KEM: ML-KEM-768 <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span><a href="#section-8.5-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.5-5.2">
+            <p id="section-8.5-5.2.1">Group: X25519 <span>[<a href="#X25519" class="cite xref">X25519</a>]</span><a href="#section-8.5-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-8.5-6">This instantiation uses X25519 for the Group.<a href="#section-8.5-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.5-7.1">
+            <p id="section-8.5-7.1.1">Group: Curve25519 <span>[<a href="#X25519" class="cite xref">X25519</a>]</span>, where Ne = 32 and Ns = 32.<a href="#section-8.5-7.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.5-7.1.2.1">
+                <p id="section-8.5-7.1.2.1.1">Order(): Return 2^252 + 0x14def9dea2f79cd65812631a5cf5d3ed (see
+  <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>).<a href="#section-8.5-7.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.5-7.1.2.2">
+                <p id="section-8.5-7.1.2.2.1">Identity(): As defined in <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>.<a href="#section-8.5-7.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.5-7.1.2.3">
+                <p id="section-8.5-7.1.2.3.1">RandomScalar(): Implemented by returning a uniformly random Scalar in the
+range [0, <code>G.Order()</code> - 1]. Refer to <a href="#random-scalar" class="auto internal xref">Section 9</a> for
+implementation guidance.<a href="#section-8.5-7.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.5-7.1.2.4">
+                <p id="section-8.5-7.1.2.4.1">SerializeElement(A): Implemented as specified in <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>.<a href="#section-8.5-7.1.2.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.5-7.1.2.5">
+                <p id="section-8.5-7.1.2.5.1">DeserializeElement(buf): Implemented as specified in <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>.<a href="#section-8.5-7.1.2.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.5-7.1.2.6">
+                <p id="section-8.5-7.1.2.6.1">SerializeScalar(s): Implemented by outputting the little-endian 32-byte
+encoding of the Scalar value with the top three bits set to zero.<a href="#section-8.5-7.1.2.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.5-7.1.2.7">
+                <p id="section-8.5-7.1.2.7.1">DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
+from a little-endian 32-byte string. This function can fail if the input
+does not represent a Scalar in the range [0, <code>G.Order()</code> - 1]. Note
+that this means the top three bits of the input <span class="bcp14">MUST</span> be zero.<a href="#section-8.5-7.1.2.7.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+        </ul>
+<div id="key-generation-1">
+<section id="section-8.5.1">
+          <h4 id="name-key-generation-3">
+<a href="#section-8.5.1" class="section-number selfRef">8.5.1. </a><a href="#name-key-generation-3" class="section-name selfRef">Key generation</a>
+          </h4>
+<p id="section-8.5.1-1">A keypair (decapsulation key, encapsulation key) is generated as follows.<a href="#section-8.5.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.5.1-2">
+<pre>
+def expandDecapsulationKey(sk):
+  expanded = SHAKE256(sk, 96)
+  (pk_M, sk_M) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
+  sk_G = Scalar(expanded[64:96])
+  pk_G = ScalarMultBase(sk_G)
+  return (sk_M, sk_G, pk_M, pk_G)
+
+def GenerateKeyPair():
+  sk = random(32)
+  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
+  return sk, concat(pk_M, pk_G)
+</pre><a href="#section-8.5.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.5.1-3"><code>GenerateKeyPair()</code> returns the 32 byte secret decapsulation key <code>sk</code> and the
+1216 byte encapsulation key <code>pk</code>.<a href="#section-8.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-4">For testing, it is convenient to have a deterministic version of key
+generation. An implementation <span class="bcp14">MAY</span> provide the following derandomized variant
+of key generation.<a href="#section-8.5.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.5.1-5">
+<pre>
+def GenerateKeyPairDerand(sk):
+  sk_M, sk_G, pk_M, pk_G = expandDecapsulationKey(sk)
+  return sk, concat(pk_M, pk_X)
+</pre><a href="#section-8.5.1-5" class="pilcrow">¶</a>
+</div>
+<p id="section-8.5.1-6"><code>sk</code> <span class="bcp14">MUST</span> be 32 bytes.<a href="#section-8.5.1-6" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-7"><code>GenerateKeyPairDerand()</code> returns the 32 byte secret encapsulation key <code>sk</code>
+and the 1216 byte decapsulation key <code>pk</code>.<a href="#section-8.5.1-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="shared-secret-1">
+<section id="section-8.6">
+        <h3 id="name-shared-secret-2">
+<a href="#section-8.6" class="section-number selfRef">8.6. </a><a href="#name-shared-secret-2" class="section-name selfRef">Shared secret</a>
+        </h3>
+<p id="section-8.6-1">Given 32-byte strings <code>ss_M</code>, <code>ss_G</code>, <code>ct_G</code>, <code>pk_G</code>, representing the
+ML-KEM-768 shared secret, X25519 shared secret, X25519 ciphertext (ephemeral
+public key) and X25519 public key respectively, the 32 byte combined shared
+secret is given by:<a href="#section-8.6-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.6-2">
+<pre>
+def SharedSecret(ss_M, ss_G, ct_G, pk_G):
+  return HKDF(concat(
+    ss_M,
+    ss_X,
+    ct_G,
+    pk_G,
+    `label`
+  ))
+</pre><a href="#section-8.6-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.6-3">where <code>label</code> is the instance <code>label</code>. In hex <code>label</code> is given by <code>TODO</code>.<a href="#section-8.6-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="encapsulation-1">
+<section id="section-8.7">
+        <h3 id="name-encapsulation-2">
+<a href="#section-8.7" class="section-number selfRef">8.7. </a><a href="#name-encapsulation-2" class="section-name selfRef">Encapsulation</a>
+        </h3>
+<p id="section-8.7-1">Given an encapsulation key <code>pk</code>, encapsulation proceeds as follows.<a href="#section-8.7-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.7-2">
+<pre>
+def Encapsulate(pk):
+  pk_M = pk[0:1184]
+  pk_G = pk[1184:1216]
+  ek_G = RandomScalar()
+  ct_G = ScalarMultBase(ek_G)
+  ss_G = ScalarMult(ek_G, pk_G)
+  (ss_M, ct_M) = ML-KEM-768.Encaps(pk_M)
+  ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
+  ct = concat(ct_M, ct_G)
+  return (ss, ct)
+</pre><a href="#section-8.7-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.7-3"><code>pk</code> is a 1216 byte encapsulation key resulting from <code>GeneratePublicKey()</code><a href="#section-8.7-3" class="pilcrow">¶</a></p>
+<p id="section-8.7-4"><code>Encapsulate()</code> returns the 32 byte shared secret <code>ss</code> and the 1120 byte
+ciphertext <code>ct</code>.<a href="#section-8.7-4" class="pilcrow">¶</a></p>
+<p id="section-8.7-5">Note that <code>Encapsulate()</code> may raise an error if the ML-KEM encapsulation does
+not pass the check of <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span> §7.2.<a href="#section-8.7-5" class="pilcrow">¶</a></p>
+<div id="derandomized-1">
+<section id="section-8.7.1">
+          <h4 id="name-derandomized-2">
+<a href="#section-8.7.1" class="section-number selfRef">8.7.1. </a><a href="#name-derandomized-2" class="section-name selfRef">Derandomized</a>
+          </h4>
+<p id="section-8.7.1-1">For testing, it is convenient to have a deterministic version of
+encapsulation. An implementation <span class="bcp14">MAY</span> provide the following derandomized
+function.<a href="#section-8.7.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.7.1-2">
+<pre>
+def EncapsulateDerand(pk, eseed):
+  pk_M = pk[0:1184]
+  pk_G = pk[1184:1216]
+  ek_G = eseed[32:64]
+  ct_G = ScalarMultBase(ek_G)
+  ss_G = ScalarMult(ek_G, pk_G)
+
+  (ss_M, ct_M) = ML-KEM-768.EncapsDerand(pk_M, eseed[0:32])
+  ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
+  ct = concat(ct_M, ct_G)
+  return (ss, ct)
+</pre><a href="#section-8.7.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.7.1-3"><code>pk</code> is a 1217 byte X-Wing encapsulation key resulting from
+<code>GeneratePublicKey()</code> <code>eseed</code> <span class="bcp14">MUST</span> be 65 bytes.<a href="#section-8.7.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-4"><code>EncapsulateDerand()</code> returns the 32 byte shared secret <code>ss</code> and the 1121
+byte ciphertext <code>ct</code>.<a href="#section-8.7.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="decapsulation-1">
+<section id="section-8.8">
+        <h3 id="name-decapsulation-2">
+<a href="#section-8.8" class="section-number selfRef">8.8. </a><a href="#name-decapsulation-2" class="section-name selfRef">Decapsulation</a>
+        </h3>
+<div class="alignLeft art-text artwork" id="section-8.8-1">
+<pre>
+def Decapsulate(ct, sk):
+  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
+  ct_M = ct[0:1088]
+  ct_G = ct[1088:1120]
+  ss_M = ML-KEM-768.Decapsulate(ct_M, sk_M)
+  ss_G = ScalarMult(sk_G, ct_G)
+  return SharedSecret(ss_M, ss_G, ct_G, pk_G)
+</pre><a href="#section-8.8-1" class="pilcrow">¶</a>
+</div>
+<p id="section-8.8-2"><code>ct</code> is the 1120 byte ciphertext resulting from <code>Encapsulate()</code> <code>sk</code> is a 32
+byte decapsulation key resulting from <code>GenerateKeyPair()</code><a href="#section-8.8-2" class="pilcrow">¶</a></p>
+<p id="section-8.8-3"><code>Decapsulate()</code> returns the 32 byte shared secret.<a href="#section-8.8-3" class="pilcrow">¶</a></p>
+<div id="security-properties-2">
+<section id="section-8.8.1">
+          <h4 id="name-security-properties-3">
+<a href="#section-8.8.1" class="section-number selfRef">8.8.1. </a><a href="#name-security-properties-3" class="section-name selfRef">Security properties</a>
+          </h4>
+<div id="binding-1">
+<section id="section-8.8.1.1">
+            <h5 id="name-binding-2">
+<a href="#section-8.8.1.1" class="section-number selfRef">8.8.1.1. </a><a href="#name-binding-2" class="section-name selfRef">Binding</a>
+            </h5>
+<p id="section-8.8.1.1-1">The inlined DH-KEM instantiated over the elliptic curve group X25519: as
+shown in <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>, this gives the traditional KEM maximum binding
+properties (MAL-BIND-K-CT, MAL-BIND-K-PK).<a href="#section-8.8.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.8.1.1-2">ML-KEM-768 as standardized in <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span>, when using the 64-byte seed key
+format as is here, provides MAL-BIND-K-CT security and LEAK-BIND-K-PK
+security, as demonstrated in <span>[<a href="#SCHMIEG2024" class="cite xref">SCHMIEG2024</a>]</span>. Further, the ML-KEM ciphertext
+and encapsulation key are included in the KDF preimage, giving
+straightforward CT and PK binding for the entire bytes of the hybrid KEM
+ciphertext and encapsulation key. Therefore this concrete instance provides
+MAL-BIND-K-PK and MAL-BIND-K-CT security.<a href="#section-8.8.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.8.1.1-3">This implies via <span>[<a href="#KSMW2024" class="cite xref">KSMW2024</a>]</span> that this instance also satisfies<a href="#section-8.8.1.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.8.1.1-4.1">
+                <p id="section-8.8.1.1-4.1.1">MAL-BIND-K,CT-PK<a href="#section-8.8.1.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.2">
+                <p id="section-8.8.1.1-4.2.1">MAL-BIND-K,PK-CT<a href="#section-8.8.1.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.3">
+                <p id="section-8.8.1.1-4.3.1">LEAK-BIND-K-PK<a href="#section-8.8.1.1-4.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.4">
+                <p id="section-8.8.1.1-4.4.1">LEAK-BIND-K-CT<a href="#section-8.8.1.1-4.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.5">
+                <p id="section-8.8.1.1-4.5.1">LEAK-BIND-K,CT-PK<a href="#section-8.8.1.1-4.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.6">
+                <p id="section-8.8.1.1-4.6.1">LEAK-BIND-K,PK-CT<a href="#section-8.8.1.1-4.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.7">
+                <p id="section-8.8.1.1-4.7.1">HON-BIND-K-PK<a href="#section-8.8.1.1-4.7.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.8">
+                <p id="section-8.8.1.1-4.8.1">HON-BIND-K-CT<a href="#section-8.8.1.1-4.8.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.9">
+                <p id="section-8.8.1.1-4.9.1">HON-BIND-K,CT-PK<a href="#section-8.8.1.1-4.9.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.8.1.1-4.10">
+                <p id="section-8.8.1.1-4.10.1">HON-BIND-K,PK-CT<a href="#section-8.8.1.1-4.10.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="qsf-sha3-256-ml-kem-1024-p-384-todo-include-the-xof-">
+<section id="section-8.9">
+        <h3 id="name-qsf-sha3-256-ml-kem-1024-p-">
+<a href="#section-8.9" class="section-number selfRef">8.9. </a><a href="#name-qsf-sha3-256-ml-kem-1024-p-" class="section-name selfRef"><code>QSF-SHA3-256-ML-KEM-1024-P-384</code></a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-8.9-1.1">
+            <p id="section-8.9-1.1.1"><code>label</code>: <code>QSF-SHA3-256-ML-KEM-768-P-256</code><a href="#section-8.9-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.9-1.2">
+            <p id="section-8.9-1.2.1"><code>XOF</code>: [SHAKE-256][FIPS202]<a href="#section-8.9-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.9-1.3">
+            <p id="section-8.9-1.3.1"><code>KDF</code>: [SHA3-256][FIPS202]<a href="#section-8.9-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.9-1.4">
+            <p id="section-8.9-1.4.1">PQ KEM: <span><a href="#FIPS203" class="internal xref">ML-KEM-1024</a> [<a href="#FIPS203" class="cite xref">FIPS203</a>]</span><a href="#section-8.9-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.9-1.5">
+            <p id="section-8.9-1.5.1">Group: [P-384]<span>[<a href="#FIPS186" class="cite xref">FIPS186</a>]</span> (secp256r1) <span>[<a href="#ANSIX9.62" class="cite xref">ANSIX9.62</a>]</span>, where Ne = 33 and Ns = 32.<a href="#section-8.9-1.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-8.9-2">This instantiation uses P-384 for the Group.<a href="#section-8.9-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.9-3.1">
+            <p id="section-8.9-3.1.1">Group: P-384<a href="#section-8.9-3.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.9-3.1.2.1">
+                <p id="section-8.9-3.1.2.1.1">Order(): Return
+0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf
+581a0db248b0a77aecec196accc52973<a href="#section-8.9-3.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.9-3.1.2.2">
+                <p id="section-8.9-3.1.2.2.1">Identity(): As defined in <span>[<a href="#ANSIX9.62" class="cite xref">ANSIX9.62</a>]</span>.<a href="#section-8.9-3.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.9-3.1.2.3">
+                <p id="section-8.9-3.1.2.3.1">RandomScalar(): Implemented by returning a uniformly random Scalar in the
+range [0, <code>G.Order()</code> - 1]. Refer to <a href="#random-scalar" class="auto internal xref">Section 9</a> for
+implementation guidance.<a href="#section-8.9-3.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.9-3.1.2.4">
+                <p id="section-8.9-3.1.2.4.1">SerializeElement(A): Implemented using the compressed
+Elliptic-Curve-Point-to-Octet-String method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>,
+yielding a 61-byte output. Additionally, this function validates that the
+input element is not the group identity element.<a href="#section-8.9-3.1.2.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.9-3.1.2.5">
+                <p id="section-8.9-3.1.2.5.1">DeserializeElement(buf): Implemented by attempting to deserialize a
+61-byte input string to a public key using the compressed
+Octet-String-to-Elliptic-Curve-Point method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>, and
+then performs public-key validation as defined in section 3.2.2.1 of
+<span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>.  This includes checking that the coordinates of the resulting
+point are in the correct range, that the point is on the curve, and that
+the point is not the point at infinity. (As noted in the specification,
+validation of the point order is not required since the cofactor is 1.)
+If any of these checks fail, deserialization returns an error.<a href="#section-8.9-3.1.2.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.9-3.1.2.6">
+                <p id="section-8.9-3.1.2.6.1">SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
+conversion according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>.<a href="#section-8.9-3.1.2.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.9-3.1.2.7">
+                <p id="section-8.9-3.1.2.7.1">DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
+from a 48-byte string using Octet-String-to-Field-Element from
+<span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>. This function can fail if the input does not represent a Scalar
+in the range [0, <code>G.Order()</code> - 1].<a href="#section-8.9-3.1.2.7.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+        </ul>
+<div id="key-generation-2">
+<section id="section-8.9.1">
+          <h4 id="name-key-generation-4">
+<a href="#section-8.9.1" class="section-number selfRef">8.9.1. </a><a href="#name-key-generation-4" class="section-name selfRef">Key generation</a>
+          </h4>
+<p id="section-8.9.1-1">A keypair (decapsulation key, encapsulation key) is generated as follows.<a href="#section-8.9.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.9.1-2">
+<pre>
+def expandDecapsulationKey(sk):
+  expanded = SHAKE256(sk, 112)
+  (pk_M, sk_M) = ML-KEM-1024.KeyGen_internal(expanded[0:32], expanded[32:64])
+  sk_G = Scalar(expanded[64:112])
+  pk_G = ScalarMultBase(sk_G)
+  return (sk_M, sk_G, pk_M, pk_G)
+
+def GenerateKeyPair():
+  sk = random(32)
+  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
+  return sk, concat(pk_M, pk_G)
+</pre><a href="#section-8.9.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.9.1-3"><code>GenerateKeyPair()</code> returns the 32 byte secret decapsulation key <code>sk</code> and the
+1629 byte encapsulation key <code>pk</code>.<a href="#section-8.9.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.9.1-4">For testing, it is convenient to have a deterministic version of key
+generation. An implementation <span class="bcp14">MAY</span> provide the following derandomized variant
+of key generation.<a href="#section-8.9.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.9.1-5">
+<pre>
+def GenerateKeyPairDerand(sk):
+  sk_M, sk_G, pk_M, pk_G = expandDecapsulationKey(sk)
+  return sk, concat(pk_M, pk_X)
+</pre><a href="#section-8.9.1-5" class="pilcrow">¶</a>
+</div>
+<p id="section-8.9.1-6"><code>sk</code> <span class="bcp14">MUST</span> be 32 bytes.<a href="#section-8.9.1-6" class="pilcrow">¶</a></p>
+<p id="section-8.9.1-7"><code>GenerateKeyPairDerand()</code> returns the 32 byte secret decapsulation key <code>sk</code>
+and the 1629 byte encapsulation key <code>pk</code>.<a href="#section-8.9.1-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="shared-secret-2">
+<section id="section-8.10">
+        <h3 id="name-shared-secret-3">
+<a href="#section-8.10" class="section-number selfRef">8.10. </a><a href="#name-shared-secret-3" class="section-name selfRef">Shared secret</a>
+        </h3>
+<p id="section-8.10-1">Given 32-byte string <code>ss_M</code>, the 61-byte strings <code>ss_G</code>, <code>ct_G</code>, <code>pk_G</code>,
+representing the ML-KEM-1024 shared secret, P-384 shared secret, P-384
+ciphertext (ephemeral public key) and P-384 public key respectively, the 32
+byte combined shared secret is given by:<a href="#section-8.10-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.10-2">
+<pre>
+def SharedSecret(ss_M, ss_G, ct_G, pk_G):
+  return SHA3-256(concat(
+    ss_M,
+    ss_X,
+    ct_G,
+    pk_G,
+    `label`
+  ))
+</pre><a href="#section-8.10-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.10-3">where <code>label</code> is the instance <code>label</code>. In hex <code>label</code> is given by <code>TODO</code>.<a href="#section-8.10-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="encapsulation-2">
+<section id="section-8.11">
+        <h3 id="name-encapsulation-3">
+<a href="#section-8.11" class="section-number selfRef">8.11. </a><a href="#name-encapsulation-3" class="section-name selfRef">Encapsulation</a>
+        </h3>
+<p id="section-8.11-1">Given an encapsulation key <code>pk</code>, encapsulation proceeds as follows.<a href="#section-8.11-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.11-2">
+<pre>
+def Encapsulate(pk):
+  pk_M = pk[0:1568]
+  pk_G = pk[1568:1629]
+  ek_G = RandomScalar()
+  ct_G = ScalarMultBase(ek_G)
+  ss_G = ScalarMult(ek_G, pk_G)
+  (ss_M, ct_M) = ML-KEM-1024.Encaps(pk_M)
+  ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
+  ct = concat(ct_M, ct_G)
+  return (ss, ct)
+</pre><a href="#section-8.11-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.11-3"><code>pk</code> is a 1629 byte X-Wing encapsulation key resulting from
+<code>GeneratePublicKey()</code><a href="#section-8.11-3" class="pilcrow">¶</a></p>
+<p id="section-8.11-4"><code>Encapsulate()</code> returns the 32 byte shared secret <code>ss</code> and the 1629 byte
+ciphertext <code>ct</code>.<a href="#section-8.11-4" class="pilcrow">¶</a></p>
+<p id="section-8.11-5">Note that <code>Encapsulate()</code> may raise an error if the ML-KEM encapsulation does
+not pass the check of <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span> §7.2.<a href="#section-8.11-5" class="pilcrow">¶</a></p>
+<div id="derandomized-2">
+<section id="section-8.11.1">
+          <h4 id="name-derandomized-3">
+<a href="#section-8.11.1" class="section-number selfRef">8.11.1. </a><a href="#name-derandomized-3" class="section-name selfRef">Derandomized</a>
+          </h4>
+<p id="section-8.11.1-1">For testing, it is convenient to have a deterministic version of
+encapsulation. An implementation <span class="bcp14">MAY</span> provide the following derandomized
+function.<a href="#section-8.11.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.11.1-2">
+<pre>
+def EncapsulateDerand(pk, eseed):
+  pk_M = pk[0:1568]
+  pk_G = pk[1568:1629]
+  ek_G = eseed[32:80]
+  ct_G = ScalarMultBase(ek_G)
+  ss_G = ScalarMult(ek_G, pk_G)
+
+  (ss_M, ct_M) = ML-KEM-768.EncapsDerand(pk_M, eseed[0:32])
+  ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
+  ct = concat(ct_M, ct_G)
+  return (ss, ct)
+</pre><a href="#section-8.11.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.11.1-3"><code>pk</code> is a 1629 byte X-Wing encapsulation key resulting from
+<code>GeneratePublicKey()</code> <code>eseed</code> <span class="bcp14">MUST</span> be 80 bytes.<a href="#section-8.11.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.11.1-4"><code>EncapsulateDerand()</code> returns the 32 byte shared secret <code>ss</code> and the 1629
+byte ciphertext <code>ct</code>.<a href="#section-8.11.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="decapsulation-2">
+<section id="section-8.12">
+        <h3 id="name-decapsulation-3">
+<a href="#section-8.12" class="section-number selfRef">8.12. </a><a href="#name-decapsulation-3" class="section-name selfRef">Decapsulation</a>
+        </h3>
+<div class="alignLeft art-text artwork" id="section-8.12-1">
+<pre>
+def Decapsulate(ct, sk):
+  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
+  ct_M = ct[0:1568]
+  ct_G = ct[1568:1629]
+  ss_M = ML-KEM-1024.Decapsulate(ct_M, sk_M)
+  ss_G = ScalarMult(sk_G, ct_G)
+  return SharedSecret(ss_M, ss_G, ct_G, pk_G)
+</pre><a href="#section-8.12-1" class="pilcrow">¶</a>
+</div>
+<p id="section-8.12-2"><code>ct</code> is the 1629 byte ciphertext resulting from <code>Encapsulate()</code> <code>sk</code> is a 32
+byte decapsulation key resulting from <code>GenerateKeyPair()</code><a href="#section-8.12-2" class="pilcrow">¶</a></p>
+<p id="section-8.12-3"><code>Decapsulate()</code> returns the 32 byte shared secret.<a href="#section-8.12-3" class="pilcrow">¶</a></p>
+<div id="security-properties-3">
+<section id="section-8.12.1">
+          <h4 id="name-security-properties-4">
+<a href="#section-8.12.1" class="section-number selfRef">8.12.1. </a><a href="#name-security-properties-4" class="section-name selfRef">Security properties</a>
+          </h4>
+<div id="binding-2">
+<section id="section-8.12.1.1">
+            <h5 id="name-binding-3">
+<a href="#section-8.12.1.1" class="section-number selfRef">8.12.1.1. </a><a href="#name-binding-3" class="section-name selfRef">Binding</a>
+            </h5>
+<p id="section-8.12.1.1-1">The inlined DH-KEM is instantiated over the elliptic curve group P-384: as
+shown in <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>, this gives the traditional KEM maximum binding
+properties (MAL-BIND-K-CT, MAL-BIND-K-PK).<a href="#section-8.12.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.12.1.1-2">ML-KEM-1024 as standardized in <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span>, when using the 64-byte seed key
+format as is here, provides MAL-BIND-K-CT security and LEAK-BIND-K-PK
+security, as demonstrated in <span>[<a href="#SCHMIEG2024" class="cite xref">SCHMIEG2024</a>]</span>.<a href="#section-8.12.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.12.1.1-3">Therefore this concrete instance provides MAL-BIND-K-PK and MAL-BIND-K-CT
+security.<a href="#section-8.12.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.12.1.1-4">This implies via <span>[<a href="#KSMW2024" class="cite xref">KSMW2024</a>]</span> that this instance also satisfies<a href="#section-8.12.1.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.12.1.1-5.1">
+                <p id="section-8.12.1.1-5.1.1">MAL-BIND-K,CT-PK<a href="#section-8.12.1.1-5.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.2">
+                <p id="section-8.12.1.1-5.2.1">MAL-BIND-K,PK-CT<a href="#section-8.12.1.1-5.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.3">
+                <p id="section-8.12.1.1-5.3.1">LEAK-BIND-K-PK<a href="#section-8.12.1.1-5.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.4">
+                <p id="section-8.12.1.1-5.4.1">LEAK-BIND-K-CT<a href="#section-8.12.1.1-5.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.5">
+                <p id="section-8.12.1.1-5.5.1">LEAK-BIND-K,CT-PK<a href="#section-8.12.1.1-5.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.6">
+                <p id="section-8.12.1.1-5.6.1">LEAK-BIND-K,PK-CT<a href="#section-8.12.1.1-5.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.7">
+                <p id="section-8.12.1.1-5.7.1">HON-BIND-K-PK<a href="#section-8.12.1.1-5.7.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.8">
+                <p id="section-8.12.1.1-5.8.1">HON-BIND-K-CT<a href="#section-8.12.1.1-5.8.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.9">
+                <p id="section-8.12.1.1-5.9.1">HON-BIND-K,CT-PK<a href="#section-8.12.1.1-5.9.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.12.1.1-5.10">
+                <p id="section-8.12.1.1-5.10.1">HON-BIND-K,PK-CT<a href="#section-8.12.1.1-5.10.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="random-scalar">
+<section id="section-9">
+      <h2 id="name-random-scalar-generation">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-random-scalar-generation" class="section-name selfRef">Random Scalar Generation</a>
+      </h2>
+<p id="section-9-1">Two popular algorithms for generating a random integer uniformly distributed in
+the range [0, G.Order() -1] are as follows:<a href="#section-9-1" class="pilcrow">¶</a></p>
+<div id="rejection-sampling">
+<section id="section-9.1">
+        <h3 id="name-rejection-sampling">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-rejection-sampling" class="section-name selfRef">Rejection Sampling</a>
+        </h3>
+<p id="section-9.1-1">Generate a random byte array with <code>Ns</code> bytes, and attempt to map to a Scalar
+by calling <code>DeserializeScalar</code> in constant time. If it succeeds, return the
+result. If it fails, try again with another random byte array, until the
+procedure succeeds. Failure to implement <code>DeserializeScalar</code> in constant time
+can leak information about the underlying corresponding Scalar.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">As an optimization, if the group order is very close to a power of
+2, it is acceptable to omit the rejection test completely.  In
+particular, if the group order is p, and there is an integer b
+such that |p - 2<sup>b</sup>| is less than 2<sup>(b/2)</sup>, then
+<code>RandomScalar</code> can simply return a uniformly random integer of at
+most b bits.<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="wide-reduction">
+<section id="section-9.2">
+        <h3 id="name-wide-reduction">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-wide-reduction" class="section-name selfRef">Wide Reduction</a>
+        </h3>
+<p id="section-9.2-1">Generate a random byte array with <code>l = ceil(((3 * ceil(log2(G.Order()))) / 2) / 8)</code>
+bytes, and interpret it as an integer; reduce the integer modulo <code>G.Order()</code> and return the
+result. See <span><a href="https://rfc-editor.org/rfc/rfc9380#section-5" class="relref">Section 5</a> of [<a href="#HASH-TO-CURVE" class="cite xref">HASH-TO-CURVE</a>]</span> for the underlying derivation of <code>l</code>.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-10">
+      <h2 id="name-security-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-10-1">Informally, these hybrid KEMs are secure if the <code>KDF</code> is secure, and either
+the elliptic curve is secure, or the post-quantum KEM is secure: this is the
+'hybrid' property.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">More precisely for the concrete instantiations in this document, if SHA3-256,
+SHA3-512, and SHAKE-256 may be modelled as a random oracle, then the IND-CCA
+security of <code>QSF</code> constructions is bounded by the IND-CCA security of ML-KEM,
+and the gap-CDH security of secp256n1, see <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>.<a href="#section-10-2" class="pilcrow">¶</a></p>
+<div id="fixed-length">
+<section id="section-10.1">
+        <h3 id="name-fixed-length">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-fixed-length" class="section-name selfRef">Fixed-length</a>
+        </h3>
+<p id="section-10.1-1">Variable-length secrets are generally dangerous. In particular, using key
+material of variable length and processing it using hash functions may result
+in a timing side channel. In broad terms, when the secret is longer, the hash
+function may need to process more blocks internally. In some unfortunate
+circumstances, this has led to timing attacks, e.g. the Lucky Thirteen
+<span>[<a href="#LUCKY13" class="cite xref">LUCKY13</a>]</span> and Raccoon <span>[<a href="#RACCOON" class="cite xref">RACCOON</a>]</span> attacks.<a href="#section-10.1-1" class="pilcrow">¶</a></p>
+<p id="section-10.1-2">Furthermore, <span>[<a href="#AVIRAM" class="cite xref">AVIRAM</a>]</span> identified a risk of using variable-length secrets when
+the hash function used in the key derivation function is no longer
+collision-resistant.<a href="#section-10.1-2" class="pilcrow">¶</a></p>
+<p id="section-10.1-3">If concatenation were to be used with values that are not fixed-length, a
+length prefix or other unambiguous encoding would need to be used to ensure
+that the composition of the two values is injective and requires a mechanism
+different from that specified in this document.<a href="#section-10.1-3" class="pilcrow">¶</a></p>
+<p id="section-10.1-4">Therefore, this specification <span class="bcp14">MUST</span> only be used with algorithms which have
+fixed-length shared secrets (after the variant has been fixed by the
+algorithm identifier in the NamedGroup negotiation in Section 3.1).<a href="#section-10.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="out-of-scope">
+<section id="section-11">
+      <h2 id="name-out-of-scope">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-out-of-scope" class="section-name selfRef">Out of Scope</a>
+      </h2>
+<p id="section-11-1">Considerations that were considered and not included in these designs:<a href="#section-11-1" class="pilcrow">¶</a></p>
+<div id="more-than-two-component-kems">
+<section id="section-11.1">
+        <h3 id="name-more-than-two-component-kem">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-more-than-two-component-kem" class="section-name selfRef">More than two component KEMs</a>
+        </h3>
+<p id="section-11.1-1">Design team decided to restrict the space to only two components, a
+traditional and a post-quantum KEM.<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="parameterized-output-length">
+<section id="section-11.2">
+        <h3 id="name-parameterized-output-length">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-parameterized-output-length" class="section-name selfRef">Parameterized output length</a>
+        </h3>
+<p id="section-11.2-1">Not analyzed as part of any security proofs in the literature, and a
+complicatation deemed unnecessary.<a href="#section-11.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="protocol-specific-labels-info">
+<section id="section-11.3">
+        <h3 id="name-protocol-specific-labels-in">
+<a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-protocol-specific-labels-in" class="section-name selfRef">Protocol-specific labels / info</a>
+        </h3>
+<p id="section-11.3-1">The concrete instantiations have specific labels, protocol-specific
+information is out of scope.<a href="#section-11.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="other-component-primitives">
+<section id="section-11.4">
+        <h3 id="name-other-component-primitives">
+<a href="#section-11.4" class="section-number selfRef">11.4. </a><a href="#name-other-component-primitives" class="section-name selfRef">Other Component Primitives</a>
+        </h3>
+<p id="section-11.4-1">There is demand for other hybrid variants that either use different
+primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that use a
+combiner optimized for a specific use case. Other use cases could be covered
+in subsequent documents and not included here.<a href="#section-11.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-12">
+      <h2 id="name-iana-considerations">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<div id="hpke">
+<section id="section-12.1">
+        <h3 id="name-hpke">
+<a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-hpke" class="section-name selfRef">HPKE</a>
+        </h3>
+<p id="section-12.1-1">TODO<a href="#section-12.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-13">
+      <h2 id="name-references">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-13.1">
+        <h3 id="name-normative-references">
+<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="FIPS203">[FIPS203]</dt>
+        <dd>
+<span class="refTitle">"Module-lattice-based key-encapsulation mechanism standard"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.203</span>, <time datetime="2024-08" class="refDate">August 2024</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.203">https://doi.org/10.6028/nist.fips.203</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HASH-TO-CURVE">[HASH-TO-CURVE]</dt>
+        <dd>
+<span class="refAuthor">Faz-Hernandez, A.</span>, <span class="refAuthor">Scott, S.</span>, <span class="refAuthor">Sullivan, N.</span>, <span class="refAuthor">Wahby, R. S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Hashing to Elliptic Curves"</span>, <span class="seriesInfo">RFC 9380</span>, <span class="seriesInfo">DOI 10.17487/RFC9380</span>, <time datetime="2023-08" class="refDate">August 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9380">https://www.rfc-editor.org/rfc/rfc9380</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7748">[RFC7748]</dt>
+        <dd>
+<span class="refAuthor">Langley, A.</span>, <span class="refAuthor">Hamburg, M.</span>, and <span class="refAuthor">S. Turner</span>, <span class="refTitle">"Elliptic Curves for Security"</span>, <span class="seriesInfo">RFC 7748</span>, <span class="seriesInfo">DOI 10.17487/RFC7748</span>, <time datetime="2016-01" class="refDate">January 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7748">https://www.rfc-editor.org/rfc/rfc7748</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8017">[RFC8017]</dt>
+        <dd>
+<span class="refAuthor">Moriarty, K., Ed.</span>, <span class="refAuthor">Kaliski, B.</span>, <span class="refAuthor">Jonsson, J.</span>, and <span class="refAuthor">A. Rusch</span>, <span class="refTitle">"PKCS #1: RSA Cryptography Specifications Version 2.2"</span>, <span class="seriesInfo">RFC 8017</span>, <span class="seriesInfo">DOI 10.17487/RFC8017</span>, <time datetime="2016-11" class="refDate">November 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8017">https://www.rfc-editor.org/rfc/rfc8017</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-13.2">
+        <h3 id="name-informative-references">
+<a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="ANSIX9.62">[ANSIX9.62]</dt>
+        <dd>
+<span class="refAuthor">ANS</span>, <span class="refTitle">"Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"</span>, <span class="seriesInfo">ANS X9.62-2005</span>, <time datetime="2005-11" class="refDate">November 2005</time>. </dd>
+<dd class="break"></dd>
+<dt id="AVIRAM">[AVIRAM]</dt>
+        <dd>
+<span class="refAuthor">Nimrod Aviram</span>, <span class="refAuthor">Benjamin Dowling</span>, <span class="refAuthor">Ilan Komargodski</span>, <span class="refAuthor">Kenny Paterson</span>, <span class="refAuthor">Eyal Ronen</span>, and <span class="refAuthor">Eylon Yogev</span>, <span class="refTitle">"[TLS] Combining Secrets in Hybrid Key Exchange in TLS 1.3"</span>, <time datetime="2021-09-01" class="refDate">1 September 2021</time>, <span>&lt;<a href="https://mailarchive.ietf.org/arch/msg/tls/F4SVeL2xbGPaPB2GW_GkBbD_a5M/">https://mailarchive.ietf.org/arch/msg/tls/F4SVeL2xbGPaPB2GW_GkBbD_a5M/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="BDG2020">[BDG2020]</dt>
+        <dd>
+<span class="refTitle">"Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"</span>, <time datetime="2020" class="refDate">2020</time>, <span>&lt;<a href="https://eprint.iacr.org/2020/241.pdf">https://eprint.iacr.org/2020/241.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="CDM23">[CDM23]</dt>
+        <dd>
+<span class="refAuthor">Cremers, C.</span>, <span class="refAuthor">Dax, A.</span>, and <span class="refAuthor">N. Medinger</span>, <span class="refTitle">"Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"</span>, <time datetime="2023" class="refDate">2023</time>, <span>&lt;<a href="https://eprint.iacr.org/2023/1933.pdf">https://eprint.iacr.org/2023/1933.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS186">[FIPS186]</dt>
+        <dd>
+<span class="refTitle">"Digital Signature Standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-5</span>, <time datetime="2023-02" class="refDate">February 2023</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-5">https://doi.org/10.6028/nist.fips.186-5</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="GHP2018">[GHP2018]</dt>
+        <dd>
+<span class="refTitle">"KEM Combiners"</span>, <time datetime="2018" class="refDate">2018</time>, <span>&lt;<a href="https://eprint.iacr.org/2018/024.pdf">https://eprint.iacr.org/2018/024.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HKDF">[HKDF]</dt>
+        <dd>
+<span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"</span>, <span class="seriesInfo">RFC 5869</span>, <span class="seriesInfo">DOI 10.17487/RFC5869</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5869">https://www.rfc-editor.org/rfc/rfc5869</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.driscoll-pqt-hybrid-terminology">[I-D.driscoll-pqt-hybrid-terminology]</dt>
+        <dd>
+<span class="refAuthor">D, F.</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-driscoll-pqt-hybrid-terminology-02</span>, <time datetime="2023-03-07" class="refDate">7 March 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-hybrid-terminology-02">https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-hybrid-terminology-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="KSMW2024">[KSMW2024]</dt>
+        <dd>
+<span class="refAuthor">Kraemer, J.</span>, <span class="refAuthor">Struck, P.</span>, and <span class="refAuthor">M. Weishaupl</span>, <span class="refTitle">"Binding Security of Implicitly-Rejecting KEMs and Application to BIKE and HQC"</span>, <span>n.d.</span>, <span>&lt;<a href="https://eprint.iacr.org/2024/1233">https://eprint.iacr.org/2024/1233</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="LUCKY13">[LUCKY13]</dt>
+        <dd>
+<span class="refAuthor">Al Fardan, N. J.</span> and <span class="refAuthor">K. G. Paterson</span>, <span class="refTitle">"Lucky Thirteen: Breaking the TLS and DTLS record protocols"</span>, <span>n.d.</span>, <span>&lt;<a href="https://ieeexplore.ieee.org/iel7/6547086/6547088/06547131.pdf">https://ieeexplore.ieee.org/iel7/6547086/6547088/06547131.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RACCOON">[RACCOON]</dt>
+        <dd>
+<span class="refAuthor">Merget, R.</span>, <span class="refAuthor">Brinkmann, M.</span>, <span class="refAuthor">Aviram, N.</span>, <span class="refAuthor">Somorovsky, J.</span>, <span class="refAuthor">Mittmann, J.</span>, and <span class="refAuthor">J. Schwenk</span>, <span class="refTitle">"Raccoon Attack: Finding and Exploiting Most-Significant-Bit-Oracles in TLS-DH(E)"</span>, <time datetime="2020-09" class="refDate">September 2020</time>, <span>&lt;<a href="https://raccoon-attack.com/">https://raccoon-attack.com/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SCHMIEG2024">[SCHMIEG2024]</dt>
+        <dd>
+<span class="refAuthor">Schmieg, S.</span>, <span class="refTitle">"Unbindable Kemmy Schmidt: ML-KEM is neither MAL-BIND-K-CT nor MAL-BIND-K-PK"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://eprint.iacr.org/2024/523.pdf">https://eprint.iacr.org/2024/523.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SEC1">[SEC1]</dt>
+        <dd>
+<span class="refTitle">"Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://secg.org/sec1-v2.pdf">https://secg.org/sec1-v2.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="X25519">[X25519]</dt>
+        <dd>
+<span class="refAuthor">Langley, A.</span>, <span class="refAuthor">Hamburg, M.</span>, and <span class="refAuthor">S. Turner</span>, <span class="refTitle">"Elliptic Curves for Security"</span>, <span class="seriesInfo">RFC 7748</span>, <span class="seriesInfo">DOI 10.17487/RFC7748</span>, <time datetime="2016-01" class="refDate">January 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7748">https://www.rfc-editor.org/rfc/rfc7748</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="XWING">[XWING]</dt>
+      <dd>
+<span class="refTitle">"X-Wing: The Hybrid KEM You’ve Been Looking For"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://eprint.iacr.org/2024/039.pdf">https://eprint.iacr.org/2024/039.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Deirdre Connolly</span></div>
+<div dir="auto" class="left"><span class="org">SandboxAQ</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:durumcrustulum@gmail.com" class="email">durumcrustulum@gmail.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
