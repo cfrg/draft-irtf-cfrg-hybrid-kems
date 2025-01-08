@@ -19,35 +19,6 @@ normative:
     FIPS203: DOI.10.6028/NIST.FIPS.203
 
 informative:
-  ABHKLR2020:
-    target: https://eprint.iacr.org/2020/1499.pdf
-    title: "Analysing the HPKE Standard"
-    date: 2020
-    author:
-      -
-        ins: J. Alwen
-        name: Joël Alwen
-        org: Wickr
-      -
-        ins: B. Blanchet
-        name: Bruno Blanchet
-        org: Inria Paris
-      -
-        ins: E. Hauck
-        name: Eduard Hauck
-        org: Ruhr-Universität Bochum
-      -
-        ins: E. Kiltz
-        name: Eike Kiltz
-        org: Ruhr-Universität Bochum
-      -
-        ins: B. Lipp
-        name: Benjamin Lipp
-        org: Inria Paris
-      -
-        ins: D. Riepel
-        name: Doreen Riepel
-        org: Ruhr-Universität Bochum
   ANSIX9.62:
     title: "Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"
     date: Nov, 2005
@@ -73,7 +44,10 @@ informative:
         ins: Eyal Ronen
       -
         ins: Eylon Yogev
-  BDG2020: https://eprint.iacr.org/2020/241.pdf
+  BDG2020:
+    title: "Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"
+    target: https://eprint.iacr.org/2020/241.pdf
+    date: 2020
   CDM23:
     title: "Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"
     target: https://eprint.iacr.org/2023/1933.pdf
@@ -91,10 +65,13 @@ informative:
         ins: N. Medinger
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
-  FIPS186: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
-  FIPS202: DOI.10.6028/NIST.FIPS.202
-  FIPS203: DOI.10.6028/NIST.FIPS.203
-  GHP2018: https://eprint.iacr.org/2018/024.pdf
+  FIPS186: DOI.10.6028/NIST.FIPS.186-5 #https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
+  #FIPS202: DOI.10.6028/NIST.FIPS.202
+  #FIPS203: DOI.10.6028/NIST.FIPS.203
+  GHP2018:
+    title: "KEM Combiners"
+    target: https://eprint.iacr.org/2018/024.pdf
+    date: 2018
   I-D.driscoll-pqt-hybrid-terminology:
   KSMW2024:
     target: https://eprint.iacr.org/2024/1233
@@ -132,7 +109,6 @@ informative:
       ins: J. Schwenk
     date: 2020-09
   HKDF: RFC5869
-  HPKE: RFC9180
   SCHMIEG2024:
     title: "Unbindable Kemmy Schmidt: ML-KEM is neither MAL-BIND-K-CT nor MAL-BIND-K-PK"
     target: https://eprint.iacr.org/2024/523.pdf
@@ -146,8 +122,11 @@ informative:
     target: https://secg.org/sec1-v2.pdf
     date: 2009
   X25519: RFC7748
-  XWING: https://eprint.iacr.org/2024/039.pdf
-  XWING-EC-PROOF: https://github.com/formosa-crypto/formosa-x-wing/
+  XWING:
+    title: "X-Wing: The Hybrid KEM You’ve Been Looking For"
+    target: https://eprint.iacr.org/2024/039.pdf
+    date: 2024
+  # XWING-EC-PROOF: https://github.com/formosa-crypto/formosa-x-wing/
 
 --- abstract
 
@@ -208,7 +187,6 @@ three algorithms:
   as input a secret decapsulation key `sk` and ciphertext `ct` and outputs a
   shared secret `shared_secret`.
 
-
 # Hybrid KEM Security Properties
 
 Hybrid KEM constructions aim to provide security by combining two or more
@@ -240,7 +218,7 @@ Fujisaki-Okamoto transform, guarantees that it is impossible to find a second
 ciphertext that decapsulates to the same shared secret `K`: this notion is
 known as ciphertext second preimage resistance (C2SPI) for KEMs
 {{XWING}}. The same notion has also been described as chosen ciphertext
-resistance elsewhere {{CDM2023}}.
+resistance elsewhere {{CDM23}}.
 
 
 ## Binding properties
@@ -252,7 +230,7 @@ resistance elsewhere {{CDM2023}}.
 ### X-BIND-K-CT security
 
 
-Ciphertext second preimage resistance for KEMs ([C2PRI][XWING]). Related to
+Ciphertext second preimage resistance for KEMs ([C2PRI]{{XWING}}). Related to
 the ciphertext collision-freeness of the underlying PKE scheme of a
 FO-transform KEM. Also called ciphertext collision resistance.
 
@@ -263,7 +241,7 @@ following cryptographic primitives:
 
 - Extendable Output Function {{xof}}
 - Key Derivation Function {{kdf}}
-- Post-Quantum-secure KEM {{pq-kem}
+- Post-Quantum-secure KEM {{pq-kem}}
 - Nominal Diffie-Hellman Group {{group}}
 
 ## `XOF` {#xof}
@@ -286,10 +264,10 @@ is passed to the component key generation algorithms.
 ## Key Derivation Function `KDF` {#kdf}
 
 A secure key derivation function (KDF) that is modeled as a secure
-pseudorandom function (PRF) in the [standard model][GHP2018] and independent
+pseudorandom function (PRF) in the standard model {{GHP2018}} and independent
 random oracle in the random oracle model (ROM).
 
-## Post-Quantum KEM {{#pq-kem}}
+## Post-Quantum KEM {#pq-kem}
 
 An IND-CCA KEM that is resilient against post-quantum attacks. It fulfills
 the scheme API in {kems}.
@@ -387,11 +365,11 @@ We now detail a number of member functions that can be invoked on `G`.
 
 ## `label`
 
-ASCII-encoded bytes that provide [oracle cloning][BDG2020] in the security
+ASCII-encoded bytes that provide oracle cloning {{BDG2020}} in the security
 game via domain separation. The IND-CCA security of hybrid KEMs often
-[relies][GHP2018] on the KDF function `KDF` to behave as an independent
+relies on the KDF function `KDF` to behave as an independent
 random oracle, which the inclusion of the `label` achieves via domain
-separation.
+separation {{GHP2018}}.
 
 By design, the calls to `KDF` in these constructions and usage anywhere else
 in higher level protoocl use separate input domains unless intentionally
@@ -402,7 +380,7 @@ same KDF. This domain separation is achieved by using prefix-free sets of
 another within the set.
 
 Length diffentiation is sometimes used to achieve domain separation but as a
-technique it is [brittle and prone to misuse][BDG2020] in practice so we
+technique it is [brittle and prone to misuse]{{BDG2020}} in practice so we
 favor the use of an explicit post-fix label.
 
 # Hybrid KEM Generic Constructions
@@ -412,7 +390,7 @@ favor the use of an explicit post-fix label.
 ### KDF as a secure PRF
 
 A key derivation function (KDF) that is modeled as a secure pseudorandom
-function (PRF) in the [standard model][GHP2018] and independent random oracle
+function (PRF) in the standard model {{GHP2018}} and independent random oracle
 in the random oracle model (ROM).
 
 ### IND-CCA-secure Post-Quantum KEM
@@ -487,14 +465,12 @@ correct --> <!-- and OW-CCA secure. In this setting, the KDF is modeled as a
 random oracle. -->
 
 
-## 'QSF' construction {#qsf}
+## 'QSF' construction {#QSF}
 
-Inspired by the generic QSF[^qsf] framework in [XWING], which leverages the
-security properties of a KEM like ML-KEM and an inlined instance of DH-KEM,
-to elide other public data like the PQ ciphertext and encapsulation key from
+Inspired by the generic QSF (Quantum Superiority Fighter) framework in {{XWING}},
+which leverages the security properties of a KEM like ML-KEM and an inlined instance
+of DH-KEM, to elide other public data like the PQ ciphertext and encapsulation key from
 the KDF input:
-
-[qsf] Quantum Superiority Fighter
 
 ~~~
 def QSF-KEM.SharedSecret(pq_SS, trad_SS, trad_CT, trad_PK):
@@ -503,11 +479,11 @@ def QSF-KEM.SharedSecret(pq_SS, trad_SS, trad_CT, trad_PK):
 
 ### Requirements
 
-#### Nominal Diffie-Hellman Group with strong Diffie-Hellman security {#group}
+#### Nominal Diffie-Hellman Group with strong Diffie-Hellman security
 
 A cryptographic group modelable as a nominal group where the strong
 Diffie-Hellman assumption holds {XWING}. Specically regarding a nominal
-group, this means that especially the {{QSF}} construction's security is
+group, this means that especially the QSF construction's security is
 based on a computational-Diffie-Hellman-like problem, but no assumption is
 made about the format of the generated group element - no assumption is made
 that the shared group element is indistinguishable from random bytes.
@@ -527,7 +503,7 @@ LEAK-BIND-K,PK-CT security][CDM23]
 
 Indistinguishability of the final shared secret from a random key is
 established by modeling the key-derivation function as a random
-oracle. {{XWING}}
+oracle {{XWING}}.
 
 
 # Concrete Hybrid KEM Instances
@@ -535,13 +511,13 @@ oracle. {{XWING}}
 
 ## `QSF-SHA3-256-ML-KEM-768-P-256` <!-- TODO: include the XOF?? -->
 
-Also known as [XWING] but with P-256 instead of X25519.
+Also known as {{XWING}} but with P-256 instead of X25519.
 
-### `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
-### `XOF`: [SHAKE-256][FIPS202]
-### `KDF`: [SHA3-256][FIPS202]
-### PQ KEM: [ML-KEM-768][FIPS203]
-### Group: [P-256][FIPS186] (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32.
+* `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
+* `XOF`: [SHAKE-256][FIPS202]
+* `KDF`: [SHA3-256][FIPS202]
+* PQ KEM: [ML-KEM-768][FIPS203]
+* Group: [P-256]{{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32.
 
 This instantiation uses P-256 for the Group.
 
@@ -558,7 +534,7 @@ for performance. But that might be trying to hard to over-engineer this. -->
 - Group: P-256
   - Order(): Return
     0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.
-  - Identity(): As defined in {{x9.62}}.
+  - Identity(): As defined in {{ANSIX9.62}}.
   - RandomScalar(): Implemented by returning a uniformly random Scalar in the
     range \[0, `G.Order()` - 1\]. Refer to {{random-scalar}} for
     implementation guidance.
@@ -695,7 +671,7 @@ def EncapsulateDerand(pk, eseed):
 byte ciphertext `ct`.
 
 
-## Decapsulation {#decaps}
+## Decapsulation
 
 ~~~
 def Decapsulate(ct, sk):
@@ -717,7 +693,7 @@ byte decapsulation key resulting from `GenerateKeyPair()`
 #### Binding
 
 The inlined DH-KEM is instantiated over the elliptic curve group P-256: as
-shown in {{CDM2023}}, this gives the traditional KEM maximum binding
+shown in {{CDM23}}, this gives the traditional KEM maximum binding
 properties (MAL-BIND-K-CT, MAL-BIND-K-PK).
 
 ML-KEM-768 as standardized in {{FIPS203}}, when using the 64-byte seed key
@@ -727,7 +703,7 @@ security, as demonstrated in {{SCHMIEG2024}.
 Therefore this concrete instance provides MAL-BIND-K-PK and MAL-BIND-K-CT
 security. <!-- TODO: update XWING paper to show this -->
 
-This implies via {{KSMW}} that this instance also satisfies
+This implies via {{KSMW2024}} that this instance also satisfies
 
 - MAL-BIND-K,CT-PK
 - MAL-BIND-K,PK-CT
@@ -742,9 +718,9 @@ This implies via {{KSMW}} that this instance also satisfies
 
 ## `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` <!-- TODO: include the XOF?? -->
 
-### `label`: `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519`
-### `XOF`: [SHAKE-256][FIPS202]
-### `KDF`: [HKDF-SHA-256][HKDF]
+* `label`: `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519`
+* `XOF`: [SHAKE-256][FIPS202]
+* `KDF`: [HKDF-SHA-256][HKDF]
 
 HKDF is comprised of `HKDF-Extract` and `HKDF-Expand`. We compose them as one
 function here:
@@ -770,13 +746,13 @@ def HKDF(preimage):
   return shared_secret
 ~~~
 
-### PQ KEM: [ML-KEM-768][FIPS203]
-### Group: [X25519][X25519]
+* PQ KEM: ML-KEM-768 {{FIPS203}}
+* Group: X25519 {{X25519}}
 
 This instantiation uses X25519 for the Group.
 
 
-- Group: Curve25519 {{!X25519}}, where Ne = 32 and Ns = 32.
+- Group: Curve25519 {{X25519}}, where Ne = 32 and Ns = 32.
   - Order(): Return 2^252 + 0x14def9dea2f79cd65812631a5cf5d3ed (see
       {{?RFC7748}}).
   - Identity(): As defined in {{RFC7748}}.
@@ -905,7 +881,7 @@ def EncapsulateDerand(pk, eseed):
 byte ciphertext `ct`.
 
 
-## Decapsulation {#decaps}
+## Decapsulation
 
 ~~~
 def Decapsulate(ct, sk):
@@ -929,7 +905,7 @@ byte decapsulation key resulting from `GenerateKeyPair()`
 #### Binding
 
 The inlined DH-KEM instantiated over the elliptic curve group X25519: as
-shown in {{CDM2023}}, this gives the traditional KEM maximum binding
+shown in {{CDM23}}, this gives the traditional KEM maximum binding
 properties (MAL-BIND-K-CT, MAL-BIND-K-PK).
 
 ML-KEM-768 as standardized in {{FIPS203}}, when using the 64-byte seed key
@@ -940,7 +916,7 @@ straightforward CT and PK binding for the entire bytes of the hybrid KEM
 ciphertext and encapsulation key. Therefore this concrete instance provides
 MAL-BIND-K-PK and MAL-BIND-K-CT security.
 
-This implies via {{KSMW}} that this instance also satisfies
+This implies via {{KSMW2024}} that this instance also satisfies
 
 - MAL-BIND-K,CT-PK
 - MAL-BIND-K,PK-CT
@@ -956,11 +932,11 @@ This implies via {{KSMW}} that this instance also satisfies
 ## `QSF-SHA3-256-ML-KEM-1024-P-384` <!-- TODO: include the XOF?? -->
 
 
-### `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
-### `XOF`: [SHAKE-256][FIPS202]
-### `KDF`: [SHA3-256][FIPS202]
-### PQ KEM: [ML-KEM-1024][FIPS203]
-### Group: [P-384][FIPS186] (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32.
+* `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
+* `XOF`: [SHAKE-256][FIPS202]
+* `KDF`: [SHA3-256][FIPS202]
+* PQ KEM: [ML-KEM-1024][FIPS203]
+* Group: [P-384]{{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32.
 
 This instantiation uses P-384 for the Group.
 
@@ -978,7 +954,7 @@ for performance. But that might be trying to hard to over-engineer this. -->
   - Order(): Return
     0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf
     581a0db248b0a77aecec196accc52973
-  - Identity(): As defined in {{x9.62}}.
+  - Identity(): As defined in {{ANSIX9.62}}.
   - RandomScalar(): Implemented by returning a uniformly random Scalar in the
     range \[0, `G.Order()` - 1\]. Refer to {{random-scalar}} for
     implementation guidance.
@@ -1115,7 +1091,7 @@ def EncapsulateDerand(pk, eseed):
 byte ciphertext `ct`.
 
 
-## Decapsulation {#decaps}
+## Decapsulation
 
 ~~~
 def Decapsulate(ct, sk):
@@ -1138,7 +1114,7 @@ byte decapsulation key resulting from `GenerateKeyPair()`
 #### Binding
 
 The inlined DH-KEM is instantiated over the elliptic curve group P-384: as
-shown in {{CDM2023}}, this gives the traditional KEM maximum binding
+shown in {{CDM23}}, this gives the traditional KEM maximum binding
 properties (MAL-BIND-K-CT, MAL-BIND-K-PK).
 
 ML-KEM-1024 as standardized in {{FIPS203}}, when using the 64-byte seed key
@@ -1148,7 +1124,7 @@ security, as demonstrated in {{SCHMIEG2024}.
 Therefore this concrete instance provides MAL-BIND-K-PK and MAL-BIND-K-CT
 security. <!-- TODO: update XWING paper to show this -->
 
-This implies via {{KSMW}} that this instance also satisfies
+This implies via {{KSMW2024}} that this instance also satisfies
 
 - MAL-BIND-K,CT-PK
 - MAL-BIND-K,PK-CT
@@ -1161,6 +1137,32 @@ This implies via {{KSMW}} that this instance also satisfies
 - HON-BIND-K,CT-PK
 - HON-BIND-K,PK-CT
 
+# Random Scalar Generation {#random-scalar}
+
+Two popular algorithms for generating a random integer uniformly distributed in
+the range \[0, G.Order() -1\] are as follows:
+
+## Rejection Sampling
+
+Generate a random byte array with `Ns` bytes, and attempt to map to a Scalar
+by calling `DeserializeScalar` in constant time. If it succeeds, return the
+result. If it fails, try again with another random byte array, until the
+procedure succeeds. Failure to implement `DeserializeScalar` in constant time
+can leak information about the underlying corresponding Scalar.
+
+As an optimization, if the group order is very close to a power of
+2, it is acceptable to omit the rejection test completely.  In
+particular, if the group order is p, and there is an integer b
+such that |p - 2<sup>b</sup>| is less than 2<sup>(b/2)</sup>, then
+`RandomScalar` can simply return a uniformly random integer of at
+most b bits.
+
+## Wide Reduction
+
+Generate a random byte array with `l = ceil(((3 * ceil(log2(G.Order()))) / 2) / 8)`
+bytes, and interpret it as an integer; reduce the integer modulo `G.Order()` and return the
+result. See {{Section 5 of !HASH-TO-CURVE=RFC9380}} for the underlying derivation of `l`.
+
 
 # Security Considerations
 
@@ -1171,7 +1173,7 @@ the elliptic curve is secure, or the post-quantum KEM is secure: this is the
 More precisely for the concrete instantiations in this document, if SHA3-256,
 SHA3-512, and SHAKE-256 may be modelled as a random oracle, then the IND-CCA
 security of `QSF` constructions is bounded by the IND-CCA security of ML-KEM,
-and the gap-CDH security of secp256n1, see [XWING].
+and the gap-CDH security of secp256n1, see {{XWING}}.
 
 ## Fixed-length
 
@@ -1220,6 +1222,7 @@ There is demand for other hybrid variants that either use different
 primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that use a
 combiner optimized for a specific use case. Other use cases could be covered
 in subsequent documents and not included here.
+
 
 
 # IANA Considerations
