@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-07T01:01:03.607371+00:00",
+  "timestamp": "2025-01-09T01:00:40.066968+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -50,5 +50,74 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOMmhxws6G-GIs",
+      "title": "Fix build and references",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/1",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-01-07T18:01:15Z",
+      "updatedAt": "2025-01-08T04:15:08Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "8f18831dc6e7d2b4cbe13e809c0481aa350625e6",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "caw/fix-refs",
+      "headRefOid": "f795b47e09e04f14fc9afae5b8591ec55dd4fd58",
+      "closedAt": "2025-01-08T04:15:08Z",
+      "mergedAt": "2025-01-08T04:15:08Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "503214de9161bbabeb9ffeb76d24596d8af66752"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6XJ7HM",
+          "commit": {
+            "abbreviatedOid": "f795b47"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-08T04:14:54Z",
+          "updatedAt": "2025-01-08T04:14:54Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOMmhxws6HIQRB",
+      "title": "Refactor, cleanup, reorganize",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/2",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This change refactors some stuff and cleans up the in-lined KEM implementation details.",
+      "createdAt": "2025-01-08T21:24:34Z",
+      "updatedAt": "2025-01-08T21:24:34Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "ea0a9337871b8f52777783e10780d40f21b6ca14",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "caw/reorg",
+      "headRefOid": "db08f00bad935a093a77c7dec87531a23f2dd5d6",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
