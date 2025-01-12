@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-09T01:00:40.066968+00:00",
+  "timestamp": "2025-01-12T01:06:50.269256+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -105,7 +105,7 @@
       "labels": [],
       "body": "This change refactors some stuff and cleans up the in-lined KEM implementation details.",
       "createdAt": "2025-01-08T21:24:34Z",
-      "updatedAt": "2025-01-08T21:24:34Z",
+      "updatedAt": "2025-01-09T19:48:23Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "ea0a9337871b8f52777783e10780d40f21b6ca14",
@@ -117,7 +117,28 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6XcYyA",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-09T19:48:22Z",
+          "updatedAt": "2025-01-09T19:48:23Z",
+          "comments": [
+            {
+              "originalPosition": 477,
+              "body": "\ud83d\udc4d",
+              "createdAt": "2025-01-09T19:48:22Z",
+              "updatedAt": "2025-01-09T19:48:23Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
