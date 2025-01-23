@@ -108,10 +108,10 @@ class KitchenSinkMLKEM768X25519(KEM):
     def Nct(self):
         return 1120
     
-    def GenerateKeyPair(self):
+    def KeyGen(self):
         return GenerateKeyPair()
 
-    def DeriveKeyPair(self, seed):
+    def DeriveKey(self, seed):
         return DeriveKeyPair(seed)
     
     def Encaps(self, pk):

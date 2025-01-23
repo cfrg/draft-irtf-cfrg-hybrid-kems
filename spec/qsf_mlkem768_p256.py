@@ -14,8 +14,7 @@ label = "QSF-SHA3-256-ML-KEM-768-P-256"
 as_bytes = lambda x: x if isinstance(x, bytes) else bytes(x, "utf-8")
 
 def expandDecapsulationKey(seed):
-    # XXX(caw): spec update for expanded_len
-    expanded_len = 112 # 64 + 48 
+    expanded_len = 112
     expanded = hashlib.shake_256(seed).digest(length=expanded_len)
     pkM, skM = mlkem.KeyGen(expanded[0:64], mlkem.params768)
     g = GroupP256()
@@ -44,7 +43,7 @@ def GenerateKeyPair():
     return sk, pkM + pkX
 
 def EncapsulateDerand(pk, eseed):
-    assert len(eseed) == 80 # XXX(caw): spec update for eseed len
+    assert len(eseed) == 80
     assert len(pk) == 1217
     pkM = pk[0:1184]
     pkXenc = pk[1184:1217]
@@ -102,10 +101,10 @@ class QSFMLKEM768P256(KEM):
     def Nct(self):
         return 1121
     
-    def GenerateKeyPair(self):
+    def KeyGen(self):
         return GenerateKeyPair()
 
-    def DeriveKeyPair(self, seed):
+    def DeriveKey(self, seed):
         return DeriveKeyPair(seed)
     
     def Encaps(self, pk):

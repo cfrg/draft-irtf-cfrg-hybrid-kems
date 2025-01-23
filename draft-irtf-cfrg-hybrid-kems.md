@@ -281,6 +281,9 @@ We now detail a number of member functions that can be invoked on `G`.
   Scalar `k`.
 - ScalarBaseMult(k): Outputs the scalar multiplication between Scalar `k` and
   the group generator `B`.
+- SerializeElementAsSecret(A): Maps an `Element` `A` to a fixed-length byte
+  array. This function is used to produce a shared secret for Diffie-Hellman
+  operations performed on the group.
 - SerializeElement(A): Maps an `Element` `A` to a canonical byte array `buf`
   of fixed length `Ne`. This function raises an error if `A` is the identity
   element of the group.
@@ -461,6 +464,8 @@ the following functions:
   the point is not the point at infinity. (As noted in the specification,
   validation of the point order is not required since the cofactor is 1.)
   If any of these checks fail, deserialization returns an error.
+- SerializeElementAsSecret(A): Implemented by encoding the X coordinate
+  of the elliptic curve point corresponding to A to a litte-endian 32-byte string.
 - SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
   conversion according to {{SEC1}}.
 - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
@@ -486,15 +491,15 @@ decapsulation procedures for this hybrid KEM.
 `QSF-SHA3-256-ML-KEM-768-P-256` KeyGen works as follows.
 
 <!-- TODO(caw): we need to wire-encode the keys before outputting them -->
-
 <!-- TODO: is this expanding from a decaps key seed, but maybe this should just be 'expandKeyPair` -->
 <!-- TODO: annotate with the byte sizes of the parameters in terms of Nseed, Nsk, etc -->
+
 ~~~
 def expandDecapsulationKey(sk):
-  expanded = SHAKE256(sk, 96)
+  expanded = SHAKE256(sk, 112)
   (pq_PK, pq_SK) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
-  trad_SK = P-256.Scalar(expanded[64:96])
-  trad_PK = P-256.ScalarMultBase(trad_SK)
+  trad_SK = P-256.Scalar(expanded[64:112]) % P-256.Order()
+  trad_PK = P-256.SerializeElement(P-256.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
 def KeyGen():
@@ -519,11 +524,11 @@ proceeds as follows.
 ~~~
 def Encaps(pk):
   pq_PK = pk[0:1184]
-  trad_PK = pk[1184:1217]
+  trad_PK = P-256.DeserializeElement(pk[1184:1217])
   (pq_SS, pq_CT) = ML-KEM-768.Encaps(pq_PK)
   ek = P-256.RandomScalar()
-  trad_CT = P-256.ScalarBaseMult(ek)
-  trad_SS = P-256.ScalarMult(trad_PK, ek)
+  trad_CT = P-256.SerializeElement(P-256.ScalarBaseMult(ek))
+  trad_SS = P-256.SerializeElementAsSecret(P-256.ScalarMult(trad_PK, ek))
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
@@ -543,21 +548,20 @@ For testing, it is convenient to have a deterministic version of
 encapsulation. In such cases, an implementation can provide the following
 derandomized function.
 
-
 ~~~
 def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1184]
-  trad_PK = pk[1184:1217]
+  trad_PK = P-256.DeserializeElement(pk[1184:1217])
   (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])
-  ek = randomness[32:65]
-  trad_CT = P-256.ScalarMultBase(ek)
-  trad_SS = P-256.ScalarMult(ek, trad_PK)
+  ek = P-256.Scalar(randomness[32:80]) % P-256.Order()
+  trad_CT = P-256.SerializeElement(P-256.ScalarMultBase(ek))
+  trad_SS = P-256.SerializeElementAsSecret(P-256.ScalarMult(ek, trad_PK))
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
 
-Note that `randomness` MUST be 65 bytes.
+Note that `randomness` MUST be 80 bytes.
 
 ### Decapsulation
 
@@ -568,9 +572,9 @@ Given a decapsulation key `sk` and ciphertext `ct`,
 def Decaps(sk, ct):
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
   pq_CT = ct[0:1088]
-  trad_CT = ct[1088:1121]
+  trad_CT = P-256.DeserializeElement(ct[1088:1121])
   pq_SS = ML-KEM-768.Decapsulate(pq_SK, pq_CT)
-  trad_SS = P-256.ScalarMult(trad_SK, trad_CT)
+  trad_SS = P-256.SerializeElementAsSecret(P-256.ScalarMult(trad_SK, trad_CT))
   return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
 ~~~
 

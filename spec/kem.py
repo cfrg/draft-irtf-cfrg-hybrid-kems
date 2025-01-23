@@ -5,6 +5,7 @@ class KEM(object):
         self.name = name
 
     def Nseed(self):
+        
         raise Exception("not implemented")
     
     def Neseed(self):
@@ -19,10 +20,10 @@ class KEM(object):
     def Nct(self):
         raise Exception("not implemented")
 
-    def GenerateKeyPair(self):
+    def KeyGen(self):
         raise Exception("not implemented")
 
-    def DeriveKeyPair(self, seed):
+    def DeriveKey(self, seed):
         raise Exception("not implemented")
     
     def Encaps(self, pk):
