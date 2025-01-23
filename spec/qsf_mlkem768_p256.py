@@ -42,22 +42,22 @@ def GenerateKeyPair():
     _, _, pkM, pkX = expandDecapsulationKey(sk)
     return sk, pkM + pkX
 
-def EncapsulateDerand(pk, eseed):
-    assert len(eseed) == 80
+def EncapsulateDerand(pk, randomness):
+    assert len(randomness) == 80
     assert len(pk) == 1217
     pkM = pk[0:1184]
     pkXenc = pk[1184:1217]
     
     g = GroupP256()
     pkX = g.deserialize(pkXenc)
-    ekX = OS2IP(eseed[32:]) % g.order()
+    ekX = OS2IP(randomness[32:]) % g.order()
     ssXbase = ekX * pkX
     xCoord = ssXbase[0] # X-coordinate
     ssX = I2OSP(xCoord, 32)
 
     ctX = g.serialize(ekX * g.generator())
 
-    ctM, ssM = mlkem.Enc(pkM, eseed[0:32], mlkem.params768)
+    ctM, ssM = mlkem.Enc(pkM, randomness[0:32], mlkem.params768)
 
     ss = Combiner(ssM, ssX, ctX, pkXenc)
     return ss, ctM + ctX
@@ -89,7 +89,7 @@ class QSFMLKEM768P256(KEM):
     def Nseed(self):
         return 32
     
-    def Neseed(self):
+    def Nrandomness(self):
         return 80
     
     def Npk(self):
@@ -108,11 +108,11 @@ class QSFMLKEM768P256(KEM):
         return DeriveKeyPair(seed)
     
     def Encaps(self, pk):
-        eseed = os.urandom(80)
-        return EncapsulateDerand(pk, eseed)
+        randomness = os.urandom(80)
+        return EncapsulateDerand(pk, randomness)
     
-    def EncapsDerand(self, pk, eseed):
-        return EncapsulateDerand(pk, eseed)
+    def EncapsDerand(self, pk, randomness):
+        return EncapsulateDerand(pk, randomness)
     
     def Decaps(self, sk, ct):
         return Decapsulate(ct, sk)

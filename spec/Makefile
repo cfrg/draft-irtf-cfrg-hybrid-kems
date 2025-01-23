@@ -15,12 +15,8 @@ sagelib/%.py: %.sage
 	@mv $<.py $@
 
 test: pyfiles
-	sage hybrid_kem_test.sage
+	sage hybrid_kem_test.py
 
 .PHONY: clean
 clean:
-	rm -rf sagelib *.pyc *.sage.py *.log __pycache__ *.txt *.json
-
-.PHONY: distclean
-distclean: clean
-	rm -rf *.txt *.json
+	rm -rf sagelib *.pyc *.sage.py *.log __pycache__

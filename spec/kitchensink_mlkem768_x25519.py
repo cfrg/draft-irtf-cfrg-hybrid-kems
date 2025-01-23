@@ -61,17 +61,17 @@ def GenerateKeyPair():
     _, _, pkM, pkX = expandDecapsulationKey(sk)
     return sk, pkM + pkX
 
-def EncapsulateDerand(pk, eseed):
-    assert len(eseed) == 64
+def EncapsulateDerand(pk, randomness):
+    assert len(randomness) == 64
     assert len(pk) == 1216
     pkM = pk[0:1184]
     pkX = pk[1184:1216]
     
-    ekX = eseed[32:64]
+    ekX = randomness[32:64]
     ctX = x25519.X(ekX, x25519.BASE)
     ssX = x25519.X(ekX, pkX)
 
-    ctM, ssM = mlkem.Enc(pkM, eseed[0:32], mlkem.params768)
+    ctM, ssM = mlkem.Enc(pkM, randomness[0:32], mlkem.params768)
 
     ss = LabeledHKDF(ssM + ssX + ctM + pkM + ctX + pkX + as_bytes(label))
     return ss, ctM + ctX
@@ -96,7 +96,7 @@ class KitchenSinkMLKEM768X25519(KEM):
     def Nseed(self):
         return 32
     
-    def Neseed(self):
+    def Nrandomness(self):
         return 64
     
     def Npk(self):
@@ -115,11 +115,11 @@ class KitchenSinkMLKEM768X25519(KEM):
         return DeriveKeyPair(seed)
     
     def Encaps(self, pk):
-        eseed = os.urandom(80)
-        return EncapsulateDerand(pk, eseed)
+        randomness = os.urandom(80)
+        return EncapsulateDerand(pk, randomness)
     
-    def EncapsDerand(self, pk, eseed):
-        return EncapsulateDerand(pk, eseed)
+    def EncapsDerand(self, pk, randomness):
+        return EncapsulateDerand(pk, randomness)
     
     def Decaps(self, sk, ct):
         return Decapsulate(ct, sk)

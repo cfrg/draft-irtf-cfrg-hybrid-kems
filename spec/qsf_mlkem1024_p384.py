@@ -14,8 +14,7 @@ label = "QSF-SHA3-256-ML-KEM-1024-P-384"
 as_bytes = lambda x: x if isinstance(x, bytes) else bytes(x, "utf-8")
 
 def expandDecapsulationKey(seed):
-    # XXX(caw): spec update for expanded_len
-    expanded_len = 136 # 64 + 72 
+    expanded_len = 136
     expanded = hashlib.shake_256(seed).digest(length=expanded_len)
     pkM, skM = mlkem.KeyGen(expanded[0:64], mlkem.params1024)
     g = GroupP384()
@@ -43,22 +42,22 @@ def GenerateKeyPair():
     _, _, pkM, pkX = expandDecapsulationKey(sk)
     return sk, pkM + pkX
 
-def EncapsulateDerand(pk, eseed):
-    assert len(eseed) == 104 # XXX(caw): spec update for eseed len
+def EncapsulateDerand(pk, randomness):
+    assert len(randomness) == 104
     assert len(pk) == 1617
     pkM = pk[0:1568]
     pkXenc = pk[1568:1617]
     
     g = GroupP384()
     pkX = g.deserialize(pkXenc)
-    ekX = OS2IP(eseed[32:]) % g.order()
+    ekX = OS2IP(randomness[32:]) % g.order()
     ssXbase = ekX * pkX
     xCoord = ssXbase[0] # X-coordinate
     ssX = I2OSP(xCoord, 48)
 
     ctX = g.serialize(ekX * g.generator())
 
-    ctM, ssM = mlkem.Enc(pkM, eseed[0:32], mlkem.params1024)
+    ctM, ssM = mlkem.Enc(pkM, randomness[0:32], mlkem.params1024)
 
     ss = Combiner(ssM, ssX, ctX, pkXenc)
     return ss, ctM + ctX
@@ -90,7 +89,7 @@ class QSFMLKEM1024P384(KEM):
     def Nseed(self):
         return 32
     
-    def Neseed(self):
+    def Nrandomness(self):
         return 104
     
     def Npk(self):
@@ -109,11 +108,11 @@ class QSFMLKEM1024P384(KEM):
         return DeriveKeyPair(seed)
     
     def Encaps(self, pk):
-        eseed = os.urandom(80)
-        return EncapsulateDerand(pk, eseed)
+        randomness = os.urandom(80)
+        return EncapsulateDerand(pk, randomness)
     
-    def EncapsDerand(self, pk, eseed):
-        return EncapsulateDerand(pk, eseed)
+    def EncapsDerand(self, pk, randomness):
+        return EncapsulateDerand(pk, randomness)
     
     def Decaps(self, sk, ct):
         return Decapsulate(ct, sk)

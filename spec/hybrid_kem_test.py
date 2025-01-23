@@ -17,15 +17,15 @@ def test_vectors(kems, setVectors = True):
         ret = []
         for i in range(3):
             seed = h.read(kem.Nseed())
-            eseed = h.read(kem.Neseed())
-            sk, pk = kem.DeriveKeyPair(seed)
-            ss, ct = kem.EncapsDerand(pk, eseed)
+            randomness = h.read(kem.Nrandomness())
+            sk, pk = kem.DeriveKey(seed)
+            ss, ct = kem.EncapsDerand(pk, randomness)
             ss2 = kem.Decaps(sk, ct)
             assert ss == ss2
 
             ret.append({
                 "seed":  hex(seed),
-                "eseed": hex(eseed),
+                "randomness": hex(randomness),
                 "ss":    hex(ss),
                 "sk":    hex(sk),
                 "pk":    hex(pk),
@@ -62,7 +62,7 @@ def dump_val(f, name, val):
 def dump_vectors(vecs):
     f = io.StringIO()
     for vec in vecs:
-        for k in ['seed', 'sk', 'pk', 'eseed', 'ct', 'ss']:
+        for k in ['seed', 'sk', 'pk', 'randomness', 'ct', 'ss']:
             dump_val(f, k, vec[k])
         f.write('\n')
     return f.getvalue()
