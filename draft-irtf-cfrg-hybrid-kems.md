@@ -198,16 +198,19 @@ four algorithms:
   as input a secret decapsulation key `sk` and ciphertext `ct` and outputs a
   shared secret `shared_secret`.
 
-KEMs can also provide a deterministic version of `Encaps`, denoted `EncapsDerand`,
-with the following signature:
+<!-- TODO: define expandDecapsulationKey() -->
 
-- `EncapsDerand(pk, randomness) -> (ct, shared_secret)`: A deterministic encapsulation
-   algorithm, which takes as input a public encapsulation key `pk` and randomness
-   `randomness`, and outputs a ciphertext `ct` and shared secret `shared_secret`.
+KEMs can also provide a deterministic version of `Encaps`, denoted
+`EncapsDerand`, with the following signature:
+
+- `EncapsDerand(pk, randomness) -> (ct, shared_secret)`: A deterministic
+   encapsulation algorithm, which takes as input a public encapsulation key
+   `pk` and randomness `randomness`, and outputs a ciphertext `ct` and shared
+   secret `shared_secret`.
 
 Finally, KEMs are also parameterized with the following constants:
 
-- Nseed, which denotes the number of bytes for a seed;
+- Nseed, which denotes the number of bytes for a key seed;
 - Npk, which denotes the number of bytes in a public encapsulation key;
 - Nsk, which denotes the number of bytes in a private decapsulation key; and
 - Nct, which denotes the number of bytes in a ciphertext.
@@ -290,49 +293,61 @@ We now detail a number of member functions that can be invoked on `G`.
 - DeserializeScalar(buf): Attempts to map a byte array `buf` to a `Scalar`
   `s`.  This function raises an error if deserialization fails.
 
-# Hybrid KEM Combiner {#combiners}
+# Hybrid KEM Constructions {#constructions}
 
-During encapsulation and decapsulation, a hybrid KEM combines its component KEM shared
-secrets and other info, such as the KEM ciphertexts and public keys, to yield a shared secret.
-The interface for this combiner function, denoted `Combine` throughout the rest of this document,
-accepts the following inputs:
+<!-- TODO: since NIST is OK'ing ML-KEM keygen from a NIST-approved KDF/PRF,
+specify the generic seed-stretching KeyGen for all/both constructions,
+here. -->
+
+During encapsulation and decapsulation, a hybrid KEM combines its component
+KEM shared secrets and other info, such as the KEM ciphertexts and
+encapsulation keys keys, to yield a shared secret.  The interface for this
+function, often called a 'combiner' in the literature, is the `SharedSecret`
+function for the constructions in this document. `SharedSecret` accepts the
+following inputs:
 
 - pq_SS: The PQ KEM shared secret.
 - trad_SS: The traditional KEM shared secret.
 - pq_CT: The PQ KEM ciphertext.
-- pq_PK: The PQ KEM public key.
+- pq_PK: The PQ KEM public encapsulation key.
 - trad_CT: The traditional KEM ciphertext.
-- trad_PK: The traditional KEM public key.
-- label: A domain-separating label; see {{domain-separation}} for more information on the role of the label.
+- trad_PK: The traditional KEM public encapsulation key.
+- label: A domain-separating label; see {{domain-separation}} for more
+  information on the role of the label.
 
-The output of the combiner function is a 32 byte shared secret that is, ultimately, the output of the KEM.
+The output of the `SharedSecret` function is a 32 byte shared secret that is,
+ultimately, the output of the KEM. <!-- TODO: this doesn't hold generically,
+right? If you instantiate with other components it can be more or less than
+32 bytes. -->
 
-This section describes two constructions for hybrid KEM combiners: one called the KitchenSink
-combiner, specified in {{KitchenSink}}, and another called the QSF combiner, specified in {{QSF}}.
-The KitchenSink combiner is maximally conservative in design, opting for the least assumptions
-about the component KEMs. The QSF combiner is tailored to specific component KEMs and is
-not generally reusable; specific requirements for component KEMs to be usable in the QSF
+This section describes two generic constructions for hybrid KEMs: one called
+the KitchenSink, specified in {{KitchenSink}}, and another called QSF,
+specified in {{QSF}}.  The KitchenSink construction is maximally conservative
+in design, opting for the least assumptions about the component KEMs. The QSF
+construction is tailored to specific component KEMs and is not generally
+reusable; specific requirements for component KEMs to be usable in the QSF
 combiner are detailed in {{QSF}}.
 
-Both combiners make use of the following requirements:
+Both make use of the following requirements:
 
 1. Both component KEMs have IND-CCA security.
-2. KDF as a secure PRF. A key derivation function (KDF) that is modeled as a secure
-pseudorandom function (PRF) in the standard model {{GHP2018}} and independent random
-oracle in the random oracle model (ROM).
-3. Fixed-length values. Every instantiation in concrete parameters of the generic constructions is
-for fixed parameter sizes, KDF choice, and label, allowing the lengths to not
-also be encoded into the generic construction. The label/KDF/component
-algorithm parameter sets MUST be disjoint and non-colliding. Moreover, the length
-of each each public key, ciphertext, and shared secret is fixed once the algorithm is assumed
-to be fixed.
+2. KDF as a secure PRF. A key derivation function (KDF) that is modeled as a
+secure pseudorandom function (PRF) in the standard model {{GHP2018}} and
+independent random oracle in the random oracle model (ROM).
+3. Fixed-length values. Every instantiation in concrete parameters of the
+generic constructions is for fixed parameter sizes, KDF choice, and label,
+allowing the lengths to not also be encoded into the generic
+construction. The label/KDF/component algorithm parameter sets MUST be
+disjoint and non-colliding. Moreover, the length of each each public
+encapsulation key, ciphertext, and shared secret is fixed once the algorithm
+is assumed to be fixed.
 
-## 'Kitchen Sink' combiner {#KitchenSink}
+## 'Kitchen Sink' construction {#KitchenSink}
 
-As indicated by the name, the `KitchenSink` combiner puts 'the whole
-transcript' through the KDF. This relies on the minimum security properties
-of its component algorithms at the cost of more bytes needing to be processed
-by the KDF.
+As indicated by the name, the `KitchenSink` puts 'the whole transcript'
+through the KDF. This relies on the minimum security properties of its
+component algorithms at the cost of more bytes needing to be processed by the
+KDF.
 
 ~~~
 def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
@@ -346,14 +361,15 @@ def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
 
 Because the entire hybrid KEM ciphertext and encapsulation key material are
 included in the KDF preimage, the `KitchenSink` construction is resilient
-against implementation errors in the component algorithms. <!-- TODO: cite that thing -->
+against implementation errors in the component algorithms. <!-- TODO: cite
+that thing -->
 
 ## 'QSF' construction {#QSF}
 
-Inspired by the generic QSF (Quantum Superiority Fighter) framework in {{XWING}},
-which leverages the security properties of a KEM like ML-KEM and an inlined instance
-of DH-KEM, to elide other public data like the PQ ciphertext and encapsulation key from
-the KDF input:
+Inspired by the generic QSF (Quantum Superiority Fighter) framework in
+{{XWING}}, which leverages the security properties of a KEM like ML-KEM and
+an inlined instance of DH-KEM, to elide other public data like the PQ
+ciphertext and encapsulation key from the KDF input:
 
 ~~~
 def QSF-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
@@ -361,9 +377,10 @@ def QSF-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
     return KDF(concat(pq_SS, trad_SS, trad_CT, trad_PK, label))
 ~~~
 
-Note that pq_CT and pq_PK are NOT included in the KDF. This is only possible because
-the component KEMs adhere to the following requirements. The QSF combiner MUST NOT
-be used in concrete KEM instances that do not satisfy these requirements.
+Note that pq_CT and pq_PK are NOT included in the KDF. This is only possible
+because the component KEMs adhere to the following requirements. The QSF
+combiner MUST NOT be used in concrete KEM instances that do not satisfy these
+requirements.
 
 1. Nominal Diffie-Hellman Group with strong Diffie-Hellman security
 
@@ -394,19 +411,23 @@ oracle {{XWING}}.
 
 This section instantiates three concrete KEMs:
 
-1. `QSF-SHA3-256-ML-KEM-768-P-256` {{qsf-p256}}: A hybrid KEM using the QSF combiner based on ML-KEM-768 and P-256.
-2. `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` {{ks-x25519}}: A hybrid KEM using the KitchenSink combiner based on ML-KEM-768 and X25519.
-3. `QSF-SHA3-256-ML-KEM-1024-P-384` {{qsf-p384}}: A hybrid KEM using the QSF combiner based on ML-KEM-1024 and P-384.
+1. `QSF-SHA3-256-ML-KEM-768-P-256` {{qsf-p256}}: A hybrid KEM using the QSF
+   combiner based on ML-KEM-768 and P-256.
+2. `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` {{ks-x25519}}: A hybrid KEM
+   using the KitchenSink combiner based on ML-KEM-768 and X25519.
+3. `QSF-SHA3-256-ML-KEM-1024-P-384` {{qsf-p384}}: A hybrid KEM using the QSF
+   combiner based on ML-KEM-1024 and P-384.
 
-Each instance specifies the PQ and traditional KEMs being combined, the combiner construction from {{combiners}},
-the `label` to use for domain separation in the combiner function, as well as the XOF and KDF functions to use
-throughout.
+Each instance specifies the PQ and traditional KEMs being combined, the
+combiner construction from {{constructions}}, the `label` to use for domain
+separation in the combiner function, as well as the XOF and KDF functions to
+use throughout.
 
 ## `QSF-SHA3-256-ML-KEM-768-P-256` {#qsf-p256}
 
-This hybrid KEM is heavily based on {{XWING}}. In particular, it has the same exact design
-but uses P-256 instead of X25519 as the the traditional component of the algorithm. It has
-the following parameters.
+This hybrid KEM is heavily based on {{XWING}}. In particular, it has the same
+exact design but uses P-256 instead of X25519 as the the traditional
+component of the algorithm. It has the following parameters.
 
 * `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
 * `XOF`: SHAKE-256 {{FIPS202}}
@@ -417,9 +438,9 @@ the following parameters.
 * Nsk: 32
 * Nct: 1121
 
-`QSF-SHA3-256-ML-KEM-768-P-256` depends on P-256 as a nominal prime-order group
-{{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32, with the following
-functions:
+`QSF-SHA3-256-ML-KEM-768-P-256` depends on P-256 as a nominal prime-order
+group {{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32, with
+the following functions:
 
 - Order(): Return
   0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.
@@ -457,7 +478,8 @@ If we pick the smaller, we may figure out how to get the label size down to
 fit the whole preimage into the Keccak block input size, which would be nice
 for performance. But that might be trying to hard to over-engineer this. -->
 
-The rest of this section specifies the key generation, encapsulation, and decapsulation procedures for this hybrid KEM.
+The rest of this section specifies the key generation, encapsulation, and
+decapsulation procedures for this hybrid KEM.
 
 ### Key generation
 
@@ -465,6 +487,8 @@ The rest of this section specifies the key generation, encapsulation, and decaps
 
 <!-- TODO(caw): we need to wire-encode the keys before outputting them -->
 
+<!-- TODO: is this expanding from a decaps key seed, but maybe this should just be 'expandKeyPair` -->
+<!-- TODO: annotate with the byte sizes of the parameters in terms of Nseed, Nsk, etc -->
 ~~~
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 96)
@@ -489,7 +513,8 @@ def DeriveKey(seed):
 
 ### Encapsulation
 
-Given an encapsulation key `pk`, `QSF-SHA3-256-ML-KEM-768-P-256` Encaps proceeds as follows.
+Given an encapsulation key `pk`, `QSF-SHA3-256-ML-KEM-768-P-256` Encaps
+proceeds as follows.
 
 ~~~
 def Encaps(pk):
@@ -506,14 +531,18 @@ def Encaps(pk):
 
 `pk` is a 1217-byte encapsulation key resulting from KeyGen().
 
-Encaps() returns the 32-byte shared secret `ss` and the 1121-byte ciphertext `ct`.
+Encaps() returns the 32-byte shared secret `ss` and the 1121-byte ciphertext
+`ct`.
 
-Note that `Encaps()` may raise an error if ML-KEM-768.Encaps fails, e.g., if it does not pass the check of {{FIPS203}} §7.2.
+Note that `Encaps()` may raise an error if ML-KEM-768.Encaps fails, e.g., if
+it does not pass the check of {{FIPS203}} §7.2.
 
 ### Derandomized
 
-For testing, it is convenient to have a deterministic version of encapsulation. In such
-cases, an implementation can provide the following derandomized function.
+For testing, it is convenient to have a deterministic version of
+encapsulation. In such cases, an implementation can provide the following
+derandomized function.
+
 
 ~~~
 def EncapsDerand(pk, randomness):
@@ -532,7 +561,8 @@ Note that `randomness` MUST be 65 bytes.
 
 ### Decapsulation
 
-Given a decapsulation key `sk` and ciphertext `ct`, `QSF-SHA3-256-ML-KEM-768-P-256` Decaps proceeds as follows.
+Given a decapsulation key `sk` and ciphertext `ct`,
+`QSF-SHA3-256-ML-KEM-768-P-256` Decaps proceeds as follows.
 
 ~~~
 def Decaps(sk, ct):
@@ -544,7 +574,8 @@ def Decaps(sk, ct):
   return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
 ~~~
 
-`ct` is the 1121-byte ciphertext resulting from Encaps() and `sk` is a 32-byte decapsulation key resulting from KeyGen().
+`ct` is the 1121-byte ciphertext resulting from Encaps() and `sk` is a
+32-byte decapsulation key resulting from KeyGen().
 
 Decaps() returns the 32 byte shared secret.
 
@@ -587,9 +618,9 @@ KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following parameters.
 * Nsk: 32
 * Nct: 1120
 
-`KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` depends on a prime-order group implemented
-using Curve25519 and X25519 {{!RFC7748}}. Additionally, it uses a modified version of
-HKDF in the combiner, denoted LabeledHKDF, defined below.
+`KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` depends on a prime-order group
+implemented using Curve25519 and X25519 {{!RFC7748}}. Additionally, it uses a
+modified version of HKDF in the combiner, denoted LabeledHKDF, defined below.
 
 <!-- TODO: double check on whether the public context should go in `*_info`
 or if --> <!-- all concatted is fine; i think a separate label is ok? HKDF as
@@ -611,7 +642,8 @@ def LabeledHKDF(preimage):
   return shared_secret
 ~~~
 
-The rest of this section specifies the key generation, encapsulation, and decapsulation procedures for this hybrid KEM.
+The rest of this section specifies the key generation, encapsulation, and
+decapsulation procedures for this hybrid KEM.
 
 ### Key generation
 
@@ -631,7 +663,8 @@ def KeyGen():
   return sk, concat(pq_PK, trad_PK)
 ~~~
 
-Similarly, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` DeriveKey works as follows:
+Similarly, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` DeriveKey works as
+follows:
 
 ~~~
 def DeriveKey(seed):
@@ -641,7 +674,8 @@ def DeriveKey(seed):
 
 ### Encapsulation
 
-Given an encapsulation key `pk`, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` Encaps proceeds as follows.
+Given an encapsulation key `pk`, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519`
+Encaps proceeds as follows.
 
 ~~~
 def Encaps(pk):
@@ -660,12 +694,14 @@ pk is a 1216-byte encapsulation key resulting from KeyGen().
 
 Encaps() returns the 32-byte shared secret ss and the 1120-byte ciphertext ct.
 
-Note that `Encaps()` may raise an error if ML-KEM-768.Encaps fails, e.g., if it does not pass the check of {{FIPS203}} §7.2.
+Note that `Encaps()` may raise an error if ML-KEM-768.Encaps fails, e.g., if
+it does not pass the check of {{FIPS203}} §7.2.
 
 ### Derandomized
 
-For testing, it is convenient to have a deterministic version of encapsulation. In such
-cases, an implementation can provide the following derandomized function.
+For testing, it is convenient to have a deterministic version of
+encapsulation. In such cases, an implementation can provide the following
+derandomized function.
 
 ~~~
 def EncapsDerand(pk, randomness):
@@ -684,7 +720,8 @@ Note that `randomness` MUST be 64 bytes.
 
 ### Decapsulation
 
-Given a decapsulation key `sk` and ciphertext `ct`, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` Decaps proceeds as follows.
+Given a decapsulation key `sk` and ciphertext `ct`,
+`KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` Decaps proceeds as follows.
 
 ~~~
 def Decaps(sk, ct):
@@ -696,7 +733,8 @@ def Decaps(sk, ct):
   return LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)
 ~~~
 
-`ct` is the 1120-byte ciphertext resulting from Encaps() and `sk` is a 32-byte decapsulation key resulting from KeyGen().
+`ct` is the 1120-byte ciphertext resulting from Encaps() and `sk` is a
+32-byte decapsulation key resulting from KeyGen().
 
 Decaps() returns the 32 byte shared secret.
 
@@ -741,9 +779,9 @@ This implies via {{KSMW2024}} that this instance also satisfies
 * Nsk: 32
 * Nct: 1629
 
-`QSF-SHA3-256-ML-KEM-1024-P-384` depends on P-384 as a nominal prime-order group
-{{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 61 and Ns = 48, with the following
-functions:
+`QSF-SHA3-256-ML-KEM-1024-P-384` depends on P-384 as a nominal prime-order
+group {{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 61 and Ns = 48, with
+the following functions:
 
 - Order(): Return
   0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf
@@ -772,7 +810,8 @@ functions:
   {{SEC1}}. This function can fail if the input does not represent a Scalar
   in the range \[0, `G.Order()` - 1\].
 
-The rest of this section specifies the key generation, encapsulation, and decapsulation procedures for this hybrid KEM.
+The rest of this section specifies the key generation, encapsulation, and
+decapsulation procedures for this hybrid KEM.
 
 ### Key generation
 
@@ -804,7 +843,8 @@ def DeriveKey(seed):
 
 ### Encapsulation
 
-Given an encapsulation key `pk`, `QSF-SHA3-256-ML-KEM-1024-P-384` Encaps proceeds as follows.
+Given an encapsulation key `pk`, `QSF-SHA3-256-ML-KEM-1024-P-384` Encaps
+proceeds as follows.
 
 ~~~
 def Encaps(pk):
@@ -821,14 +861,17 @@ def Encaps(pk):
 
 `pk` is a 1629-byte encapsulation key resulting from KeyGen().
 
-Encaps() returns the 32-byte shared secret `ss` and the 1629-byte ciphertext `ct`.
+Encaps() returns the 32-byte shared secret `ss` and the 1629-byte ciphertext
+`ct`.
 
-Note that `Encaps()` may raise an error if ML-KEM-1024.Encaps fails, e.g., if it does not pass the check of {{FIPS203}} §7.2.
+Note that `Encaps()` may raise an error if ML-KEM-1024.Encaps fails, e.g., if
+it does not pass the check of {{FIPS203}} §7.2.
 
 ### Derandomized
 
-For testing, it is convenient to have a deterministic version of encapsulation. In such
-cases, an implementation can provide the following derandomized function.
+For testing, it is convenient to have a deterministic version of
+encapsulation. In such cases, an implementation can provide the following
+derandomized function.
 
 ~~~
 def EncapsDerand(pk, randomness):
@@ -847,7 +890,8 @@ Note that `randomness` MUST be 80 bytes.
 
 ### Decapsulation
 
-Given a decapsulation key `sk` and ciphertext `ct`, `QSF-SHA3-256-ML-KEM-1024-P-384` Decaps proceeds as follows.
+Given a decapsulation key `sk` and ciphertext `ct`,
+`QSF-SHA3-256-ML-KEM-1024-P-384` Decaps proceeds as follows.
 
 ~~~
 def Decaps(sk, ct):
@@ -859,7 +903,8 @@ def Decaps(sk, ct):
   return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
 ~~~
 
-`ct` is the 1629-byte ciphertext resulting from Encaps() and `sk` is a 32-byte decapsulation key resulting from KeyGen().
+`ct` is the 1629-byte ciphertext resulting from Encaps() and `sk` is a
+32-byte decapsulation key resulting from KeyGen().
 
 Decaps() returns the 32-byte shared secret.
 
@@ -911,9 +956,10 @@ most b bits.
 
 ## Wide Reduction
 
-Generate a random byte array with `l = ceil(((3 * ceil(log2(G.Order()))) / 2) / 8)`
-bytes, and interpret it as an integer; reduce the integer modulo `G.Order()` and return the
-result. See {{Section 5 of !HASH-TO-CURVE=RFC9380}} for the underlying derivation of `l`.
+Generate a random byte array with `l = ceil(((3 * ceil(log2(G.Order()))) / 2)
+/ 8)` bytes, and interpret it as an integer; reduce the integer modulo
+`G.Order()` and return the result. See {{Section 5 of
+!HASH-TO-CURVE=RFC9380}} for the underlying derivation of `l`.
 
 # Security Considerations
 
