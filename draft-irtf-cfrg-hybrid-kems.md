@@ -201,9 +201,9 @@ four algorithms:
 KEMs can also provide a deterministic version of `Encaps`, denoted `EncapsDerand`,
 with the following signature:
 
-- `EncapsDerand(pk, eseed) -> (ct, shared_secret)`: A deterministic encapsulation
-   algorithm, which takes as input a public encapsulation key `pk` and seed
-   `eseed`, and outputs a ciphertext `ct` and shared secret `shared_secret`.
+- `EncapsDerand(pk, randomness) -> (ct, shared_secret)`: A deterministic encapsulation
+   algorithm, which takes as input a public encapsulation key `pk` and randomness
+   `randomness`, and outputs a ciphertext `ct` and shared secret `shared_secret`.
 
 Finally, KEMs are also parameterized with the following constants:
 
@@ -516,11 +516,11 @@ For testing, it is convenient to have a deterministic version of encapsulation. 
 cases, an implementation can provide the following derandomized function.
 
 ~~~
-def EncapsDerand(pk, eseed):
+def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1184]
   trad_PK = pk[1184:1217]
-  (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, eseed[0:32])
-  ek = eseed[32:65]
+  (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])
+  ek = randomness[32:65]
   trad_CT = P-256.ScalarMultBase(ek)
   trad_SS = P-256.ScalarMult(ek, trad_PK)
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
@@ -528,7 +528,7 @@ def EncapsDerand(pk, eseed):
   return (ss, ct)
 ~~~
 
-Note that `eseed` MUST be 65 bytes.
+Note that `randomness` MUST be 65 bytes.
 
 ### Decapsulation
 
@@ -668,11 +668,11 @@ For testing, it is convenient to have a deterministic version of encapsulation. 
 cases, an implementation can provide the following derandomized function.
 
 ~~~
-def EncapsDerand(pk, eseed):
+def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1184]
   trad_PK = pk[1184:1216]
-  (pq_SS, pq_CT) = PQ-KEM.EncapsDerand(pq_PK, eseed[0:32])
-  ek = eseed[32:64]
+  (pq_SS, pq_CT) = PQ-KEM.EncapsDerand(pq_PK, randomness[0:32])
+  ek = randomness[32:64]
   trad_CT = X25519(ek, 9)
   trad_SS = X25519(ek, trad_PK)
   ss = LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)
@@ -680,7 +680,7 @@ def EncapsDerand(pk, eseed):
   return (ss, ct)
 ~~~
 
-Note that `eseed` MUST be 64 bytes.
+Note that `randomness` MUST be 64 bytes.
 
 ### Decapsulation
 
@@ -831,11 +831,11 @@ For testing, it is convenient to have a deterministic version of encapsulation. 
 cases, an implementation can provide the following derandomized function.
 
 ~~~
-def EncapsDerand(pk, eseed):
+def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1568]
   trad_PK = pk[1568:1629]
-  (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, eseed[0:32])
-  ek = eseed[32:80]
+  (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, randomness[0:32])
+  ek = randomness[32:80]
   trad_CT = P-384.ScalarMultBase(ek)
   trad_SS = P-384.ScalarMult(ek, trad_PK)
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
@@ -843,7 +843,7 @@ def EncapsDerand(pk, eseed):
   return (ss, ct)
 ~~~
 
-Note that `eseed` MUST be 80 bytes.
+Note that `randomness` MUST be 80 bytes.
 
 ### Decapsulation
 
