@@ -4,8 +4,8 @@
 
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
-Intended status: Informational                            8 January 2025
-Expires: 12 July 2025
+Intended status: Informational                           23 January 2025
+Expires: 27 July 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 July 2025.
+   This Internet-Draft will expire on 27 July 2025.
 
 Copyright Notice
 
@@ -61,86 +61,62 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-     1.1.  Motivation
    2.  Requirements Notation
    3.  Notation
-     3.1.  Key encapsulation mechanisms
-   4.  Hybrid KEM Security Properties
-     4.1.  Hybrid Security
-     4.2.  IND-CCA security
-     4.3.  Ciphertext second preimage resistant (C2PRI) security /
+   4.  Cryptographic Dependencies
+     4.1.  Key encapsulation mechanisms
+     4.2.  XOF
+     4.3.  Key Derivation Function KDF
+     4.4.  Nominal Diffie-Hellman Group
+   5.  Hybrid KEM Constructions
+     5.1.  'Kitchen Sink' construction
+       5.1.1.  Security properties
+     5.2.  'QSF' construction
+   6.  Concrete Hybrid KEM Instances
+     6.1.  QSF-SHA3-256-ML-KEM-768-P-256
+       6.1.1.  Key generation
+       6.1.2.  Encapsulation
+       6.1.3.  Derandomized
+       6.1.4.  Decapsulation
+       6.1.5.  Security properties
+     6.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+       6.2.1.  Key generation
+       6.2.2.  Encapsulation
+       6.2.3.  Derandomized
+       6.2.4.  Decapsulation
+       6.2.5.  Security properties
+     6.3.  QSF-SHA3-256-ML-KEM-1024-P-384
+       6.3.1.  Key generation
+       6.3.2.  Encapsulation
+       6.3.3.  Derandomized
+       6.3.4.  Decapsulation
+       6.3.5.  Security properties
+   7.  Random Scalar Generation
+     7.1.  Rejection Sampling
+     7.2.  Wide Reduction
+   8.  Security Considerations
+     8.1.  IND-CCA security
+     8.2.  Ciphertext second preimage resistant (C2PRI) security /
            ciphertext collision resistance (CCR)
-     4.4.  Binding properties
-       4.4.1.  X-BIND-K-PK security
-       4.4.2.  X-BIND-K-CT security
-   5.  Cryptographic Dependencies
-     5.1.  XOF
-     5.2.  Key Derivation Function KDF
-     5.3.  Post-Quantum KEM
-       5.3.1.  Post-quantum KEM ciphertext pq_CT
-       5.3.2.  Post-quantum KEM public encapsulation key pq_PK
-       5.3.3.  Post-quantum KEM shared secret pq_SS
-       5.3.4.  Traditional KEM ciphertext trad_CT
-       5.3.5.  Traditional KEM public encapsulation key trad_PK
-       5.3.6.  Traditional KEM shared secret trad_SS
-     5.4.  Nominal Diffie-Hellman Group
-   6.  Other
-     6.1.  label
-   7.  Hybrid KEM Generic Constructions
-     7.1.  Common security requirements
-       7.1.1.  KDF as a secure PRF
-       7.1.2.  IND-CCA-secure Post-Quantum KEM
-       7.1.3.  IND-CCA-secure traditional KEM
-       7.1.4.  Fixed lengths
-     7.2.  Key Generation
-     7.3.  'Kitchen Sink' construction:
-       7.3.1.  Security properties
-     7.4.  'QSF' construction
-       7.4.1.  Requirements
-   8.  Concrete Hybrid KEM Instances
-     8.1.  QSF-SHA3-256-ML-KEM-768-P-256 TODO: include the XOF??
-       8.1.1.  Key generation
-     8.2.  Shared secret
-     8.3.  Encapsulation
-       8.3.1.  Derandomized
-     8.4.  Decapsulation
-       8.4.1.  Security properties
-     8.5.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 TODO: include
-            the XOF??
-       8.5.1.  Key generation
-     8.6.  Shared secret
-     8.7.  Encapsulation
-       8.7.1.  Derandomized
-     8.8.  Decapsulation
-       8.8.1.  Security properties
-     8.9.  QSF-SHA3-256-ML-KEM-1024-P-384 TODO: include the XOF??
-       8.9.1.  Key generation
-     8.10. Shared secret
-     8.11. Encapsulation
-       8.11.1.  Derandomized
-     8.12. Decapsulation
-       8.12.1.  Security properties
-   9.  Random Scalar Generation
-     9.1.  Rejection Sampling
-     9.2.  Wide Reduction
-   10. Security Considerations
-     10.1.  Fixed-length
-   11. Out of Scope
-     11.1.  More than two component KEMs
-     11.2.  Parameterized output length
-     11.3.  Protocol-specific labels / info
-     11.4.  Other Component Primitives
-   12. IANA Considerations
-     12.1.  HPKE
-   13. References
-     13.1.  Normative References
-     13.2.  Informative References
+     8.3.  Binding properties
+       8.3.1.  X-BIND-K-PK security
+       8.3.2.  X-BIND-K-CT security
+     8.4.  Domain Separation
+     8.5.  Fixed-length
+   9.  Out of Scope
+     9.1.  More than two component KEMs
+     9.2.  Parameterized output length
+     9.3.  Protocol-specific labels / info
+     9.4.  Other Component Primitives
+   10. IANA Considerations
+     10.1.  HPKE
+   11. References
+     11.1.  Normative References
+     11.2.  Informative References
    Acknowledgments
    Author's Address
 
 1.  Introduction
-
-1.1.  Motivation
 
    There are many choices that can be made when specifying a hybrid KEM:
    the constituent KEMs; their security levels; the combiner; and the
@@ -179,14 +155,34 @@ Table of Contents
    *  OS2IP(x): Convert byte string x to a non-negative integer, as
       described in [RFC8017], assuming big-endian byte order.
 
-3.1.  Key encapsulation mechanisms
+4.  Cryptographic Dependencies
+
+   The generic hybrid PQ/T KEM constructions we define depend on the the
+   following cryptographic primitives:
+
+   *  Key Encapsulation Mechanism Section 4.1;
+
+   *  Extendable Output Function (XOF) Section 4.2;
+
+   *  Key Derivation Function (KDF) Section 4.3; and
+
+   *  Nominal Diffie-Hellman Group Section 4.4.
+
+   These dependencies are defined in the following subsections.
+
+4.1.  Key encapsulation mechanisms
 
    Key encapsulation mechanisms (KEMs) are cryptographic schemes that
-   consist of three algorithms:
+   consist of four algorithms:
 
    *  KeyGen() -> (pk, sk): A probabilistic key generation algorithm,
       which generates a public encapsulation key pk and a secret
-      decapsulation key sk.
+      decapsulation key sk, each of which are byte strings.
+
+   *  DeriveKey(seed) -> (pk, sk): A deterministic algorithm, which
+      takes as input a seed seed and generates a public encapsulation
+      key pk and a secret decapsulation key sk, each of which are byte
+      strings.
 
    *  Encaps(pk) -> (ct, shared_secret): A probabilistic encapsulation
       algorithm, which takes as input a public encapsulation key pk and
@@ -196,66 +192,27 @@ Table of Contents
       takes as input a secret decapsulation key sk and ciphertext ct and
       outputs a shared secret shared_secret.
 
-4.  Hybrid KEM Security Properties
+   KEMs can also provide a deterministic version of Encaps, denoted
+   EncapsDerand, with the following signature:
 
-   Hybrid KEM constructions aim to provide security by combining two or
-   more schemes so that security is preserved if all but one schemes are
-   replaced by an arbitrarily bad scheme.
+   *  EncapsDerand(pk, randomness) -> (ct, shared_secret): A
+      deterministic encapsulation algorithm, which takes as input a
+      public encapsulation key pk and randomness randomness, and outputs
+      a ciphertext ct and shared secret shared_secret.
 
-4.1.  Hybrid Security
+   Finally, KEMs are also parameterized with the following constants:
 
-   Informally, hybrid KEMs are secure if the KDF is secure, and if any
-   one of the components KEMs is secure: this is the 'hybrid' property.
+   *  Nseed, which denotes the number of bytes for a key seed;
 
-4.2.  IND-CCA security
+   *  Npk, which denotes the number of bytes in a public encapsulation
+      key;
 
-   Also known as IND-CCA2 security for general public key encryption,
-   for KEMs that encapsulate a new random 'message' each time.
+   *  Nsk, which denotes the number of bytes in a private decapsulation
+      key; and
 
-   The notion of INDistinguishability against Chosen-Ciphertext Attacks
-   (IND-CCA) [RS92] is now widely accepted as the standard security
-   notion for asymmetric encryption schemes.  IND-CCA security requires
-   that no efficient adversary can recognize which of two messages is
-   encrypted in a given ciphertext, even if the two candidate messages
-   are chosen by the adversary himself.
+   *  Nct, which denotes the number of bytes in a ciphertext.
 
-4.3.  Ciphertext second preimage resistant (C2PRI) security / ciphertext
-      collision resistance (CCR)
-
-   The notion where, even if a KEM has broken IND-CCA security (either
-   due to construction, implementation, or other), its internal
-   structure, based on the Fujisaki-Okamoto transform, guarantees that
-   it is impossible to find a second ciphertext that decapsulates to the
-   same shared secret K: this notion is known as ciphertext second
-   preimage resistance (C2SPI) for KEMs [XWING].  The same notion has
-   also been described as chosen ciphertext resistance elsewhere
-   [CDM23].
-
-4.4.  Binding properties
-
-4.4.1.  X-BIND-K-PK security
-
-4.4.2.  X-BIND-K-CT security
-
-   Ciphertext second preimage resistance for KEMs ([C2PRI][XWING]).
-   Related to the ciphertext collision-freeness of the underlying PKE
-   scheme of a FO-transform KEM.  Also called ciphertext collision
-   resistance.
-
-5.  Cryptographic Dependencies
-
-   The generic hybrid PQ/T KEM constructions we define depend on the the
-   following cryptographic primitives:
-
-   *  Extendable Output Function Section 5.1
-
-   *  Key Derivation Function Section 5.2
-
-   *  Post-Quantum-secure KEM Section 5.3
-
-   *  Nominal Diffie-Hellman Group Section 5.4
-
-5.1.  XOF
+4.2.  XOF
 
    Extendable-output function (XOF).  A function on bit strings in which
    the output can be extended to any desired length.  Ought to satisfy
@@ -272,51 +229,13 @@ Table of Contents
    PQ/T components from a seed that is expanded to a output length, of
    which a subset is passed to the component key generation algorithms.
 
-5.2.  Key Derivation Function KDF
+4.3.  Key Derivation Function KDF
 
    A secure key derivation function (KDF) that is modeled as a secure
    pseudorandom function (PRF) in the standard model [GHP2018] and
    independent random oracle in the random oracle model (ROM).
 
-5.3.  Post-Quantum KEM
-
-   An IND-CCA KEM that is resilient against post-quantum attacks.  It
-   fulfills the scheme API in {kems}.
-
-5.3.1.  Post-quantum KEM ciphertext pq_CT
-
-   The ciphertext produced from one encapsulation from the post-quantum
-   component KEM.
-
-5.3.2.  Post-quantum KEM public encapsulation key pq_PK
-
-   The public encapsulation key produced by one key generation from the
-   post-quantum component KEM.
-
-5.3.3.  Post-quantum KEM shared secret pq_SS
-
-   The shared secret produced from one encapsulation/decapsulation from
-   the post-quantum component KEM.
-
-5.3.4.  Traditional KEM ciphertext trad_CT
-
-   The ciphertext (or equivalent) produced from one encapsulation from
-   the traditional component KEM.  For the constructions in this
-   document, this is a Diffie-Hellman group element.
-
-5.3.5.  Traditional KEM public encapsulation key trad_PK
-
-   The public encapsulation key produced by one key generation from the
-   traditional component KEM.  For the constructions in this document,
-   this is a Diffie-Hellman group element.
-
-5.3.6.  Traditional KEM shared secret trad_SS
-
-   The shared secret produced from one encapsulation/decapsulation from
-   the traditional component KEM.  For the constructions in this
-   document, this is a Diffie-Hellman group element.
-
-5.4.  Nominal Diffie-Hellman Group
+4.4.  Nominal Diffie-Hellman Group
 
    The traditional DH-KEM construction depends on an abelian group of
    order order.  We represent this group as the object G that
@@ -382,103 +301,96 @@ Table of Contents
    *  DeserializeScalar(buf): Attempts to map a byte array buf to a
       Scalar s.  This function raises an error if deserialization fails.
 
-6.  Other
+5.  Hybrid KEM Constructions
 
-6.1.  label
+   During encapsulation and decapsulation, a hybrid KEM combines its
+   component KEM shared secrets and other info, such as the KEM
+   ciphertexts and encapsulation keys keys, to yield a shared secret.
+   The interface for this function, often called a 'combiner' in the
+   literature, is the SharedSecret function for the constructions in
+   this document.  SharedSecret accepts the following inputs:
 
-   ASCII-encoded bytes that provide oracle cloning [BDG2020] in the
-   security game via domain separation.  The IND-CCA security of hybrid
-   KEMs often relies on the KDF function KDF to behave as an independent
-   random oracle, which the inclusion of the label achieves via domain
-   separation [GHP2018].
+   *  pq_SS: The PQ KEM shared secret.
 
-   By design, the calls to KDF in these constructions and usage anywhere
-   else in higher level protoocl use separate input domains unless
-   intentionally duplicating the 'label' per concrete instance with
-   fixed paramters.  This justifies modeling them as independent
-   functions even if instantiated by the same KDF.  This domain
-   separation is achieved by using prefix-free sets of label values.
-   Recall that a set is prefix-free if no element is a prefix of another
-   within the set.
+   *  trad_SS: The traditional KEM shared secret.
 
-   Length diffentiation is sometimes used to achieve domain separation
-   but as a technique it is [brittle and prone to misuse][BDG2020] in
-   practice so we favor the use of an explicit post-fix label.
+   *  pq_CT: The PQ KEM ciphertext.
 
-7.  Hybrid KEM Generic Constructions
+   *  pq_PK: The PQ KEM public encapsulation key.
 
-7.1.  Common security requirements
+   *  trad_CT: The traditional KEM ciphertext.
 
-7.1.1.  KDF as a secure PRF
+   *  trad_PK: The traditional KEM public encapsulation key.
 
-   A key derivation function (KDF) that is modeled as a secure
-   pseudorandom function (PRF) in the standard model [GHP2018] and
-   independent random oracle in the random oracle model (ROM).
+   *  label: A domain-separating label; see Section 8.4 for more
+      information on the role of the label.
 
-7.1.2.  IND-CCA-secure Post-Quantum KEM
+   The output of the SharedSecret function is a 32 byte shared secret
+   that is, ultimately, the output of the KEM.
 
-   A component post-quantum KEM that has IND-CCA security.
+   This section describes two generic constructions for hybrid KEMs: one
+   called the KitchenSink, specified in Section 5.1, and another called
+   QSF, specified in Section 5.2.  The KitchenSink construction is
+   maximally conservative in design, opting for the least assumptions
+   about the component KEMs.  The QSF construction is tailored to
+   specific component KEMs and is not generally reusable; specific
+   requirements for component KEMs to be usable in the QSF combiner are
+   detailed in Section 5.2.
 
-7.1.3.  IND-CCA-secure traditional KEM
+   Both make use of the following requirements:
 
-   A component traditional KEM that has IND-CCA security.
+   1.  Both component KEMs have IND-CCA security.
 
-7.1.4.  Fixed lengths
+   2.  KDF as a secure PRF.  A key derivation function (KDF) that is
+       modeled as a secure pseudorandom function (PRF) in the standard
+       model [GHP2018] and independent random oracle in the random
+       oracle model (ROM).
 
-   Every instantiation in concrete parameters of the generic
-   constructions is for fixed parameter sizes, KDF choice, and label,
-   allowing the lengths to not also be encoded into the generic
-   construction.  The label/KDF/component algorithm parameter sets MUST
-   be disjoint and non-colliding.
+   3.  Fixed-length values.  Every instantiation in concrete parameters
+       of the generic constructions is for fixed parameter sizes, KDF
+       choice, and label, allowing the lengths to not also be encoded
+       into the generic construction.  The label/KDF/component algorithm
+       parameter sets MUST be disjoint and non-colliding.  Moreover, the
+       length of each each public encapsulation key, ciphertext, and
+       shared secret is fixed once the algorithm is assumed to be fixed.
 
-   This document assumes and requires that the length of each public
-   key, ciphertext, and shared secret is fixed once the algorithm is
-   fixed in the concrete instantiations.  This is the case for all
-   concrete instantiations in this document.
+5.1.  'Kitchen Sink' construction
 
-7.2.  Key Generation
+   As indicated by the name, the KitchenSink puts 'the whole transcript'
+   through the KDF.  This relies on the minimum security properties of
+   its component algorithms at the cost of more bytes needing to be
+   processed by the KDF.
 
-   We specify a common generic key generation scheme for all generic
-   constructions.  This requires the component key generation algorithns
-   to accept the sufficient random seed, possibly according to their
-   parameter set.
+ def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
+                                  trad_PK, label):
+     input = concat(pq_SS, trad_SS, pq_CT, pq_PK,
+                    trad_CT, trad_PK, label)
+     return KDF(input)
 
-   ### Key derivation {#derive-key-pair}
-
-7.3.  'Kitchen Sink' construction:
-
-   As indicated by the name, the KitchenSink construction puts 'the
-   whole transcript' through the KDF.  This relies on the minimum
-   security properties of its component algorithms at the cost of more
-   bytes needing to be processed by the KDF.
-
-def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK):
-    return KDF(concat(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label))
-
-7.3.1.  Security properties
+5.1.1.  Security properties
 
    Because the entire hybrid KEM ciphertext and encapsulation key
    material are included in the KDF preimage, the KitchenSink
    construction is resilient against implementation errors in the
    component algorithms.
 
-
-
-
-7.4.  'QSF' construction
+5.2.  'QSF' construction
 
    Inspired by the generic QSF (Quantum Superiority Fighter) framework
    in [XWING], which leverages the security properties of a KEM like ML-
    KEM and an inlined instance of DH-KEM, to elide other public data
    like the PQ ciphertext and encapsulation key from the KDF input:
 
-   def QSF-KEM.SharedSecret(pq_SS, trad_SS, trad_CT, trad_PK):
+   def QSF-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
+                            trad_PK, label):
        return KDF(concat(pq_SS, trad_SS, trad_CT, trad_PK, label))
 
-7.4.1.  Requirements
+   Note that pq_CT and pq_PK are NOT included in the KDF.  This is only
+   possible because the component KEMs adhere to the following
+   requirements.  The QSF combiner MUST NOT be used in concrete KEM
+   instances that do not satisfy these requirements.
 
-7.4.1.1.  Nominal Diffie-Hellman Group with strong Diffie-Hellman
-          security
+   1.  Nominal Diffie-Hellman Group with strong Diffie-Hellman security
 
    A cryptographic group modelable as a nominal group where the strong
    Diffie-Hellman assumption holds {XWING}. Specically regarding a
@@ -491,195 +403,186 @@ def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK)
    The concrete instantiations in this document use elliptic curve
    groups that have been modeled as nominal groups in the literature.
 
-7.4.1.2.  Post-quantum IND-CCA KEM with ciphertext second preimage
-          resistance
+   1.  Post-quantum IND-CCA KEM with ciphertext second preimage
+       resistance
 
    The QSF relies the post-quantum KEM component having IND-CCA security
    against a post-quantum attacker, and ciphertext second preimage
    resistance (C2SPI, also known as chosen ciphertext resistance, CCR).
    C2SPI/CCR is equivalent to LEAK-BIND-K,PK-CT security [CDM23]
 
-7.4.1.3.  KDF is a secure (post-quantum) PRF, modelable as a random
-          oracle
+   1.  KDF is a secure (post-quantum) PRF, modelable as a random oracle.
 
    Indistinguishability of the final shared secret from a random key is
    established by modeling the key-derivation function as a random
    oracle [XWING].
 
-8.  Concrete Hybrid KEM Instances
+6.  Concrete Hybrid KEM Instances
 
-8.1.  QSF-SHA3-256-ML-KEM-768-P-256
+   This section instantiates three concrete KEMs:
 
-   Also known as [XWING] but with P-256 instead of X25519.
+   1.  QSF-SHA3-256-ML-KEM-768-P-256 Section 6.1: A hybrid KEM using the
+       QSF combiner based on ML-KEM-768 and P-256.
+
+   2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 Section 6.2: A hybrid
+       KEM using the KitchenSink combiner based on ML-KEM-768 and
+       X25519.
+
+   3.  QSF-SHA3-256-ML-KEM-1024-P-384 Section 6.3: A hybrid KEM using
+       the QSF combiner based on ML-KEM-1024 and P-384.
+
+   Each instance specifies the PQ and traditional KEMs being combined,
+   the combiner construction from Section 5, the label to use for domain
+   separation in the combiner function, as well as the XOF and KDF
+   functions to use throughout.
+
+6.1.  QSF-SHA3-256-ML-KEM-768-P-256
+
+   This hybrid KEM is heavily based on [XWING].  In particular, it has
+   the same exact design but uses P-256 instead of X25519 as the the
+   traditional component of the algorithm.  It has the following
+   parameters.
 
    *  label: QSF-SHA3-256-ML-KEM-768-P-256
 
-   *  XOF: [SHAKE-256][FIPS202]
+   *  XOF: SHAKE-256 [FIPS202]
 
-   *  KDF: [SHA3-256][FIPS202]
+   *  KDF: SHA3-256 [FIPS202]
 
-   *  PQ KEM: ML-KEM-768 [FIPS203]
+   *  Combiner: QSF-KEM.SharedSecret
 
-   *  Group: [P-256][FIPS186] (secp256r1) [ANSIX9.62], where Ne = 33 and
-      Ns = 32.
+   *  Nseed: 65
 
-   This instantiation uses P-256 for the Group.
+   *  Npk: 1217
 
-   *  Group: P-256
+   *  Nsk: 32
 
-      -  Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179
-         e84f3b9cac2fc632551.
+   *  Nct: 1121
 
-      -  Identity(): As defined in [ANSIX9.62].
+   QSF-SHA3-256-ML-KEM-768-P-256 depends on P-256 as a nominal prime-
+   order group [FIPS186] (secp256r1) [ANSIX9.62], where Ne = 33 and Ns =
+   32, with the following functions:
 
-      -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 9 for
-         implementation guidance.
+   *  Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84
+      f3b9cac2fc632551.
 
-      -  SerializeElement(A): Implemented using the compressed Elliptic-
-         Curve-Point-to-Octet-String method according to [SEC1],
-         yielding a 33-byte output.  Additionally, this function
-         validates that the input element is not the group identity
-         element.
+   *  Identity(): As defined in [ANSIX9.62].
 
-      -  DeserializeElement(buf): Implemented by attempting to
-         deserialize a 33-byte input string to a public key using the
-         compressed Octet-String-to-Elliptic-Curve-Point method
-         according to [SEC1], and then performs public-key validation as
-         defined in section 3.2.2.1 of [SEC1].  This includes checking
-         that the coordinates of the resulting point are in the correct
-         range, that the point is on the curve, and that the point is
-         not the point at infinity.  (As noted in the specification,
-         validation of the point order is not required since the
-         cofactor is 1.)  If any of these checks fail, deserialization
-         returns an error.
+   *  RandomScalar(): Implemented by returning a uniformly random Scalar
+      in the range [0, G.Order() - 1].  Refer to Section 7 for
+      implementation guidance.
 
-      -  SerializeScalar(s): Implemented using the Field-Element-to-
-         Octet-String conversion according to [SEC1].
+   *  SerializeElement(A): Implemented using the compressed Elliptic-
+      Curve-Point-to-Octet-String method according to [SEC1], yielding a
+      33-byte output.  Additionally, this function validates that the
+      input element is not the group identity element.
 
-      -  DeserializeScalar(buf): Implemented by attempting to
-         deserialize a Scalar from a 32-byte string using Octet-String-
-         to-Field-Element from [SEC1].  This function can fail if the
-         input does not represent a Scalar in the range [0, G.Order() -
-         1].
+   *  DeserializeElement(buf): Implemented by attempting to deserialize
+      a 33-byte input string to a public key using the compressed Octet-
+      String-to-Elliptic-Curve-Point method according to [SEC1], and
+      then performs public-key validation as defined in section 3.2.2.1
+      of [SEC1].  This includes checking that the coordinates of the
+      resulting point are in the correct range, that the point is on the
+      curve, and that the point is not the point at infinity.  (As noted
+      in the specification, validation of the point order is not
+      required since the cofactor is 1.)  If any of these checks fail,
+      deserialization returns an error.
 
-8.1.1.  Key generation
+   *  SerializeScalar(s): Implemented using the Field-Element-to-Octet-
+      String conversion according to [SEC1].
 
-   A keypair (decapsulation key, encapsulation key) is generated as
-   follows.
+   *  DeserializeScalar(buf): Implemented by attempting to deserialize a
+      Scalar from a 32-byte string using Octet-String-to-Field-Element
+      from [SEC1].  This function can fail if the input does not
+      represent a Scalar in the range [0, G.Order() - 1].
+
+   The rest of this section specifies the key generation, encapsulation,
+   and decapsulation procedures for this hybrid KEM.
+
+6.1.1.  Key generation
+
+   QSF-SHA3-256-ML-KEM-768-P-256 KeyGen works as follows.
 
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 96)
-  (pk_M, sk_M) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
-  sk_G = Scalar(expanded[64:96])
-  pk_G = ScalarMultBase(sk_G)
-  return (sk_M, sk_G, pk_M, pk_G)
+  (pq_PK, pq_SK) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
+  trad_SK = P-256.Scalar(expanded[64:96])
+  trad_PK = P-256.ScalarMultBase(trad_SK)
+  return (pq_SK, trad_SK, pq_PK, trad_PK)
 
-def GenerateKeyPair():
+def KeyGen():
   sk = random(32)
-  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
-  return sk, concat(pk_M, pk_G)
+  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+  return sk, concat(pq_PK, trad_PK)
 
-   GenerateKeyPair() returns the 32 byte secret decapsulation key sk and
-   the 1217 byte encapsulation key pk.
+   Similarly, QSF-SHA3-256-ML-KEM-768-P-256 DeriveKey works as follows:
 
-   For testing, it is convenient to have a deterministic version of key
-   generation.  An implementation MAY provide the following derandomized
-   variant of key generation.
+   def DeriveKey(seed):
+     (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
+     return sk, concat(pq_PK, trad_PK)
 
-   def GenerateKeyPairDerand(sk):
-     sk_M, sk_G, pk_M, pk_G = expandDecapsulationKey(sk)
-     return sk, concat(pk_M, pk_X)
+6.1.2.  Encapsulation
 
-   sk MUST be 32 bytes.
+   Given an encapsulation key pk, QSF-SHA3-256-ML-KEM-768-P-256 Encaps
+   proceeds as follows.
 
-   GenerateKeyPairDerand() returns the 32 byte secret decapsulation key
-   sk and the 1217 byte encapsulation key pk.
-
-8.2.  Shared secret
-
-   Given 32-byte strings ss_M, ss_G, and the 33-byte strings ct_G, pk_G,
-   representing the ML-KEM-768 shared secret, P-256 shared secret, P-256
-   ciphertext (ephemeral public key) and P-256 public key respectively,
-   the 32 byte combined shared secret is given by:
-
-   def SharedSecret(ss_M, ss_G, ct_G, pk_G):
-     return SHA3-256(concat(
-       ss_M,
-       ss_X,
-       ct_G,
-       pk_G,
-       `label`
-     ))
-
-   where label is the instance label.  In hex label is given by TODO.
-
-8.3.  Encapsulation
-
-   Given an encapsulation key pk, encapsulation proceeds as follows.
-
-   def Encapsulate(pk):
-     pk_M = pk[0:1184]
-     pk_G = pk[1184:1217]
-     ek_G = RandomScalar()
-     ct_G = ScalarMultBase(ek_G)
-     ss_G = ScalarMult(ek_G, pk_G)
-     (ss_M, ct_M) = ML-KEM-768.Encaps(pk_M)
-     ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
-     ct = concat(ct_M, ct_G)
+   def Encaps(pk):
+     pq_PK = pk[0:1184]
+     trad_PK = pk[1184:1217]
+     (pq_SS, pq_CT) = ML-KEM-768.Encaps(pq_PK)
+     ek = P-256.RandomScalar()
+     trad_CT = P-256.ScalarBaseMult(ek)
+     trad_SS = P-256.ScalarMult(trad_PK, ek)
+     ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+     ct = concat(pq_CT, trad_CT)
      return (ss, ct)
 
-   pk is a 1217 byte X-Wing encapsulation key resulting from
-   GeneratePublicKey()
+   pk is a 1217-byte encapsulation key resulting from KeyGen().
 
-   Encapsulate() returns the 32 byte shared secret ss and the 1121 byte
+   Encaps() returns the 32-byte shared secret ss and the 1121-byte
    ciphertext ct.
 
-   Note that Encapsulate() may raise an error if the ML-KEM
-   encapsulation does not pass the check of [FIPS203] §7.2.
+   Note that Encaps() may raise an error if ML-KEM-768.Encaps fails,
+   e.g., if it does not pass the check of [FIPS203] §7.2.
 
-8.3.1.  Derandomized
+6.1.3.  Derandomized
 
    For testing, it is convenient to have a deterministic version of
-   encapsulation.  An implementation MAY provide the following
-   derandomized function.
+   encapsulation.  In such cases, an implementation can provide the
+   following derandomized function.
 
-   def EncapsulateDerand(pk, eseed):
-     pk_M = pk[0:1184]
-     pk_G = pk[1184:1217]
-     ek_G = eseed[32:65]
-     ct_G = ScalarMultBase(ek_G)
-     ss_G = ScalarMult(ek_G, pk_G)
-
-     (ss_M, ct_M) = ML-KEM-768.EncapsDerand(pk_M, eseed[0:32])
-     ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
-     ct = concat(ct_M, ct_G)
+   def EncapsDerand(pk, randomness):
+     pq_PK = pk[0:1184]
+     trad_PK = pk[1184:1217]
+     (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])
+     ek = randomness[32:65]
+     trad_CT = P-256.ScalarMultBase(ek)
+     trad_SS = P-256.ScalarMult(ek, trad_PK)
+     ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+     ct = concat(pq_CT, trad_CT)
      return (ss, ct)
 
-   pk is a 1217 byte X-Wing encapsulation key resulting from
-   GeneratePublicKey() eseed MUST be 65 bytes.
+   Note that randomness MUST be 65 bytes.
 
-   EncapsulateDerand() returns the 32 byte shared secret ss and the 1121
-   byte ciphertext ct.
+6.1.4.  Decapsulation
 
-8.4.  Decapsulation
+   Given a decapsulation key sk and ciphertext ct, QSF-SHA3-256-ML-KEM-
+   768-P-256 Decaps proceeds as follows.
 
-   def Decapsulate(ct, sk):
-     (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
-     ct_M = ct[0:1088]
-     ct_G = ct[1088:1121]
-     ss_M = ML-KEM-768.Decapsulate(ct_M, sk_M)
-     ss_G = ScalarMult(sk_G, ct_G)
-     return SharedSecret(ss_M, ss_G, ct_G, pk_G)
+   def Decaps(sk, ct):
+     (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+     pq_CT = ct[0:1088]
+     trad_CT = ct[1088:1121]
+     pq_SS = ML-KEM-768.Decapsulate(pq_SK, pq_CT)
+     trad_SS = P-256.ScalarMult(trad_SK, trad_CT)
+     return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
 
-   ct is the 1121 byte ciphertext resulting from Encapsulate() sk is a
-   32 byte decapsulation key resulting from GenerateKeyPair()
+   ct is the 1121-byte ciphertext resulting from Encaps() and sk is a
+   32-byte decapsulation key resulting from KeyGen().
 
-   Decapsulate() returns the 32 byte shared secret.
+   Decaps() returns the 32 byte shared secret.
 
-8.4.1.  Security properties
-
-8.4.1.1.  Binding
+6.1.5.  Security properties
 
    The inlined DH-KEM is instantiated over the elliptic curve group
    P-256: as shown in [CDM23], this gives the traditional KEM maximum
@@ -714,16 +617,31 @@ def GenerateKeyPair():
 
    *  HON-BIND-K,PK-CT
 
-8.5.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+6.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+
+   KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following
+   parameters.
 
    *  label: KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
 
-   *  XOF: [SHAKE-256][FIPS202]
+   *  XOF: SHAKE-256 [FIPS202]
 
    *  KDF: HKDF-SHA-256 [HKDF]
 
-   HKDF is comprised of HKDF-Extract and HKDF-Expand.  We compose them
-   as one function here:
+   *  Combiner: KitchenSink-KEM.SharedSecret
+
+   *  Nseed: 96
+
+   *  Npk: 1216
+
+   *  Nsk: 32
+
+   *  Nct: 1120
+
+   KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 depends on a prime-order
+   group implemented using Curve25519 and X25519 [RFC7748].
+   Additionally, it uses a modified version of HKDF in the combiner,
+   denoted LabeledHKDF, defined below.
 
 
    def LabeledExtract(salt, label, ikm):
@@ -735,160 +653,99 @@ def GenerateKeyPair():
                            label, info)
      return HKDF-Expand(prk, labeled_info, L)
 
-
-   def HKDF(preimage):
+   def LabeledHKDF(preimage):
      prk = LabeledExtract("", "hybrid_prk", preimage)
      shared_secret = LabeledExpand(prk, "shared_secret", "", 32)
      return shared_secret
 
-   *  PQ KEM: ML-KEM-768 [FIPS203]
+   The rest of this section specifies the key generation, encapsulation,
+   and decapsulation procedures for this hybrid KEM.
 
-   *  Group: X25519 [X25519]
+6.2.1.  Key generation
 
-   This instantiation uses X25519 for the Group.
-
-   *  Group: Curve25519 [X25519], where Ne = 32 and Ns = 32.
-
-      -  Order(): Return 2^252 + 0x14def9dea2f79cd65812631a5cf5d3ed (see
-         [RFC7748]).
-
-      -  Identity(): As defined in [RFC7748].
-
-      -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 9 for
-         implementation guidance.
-
-      -  SerializeElement(A): Implemented as specified in [RFC7748].
-
-      -  DeserializeElement(buf): Implemented as specified in [RFC7748].
-
-      -  SerializeScalar(s): Implemented by outputting the little-endian
-         32-byte encoding of the Scalar value with the top three bits
-         set to zero.
-
-      -  DeserializeScalar(buf): Implemented by attempting to
-         deserialize a Scalar from a little-endian 32-byte string.  This
-         function can fail if the input does not represent a Scalar in
-         the range [0, G.Order() - 1].  Note that this means the top
-         three bits of the input MUST be zero.
-
-8.5.1.  Key generation
-
-   A keypair (decapsulation key, encapsulation key) is generated as
-   follows.
+   KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 KeyGen works as follows.
 
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 96)
-  (pk_M, sk_M) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
-  sk_G = Scalar(expanded[64:96])
-  pk_G = ScalarMultBase(sk_G)
-  return (sk_M, sk_G, pk_M, pk_G)
+  (pq_PK, pq_SK) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
+  trad_SK = expanded[64:96]
+  trad_PK = X25519(trad_SK, 9)
+  return (pq_SK, trad_SK, pq_PK, trad_PK)
 
-def GenerateKeyPair():
+def KeyGen():
   sk = random(32)
-  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
-  return sk, concat(pk_M, pk_G)
+  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+  return sk, concat(pq_PK, trad_PK)
 
-   GenerateKeyPair() returns the 32 byte secret decapsulation key sk and
-   the 1216 byte encapsulation key pk.
+   Similarly, KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 DeriveKey works
+   as follows:
 
-   For testing, it is convenient to have a deterministic version of key
-   generation.  An implementation MAY provide the following derandomized
-   variant of key generation.
+   def DeriveKey(seed):
+     (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
+     return sk, concat(pq_PK, trad_PK)
 
-   def GenerateKeyPairDerand(sk):
-     sk_M, sk_G, pk_M, pk_G = expandDecapsulationKey(sk)
-     return sk, concat(pk_M, pk_X)
+6.2.2.  Encapsulation
 
-   sk MUST be 32 bytes.
+   Given an encapsulation key pk, KitchenSink-HKDF-SHA-256-ML-KEM-
+   768-X25519 Encaps proceeds as follows.
 
-   GenerateKeyPairDerand() returns the 32 byte secret encapsulation key
-   sk and the 1216 byte decapsulation key pk.
+def Encaps(pk):
+  pq_PK = pk[0:1184]
+  trad_PK = pk[1184:1216]
+  (pq_SS, pq_CT) = ML-KEM-768.Encaps(pq_PK)
+  ek = random(32)
+  trad_CT = X25519(ek, 9)
+  trad_SS = X25519(ek, trad_PK)
+  ss = LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)
+  ct = concat(pq_CT, trad_CT)
+  return (ss, ct)
 
-8.6.  Shared secret
+   pk is a 1216-byte encapsulation key resulting from KeyGen().
 
-   Given 32-byte strings ss_M, ss_G, ct_G, pk_G, representing the ML-
-   KEM-768 shared secret, X25519 shared secret, X25519 ciphertext
-   (ephemeral public key) and X25519 public key respectively, the 32
-   byte combined shared secret is given by:
-
-   def SharedSecret(ss_M, ss_G, ct_G, pk_G):
-     return HKDF(concat(
-       ss_M,
-       ss_X,
-       ct_G,
-       pk_G,
-       `label`
-     ))
-
-   where label is the instance label.  In hex label is given by TODO.
-
-8.7.  Encapsulation
-
-   Given an encapsulation key pk, encapsulation proceeds as follows.
-
-   def Encapsulate(pk):
-     pk_M = pk[0:1184]
-     pk_G = pk[1184:1216]
-     ek_G = RandomScalar()
-     ct_G = ScalarMultBase(ek_G)
-     ss_G = ScalarMult(ek_G, pk_G)
-     (ss_M, ct_M) = ML-KEM-768.Encaps(pk_M)
-     ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
-     ct = concat(ct_M, ct_G)
-     return (ss, ct)
-
-   pk is a 1216 byte encapsulation key resulting from
-   GeneratePublicKey()
-
-   Encapsulate() returns the 32 byte shared secret ss and the 1120 byte
+   Encaps() returns the 32-byte shared secret ss and the 1120-byte
    ciphertext ct.
 
-   Note that Encapsulate() may raise an error if the ML-KEM
-   encapsulation does not pass the check of [FIPS203] §7.2.
+   Note that Encaps() may raise an error if ML-KEM-768.Encaps fails,
+   e.g., if it does not pass the check of [FIPS203] §7.2.
 
-8.7.1.  Derandomized
+6.2.3.  Derandomized
 
    For testing, it is convenient to have a deterministic version of
-   encapsulation.  An implementation MAY provide the following
-   derandomized function.
+   encapsulation.  In such cases, an implementation can provide the
+   following derandomized function.
 
-   def EncapsulateDerand(pk, eseed):
-     pk_M = pk[0:1184]
-     pk_G = pk[1184:1216]
-     ek_G = eseed[32:64]
-     ct_G = ScalarMultBase(ek_G)
-     ss_G = ScalarMult(ek_G, pk_G)
+def EncapsDerand(pk, randomness):
+  pq_PK = pk[0:1184]
+  trad_PK = pk[1184:1216]
+  (pq_SS, pq_CT) = PQ-KEM.EncapsDerand(pq_PK, randomness[0:32])
+  ek = randomness[32:64]
+  trad_CT = X25519(ek, 9)
+  trad_SS = X25519(ek, trad_PK)
+  ss = LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)
+  ct = concat(pq_CT, trad_CT)
+  return (ss, ct)
 
-     (ss_M, ct_M) = ML-KEM-768.EncapsDerand(pk_M, eseed[0:32])
-     ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
-     ct = concat(ct_M, ct_G)
-     return (ss, ct)
+   Note that randomness MUST be 64 bytes.
 
-   pk is a 1217 byte X-Wing encapsulation key resulting from
-   GeneratePublicKey() eseed MUST be 65 bytes.
+6.2.4.  Decapsulation
 
-   EncapsulateDerand() returns the 32 byte shared secret ss and the 1121
-   byte ciphertext ct.
+   Given a decapsulation key sk and ciphertext ct, KitchenSink-HKDF-SHA-
+   256-ML-KEM-768-X25519 Decaps proceeds as follows.
 
-8.8.  Decapsulation
+def Decaps(sk, ct):
+  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+  pq_CT = ct[0:1088]
+  trad_CT = ct[1088:1120]
+  pq_SS = ML-KEM-768.Decapsulate(pq_SK, pq_CT)
+  trad_SS = X25519(trad_SK, trad_CT)
+  return LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)
 
-   def Decapsulate(ct, sk):
-     (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
-     ct_M = ct[0:1088]
-     ct_G = ct[1088:1120]
-     ss_M = ML-KEM-768.Decapsulate(ct_M, sk_M)
-     ss_G = ScalarMult(sk_G, ct_G)
-     return SharedSecret(ss_M, ss_G, ct_G, pk_G)
+   ct is the 1120-byte ciphertext resulting from Encaps() and sk is a
+   32-byte decapsulation key resulting from KeyGen().
 
-   ct is the 1120 byte ciphertext resulting from Encapsulate() sk is a
-   32 byte decapsulation key resulting from GenerateKeyPair()
+   Decaps() returns the 32 byte shared secret.
 
-   Decapsulate() returns the 32 byte shared secret.
-
-8.8.1.  Security properties
-
-8.8.1.1.  Binding
+6.2.5.  Security properties
 
    The inlined DH-KEM instantiated over the elliptic curve group X25519:
    as shown in [CDM23], this gives the traditional KEM maximum binding
@@ -924,176 +781,151 @@ def GenerateKeyPair():
 
    *  HON-BIND-K,PK-CT
 
-8.9.  QSF-SHA3-256-ML-KEM-1024-P-384
+6.3.  QSF-SHA3-256-ML-KEM-1024-P-384
+
+   QSF-SHA3-256-ML-KEM-1024-P-384 has the following parameters.
 
    *  label: QSF-SHA3-256-ML-KEM-768-P-256
 
-   *  XOF: [SHAKE-256][FIPS202]
+   *  XOF: SHAKE-256 [FIPS202]
 
-   *  KDF: [SHA3-256][FIPS202]
+   *  KDF: SHA3-256 [FIPS202]
 
-   *  PQ KEM: ML-KEM-1024 [FIPS203]
+   *  Combiner: QSF-KEM.SharedSecret
 
-   *  Group: [P-384][FIPS186] (secp256r1) [ANSIX9.62], where Ne = 33 and
-      Ns = 32.
+   *  Nseed: 112
 
-   This instantiation uses P-384 for the Group.
+   *  Npk: 1629
 
-   *  Group: P-384
+   *  Nsk: 32
 
-      -  Order(): Return 0xfffffffffffffffffffffffffffffffffffffffffffff
-         fffc7634d81f4372ddf 581a0db248b0a77aecec196accc52973
+   *  Nct: 1629
 
-      -  Identity(): As defined in [ANSIX9.62].
+   QSF-SHA3-256-ML-KEM-1024-P-384 depends on P-384 as a nominal prime-
+   order group [FIPS186] (secp256r1) [ANSIX9.62], where Ne = 61 and Ns =
+   48, with the following functions:
 
-      -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 9 for
-         implementation guidance.
+   *  Order(): Return
+      0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf
+      581a0db248b0a77aecec196accc52973
 
-      -  SerializeElement(A): Implemented using the compressed Elliptic-
-         Curve-Point-to-Octet-String method according to [SEC1],
-         yielding a 61-byte output.  Additionally, this function
-         validates that the input element is not the group identity
-         element.
+   *  Identity(): As defined in [ANSIX9.62].
 
-      -  DeserializeElement(buf): Implemented by attempting to
-         deserialize a 61-byte input string to a public key using the
-         compressed Octet-String-to-Elliptic-Curve-Point method
-         according to [SEC1], and then performs public-key validation as
-         defined in section 3.2.2.1 of [SEC1].  This includes checking
-         that the coordinates of the resulting point are in the correct
-         range, that the point is on the curve, and that the point is
-         not the point at infinity.  (As noted in the specification,
-         validation of the point order is not required since the
-         cofactor is 1.)  If any of these checks fail, deserialization
-         returns an error.
+   *  RandomScalar(): Implemented by returning a uniformly random Scalar
+      in the range [0, G.Order() - 1].  Refer to Section 7 for
+      implementation guidance.
 
-      -  SerializeScalar(s): Implemented using the Field-Element-to-
-         Octet-String conversion according to [SEC1].
+   *  SerializeElement(A): Implemented using the compressed Elliptic-
+      Curve-Point-to-Octet-String method according to [SEC1], yielding a
+      61-byte output.  Additionally, this function validates that the
+      input element is not the group identity element.
 
-      -  DeserializeScalar(buf): Implemented by attempting to
-         deserialize a Scalar from a 48-byte string using Octet-String-
-         to-Field-Element from [SEC1].  This function can fail if the
-         input does not represent a Scalar in the range [0, G.Order() -
-         1].
+   *  DeserializeElement(buf): Implemented by attempting to deserialize
+      a 61-byte input string to a public key using the compressed Octet-
+      String-to-Elliptic-Curve-Point method according to [SEC1], and
+      then performs public-key validation as defined in section 3.2.2.1
+      of [SEC1].  This includes checking that the coordinates of the
+      resulting point are in the correct range, that the point is on the
+      curve, and that the point is not the point at infinity.  (As noted
+      in the specification, validation of the point order is not
+      required since the cofactor is 1.)  If any of these checks fail,
+      deserialization returns an error.
 
-8.9.1.  Key generation
+   *  SerializeScalar(s): Implemented using the Field-Element-to-Octet-
+      String conversion according to [SEC1].
 
-   A keypair (decapsulation key, encapsulation key) is generated as
-   follows.
+   *  DeserializeScalar(buf): Implemented by attempting to deserialize a
+      Scalar from a 48-byte string using Octet-String-to-Field-Element
+      from [SEC1].  This function can fail if the input does not
+      represent a Scalar in the range [0, G.Order() - 1].
+
+   The rest of this section specifies the key generation, encapsulation,
+   and decapsulation procedures for this hybrid KEM.
+
+6.3.1.  Key generation
+
+   QSF-SHA3-256-ML-KEM-1024-P-384 KeyGen works as follows.
 
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 112)
-  (pk_M, sk_M) = ML-KEM-1024.KeyGen_internal(expanded[0:32], expanded[32:64])
-  sk_G = Scalar(expanded[64:112])
-  pk_G = ScalarMultBase(sk_G)
-  return (sk_M, sk_G, pk_M, pk_G)
+  (pq_PK, pq_SK) = ML-KEM-1024.KeyGen_internal(expanded[0:32], expanded[32:64])
+  trad_SK = P-384.Scalar(expanded[64:112])
+  trad_PK = P-384.ScalarMultBase(trad_SK)
+  return (pq_SK, trad_SK, pq_PK, trad_PK)
 
-def GenerateKeyPair():
+def KeyGen():
   sk = random(32)
-  (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
-  return sk, concat(pk_M, pk_G)
+  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+  return sk, concat(pq_PK, trad_PK)
 
-   GenerateKeyPair() returns the 32 byte secret decapsulation key sk and
-   the 1629 byte encapsulation key pk.
+   Similarly, QSF-SHA3-256-ML-KEM-1024-P-384 DeriveKey works as follows:
 
-   For testing, it is convenient to have a deterministic version of key
-   generation.  An implementation MAY provide the following derandomized
-   variant of key generation.
+   def DeriveKey(seed):
+     (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
+     return sk, concat(pq_PK, trad_PK)
 
-   def GenerateKeyPairDerand(sk):
-     sk_M, sk_G, pk_M, pk_G = expandDecapsulationKey(sk)
-     return sk, concat(pk_M, pk_X)
+6.3.2.  Encapsulation
 
-   sk MUST be 32 bytes.
+   Given an encapsulation key pk, QSF-SHA3-256-ML-KEM-1024-P-384 Encaps
+   proceeds as follows.
 
-   GenerateKeyPairDerand() returns the 32 byte secret decapsulation key
-   sk and the 1629 byte encapsulation key pk.
-
-8.10.  Shared secret
-
-   Given 32-byte string ss_M, the 61-byte strings ss_G, ct_G, pk_G,
-   representing the ML-KEM-1024 shared secret, P-384 shared secret,
-   P-384 ciphertext (ephemeral public key) and P-384 public key
-   respectively, the 32 byte combined shared secret is given by:
-
-   def SharedSecret(ss_M, ss_G, ct_G, pk_G):
-     return SHA3-256(concat(
-       ss_M,
-       ss_X,
-       ct_G,
-       pk_G,
-       `label`
-     ))
-
-   where label is the instance label.  In hex label is given by TODO.
-
-8.11.  Encapsulation
-
-   Given an encapsulation key pk, encapsulation proceeds as follows.
-
-   def Encapsulate(pk):
-     pk_M = pk[0:1568]
-     pk_G = pk[1568:1629]
-     ek_G = RandomScalar()
-     ct_G = ScalarMultBase(ek_G)
-     ss_G = ScalarMult(ek_G, pk_G)
-     (ss_M, ct_M) = ML-KEM-1024.Encaps(pk_M)
-     ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
-     ct = concat(ct_M, ct_G)
+   def Encaps(pk):
+     pq_PK = pk[0:1568]
+     trad_PK = pk[1568:1629]
+     (pq_SS, pq_CT) = ML-KEM-1024.Encaps(pq_PK)
+     ek = P-384.RandomScalar()
+     trad_CT = P-384.ScalarBaseMult(ek)
+     trad_SS = P-384.ScalarMult(trad_PK, ek)
+     ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+     ct = concat(pq_CT, trad_CT)
      return (ss, ct)
 
-   pk is a 1629 byte X-Wing encapsulation key resulting from
-   GeneratePublicKey()
+   pk is a 1629-byte encapsulation key resulting from KeyGen().
 
-   Encapsulate() returns the 32 byte shared secret ss and the 1629 byte
+   Encaps() returns the 32-byte shared secret ss and the 1629-byte
    ciphertext ct.
 
-   Note that Encapsulate() may raise an error if the ML-KEM
-   encapsulation does not pass the check of [FIPS203] §7.2.
+   Note that Encaps() may raise an error if ML-KEM-1024.Encaps fails,
+   e.g., if it does not pass the check of [FIPS203] §7.2.
 
-8.11.1.  Derandomized
+6.3.3.  Derandomized
 
    For testing, it is convenient to have a deterministic version of
-   encapsulation.  An implementation MAY provide the following
-   derandomized function.
+   encapsulation.  In such cases, an implementation can provide the
+   following derandomized function.
 
-   def EncapsulateDerand(pk, eseed):
-     pk_M = pk[0:1568]
-     pk_G = pk[1568:1629]
-     ek_G = eseed[32:80]
-     ct_G = ScalarMultBase(ek_G)
-     ss_G = ScalarMult(ek_G, pk_G)
-
-     (ss_M, ct_M) = ML-KEM-768.EncapsDerand(pk_M, eseed[0:32])
-     ss = SharedSecret(ss_M, ss_G, ct_G, pk_G)
-     ct = concat(ct_M, ct_G)
+   def EncapsDerand(pk, randomness):
+     pq_PK = pk[0:1568]
+     trad_PK = pk[1568:1629]
+     (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, randomness[0:32])
+     ek = randomness[32:80]
+     trad_CT = P-384.ScalarMultBase(ek)
+     trad_SS = P-384.ScalarMult(ek, trad_PK)
+     ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+     ct = concat(pq_CT, trad_CT)
      return (ss, ct)
 
-   pk is a 1629 byte X-Wing encapsulation key resulting from
-   GeneratePublicKey() eseed MUST be 80 bytes.
+   Note that randomness MUST be 80 bytes.
 
-   EncapsulateDerand() returns the 32 byte shared secret ss and the 1629
-   byte ciphertext ct.
+6.3.4.  Decapsulation
 
-8.12.  Decapsulation
+   Given a decapsulation key sk and ciphertext ct, QSF-SHA3-256-ML-KEM-
+   1024-P-384 Decaps proceeds as follows.
 
-   def Decapsulate(ct, sk):
-     (sk_M, sk_G, pk_M, pk_G) = expandDecapsulationKey(sk)
-     ct_M = ct[0:1568]
-     ct_G = ct[1568:1629]
-     ss_M = ML-KEM-1024.Decapsulate(ct_M, sk_M)
-     ss_G = ScalarMult(sk_G, ct_G)
-     return SharedSecret(ss_M, ss_G, ct_G, pk_G)
+   def Decaps(sk, ct):
+     (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+     pq_CT = ct[0:1568]
+     trad_CT = ct[1568:1629]
+     pq_SS = ML-KEM-1024.Decapsulate(pq_SK, pq_CT)
+     trad_SS = P-384.ScalarMult(trad_SK, trad_CT)
+     return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
 
-   ct is the 1629 byte ciphertext resulting from Encapsulate() sk is a
-   32 byte decapsulation key resulting from GenerateKeyPair()
+   ct is the 1629-byte ciphertext resulting from Encaps() and sk is a
+   32-byte decapsulation key resulting from KeyGen().
 
-   Decapsulate() returns the 32 byte shared secret.
+   Decaps() returns the 32-byte shared secret.
 
-8.12.1.  Security properties
-
-8.12.1.1.  Binding
+6.3.5.  Security properties
 
    The inlined DH-KEM is instantiated over the elliptic curve group
    P-384: as shown in [CDM23], this gives the traditional KEM maximum
@@ -1128,12 +960,12 @@ def GenerateKeyPair():
 
    *  HON-BIND-K,PK-CT
 
-9.  Random Scalar Generation
+7.  Random Scalar Generation
 
    Two popular algorithms for generating a random integer uniformly
    distributed in the range [0, G.Order() -1] are as follows:
 
-9.1.  Rejection Sampling
+7.1.  Rejection Sampling
 
    Generate a random byte array with Ns bytes, and attempt to map to a
    Scalar by calling DeserializeScalar in constant time.  If it
@@ -1148,18 +980,21 @@ def GenerateKeyPair():
    that |p - 2^b| is less than 2^(b/2), then RandomScalar can simply
    return a uniformly random integer of at most b bits.
 
-9.2.  Wide Reduction
+7.2.  Wide Reduction
 
    Generate a random byte array with l = ceil(((3 *
    ceil(log2(G.Order()))) / 2) / 8) bytes, and interpret it as an
    integer; reduce the integer modulo G.Order() and return the result.
    See Section 5 of [HASH-TO-CURVE] for the underlying derivation of l.
 
-10.  Security Considerations
+8.  Security Considerations
 
-   Informally, these hybrid KEMs are secure if the KDF is secure, and
-   either the elliptic curve is secure, or the post-quantum KEM is
-   secure: this is the 'hybrid' property.
+   Hybrid KEM constructions aim to provide security by combining two or
+   more schemes so that security is preserved if all but one schemes are
+   replaced by an arbitrarily bad scheme.  Informally, these hybrid KEMs
+   are secure if the KDF is secure, and either the elliptic curve is
+   secure, or the post-quantum KEM is secure: this is the 'hybrid'
+   property.
 
    More precisely for the concrete instantiations in this document, if
    SHA3-256, SHA3-512, and SHAKE-256 may be modelled as a random oracle,
@@ -1167,7 +1002,67 @@ def GenerateKeyPair():
    CCA security of ML-KEM, and the gap-CDH security of secp256n1, see
    [XWING].
 
-10.1.  Fixed-length
+8.1.  IND-CCA security
+
+   Also known as IND-CCA2 security for general public key encryption,
+   for KEMs that encapsulate a new random 'message' each time.
+
+   The notion of INDistinguishability against Chosen-Ciphertext Attacks
+   (IND-CCA) [RS92] is now widely accepted as the standard security
+   notion for asymmetric encryption schemes.  IND-CCA security requires
+   that no efficient adversary can recognize which of two messages is
+   encrypted in a given ciphertext, even if the two candidate messages
+   are chosen by the adversary himself.
+
+8.2.  Ciphertext second preimage resistant (C2PRI) security / ciphertext
+      collision resistance (CCR)
+
+   The notion where, even if a KEM has broken IND-CCA security (either
+   due to construction, implementation, or other), its internal
+   structure, based on the Fujisaki-Okamoto transform, guarantees that
+   it is impossible to find a second ciphertext that decapsulates to the
+   same shared secret K: this notion is known as ciphertext second
+   preimage resistance (C2SPI) for KEMs [XWING].  The same notion has
+   also been described as chosen ciphertext resistance elsewhere
+   [CDM23].
+
+8.3.  Binding properties
+
+   TODO
+
+8.3.1.  X-BIND-K-PK security
+
+   TODO
+
+8.3.2.  X-BIND-K-CT security
+
+   Ciphertext second preimage resistance for KEMs ([C2PRI][XWING]).
+   Related to the ciphertext collision-freeness of the underlying PKE
+   scheme of a FO-transform KEM.  Also called ciphertext collision
+   resistance.
+
+8.4.  Domain Separation
+
+   ASCII-encoded bytes provide oracle cloning [BDG2020] in the security
+   game via domain separation.  The IND-CCA security of hybrid KEMs
+   often relies on the KDF function KDF to behave as an independent
+   random oracle, which the inclusion of the label achieves via domain
+   separation [GHP2018].
+
+   By design, the calls to KDF in these constructions and usage anywhere
+   else in higher level protoocl use separate input domains unless
+   intentionally duplicating the 'label' per concrete instance with
+   fixed paramters.  This justifies modeling them as independent
+   functions even if instantiated by the same KDF.  This domain
+   separation is achieved by using prefix-free sets of label values.
+   Recall that a set is prefix-free if no element is a prefix of another
+   within the set.
+
+   Length diffentiation is sometimes used to achieve domain separation
+   but as a technique it is [brittle and prone to misuse][BDG2020] in
+   practice so we favor the use of an explicit post-fix label.
+
+8.5.  Fixed-length
 
    Variable-length secrets are generally dangerous.  In particular,
    using key material of variable length and processing it using hash
@@ -1192,42 +1087,49 @@ def GenerateKeyPair():
    the algorithm identifier in the NamedGroup negotiation in
    Section 3.1).
 
-11.  Out of Scope
+9.  Out of Scope
 
    Considerations that were considered and not included in these
    designs:
 
-11.1.  More than two component KEMs
+9.1.  More than two component KEMs
 
    Design team decided to restrict the space to only two components, a
    traditional and a post-quantum KEM.
 
-11.2.  Parameterized output length
+9.2.  Parameterized output length
 
    Not analyzed as part of any security proofs in the literature, and a
    complicatation deemed unnecessary.
 
-11.3.  Protocol-specific labels / info
+9.3.  Protocol-specific labels / info
 
    The concrete instantiations have specific labels, protocol-specific
    information is out of scope.
 
-11.4.  Other Component Primitives
+9.4.  Other Component Primitives
 
    There is demand for other hybrid variants that either use different
    primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or
    that use a combiner optimized for a specific use case.  Other use
    cases could be covered in subsequent documents and not included here.
 
-12.  IANA Considerations
-
-12.1.  HPKE
+10.  IANA Considerations
 
    TODO
 
-13.  References
+10.1.  HPKE
 
-13.1.  Normative References
+   TODO
+
+11.  References
+
+11.1.  Normative References
+
+   [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
+              output functions", National Institute of Standards and
+              Technology (U.S.), DOI 10.6028/nist.fips.202, 2015,
+              <https://doi.org/10.6028/nist.fips.202>.
 
    [FIPS203]  "Module-lattice-based key-encapsulation mechanism
               standard", National Institute of Standards and Technology
@@ -1258,7 +1160,7 @@ def GenerateKeyPair():
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-13.2.  Informative References
+11.2.  Informative References
 
    [ANSIX9.62]
               ANS, "Public Key Cryptography for the Financial Services
@@ -1322,10 +1224,6 @@ def GenerateKeyPair():
    [SEC1]     "Elliptic Curve Cryptography, Standards for Efficient
               Cryptography Group, ver. 2", 2009,
               <https://secg.org/sec1-v2.pdf>.
-
-   [X25519]   Langley, A., Hamburg, M., and S. Turner, "Elliptic Curves
-              for Security", RFC 7748, DOI 10.17487/RFC7748, January
-              2016, <https://www.rfc-editor.org/rfc/rfc7748>.
 
    [XWING]    "X-Wing: The Hybrid KEM You’ve Been Looking For", 2024,
               <https://eprint.iacr.org/2024/039.pdf>.
