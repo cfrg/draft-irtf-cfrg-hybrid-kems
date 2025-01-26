@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-23T00:59:08.506797+00:00",
+  "timestamp": "2025-01-26T01:01:06.488597+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -98,24 +98,26 @@
       "id": "PR_kwDOMmhxws6HIQRB",
       "title": "Refactor, cleanup, reorganize",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/2",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This change refactors some stuff and cleans up the in-lined KEM implementation details.",
       "createdAt": "2025-01-08T21:24:34Z",
-      "updatedAt": "2025-01-09T19:48:23Z",
+      "updatedAt": "2025-01-23T18:47:30Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "ea0a9337871b8f52777783e10780d40f21b6ca14",
       "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "caw/reorg",
-      "headRefOid": "db08f00bad935a093a77c7dec87531a23f2dd5d6",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "75a1f6564a51ae64ddb2ae86cb25355a8997b705",
+      "closedAt": "2025-01-23T18:47:30Z",
+      "mergedAt": "2025-01-23T18:47:30Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "5557ce637cb791f95f09cf3271ec5623825047b1"
+      },
       "comments": [],
       "reviews": [
         {
@@ -137,8 +139,187 @@
               "updatedAt": "2025-01-09T19:48:23Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOLdI",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:01:46Z",
+          "updatedAt": "2025-01-23T18:01:47Z",
+          "comments": [
+            {
+              "originalPosition": 102,
+              "body": "```suggestion\r\n- `EncapsDerand(pk, randomness) -> (ct, shared_secret)`: A deterministic encapsulation\r\n   algorithm, which takes as input a public encapsulation key `pk` and randomness\r\n   `randomness`, and outputs a ciphertext `ct` and shared secret `shared_secret`.\r\n```",
+              "createdAt": "2025-01-23T18:01:46Z",
+              "updatedAt": "2025-01-23T18:01:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOMAE",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:02:53Z",
+          "updatedAt": "2025-01-23T18:02:53Z",
+          "comments": [
+            {
+              "originalPosition": 610,
+              "body": "```suggestion\r\ndef EncapsDerand(pk, randomness):\r\n  pq_PK = pk[0:1184]\r\n  trad_PK = pk[1184:1217]\r\n  (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])\r\n  ek = randomness[32:65]\r\n  trad_CT = P-256.ScalarMultBase(ek)\r\n  trad_SS = P-256.ScalarMult(ek, trad_PK)\r\n  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)\r\n  ct = concat(pq_CT, trad_CT)\r\n```",
+              "createdAt": "2025-01-23T18:02:53Z",
+              "updatedAt": "2025-01-23T18:02:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOMGw",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:03:05Z",
+          "updatedAt": "2025-01-23T18:03:06Z",
+          "comments": [
+            {
+              "originalPosition": 619,
+              "body": "```suggestion\r\nNote that `randomness` MUST be 65 bytes.\r\n```",
+              "createdAt": "2025-01-23T18:03:05Z",
+              "updatedAt": "2025-01-23T18:03:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOMoP",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:04:11Z",
+          "updatedAt": "2025-01-23T18:04:12Z",
+          "comments": [
+            {
+              "originalPosition": 864,
+              "body": "```suggestion\r\ndef EncapsDerand(pk, randomness):\r\n  pq_PK = pk[0:1184]\r\n  trad_PK = pk[1184:1216]\r\n  (pq_SS, pq_CT) = PQ-KEM.EncapsDerand(pq_PK, randomness[0:32])\r\n  ek = randomness[32:64]\r\n```",
+              "createdAt": "2025-01-23T18:04:11Z",
+              "updatedAt": "2025-01-23T18:04:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZONxs",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:06:33Z",
+          "updatedAt": "2025-01-23T18:06:34Z",
+          "comments": [
+            {
+              "originalPosition": 877,
+              "body": "```suggestion\r\nNote that `randomness` MUST be 64 bytes.\r\n```",
+              "createdAt": "2025-01-23T18:06:33Z",
+              "updatedAt": "2025-01-23T18:06:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOPiO",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:10:14Z",
+          "updatedAt": "2025-01-23T18:10:14Z",
+          "comments": [
+            {
+              "originalPosition": 1161,
+              "body": "```suggestion\r\ndef EncapsDerand(pk, randomness):\r\n  pq_PK = pk[0:1568]\r\n  trad_PK = pk[1568:1629]\r\n  (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, randomness[0:32])\r\n  ek = randomness[32:80]\r\n  trad_CT = P-384.ScalarMultBase(ek)\r\n  trad_SS = P-384.ScalarMult(ek, trad_PK)\r\n  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)\r\n  ct = concat(pq_CT, trad_CT)\r\n```",
+              "createdAt": "2025-01-23T18:10:14Z",
+              "updatedAt": "2025-01-23T18:10:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOPoo",
+          "commit": {
+            "abbreviatedOid": "db08f00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T18:10:28Z",
+          "updatedAt": "2025-01-23T18:10:28Z",
+          "comments": [
+            {
+              "originalPosition": 1170,
+              "body": "```suggestion\r\nNote that `randomness` MUST be 80 bytes.\r\n```",
+              "createdAt": "2025-01-23T18:10:28Z",
+              "updatedAt": "2025-01-23T18:10:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ZOk4A",
+          "commit": {
+            "abbreviatedOid": "75a1f65"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-23T18:46:24Z",
+          "updatedAt": "2025-01-23T18:46:24Z",
+          "comments": []
         }
       ]
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOMmhxws6I0Zg9",
+      "title": "Preliminary reference implementations and test vectors",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/3",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This mirrors the spec implementation for X-Wing, but it uses Sage for the NIST curve implementation. (Primarily because I had that laying around from other specs. We can replace with a Python implementation in the future if desired.) It fixes some things in the primary spec around key generation (formatting keys as byte strings), fully specifying the DH operations, etc. It also includes preliminary HPKE KEM codepoint registration requests. And, importantly, adds the test vectors produced from the reference implementation.",
+      "createdAt": "2025-01-23T21:30:19Z",
+      "updatedAt": "2025-01-23T21:32:12Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "5557ce637cb791f95f09cf3271ec5623825047b1",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "caw/vectors",
+      "headRefOid": "8d619bd493f79351a9d7aaed6b14279d8499f3bd",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
