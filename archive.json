@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-30T00:58:16.563655+00:00",
+  "timestamp": "2025-02-02T01:02:27.212039+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -307,7 +307,7 @@
       "labels": [],
       "body": "This mirrors the spec implementation for X-Wing, but it uses Sage for the NIST curve implementation. (Primarily because I had that laying around from other specs. We can replace with a Python implementation in the future if desired.) It fixes some things in the primary spec around key generation (formatting keys as byte strings), fully specifying the DH operations, etc. It also includes preliminary HPKE KEM codepoint registration requests. And, importantly, adds the test vectors produced from the reference implementation.",
       "createdAt": "2025-01-23T21:30:19Z",
-      "updatedAt": "2025-01-23T21:32:12Z",
+      "updatedAt": "2025-01-31T17:57:13Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "5557ce637cb791f95f09cf3271ec5623825047b1",
@@ -319,7 +319,74 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6aOQeU",
+          "commit": {
+            "abbreviatedOid": "8d619bd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "\ud83d\ude4f",
+          "createdAt": "2025-01-31T17:50:01Z",
+          "updatedAt": "2025-01-31T17:50:01Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws6aOT4_",
+          "commit": {
+            "abbreviatedOid": "8d619bd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-31T17:52:25Z",
+          "updatedAt": "2025-01-31T17:52:25Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "`%` needs defining above",
+              "createdAt": "2025-01-31T17:52:25Z",
+              "updatedAt": "2025-01-31T17:52:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6aOXz0",
+          "commit": {
+            "abbreviatedOid": "8d619bd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-31T17:55:37Z",
+          "updatedAt": "2025-01-31T17:55:37Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "We could leverage the text above about `Scalar`s and `Element`s to enforce that all instances of `Scalar`s MUST be modulo their order, otherwise they aren't real `Scalar`s ",
+              "createdAt": "2025-01-31T17:55:37Z",
+              "updatedAt": "2025-01-31T17:55:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6aOYml",
+          "commit": {
+            "abbreviatedOid": "8d619bd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Do we want to enforce the `Scalar` being always modulo its `Order()` via its instantiation? Otherwise we need to define `%` as used in `expandDecapsulationKey` etc",
+          "createdAt": "2025-01-31T17:57:13Z",
+          "updatedAt": "2025-01-31T17:57:13Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
