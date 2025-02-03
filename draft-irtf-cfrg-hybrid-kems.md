@@ -281,6 +281,9 @@ We now detail a number of member functions that can be invoked on `G`.
   Scalar `k`.
 - ScalarBaseMult(k): Outputs the scalar multiplication between Scalar `k` and
   the group generator `B`.
+- SerializeElementAsSharedSecret(A): Maps an `Element` `A` to a fixed-length byte
+  array. This function is used to produce a shared secret for Diffie-Hellman
+  operations performed on the group.
 - SerializeElement(A): Maps an `Element` `A` to a canonical byte array `buf`
   of fixed length `Ne`. This function raises an error if `A` is the identity
   element of the group.
@@ -292,6 +295,10 @@ We now detail a number of member functions that can be invoked on `G`.
   fixed length `Ns`.
 - DeserializeScalar(buf): Attempts to map a byte array `buf` to a `Scalar`
   `s`.  This function raises an error if deserialization fails.
+- ScalarFromBytes(buf): Maps a byte array `buf` to a `Scalar` by first
+  interpreting the contents of `buf` as an unsigned integer and then
+  reducing that integer modulo the group order; this ensures that the
+  resulting integer is always an element of the Scalar field.
 
 # Hybrid KEM Constructions {#constructions}
 
@@ -433,7 +440,7 @@ component of the algorithm. It has the following parameters.
 * `XOF`: SHAKE-256 {{FIPS202}}
 * `KDF`: SHA3-256 {{FIPS202}}
 * Combiner: QSF-KEM.SharedSecret
-* Nseed: 65
+* Nseed: 32
 * Npk: 1217
 * Nsk: 32
 * Nct: 1121
@@ -461,12 +468,16 @@ the following functions:
   the point is not the point at infinity. (As noted in the specification,
   validation of the point order is not required since the cofactor is 1.)
   If any of these checks fail, deserialization returns an error.
+- SerializeElementAsSharedSecret(A): Implemented by encoding the X coordinate
+  of the elliptic curve point corresponding to A to a little-endian 32-byte string.
 - SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
   conversion according to {{SEC1}}.
 - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
   from a 32-byte string using Octet-String-to-Field-Element from
   {{SEC1}}. This function can fail if the input does not represent a Scalar
   in the range \[0, `G.Order()` - 1\].
+- ScalarFromBytes(buf): Implemented by converting `buf` to an integer using
+  OS2IP, and then reducing the resulting integer modulo the group order.
 
 <!-- TODO: this is the FROST style, which uses 33 bytes for the serialized
 group element. It doesn't match the existing HPKE KEM style, which uses 65
@@ -485,16 +496,15 @@ decapsulation procedures for this hybrid KEM.
 
 `QSF-SHA3-256-ML-KEM-768-P-256` KeyGen works as follows.
 
-<!-- TODO(caw): we need to wire-encode the keys before outputting them -->
-
 <!-- TODO: is this expanding from a decaps key seed, but maybe this should just be 'expandKeyPair` -->
 <!-- TODO: annotate with the byte sizes of the parameters in terms of Nseed, Nsk, etc -->
+
 ~~~
 def expandDecapsulationKey(sk):
-  expanded = SHAKE256(sk, 96)
+  expanded = SHAKE256(sk, 112)
   (pq_PK, pq_SK) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
-  trad_SK = P-256.Scalar(expanded[64:96])
-  trad_PK = P-256.ScalarMultBase(trad_SK)
+  trad_SK = P-256.ScalarFromBytes(expanded[64:112])
+  trad_PK = P-256.SerializeElement(P-256.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
 def KeyGen():
@@ -519,12 +529,12 @@ proceeds as follows.
 ~~~
 def Encaps(pk):
   pq_PK = pk[0:1184]
-  trad_PK = pk[1184:1217]
+  trad_PK = P-256.DeserializeElement(pk[1184:1217])
   (pq_SS, pq_CT) = ML-KEM-768.Encaps(pq_PK)
   ek = P-256.RandomScalar()
-  trad_CT = P-256.ScalarBaseMult(ek)
-  trad_SS = P-256.ScalarMult(trad_PK, ek)
-  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+  trad_CT = P-256.SerializeElement(P-256.ScalarBaseMult(ek))
+  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(trad_PK, ek))
+  ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1184:1217], label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -543,21 +553,20 @@ For testing, it is convenient to have a deterministic version of
 encapsulation. In such cases, an implementation can provide the following
 derandomized function.
 
-
 ~~~
 def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1184]
-  trad_PK = pk[1184:1217]
+  trad_PK = P-256.DeserializeElement(pk[1184:1217])
   (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])
-  ek = randomness[32:65]
-  trad_CT = P-256.ScalarMultBase(ek)
-  trad_SS = P-256.ScalarMult(ek, trad_PK)
+  ek = P-256.ScalarFromBytes(randomness[32:80])
+  trad_CT = P-256.SerializeElement(P-256.ScalarMultBase(ek))
+  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(ek, trad_PK))
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
 
-Note that `randomness` MUST be 65 bytes.
+Note that `randomness` MUST be 80 bytes.
 
 ### Decapsulation
 
@@ -568,10 +577,10 @@ Given a decapsulation key `sk` and ciphertext `ct`,
 def Decaps(sk, ct):
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
   pq_CT = ct[0:1088]
-  trad_CT = ct[1088:1121]
+  trad_CT = P-256.DeserializeElement(ct[1088:1121])
   pq_SS = ML-KEM-768.Decapsulate(pq_SK, pq_CT)
-  trad_SS = P-256.ScalarMult(trad_SK, trad_CT)
-  return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(trad_SK, trad_CT))
+  return SHA3-256(pq_SS, trad_SS, ct[1088:1121], trad_PK, label)
 ~~~
 
 `ct` is the 1121-byte ciphertext resulting from Encaps() and `sk` is a
@@ -613,7 +622,7 @@ KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following parameters.
 * `XOF`: SHAKE-256 {{FIPS202}}
 * `KDF`: HKDF-SHA-256 {{HKDF}}
 * Combiner: KitchenSink-KEM.SharedSecret
-* Nseed: 96
+* Nseed: 32
 * Npk: 1216
 * Nsk: 32
 * Nct: 1120
@@ -628,12 +637,11 @@ a split PRF seems extra?-->
 
 ~~~
 def LabeledExtract(salt, label, ikm):
-  labeled_ikm = concat("Hybrid", suite_id, label, ikm)
+  labeled_ikm = concat(label, ikm)
   return HDKF-Extract(salt, labeled_ikm)
 
 def LabeledExpand(prk, label, info, L):
-  labeled_info = concat(I2OSP(L, 2), "Hybrid", suite_id,
-                        label, info)
+  labeled_info = concat(I2OSP(L, 2), label, info)
   return HKDF-Expand(prk, labeled_info, L)
 
 def LabeledHKDF(preimage):
@@ -766,6 +774,7 @@ This implies via {{KSMW2024}} that this instance also satisfies
 - HON-BIND-K,PK-CT
 
 ## `QSF-SHA3-256-ML-KEM-1024-P-384` {#qsf-p384}
+
 <!-- TODO: include the XOF in the name?? -->
 
 `QSF-SHA3-256-ML-KEM-1024-P-384` has the following parameters.
@@ -774,7 +783,7 @@ This implies via {{KSMW2024}} that this instance also satisfies
 * `XOF`: SHAKE-256 {{FIPS202}}
 * `KDF`: SHA3-256 {{FIPS202}}
 * Combiner: QSF-KEM.SharedSecret
-* Nseed: 112
+* Nseed: 32
 * Npk: 1629
 * Nsk: 32
 * Nct: 1629
@@ -803,12 +812,16 @@ the following functions:
   the point is not the point at infinity. (As noted in the specification,
   validation of the point order is not required since the cofactor is 1.)
   If any of these checks fail, deserialization returns an error.
+- SerializeElementAsSharedSecret(A): Implemented by encoding the X coordinate
+  of the elliptic curve point corresponding to A to a little-endian 48-byte string.
 - SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
   conversion according to {{SEC1}}.
 - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
   from a 48-byte string using Octet-String-to-Field-Element from
   {{SEC1}}. This function can fail if the input does not represent a Scalar
   in the range \[0, `G.Order()` - 1\].
+- ScalarFromBytes(buf): Implemented by converting `buf` to an integer using
+  OS2IP, and then reducing the resulting integer modulo the group order.
 
 The rest of this section specifies the key generation, encapsulation, and
 decapsulation procedures for this hybrid KEM.
@@ -817,14 +830,12 @@ decapsulation procedures for this hybrid KEM.
 
 `QSF-SHA3-256-ML-KEM-1024-P-384` KeyGen works as follows.
 
-<!-- TODO(caw): we need to wire-encode the keys before outputting them -->
-
 ~~~
 def expandDecapsulationKey(sk):
-  expanded = SHAKE256(sk, 112)
+  expanded = SHAKE256(sk, 136)
   (pq_PK, pq_SK) = ML-KEM-1024.KeyGen_internal(expanded[0:32], expanded[32:64])
-  trad_SK = P-384.Scalar(expanded[64:112])
-  trad_PK = P-384.ScalarMultBase(trad_SK)
+  trad_SK = P-384.ScalarFromBytes(expanded[64:136])
+  trad_PK = P-384.SerializeElement(P-384.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
 def KeyGen():
@@ -849,12 +860,12 @@ proceeds as follows.
 ~~~
 def Encaps(pk):
   pq_PK = pk[0:1568]
-  trad_PK = pk[1568:1629]
+  trad_PK = P-384.DeserializeElement(pk[1568:1629])
   (pq_SS, pq_CT) = ML-KEM-1024.Encaps(pq_PK)
   ek = P-384.RandomScalar()
-  trad_CT = P-384.ScalarBaseMult(ek)
-  trad_SS = P-384.ScalarMult(trad_PK, ek)
-  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+  trad_CT = P-384.SerializeElement(P-384.ScalarBaseMult(ek))
+  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(trad_PK, ek))
+  ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1568:1629], label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -876,12 +887,12 @@ derandomized function.
 ~~~
 def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1568]
-  trad_PK = pk[1568:1629]
+  trad_PK = P-384.DeserializeElement(pk[1568:1629])
   (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, randomness[0:32])
-  ek = randomness[32:80]
-  trad_CT = P-384.ScalarMultBase(ek)
-  trad_SS = P-384.ScalarMult(ek, trad_PK)
-  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+  ek = P-384.ScalarFromBytes(randomness[32:80])
+  trad_CT = P-384.SerializeElement(P-384.ScalarMultBase(ek))
+  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(ek, trad_PK))
+  ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1568:1629], label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -897,10 +908,10 @@ Given a decapsulation key `sk` and ciphertext `ct`,
 def Decaps(sk, ct):
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
   pq_CT = ct[0:1568]
-  trad_CT = ct[1568:1629]
+  trad_CT = P-384.DeserializeElement(ct[1568:1629])
   pq_SS = ML-KEM-1024.Decapsulate(pq_SK, pq_CT)
-  trad_SS = P-384.ScalarMult(trad_SK, trad_CT)
-  return SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
+  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(trad_SK, trad_CT))
+  return SHA3-256(pq_SS, trad_SS, ct[1568:1629], trad_PK, label)
 ~~~
 
 `ct` is the 1629-byte ciphertext resulting from Encaps() and `sk` is a
@@ -958,8 +969,8 @@ most b bits.
 
 Generate a random byte array with `l = ceil(((3 * ceil(log2(G.Order()))) / 2)
 / 8)` bytes, and interpret it as an integer; reduce the integer modulo
-`G.Order()` and return the result. See {{Section 5 of
-!HASH-TO-CURVE=RFC9380}} for the underlying derivation of `l`.
+`G.Order()` and return the result. See {{Section 5 of !HASH-TO-CURVE=RFC9380}}
+for the underlying derivation of `l`.
 
 # Security Considerations
 
@@ -1078,14 +1089,110 @@ primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that use a
 combiner optimized for a specific use case. Other use cases could be covered
 in subsequent documents and not included here.
 
-
 # IANA Considerations
 
-TODO
+This document requests three new entries to the "HPKE KEM Identifiers" registry.
+These entries are defined in the following subsections.
 
-## HPKE
+## QSF-SHA3-256-ML-KEM-768-P-256 KEM Identifier
 
-TODO
+Value:
+: 0xc1fe (please)
+
+KEM:
+: QSF-SHA3-256-ML-KEM-768-P-256
+
+Nsecret:
+: 32
+
+Nenc:
+: 1121
+
+Npk:
+: 1217
+
+Nsk:
+: 32
+
+Auth:
+: no
+
+Reference:
+: This document
+
+## KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 KEM Identifier
+
+Value:
+: 0xbc48  (please)
+
+KEM:
+: KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+
+Nsecret:
+: 32
+
+Nenc:
+: 1120
+
+Npk:
+: 1216
+
+Nsk:
+: 32
+
+Auth:
+: no
+
+Reference:
+: This document
+
+## QSF-SHA3-256-ML-KEM-1024-P-384 KEM Identifier
+
+Value:
+: 0x0a25 (please)
+
+KEM:
+: QSF-SHA3-256-ML-KEM-1024-P-384
+
+Nsecret:
+: 32
+
+Nenc:
+: 1617
+
+Npk:
+: 1617
+
+Nsk:
+: 32
+
+Auth:
+: no
+
+Reference:
+: This document
+
+# Test Vectors
+
+This section describes test vectors for each of the concrete KEMs specified in this document.
+
+## QSF-SHA3-256-ML-KEM-768-P-256 Test Vectors
+
+~~~~
+{::include ./spec/test-vectors-QSF-SHA3-256-ML-KEM-768-P-256.txt}
+~~~~
+
+## KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 Test Vectors
+
+~~~~
+{::include ./spec/test-vectors-KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519.txt}
+~~~~
+
+## QSF-SHA3-256-ML-KEM-1024-P-384 Test Vectors
+
+~~~~
+{::include ./spec/test-vectors-QSF-SHA3-256-ML-KEM-1024-P-384.txt}
+~~~~
 
 --- back
 
