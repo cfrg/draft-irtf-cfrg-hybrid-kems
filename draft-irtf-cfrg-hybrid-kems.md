@@ -295,6 +295,10 @@ We now detail a number of member functions that can be invoked on `G`.
   fixed length `Ns`.
 - DeserializeScalar(buf): Attempts to map a byte array `buf` to a `Scalar`
   `s`.  This function raises an error if deserialization fails.
+- ScalarFromBytes(buf): Maps a byte array `buf` to a `Scalar` by first
+  interpreting the contents of `buf` as an unsigned integer and then
+  reducing that integer modulo the group order; this ensures that the
+  resulting integer is always an element of the Scalar field.
 
 # Hybrid KEM Constructions {#constructions}
 
@@ -472,6 +476,8 @@ the following functions:
   from a 32-byte string using Octet-String-to-Field-Element from
   {{SEC1}}. This function can fail if the input does not represent a Scalar
   in the range \[0, `G.Order()` - 1\].
+- ScalarFromBytes(buf): Implemented by converting `buf` to an integer using
+  OS2IP, and then reducing the resulting integer modulo the group order.
 
 <!-- TODO: this is the FROST style, which uses 33 bytes for the serialized
 group element. It doesn't match the existing HPKE KEM style, which uses 65
@@ -497,7 +503,7 @@ decapsulation procedures for this hybrid KEM.
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 112)
   (pq_PK, pq_SK) = ML-KEM-768.KeyGen_internal(expanded[0:32], expanded[32:64])
-  trad_SK = P-256.Scalar(expanded[64:112]) % P-256.Order()
+  trad_SK = P-256.ScalarFromBytes(expanded[64:112])
   trad_PK = P-256.SerializeElement(P-256.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
@@ -552,7 +558,7 @@ def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1184]
   trad_PK = P-256.DeserializeElement(pk[1184:1217])
   (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])
-  ek = P-256.Scalar(randomness[32:80]) % P-256.Order()
+  ek = P-256.ScalarFromBytes(randomness[32:80])
   trad_CT = P-256.SerializeElement(P-256.ScalarMultBase(ek))
   trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(ek, trad_PK))
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
@@ -814,6 +820,8 @@ the following functions:
   from a 48-byte string using Octet-String-to-Field-Element from
   {{SEC1}}. This function can fail if the input does not represent a Scalar
   in the range \[0, `G.Order()` - 1\].
+- ScalarFromBytes(buf): Implemented by converting `buf` to an integer using
+  OS2IP, and then reducing the resulting integer modulo the group order.
 
 The rest of this section specifies the key generation, encapsulation, and
 decapsulation procedures for this hybrid KEM.
@@ -826,7 +834,7 @@ decapsulation procedures for this hybrid KEM.
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 136)
   (pq_PK, pq_SK) = ML-KEM-1024.KeyGen_internal(expanded[0:32], expanded[32:64])
-  trad_SK = P-384.Scalar(expanded[64:136]) % P-384.Order()
+  trad_SK = P-384.ScalarFromBytes(expanded[64:136])
   trad_PK = P-384.SerializeElement(P-384.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
@@ -881,7 +889,7 @@ def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1568]
   trad_PK = P-384.DeserializeElement(pk[1568:1629])
   (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, randomness[0:32])
-  ek = randomness[32:80]
+  ek = P-384.ScalarFromBytes(randomness[32:80])
   trad_CT = P-384.SerializeElement(P-384.ScalarMultBase(ek))
   trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(ek, trad_PK))
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1568:1629], label)
