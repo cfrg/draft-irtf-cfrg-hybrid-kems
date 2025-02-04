@@ -4,8 +4,8 @@
 
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
-Intended status: Informational                           3 February 2025
-Expires: 7 August 2025
+Intended status: Informational                           4 February 2025
+Expires: 8 August 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 August 2025.
+   This Internet-Draft will expire on 8 August 2025.
 
 Copyright Notice
 
@@ -665,7 +665,6 @@ def Decaps(sk, ct):
    group implemented using Curve25519 and X25519 [RFC7748].
    Additionally, it uses a modified version of HKDF in the combiner,
    denoted LabeledHKDF, defined below.
-
 
    def LabeledExtract(salt, label, ikm):
      labeled_ikm = concat(label, ikm)
