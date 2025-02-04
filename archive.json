@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-02T01:02:27.212039+00:00",
+  "timestamp": "2025-02-04T00:59:25.725875+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -300,25 +300,35 @@
       "id": "PR_kwDOMmhxws6I0Zg9",
       "title": "Preliminary reference implementations and test vectors",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/3",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This mirrors the spec implementation for X-Wing, but it uses Sage for the NIST curve implementation. (Primarily because I had that laying around from other specs. We can replace with a Python implementation in the future if desired.) It fixes some things in the primary spec around key generation (formatting keys as byte strings), fully specifying the DH operations, etc. It also includes preliminary HPKE KEM codepoint registration requests. And, importantly, adds the test vectors produced from the reference implementation.",
       "createdAt": "2025-01-23T21:30:19Z",
-      "updatedAt": "2025-01-31T17:57:13Z",
+      "updatedAt": "2025-02-03T18:44:49Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "5557ce637cb791f95f09cf3271ec5623825047b1",
       "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "caw/vectors",
-      "headRefOid": "8d619bd493f79351a9d7aaed6b14279d8499f3bd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "headRefOid": "9771afd2307ec7032d8d6e8298849e06017c0264",
+      "closedAt": "2025-02-03T18:44:49Z",
+      "mergedAt": "2025-02-03T18:44:49Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "2f0ea74c9e3e93b7dd4fbd3f0c33fb76256e6fef"
+      },
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@dconnolly I added a `ScalarFromBytes` function, distinct from `DeserializeScalar`, as an infallible constructor that takes bytes and produces `Scalar` values, with an implementation that matches the reference code under the hood. Please take another look!",
+          "createdAt": "2025-02-03T17:35:02Z",
+          "updatedAt": "2025-02-03T17:35:02Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOMmhxws6aOQeU",
@@ -384,6 +394,39 @@
           "body": "Do we want to enforce the `Scalar` being always modulo its `Order()` via its instantiation? Otherwise we need to define `%` as used in `expandDecapsulationKey` etc",
           "createdAt": "2025-01-31T17:57:13Z",
           "updatedAt": "2025-01-31T17:57:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws6aaI9p",
+          "commit": {
+            "abbreviatedOid": "8d619bd"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-03T17:11:55Z",
+          "updatedAt": "2025-02-03T17:11:55Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "That's a cleaner way to handle this. I'll update the textual description of Scalar to include something about mapping from bytes, and say that the bytes are reduced modulo the order, or something.",
+              "createdAt": "2025-02-03T17:11:55Z",
+              "updatedAt": "2025-02-03T17:11:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6aa29j",
+          "commit": {
+            "abbreviatedOid": "9771afd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-03T18:44:32Z",
+          "updatedAt": "2025-02-03T18:44:32Z",
           "comments": []
         }
       ]
