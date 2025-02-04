@@ -198,8 +198,6 @@ four algorithms:
   as input a secret decapsulation key `sk` and ciphertext `ct` and outputs a
   shared secret `shared_secret`.
 
-<!-- TODO: define expandDecapsulationKey() -->
-
 KEMs can also provide a deterministic version of `Encaps`, denoted
 `EncapsDerand`, with the following signature:
 
@@ -479,16 +477,6 @@ the following functions:
 - ScalarFromBytes(buf): Implemented by converting `buf` to an integer using
   OS2IP, and then reducing the resulting integer modulo the group order.
 
-<!-- TODO: this is the FROST style, which uses 33 bytes for the serialized
-group element. It doesn't match the existing HPKE KEM style, which uses 65
-bytes for the serialized element. The 33-byte version is compressed, which
-may have implications for binding properties, but is compressed vs not
-sufficiently distinct to matter, when the sign is encoded. Align? Don't?
-
-If we pick the smaller, we may figure out how to get the label size down to
-fit the whole preimage into the Keccak block input size, which would be nice
-for performance. But that might be trying to hard to over-engineer this. -->
-
 The rest of this section specifies the key generation, encapsulation, and
 decapsulation procedures for this hybrid KEM.
 
@@ -496,8 +484,11 @@ decapsulation procedures for this hybrid KEM.
 
 `QSF-SHA3-256-ML-KEM-768-P-256` KeyGen works as follows.
 
-<!-- TODO: is this expanding from a decaps key seed, but maybe this should just be 'expandKeyPair` -->
-<!-- TODO: annotate with the byte sizes of the parameters in terms of Nseed, Nsk, etc -->
+<!-- TODO: is this expanding from a decaps key seed, but maybe this should
+just be 'expandKeyPair` -->
+
+<!-- TODO: annotate with the byte sizes of the parameters in terms of Nseed,
+Nsk, etc -->
 
 ~~~
 def expandDecapsulationKey(sk):
@@ -632,8 +623,8 @@ implemented using Curve25519 and X25519 {{!RFC7748}}. Additionally, it uses a
 modified version of HKDF in the combiner, denoted LabeledHKDF, defined below.
 
 <!-- TODO: double check on whether the public context should go in `*_info`
-or if --> <!-- all concatted is fine; i think a separate label is ok? HKDF as
-a split PRF seems extra?-->
+or if all concatted is fine; i think a separate label is ok? HKDF as a split
+PRF seems extra?-->
 
 ~~~
 def LabeledExtract(salt, label, ikm):
@@ -698,9 +689,10 @@ def Encaps(pk):
   return (ss, ct)
 ~~~
 
-pk is a 1216-byte encapsulation key resulting from KeyGen().
+`pk` is a 1216-byte encapsulation key resulting from KeyGen().
 
-Encaps() returns the 32-byte shared secret ss and the 1120-byte ciphertext ct.
+Encaps() returns the 32-byte shared secret ss and the 1120-byte ciphertext
+ct.
 
 Note that `Encaps()` may raise an error if ML-KEM-768.Encaps fails, e.g., if
 it does not pass the check of {{FIPS203}} §7.2.
@@ -800,20 +792,21 @@ the following functions:
   range \[0, `G.Order()` - 1\]. Refer to {{random-scalar}} for
   implementation guidance.
 - SerializeElement(A): Implemented using the compressed
-  Elliptic-Curve-Point-to-Octet-String method according to {{SEC1}},
-  yielding a 61-byte output. Additionally, this function validates that the
-  input element is not the group identity element.
-- DeserializeElement(buf): Implemented by attempting to deserialize a
-  61-byte input string to a public key using the compressed
-  Octet-String-to-Elliptic-Curve-Point method according to {{SEC1}}, and
-  then performs public-key validation as defined in section 3.2.2.1 of
-  {{SEC1}}.  This includes checking that the coordinates of the resulting
-  point are in the correct range, that the point is on the curve, and that
-  the point is not the point at infinity. (As noted in the specification,
-  validation of the point order is not required since the cofactor is 1.)
-  If any of these checks fail, deserialization returns an error.
+  Elliptic-Curve-Point-to-Octet-String method according to {{SEC1}}, yielding
+  a 61-byte output. Additionally, this function validates that the input
+  element is not the group identity element.
+- DeserializeElement(buf): Implemented by attempting to deserialize a 61-byte
+  input string to a public key using the compressed
+  Octet-String-to-Elliptic-Curve-Point method according to {{SEC1}}, and then
+  performs public-key validation as defined in section 3.2.2.1 of {{SEC1}}.
+  This includes checking that the coordinates of the resulting point are in
+  the correct range, that the point is on the curve, and that the point is
+  not the point at infinity. (As noted in the specification, validation of
+  the point order is not required since the cofactor is 1.)  If any of these
+  checks fail, deserialization returns an error.
 - SerializeElementAsSharedSecret(A): Implemented by encoding the X coordinate
-  of the elliptic curve point corresponding to A to a little-endian 48-byte string.
+  of the elliptic curve point corresponding to A to a little-endian 48-byte
+  string.
 - SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
   conversion according to {{SEC1}}.
 - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar
@@ -1091,8 +1084,8 @@ in subsequent documents and not included here.
 
 # IANA Considerations
 
-This document requests three new entries to the "HPKE KEM Identifiers" registry.
-These entries are defined in the following subsections.
+This document requests three new entries to the "HPKE KEM Identifiers"
+registry.  These entries are defined in the following subsections.
 
 ## QSF-SHA3-256-ML-KEM-768-P-256 KEM Identifier
 
@@ -1174,7 +1167,8 @@ Reference:
 
 # Test Vectors
 
-This section describes test vectors for each of the concrete KEMs specified in this document.
+This section describes test vectors for each of the concrete KEMs specified
+in this document.
 
 ## QSF-SHA3-256-ML-KEM-768-P-256 Test Vectors
 
