@@ -666,7 +666,6 @@ def Decaps(sk, ct):
    Additionally, it uses a modified version of HKDF in the combiner,
    denoted LabeledHKDF, defined below.
 
-
    def LabeledExtract(salt, label, ikm):
      labeled_ikm = concat(label, ikm)
      return HDKF-Extract(salt, labeled_ikm)

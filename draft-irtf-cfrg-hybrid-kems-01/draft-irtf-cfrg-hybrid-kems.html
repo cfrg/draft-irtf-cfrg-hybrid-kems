@@ -2063,8 +2063,7 @@ security.<a href="#section-6.1.5-3" class="pilcrow">¶</a></p>
 <p id="section-6.2-3"><code>KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519</code> depends on a prime-order group
 implemented using Curve25519 and X25519 <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>. Additionally, it uses a
 modified version of HKDF in the combiner, denoted LabeledHKDF, defined below.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.2-4"></p>
-<div class="alignLeft art-text artwork" id="section-6.2-5">
+<div class="alignLeft art-text artwork" id="section-6.2-4">
 <pre>
 def LabeledExtract(salt, label, ikm):
   labeled_ikm = concat(label, ikm)
@@ -2078,10 +2077,10 @@ def LabeledHKDF(preimage):
   prk = LabeledExtract("", "hybrid_prk", preimage)
   shared_secret = LabeledExpand(prk, "shared_secret", "", 32)
   return shared_secret
-</pre><a href="#section-6.2-5" class="pilcrow">¶</a>
+</pre><a href="#section-6.2-4" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2-6">The rest of this section specifies the key generation, encapsulation, and
-decapsulation procedures for this hybrid KEM.<a href="#section-6.2-6" class="pilcrow">¶</a></p>
+<p id="section-6.2-5">The rest of this section specifies the key generation, encapsulation, and
+decapsulation procedures for this hybrid KEM.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
 <div id="key-generation-1">
 <section id="section-6.2.1">
           <h4 id="name-key-generation-2">
@@ -2135,8 +2134,9 @@ def Encaps(pk):
   return (ss, ct)
 </pre><a href="#section-6.2.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2.2-3">pk is a 1216-byte encapsulation key resulting from KeyGen().<a href="#section-6.2.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.2.2-4">Encaps() returns the 32-byte shared secret ss and the 1120-byte ciphertext ct.<a href="#section-6.2.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-3"><code>pk</code> is a 1216-byte encapsulation key resulting from KeyGen().<a href="#section-6.2.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-4">Encaps() returns the 32-byte shared secret ss and the 1120-byte ciphertext
+ct.<a href="#section-6.2.2-4" class="pilcrow">¶</a></p>
 <p id="section-6.2.2-5">Note that <code>Encaps()</code> may raise an error if ML-KEM-768.Encaps fails, e.g., if
 it does not pass the check of <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span> §7.2.<a href="#section-6.2.2-5" class="pilcrow">¶</a></p>
 </section>
@@ -2292,24 +2292,25 @@ implementation guidance.<a href="#section-6.3-4.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-4.4">
             <p id="section-6.3-4.4.1">SerializeElement(A): Implemented using the compressed
-Elliptic-Curve-Point-to-Octet-String method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>,
-yielding a 61-byte output. Additionally, this function validates that the
-input element is not the group identity element.<a href="#section-6.3-4.4.1" class="pilcrow">¶</a></p>
+Elliptic-Curve-Point-to-Octet-String method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>, yielding
+a 61-byte output. Additionally, this function validates that the input
+element is not the group identity element.<a href="#section-6.3-4.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-4.5">
-            <p id="section-6.3-4.5.1">DeserializeElement(buf): Implemented by attempting to deserialize a
-61-byte input string to a public key using the compressed
-Octet-String-to-Elliptic-Curve-Point method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>, and
-then performs public-key validation as defined in section 3.2.2.1 of
-<span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>.  This includes checking that the coordinates of the resulting
-point are in the correct range, that the point is on the curve, and that
-the point is not the point at infinity. (As noted in the specification,
-validation of the point order is not required since the cofactor is 1.)
-If any of these checks fail, deserialization returns an error.<a href="#section-6.3-4.5.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-4.5.1">DeserializeElement(buf): Implemented by attempting to deserialize a 61-byte
+input string to a public key using the compressed
+Octet-String-to-Elliptic-Curve-Point method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>, and then
+performs public-key validation as defined in section 3.2.2.1 of <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>.
+This includes checking that the coordinates of the resulting point are in
+the correct range, that the point is on the curve, and that the point is
+not the point at infinity. (As noted in the specification, validation of
+the point order is not required since the cofactor is 1.)  If any of these
+checks fail, deserialization returns an error.<a href="#section-6.3-4.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-4.6">
             <p id="section-6.3-4.6.1">SerializeElementAsSharedSecret(A): Implemented by encoding the X coordinate
-of the elliptic curve point corresponding to A to a little-endian 48-byte string.<a href="#section-6.3-4.6.1" class="pilcrow">¶</a></p>
+of the elliptic curve point corresponding to A to a little-endian 48-byte
+string.<a href="#section-6.3-4.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-4.7">
             <p id="section-6.3-4.7.1">SerializeScalar(s): Implemented using the Field-Element-to-Octet-String
@@ -2692,8 +2693,8 @@ in subsequent documents and not included here.<a href="#section-9.4-1" class="pi
       <h2 id="name-iana-considerations">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-10-1">This document requests three new entries to the "HPKE KEM Identifiers" registry.
-These entries are defined in the following subsections.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-1">This document requests three new entries to the "HPKE KEM Identifiers"
+registry.  These entries are defined in the following subsections.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <div id="qsf-sha3-256-ml-kem-768-p-256-kem-identifier">
 <section id="section-10.1">
         <h3 id="name-qsf-sha3-256-ml-kem-768-p-25">
@@ -2848,7 +2849,8 @@ These entries are defined in the following subsections.<a href="#section-10-1" c
       <h2 id="name-test-vectors">
 <a href="#section-11" class="section-number selfRef">11. </a><a href="#name-test-vectors" class="section-name selfRef">Test Vectors</a>
       </h2>
-<p id="section-11-1">This section describes test vectors for each of the concrete KEMs specified in this document.<a href="#section-11-1" class="pilcrow">¶</a></p>
+<p id="section-11-1">This section describes test vectors for each of the concrete KEMs specified
+in this document.<a href="#section-11-1" class="pilcrow">¶</a></p>
 <div id="qsf-sha3-256-ml-kem-768-p-256-test-vectors">
 <section id="section-11.1">
         <h3 id="name-qsf-sha3-256-ml-kem-768-p-256">
