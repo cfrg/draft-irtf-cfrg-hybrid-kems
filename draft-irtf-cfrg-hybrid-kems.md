@@ -168,6 +168,12 @@ The following terms are used throughout this document:
 - `OS2IP(x)`: Convert byte string `x` to a non-negative integer, as described
   in {{!RFC8017}}, assuming big-endian byte order.
 
+When `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to
+denote the slice of bytes in `x` starting from the beginning of `x` and
+leading up to index `i`, including the `i`-th byte, and the slice the bytes
+in `x` starting from index `i` to the end of `x`, respectively. For example,
+if `x = [0, 1, 2, 3]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3]`.
+
 # Cryptographic Dependencies {#cryptographic-deps}
 
 The generic hybrid PQ/T KEM constructions we define depend on the the
@@ -349,22 +355,24 @@ is assumed to be fixed.
 
 ## Key generation and derivation {#generic-keygen}
 
-For both constructions we provide a common key generation and derivation
-design. It relies on the following parameters that are populated by concrete
-instantiations:
+For both constructions in this document we provide a common key generation
+and derivation design. It relies on the following parameters that are
+populated by concrete instantiations:
 
-* `XOF`: The eXtended Output Function
+* `XOF`: the eXtended Output Function
+* `PQKEM`: the PQ KEM component scheme
+* `G`: the nomimal group used to construct the traditional KEM component
+  scheme as described in {{group}
 * Nseed: length in bytes of the seed randomness sourced from the RNG
-* Nxofout: length in bytes of the XOF output
 * Npqseed: length in bytes of the input to PQ.DeriveKey()
 * Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()
 
 ~~~
 def expandDecapsulationKey(sk):
-  expanded = XOF(sk, Nxofout)
-  (pq_PK, pq_SK) = PQ.DeriveKey(expanded[..Npqseed])
-  trad_SK = NominalGroup.ScalarFromBytes(expanded[Npqseed..])
-  trad_PK = NominalGroup.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
+  expanded = XOF(sk, Npqseed + Ntradseed)
+  (pq_PK, pq_SK) = PQKEM.DeriveKey(expanded[..Npqseed])
+  trad_SK = G.ScalarFromBytes(expanded[Npqseed..])
+  trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
 def KeyGen():
@@ -475,9 +483,12 @@ component of the algorithm. It has the following parameters.
 * `KDF`: SHA3-256 {{FIPS202}}
 * Combiner: QSF-KEM.SharedSecret
 * Nseed: 32
+* Npqseed: 64
+* Ntradseed: 48
 * Npk: 1217
 * Nsk: 32
 * Nct: 1121
+
 
 `QSF-SHA3-256-ML-KEM-768-P-256` depends on P-256 as a nominal prime-order
 group {{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32, with
@@ -650,6 +661,8 @@ KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following parameters.
 * `KDF`: HKDF-SHA-256 {{HKDF}}
 * Combiner: KitchenSink-KEM.SharedSecret
 * Nseed: 32
+* Npqseed: 64
+* Ntradseed: 32
 * Npk: 1216
 * Nsk: 32
 * Nct: 1120
@@ -812,6 +825,8 @@ This implies via {{KSMW2024}} that this instance also satisfies
 * `KDF`: SHA3-256 {{FIPS202}}
 * Combiner: QSF-KEM.SharedSecret
 * Nseed: 32
+* Npqseed: 64
+* Ntradseed: 72
 * Npk: 1629
 * Nsk: 32
 * Nct: 1629
