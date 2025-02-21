@@ -1,7 +1,6 @@
-# WARNING This is a specification of KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519;
+# WARNING This is a specification of KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256);
 # not a production-ready implementation. It is slow and does not run
 # in constant time.
-
 import os
 import hmac
 import hashlib
@@ -10,7 +9,7 @@ from kem import *
 import x25519
 import mlkem
 
-label = "KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519"
+label = "KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)"
 as_bytes = lambda x: x if isinstance(x, bytes) else bytes(x, "utf-8")
 
 def hkdf_extract(salt, ikm):
