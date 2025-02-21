@@ -1411,6 +1411,11 @@ byte string, as described in <span>[<a href="#RFC8017" class="cite xref">RFC8017
 in <span>[<a href="#RFC8017" class="cite xref">RFC8017</a>]</span>, assuming big-endian byte order.<a href="#section-3-3.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
+<p id="section-3-4">When <code>x</code> is a byte string, we use the notation <code>x[..i]</code> and <code>x[i..]</code> to
+denote the slice of bytes in <code>x</code> starting from the beginning of <code>x</code> and
+leading up to index <code>i</code>, including the <code>i</code>-th byte, and the slice the bytes
+in <code>x</code> starting from index <code>i</code> to the end of <code>x</code>, respectively. For example,
+if <code>x = [0, 1, 2, 3]</code>, then <code>x[..2] = [0, 1]</code> and <code>x[2..] = [2, 3]</code>.<a href="#section-3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cryptographic-deps">
@@ -1683,33 +1688,37 @@ is assumed to be fixed.<a href="#section-5-6.3.1" class="pilcrow">¶</a></p>
         <h3 id="name-key-generation-and-derivati">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-key-generation-and-derivati" class="section-name selfRef">Key generation and derivation</a>
         </h3>
-<p id="section-5.1-1">For both constructions we provide a common key generation and derivation
-design. It relies on the following parameters that are populated by concrete
-instantiations:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-1">For both constructions in this document we provide a common key generation
+and derivation design. It relies on the following parameters that are
+populated by concrete instantiations:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-2.1">
-            <p id="section-5.1-2.1.1"><code>XOF</code>: The eXtended Output Function<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.1.1"><code>XOF</code>: the eXtended Output Function<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.2">
-            <p id="section-5.1-2.2.1">Nseed: length in bytes of the seed randomness sourced from the RNG<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.2.1"><code>PQKEM</code>: the PQ KEM component scheme<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.3">
-            <p id="section-5.1-2.3.1">Nxofout: length in bytes of the XOF output<a href="#section-5.1-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.3.1"><code>G</code>: the nomimal group used to construct the traditional KEM component
+scheme as described in <a href="#group" class="auto internal xref">Section 4.4</a><a href="#section-5.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.4">
-            <p id="section-5.1-2.4.1">Npqseed: length in bytes of the input to PQ.DeriveKey()<a href="#section-5.1-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.4.1">Nseed: length in bytes of the seed randomness sourced from the RNG<a href="#section-5.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.5">
-            <p id="section-5.1-2.5.1">Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()<a href="#section-5.1-2.5.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.5.1">Npqseed: length in bytes of the input to PQ.DeriveKey()<a href="#section-5.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.1-2.6">
+            <p id="section-5.1-2.6.1">Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()<a href="#section-5.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div class="alignLeft art-text artwork" id="section-5.1-3">
 <pre>
 def expandDecapsulationKey(sk):
-  expanded = XOF(sk, Nxofout)
-  (pq_PK, pq_SK) = PQ.DeriveKey(expanded[..Npqseed])
-  trad_SK = NominalGroup.ScalarFromBytes(expanded[Npqseed..])
-  trad_PK = NominalGroup.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
+  expanded = XOF(sk, Npqseed + Ntradseed)
+  (pq_PK, pq_SK) = PQKEM.DeriveKey(expanded[..Npqseed])
+  trad_SK = G.ScalarFromBytes(expanded[Npqseed..])
+  trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
   return (pq_SK, trad_SK, pq_PK, trad_PK)
 
 def KeyGen():
@@ -1861,13 +1870,19 @@ component of the algorithm. It has the following parameters.<a href="#section-6.
             <p id="section-6.1-2.5.1">Nseed: 32<a href="#section-6.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-2.6">
-            <p id="section-6.1-2.6.1">Npk: 1217<a href="#section-6.1-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-6.1-2.6.1">Npqseed: 64<a href="#section-6.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-2.7">
-            <p id="section-6.1-2.7.1">Nsk: 32<a href="#section-6.1-2.7.1" class="pilcrow">¶</a></p>
+            <p id="section-6.1-2.7.1">Ntradseed: 48<a href="#section-6.1-2.7.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-2.8">
-            <p id="section-6.1-2.8.1">Nct: 1121<a href="#section-6.1-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-6.1-2.8.1">Npk: 1217<a href="#section-6.1-2.8.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.9">
+            <p id="section-6.1-2.9.1">Nsk: 32<a href="#section-6.1-2.9.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.10">
+            <p id="section-6.1-2.10.1">Nct: 1121<a href="#section-6.1-2.10.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.1-3"><code>QSF-SHA3-256-ML-KEM-768-P-256</code> depends on P-256 as a nominal prime-order
@@ -2104,13 +2119,19 @@ security.<a href="#section-6.1.5-3" class="pilcrow">¶</a></p>
             <p id="section-6.2-2.5.1">Nseed: 32<a href="#section-6.2-2.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.2-2.6">
-            <p id="section-6.2-2.6.1">Npk: 1216<a href="#section-6.2-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-6.2-2.6.1">Npqseed: 64<a href="#section-6.2-2.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.2-2.7">
-            <p id="section-6.2-2.7.1">Nsk: 32<a href="#section-6.2-2.7.1" class="pilcrow">¶</a></p>
+            <p id="section-6.2-2.7.1">Ntradseed: 32<a href="#section-6.2-2.7.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.2-2.8">
-            <p id="section-6.2-2.8.1">Nct: 1120<a href="#section-6.2-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-6.2-2.8.1">Npk: 1216<a href="#section-6.2-2.8.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.9">
+            <p id="section-6.2-2.9.1">Nsk: 32<a href="#section-6.2-2.9.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.10">
+            <p id="section-6.2-2.10.1">Nct: 1120<a href="#section-6.2-2.10.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.2-3"><code>KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519</code> depends on a prime-order group
@@ -2317,13 +2338,19 @@ MAL-BIND-K-PK and MAL-BIND-K-CT security.<a href="#section-6.2.5-2" class="pilcr
             <p id="section-6.3-2.5.1">Nseed: 32<a href="#section-6.3-2.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-2.6">
-            <p id="section-6.3-2.6.1">Npk: 1629<a href="#section-6.3-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-2.6.1">Npqseed: 64<a href="#section-6.3-2.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-2.7">
-            <p id="section-6.3-2.7.1">Nsk: 32<a href="#section-6.3-2.7.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-2.7.1">Ntradseed: 72<a href="#section-6.3-2.7.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-2.8">
-            <p id="section-6.3-2.8.1">Nct: 1629<a href="#section-6.3-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-2.8.1">Npk: 1629<a href="#section-6.3-2.8.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-2.9">
+            <p id="section-6.3-2.9.1">Nsk: 32<a href="#section-6.3-2.9.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-2.10">
+            <p id="section-6.3-2.10.1">Nct: 1629<a href="#section-6.3-2.10.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.3-3"><code>QSF-SHA3-256-ML-KEM-1024-P-384</code> depends on P-384 as a nominal prime-order
