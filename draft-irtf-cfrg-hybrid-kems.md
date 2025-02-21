@@ -347,6 +347,41 @@ disjoint and non-colliding. Moreover, the length of each each public
 encapsulation key, ciphertext, and shared secret is fixed once the algorithm
 is assumed to be fixed.
 
+## Key generation and derivation {#generic-keygen}
+
+For both constructions we provide a common key generation and derivation
+design. It relies on the following parameters that are populated by concrete
+instantiations:
+
+* `XOF`: The eXtended Output Function
+* Nseed: length in bytes of the seed randomness sourced from the RNG
+* Nxofout: length in bytes of the XOF output
+* Npqseed: length in bytes of the input to PQ.DeriveKey()
+* Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()
+
+~~~
+def expandDecapsulationKey(sk):
+  expanded = XOF(sk, Nxofout)
+  (pq_PK, pq_SK) = PQ.DeriveKey(expanded[..Npqseed])
+  trad_SK = NominalGroup.ScalarFromBytes(expanded[Npqseed..])
+  trad_PK = NominalGroup.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
+  return (pq_SK, trad_SK, pq_PK, trad_PK)
+
+def KeyGen():
+  sk = random(Nseed)
+  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
+  return sk, concat(pq_PK, trad_PK)
+~~~
+
+Similarly, `DeriveKey` works as follows:
+
+~~~
+def DeriveKey(seed):
+  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
+  return sk, concat(pq_PK, trad_PK)
+~~~
+
+
 ## 'Kitchen Sink' construction {#KitchenSink}
 
 As indicated by the name, the `KitchenSink` puts 'the whole transcript'
@@ -411,6 +446,7 @@ LEAK-BIND-K,PK-CT security][CDM23]
 Indistinguishability of the final shared secret from a random key is
 established by modeling the key-derivation function as a random
 oracle {{XWING}}.
+
 
 # Concrete Hybrid KEM Instances
 
