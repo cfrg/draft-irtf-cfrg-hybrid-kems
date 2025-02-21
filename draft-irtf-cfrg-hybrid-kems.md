@@ -416,25 +416,27 @@ oracle {{XWING}}.
 
 This section instantiates three concrete KEMs:
 
-1. `QSF-SHA3-256-ML-KEM-768-P-256` {{qsf-p256}}: A hybrid KEM using the QSF
-   combiner based on ML-KEM-768 and P-256.
-2. `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` {{ks-x25519}}: A hybrid KEM
-   using the KitchenSink combiner based on ML-KEM-768 and X25519.
-3. `QSF-SHA3-256-ML-KEM-1024-P-384` {{qsf-p384}}: A hybrid KEM using the QSF
-   combiner based on ML-KEM-1024 and P-384.
+1. `QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` {{qsf-p256}}:
+   A hybrid KEM using the QSF combiner with SHA3-256 as the hash function
+   based on ML-KEM-768 and P-256, along with SHAKE256 as the key derivation XOF.
+2. `KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` {{ks-x25519}}:
+   A hybrid KEM using the KitchenSink combiner based on ML-KEM-768 and X25519.
+3. `QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` {{qsf-p384}}:
+   A hybrid KEM using the QSF combiner with SHA3-256 as the hash function
+   based on ML-KEM-1024 and P-384, along with SHAKE256 as the key derivation XOF.
 
 Each instance specifies the PQ and traditional KEMs being combined, the
 combiner construction from {{constructions}}, the `label` to use for domain
 separation in the combiner function, as well as the XOF and KDF functions to
 use throughout.
 
-## `QSF-SHA3-256-ML-KEM-768-P-256` {#qsf-p256}
+## `QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` {#qsf-p256}
 
 This hybrid KEM is heavily based on {{XWING}}. In particular, it has the same
 exact design but uses P-256 instead of X25519 as the the traditional
 component of the algorithm. It has the following parameters.
 
-* `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
+* `label`: `QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)`
 * `XOF`: SHAKE-256 {{FIPS202}}
 * `KDF`: SHA3-256 {{FIPS202}}
 * Combiner: QSF-KEM.SharedSecret
@@ -443,7 +445,7 @@ component of the algorithm. It has the following parameters.
 * Nsk: 32
 * Nct: 1121
 
-`QSF-SHA3-256-ML-KEM-768-P-256` depends on P-256 as a nominal prime-order
+`QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` depends on P-256 as a nominal prime-order
 group {{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 33 and Ns = 32, with
 the following functions:
 
@@ -482,7 +484,7 @@ decapsulation procedures for this hybrid KEM.
 
 ### Key generation
 
-`QSF-SHA3-256-ML-KEM-768-P-256` KeyGen works as follows.
+`QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` KeyGen works as follows.
 
 <!-- TODO: is this expanding from a decaps key seed, but maybe this should
 just be 'expandKeyPair` -->
@@ -504,7 +506,7 @@ def KeyGen():
   return sk, concat(pq_PK, trad_PK)
 ~~~
 
-Similarly, `QSF-SHA3-256-ML-KEM-768-P-256` DeriveKey works as follows:
+Similarly, `QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` DeriveKey works as follows:
 
 ~~~
 def DeriveKey(seed):
@@ -514,7 +516,7 @@ def DeriveKey(seed):
 
 ### Encapsulation
 
-Given an encapsulation key `pk`, `QSF-SHA3-256-ML-KEM-768-P-256` Encaps
+Given an encapsulation key `pk`, `QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` Encaps
 proceeds as follows.
 
 ~~~
@@ -562,7 +564,7 @@ Note that `randomness` MUST be 80 bytes.
 ### Decapsulation
 
 Given a decapsulation key `sk` and ciphertext `ct`,
-`QSF-SHA3-256-ML-KEM-768-P-256` Decaps proceeds as follows.
+`QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)` Decaps proceeds as follows.
 
 ~~~
 def Decaps(sk, ct):
@@ -605,11 +607,11 @@ This implies via {{KSMW2024}} that this instance also satisfies
 - HON-BIND-K,CT-PK
 - HON-BIND-K,PK-CT
 
-## `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` {#ks-x25519}
+## `KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` {#ks-x25519}
 
-KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following parameters.
+KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256) has the following parameters.
 
-* `label`: `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519`
+* `label`: `KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)`
 * `XOF`: SHAKE-256 {{FIPS202}}
 * `KDF`: HKDF-SHA-256 {{HKDF}}
 * Combiner: KitchenSink-KEM.SharedSecret
@@ -618,7 +620,7 @@ KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following parameters.
 * Nsk: 32
 * Nct: 1120
 
-`KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` depends on a prime-order group
+`KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` depends on a prime-order group
 implemented using Curve25519 and X25519 {{!RFC7748}}. Additionally, it uses a
 modified version of HKDF in the combiner, denoted LabeledHKDF, defined below.
 
@@ -646,7 +648,7 @@ decapsulation procedures for this hybrid KEM.
 
 ### Key generation
 
-`KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` KeyGen works as follows.
+`KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` KeyGen works as follows.
 
 ~~~
 def expandDecapsulationKey(sk):
@@ -662,7 +664,7 @@ def KeyGen():
   return sk, concat(pq_PK, trad_PK)
 ~~~
 
-Similarly, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` DeriveKey works as
+Similarly, `KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` DeriveKey works as
 follows:
 
 ~~~
@@ -673,7 +675,7 @@ def DeriveKey(seed):
 
 ### Encapsulation
 
-Given an encapsulation key `pk`, `KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519`
+Given an encapsulation key `pk`, `KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)`
 Encaps proceeds as follows.
 
 ~~~
@@ -721,7 +723,7 @@ Note that `randomness` MUST be 64 bytes.
 ### Decapsulation
 
 Given a decapsulation key `sk` and ciphertext `ct`,
-`KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519` Decaps proceeds as follows.
+`KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` Decaps proceeds as follows.
 
 ~~~
 def Decaps(sk, ct):
@@ -765,13 +767,13 @@ This implies via {{KSMW2024}} that this instance also satisfies
 - HON-BIND-K,CT-PK
 - HON-BIND-K,PK-CT
 
-## `QSF-SHA3-256-ML-KEM-1024-P-384` {#qsf-p384}
+## `QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` {#qsf-p384}
 
 <!-- TODO: include the XOF in the name?? -->
 
-`QSF-SHA3-256-ML-KEM-1024-P-384` has the following parameters.
+`QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` has the following parameters.
 
-* `label`: `QSF-SHA3-256-ML-KEM-768-P-256`
+* `label`: `QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)`
 * `XOF`: SHAKE-256 {{FIPS202}}
 * `KDF`: SHA3-256 {{FIPS202}}
 * Combiner: QSF-KEM.SharedSecret
@@ -780,7 +782,7 @@ This implies via {{KSMW2024}} that this instance also satisfies
 * Nsk: 32
 * Nct: 1629
 
-`QSF-SHA3-256-ML-KEM-1024-P-384` depends on P-384 as a nominal prime-order
+`QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` depends on P-384 as a nominal prime-order
 group {{FIPS186}} (secp256r1) {{ANSIX9.62}}, where Ne = 61 and Ns = 48, with
 the following functions:
 
@@ -821,7 +823,7 @@ decapsulation procedures for this hybrid KEM.
 
 ### Key generation
 
-`QSF-SHA3-256-ML-KEM-1024-P-384` KeyGen works as follows.
+`QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` KeyGen works as follows.
 
 ~~~
 def expandDecapsulationKey(sk):
@@ -837,7 +839,7 @@ def KeyGen():
   return sk, concat(pq_PK, trad_PK)
 ~~~
 
-Similarly, `QSF-SHA3-256-ML-KEM-1024-P-384` DeriveKey works as follows:
+Similarly, `QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` DeriveKey works as follows:
 
 ~~~
 def DeriveKey(seed):
@@ -847,7 +849,7 @@ def DeriveKey(seed):
 
 ### Encapsulation
 
-Given an encapsulation key `pk`, `QSF-SHA3-256-ML-KEM-1024-P-384` Encaps
+Given an encapsulation key `pk`, `QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` Encaps
 proceeds as follows.
 
 ~~~
@@ -895,7 +897,7 @@ Note that `randomness` MUST be 80 bytes.
 ### Decapsulation
 
 Given a decapsulation key `sk` and ciphertext `ct`,
-`QSF-SHA3-256-ML-KEM-1024-P-384` Decaps proceeds as follows.
+`QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)` Decaps proceeds as follows.
 
 ~~~
 def Decaps(sk, ct):
@@ -1087,13 +1089,13 @@ in subsequent documents and not included here.
 This document requests three new entries to the "HPKE KEM Identifiers"
 registry.  These entries are defined in the following subsections.
 
-## QSF-SHA3-256-ML-KEM-768-P-256 KEM Identifier
+## QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) KEM Identifier
 
 Value:
 : 0xc1fe (please)
 
 KEM:
-: QSF-SHA3-256-ML-KEM-768-P-256
+: QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
 
 Nsecret:
 : 32
@@ -1113,13 +1115,13 @@ Auth:
 Reference:
 : This document
 
-## KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 KEM Identifier
+## KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256) KEM Identifier
 
 Value:
 : 0xbc48  (please)
 
 KEM:
-: KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+: KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)
 
 Nsecret:
 : 32
@@ -1139,13 +1141,13 @@ Auth:
 Reference:
 : This document
 
-## QSF-SHA3-256-ML-KEM-1024-P-384 KEM Identifier
+## QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) KEM Identifier
 
 Value:
 : 0x0a25 (please)
 
 KEM:
-: QSF-SHA3-256-ML-KEM-1024-P-384
+: QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
 
 Nsecret:
 : 32
@@ -1170,22 +1172,22 @@ Reference:
 This section describes test vectors for each of the concrete KEMs specified
 in this document.
 
-## QSF-SHA3-256-ML-KEM-768-P-256 Test Vectors
+## QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) Test Vectors
 
 ~~~~
-{::include ./spec/test-vectors-QSF-SHA3-256-ML-KEM-768-P-256.txt}
+{::include ./spec/test-vectors-QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256).txt}
 ~~~~
 
-## KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 Test Vectors
+## KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256) Test Vectors
 
 ~~~~
-{::include ./spec/test-vectors-KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519.txt}
+{::include ./spec/test-vectors-KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256).txt}
 ~~~~
 
-## QSF-SHA3-256-ML-KEM-1024-P-384 Test Vectors
+## QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) Test Vectors
 
 ~~~~
-{::include ./spec/test-vectors-QSF-SHA3-256-ML-KEM-1024-P-384.txt}
+{::include ./spec/test-vectors-QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256).txt}
 ~~~~
 
 --- back
