@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-20T01:01:05.236199+00:00",
+  "timestamp": "2025-02-23T01:05:33.410428+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -49,7 +49,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 4,
+      "id": "I_kwDOMmhxws6rCIMm",
+      "title": "Should instance labels include the XOF that's used for key generation?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/4",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "For example, `QSF-SHA3-256-ML-KEM-768-P-256` doesn't say that it uses SHAKE256 for the XOF. Should we?",
+      "createdAt": "2025-02-21T16:15:05Z",
+      "updatedAt": "2025-02-21T16:15:05Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
@@ -428,6 +445,120 @@
           "createdAt": "2025-02-03T18:44:32Z",
           "updatedAt": "2025-02-03T18:44:32Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOMmhxws6MFI2K",
+      "title": "Update labels to include XOF",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/5",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Hopefully these labels are not too terrible on the eyes \ud83e\udd37 \r\n\r\nCloses #4.",
+      "createdAt": "2025-02-21T17:19:15Z",
+      "updatedAt": "2025-02-21T21:14:24Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "f50c9557531cb1237d8be28871842f6fa8675134",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "caw/update-labels",
+      "headRefOid": "a7175ff234e2196d897535ea810a1bdb707d85df",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6dAy3d",
+          "commit": {
+            "abbreviatedOid": "a7175ff"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-21T21:14:24Z",
+          "updatedAt": "2025-02-21T21:14:24Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\n2. `KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)` {{ks-x25519}}:\r\n```\r\n\r\nHm I worry about a comma in a label like this, have we done this in other i*tf crypto protocols? Is it fine in practice?",
+              "createdAt": "2025-02-21T21:14:24Z",
+              "updatedAt": "2025-02-21T21:14:24Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOMmhxws6MGGlY",
+      "title": "Add generic keygen and derivation",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/6",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "@chris-wood wdyt of the attempt at including slicing of the XOF output into the bytes that go into each component algorithm? \ud83d\ude05",
+      "createdAt": "2025-02-21T19:50:44Z",
+      "updatedAt": "2025-02-21T21:15:08Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "f50c9557531cb1237d8be28871842f6fa8675134",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "generic-keygen",
+      "headRefOid": "9fcef57ff286640cf383b48579c201ecec104507",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6dASs8",
+          "commit": {
+            "abbreviatedOid": "d76eae8"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-21T19:57:03Z",
+          "updatedAt": "2025-02-21T19:57:11Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "Maybe we replace `Nxofout` with `Npqseed + Ntradseed`? I think the `expanded[..Npqseed]` is fairly clear, but we should probably add some text to the terminology section that describes how it works. Something like:\r\n\r\n```\r\nWhen `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to denote the slice of bytes in `x` starting from the beginning of `x` and leading up to index `i`, including the `i`-th byte, and the slice the bytes in `x` starting from index `i` to the end of `x`, respectively. For example, if `x = [0, 1, 2, 3]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3]`.\r\n```",
+              "createdAt": "2025-02-21T19:57:03Z",
+              "updatedAt": "2025-02-21T19:57:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6dAzLR",
+          "commit": {
+            "abbreviatedOid": "d76eae8"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-21T21:15:08Z",
+          "updatedAt": "2025-02-21T21:15:08Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "Done; can you cross check the numbers for Ntradseed for the p256 and p384 instances?",
+              "createdAt": "2025-02-21T21:15:08Z",
+              "updatedAt": "2025-02-21T21:15:08Z"
+            }
+          ]
         }
       ]
     }
