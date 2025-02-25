@@ -1,4 +1,4 @@
-# WARNING This is a specification of QSF-SHA3-256-ML-KEM-768-P-256;
+# WARNING This is a specification of QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256);
 # not a production-ready implementation. It is slow and does not run
 # in constant time.
 
@@ -10,7 +10,7 @@ from kem import *
 import mlkem
 from sagelib.groups import GroupP256
 
-label = "QSF-SHA3-256-ML-KEM-768-P-256"
+label = "QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)"
 as_bytes = lambda x: x if isinstance(x, bytes) else bytes(x, "utf-8")
 
 def expandDecapsulationKey(seed):
