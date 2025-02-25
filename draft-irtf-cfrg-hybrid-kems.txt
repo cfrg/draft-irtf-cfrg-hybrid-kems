@@ -74,19 +74,20 @@ Table of Contents
        5.2.1.  Security properties
      5.3.  'QSF' construction
    6.  Concrete Hybrid KEM Instances
-     6.1.  QSF-SHA3-256-ML-KEM-768-P-256
+     6.1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
        6.1.1.  Key generation
        6.1.2.  Encapsulation
        6.1.3.  Derandomized
        6.1.4.  Decapsulation
        6.1.5.  Security properties
-     6.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+     6.2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-S
+           HA-256)
        6.2.1.  Key generation
        6.2.2.  Encapsulation
        6.2.3.  Derandomized
        6.2.4.  Decapsulation
        6.2.5.  Security properties
-     6.3.  QSF-SHA3-256-ML-KEM-1024-P-384
+     6.3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
        6.3.1.  Key generation
        6.3.2.  Encapsulation
        6.3.3.  Derandomized
@@ -110,13 +111,19 @@ Table of Contents
      9.3.  Protocol-specific labels / info
      9.4.  Other Component Primitives
    10. IANA Considerations
-     10.1.  QSF-SHA3-256-ML-KEM-768-P-256 KEM Identifier
-     10.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 KEM Identifier
-     10.3.  QSF-SHA3-256-ML-KEM-1024-P-384 KEM Identifier
+     10.1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) KEM
+            Identifier
+     10.2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-
+            SHA-256) KEM Identifier
+     10.3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) KEM
+            Identifier
    11. Test Vectors
-     11.1.  QSF-SHA3-256-ML-KEM-768-P-256 Test Vectors
-     11.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 Test Vectors
-     11.3.  QSF-SHA3-256-ML-KEM-1024-P-384 Test Vectors
+     11.1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) Test
+            Vectors
+     11.2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-
+            SHA-256) Test Vectors
+     11.3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
+            Test Vectors
    12. References
      12.1.  Normative References
      12.2.  Informative References
@@ -482,29 +489,33 @@ Table of Contents
 
    This section instantiates three concrete KEMs:
 
-   1.  QSF-SHA3-256-ML-KEM-768-P-256 Section 6.1: A hybrid KEM using the
-       QSF combiner based on ML-KEM-768 and P-256.
+   1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
+       Section 6.1: A hybrid KEM using the QSF combiner with SHA3-256 as
+       the hash function based on ML-KEM-768 and P-256, along with
+       SHAKE256 as the key derivation XOF.
 
-   2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 Section 6.2: A hybrid
-       KEM using the KitchenSink combiner based on ML-KEM-768 and
-       X25519.
+   2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-
+       256) Section 6.2: A hybrid KEM using the KitchenSink combiner
+       based on ML-KEM-768 and X25519.
 
-   3.  QSF-SHA3-256-ML-KEM-1024-P-384 Section 6.3: A hybrid KEM using
-       the QSF combiner based on ML-KEM-1024 and P-384.
+   3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
+       Section 6.3: A hybrid KEM using the QSF combiner with SHA3-256 as
+       the hash function based on ML-KEM-1024 and P-384, along with
+       SHAKE256 as the key derivation XOF.
 
    Each instance specifies the PQ and traditional KEMs being combined,
    the combiner construction from Section 5, the label to use for domain
    separation in the combiner function, as well as the XOF and KDF
    functions to use throughout.
 
-6.1.  QSF-SHA3-256-ML-KEM-768-P-256
+6.1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
 
    This hybrid KEM is heavily based on [XWING].  In particular, it has
    the same exact design but uses P-256 instead of X25519 as the the
    traditional component of the algorithm.  It has the following
    parameters.
 
-   *  label: QSF-SHA3-256-ML-KEM-768-P-256
+   *  label: QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
 
    *  XOF: SHAKE-256 [FIPS202]
 
@@ -524,9 +535,9 @@ Table of Contents
 
    *  Nct: 1121
 
-   QSF-SHA3-256-ML-KEM-768-P-256 depends on P-256 as a nominal prime-
-   order group [FIPS186] (secp256r1) [ANSIX9.62], where Ne = 33 and Ns =
-   32, with the following functions:
+   QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) depends on
+   P-256 as a nominal prime-order group [FIPS186] (secp256r1)
+   [ANSIX9.62], where Ne = 33 and Ns = 32, with the following functions:
 
    *  Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84
       f3b9cac2fc632551.
@@ -574,7 +585,8 @@ Table of Contents
 
 6.1.1.  Key generation
 
-   QSF-SHA3-256-ML-KEM-768-P-256 KeyGen works as follows.
+   QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) KeyGen works as
+   follows.
 
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 112)
@@ -588,7 +600,8 @@ def KeyGen():
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
   return sk, concat(pq_PK, trad_PK)
 
-   Similarly, QSF-SHA3-256-ML-KEM-768-P-256 DeriveKey works as follows:
+   Similarly, QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
+   DeriveKey works as follows:
 
    def DeriveKey(seed):
      (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
@@ -596,8 +609,8 @@ def KeyGen():
 
 6.1.2.  Encapsulation
 
-   Given an encapsulation key pk, QSF-SHA3-256-ML-KEM-768-P-256 Encaps
-   proceeds as follows.
+   Given an encapsulation key pk, QSF-KEM(ML-KEM-768,P-256)-
+   XOF(SHAKE256)-KDF(SHA3-256) Encaps proceeds as follows.
 
 def Encaps(pk):
   pq_PK = pk[0:1184]
@@ -639,8 +652,8 @@ def EncapsDerand(pk, randomness):
 
 6.1.4.  Decapsulation
 
-   Given a decapsulation key sk and ciphertext ct, QSF-SHA3-256-ML-KEM-
-   768-P-256 Decaps proceeds as follows.
+   Given a decapsulation key sk and ciphertext ct, QSF-KEM(ML-KEM-768,P-
+   256)-XOF(SHAKE256)-KDF(SHA3-256) Decaps proceeds as follows.
 
 def Decaps(sk, ct):
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
@@ -690,12 +703,13 @@ def Decaps(sk, ct):
 
    *  HON-BIND-K,PK-CT
 
-6.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+6.2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)
 
-   KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 has the following
-   parameters.
+   KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)
+   has the following parameters.
 
-   *  label: KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+   *  label: KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-
+      SHA-256)
 
    *  XOF: SHAKE-256 [FIPS202]
 
@@ -715,10 +729,10 @@ def Decaps(sk, ct):
 
    *  Nct: 1120
 
-   KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 depends on a prime-order
-   group implemented using Curve25519 and X25519 [RFC7748].
-   Additionally, it uses a modified version of HKDF in the combiner,
-   denoted LabeledHKDF, defined below.
+   KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)
+   depends on a prime-order group implemented using Curve25519 and
+   X25519 [RFC7748].  Additionally, it uses a modified version of HKDF
+   in the combiner, denoted LabeledHKDF, defined below.
 
    def LabeledExtract(salt, label, ikm):
      labeled_ikm = concat(label, ikm)
@@ -738,7 +752,8 @@ def Decaps(sk, ct):
 
 6.2.1.  Key generation
 
-   KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 KeyGen works as follows.
+   KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256)
+   KeyGen works as follows.
 
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 96)
@@ -752,8 +767,8 @@ def KeyGen():
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
   return sk, concat(pq_PK, trad_PK)
 
-   Similarly, KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 DeriveKey works
-   as follows:
+   Similarly, KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-
+   SHA-256) DeriveKey works as follows:
 
    def DeriveKey(seed):
      (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
@@ -761,8 +776,8 @@ def KeyGen():
 
 6.2.2.  Encapsulation
 
-   Given an encapsulation key pk, KitchenSink-HKDF-SHA-256-ML-KEM-
-   768-X25519 Encaps proceeds as follows.
+   Given an encapsulation key pk, KitchenSink-KEM(ML-KEM-768,X25519)-
+   XOF(SHAKE256)-KDF(HKDF-SHA-256) Encaps proceeds as follows.
 
 def Encaps(pk):
   pq_PK = pk[0:1184]
@@ -804,8 +819,9 @@ def EncapsDerand(pk, randomness):
 
 6.2.4.  Decapsulation
 
-   Given a decapsulation key sk and ciphertext ct, KitchenSink-HKDF-SHA-
-   256-ML-KEM-768-X25519 Decaps proceeds as follows.
+   Given a decapsulation key sk and ciphertext ct, KitchenSink-KEM(ML-
+   KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-256) Decaps proceeds as
+   follows.
 
 def Decaps(sk, ct):
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
@@ -856,11 +872,12 @@ def Decaps(sk, ct):
 
    *  HON-BIND-K,PK-CT
 
-6.3.  QSF-SHA3-256-ML-KEM-1024-P-384
+6.3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
 
-   QSF-SHA3-256-ML-KEM-1024-P-384 has the following parameters.
+   QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) has the
+   following parameters.
 
-   *  label: QSF-SHA3-256-ML-KEM-768-P-256
+   *  label: QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
 
    *  XOF: SHAKE-256 [FIPS202]
 
@@ -880,9 +897,9 @@ def Decaps(sk, ct):
 
    *  Nct: 1629
 
-   QSF-SHA3-256-ML-KEM-1024-P-384 depends on P-384 as a nominal prime-
-   order group [FIPS186] (secp256r1) [ANSIX9.62], where Ne = 61 and Ns =
-   48, with the following functions:
+   QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) depends on
+   P-384 as a nominal prime-order group [FIPS186] (secp256r1)
+   [ANSIX9.62], where Ne = 61 and Ns = 48, with the following functions:
 
    *  Order(): Return
       0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf
@@ -931,7 +948,8 @@ def Decaps(sk, ct):
 
 6.3.1.  Key generation
 
-   QSF-SHA3-256-ML-KEM-1024-P-384 KeyGen works as follows.
+   QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) KeyGen works
+   as follows.
 
 def expandDecapsulationKey(sk):
   expanded = SHAKE256(sk, 136)
@@ -945,7 +963,8 @@ def KeyGen():
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
   return sk, concat(pq_PK, trad_PK)
 
-   Similarly, QSF-SHA3-256-ML-KEM-1024-P-384 DeriveKey works as follows:
+   Similarly, QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
+   DeriveKey works as follows:
 
    def DeriveKey(seed):
      (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
@@ -953,8 +972,8 @@ def KeyGen():
 
 6.3.2.  Encapsulation
 
-   Given an encapsulation key pk, QSF-SHA3-256-ML-KEM-1024-P-384 Encaps
-   proceeds as follows.
+   Given an encapsulation key pk, QSF-KEM(ML-KEM-1024,P-384)-
+   XOF(SHAKE256)-KDF(SHA3-256) Encaps proceeds as follows.
 
 def Encaps(pk):
   pq_PK = pk[0:1568]
@@ -996,8 +1015,8 @@ def EncapsDerand(pk, randomness):
 
 6.3.4.  Decapsulation
 
-   Given a decapsulation key sk and ciphertext ct, QSF-SHA3-256-ML-KEM-
-   1024-P-384 Decaps proceeds as follows.
+   Given a decapsulation key sk and ciphertext ct, QSF-KEM(ML-KEM-
+   1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) Decaps proceeds as follows.
 
 def Decaps(sk, ct):
   (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
@@ -1207,11 +1226,12 @@ def Decaps(sk, ct):
    Identifiers" registry.  These entries are defined in the following
    subsections.
 
-10.1.  QSF-SHA3-256-ML-KEM-768-P-256 KEM Identifier
+10.1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) KEM
+       Identifier
 
    Value:  0xc1fe (please)
 
-   KEM:  QSF-SHA3-256-ML-KEM-768-P-256
+   KEM:  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256)
 
    Nsecret:  32
 
@@ -1225,11 +1245,13 @@ def Decaps(sk, ct):
 
    Reference:  This document
 
-10.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 KEM Identifier
+10.2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-
+       256) KEM Identifier
 
    Value:  0xbc48 (please)
 
-   KEM:  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519
+   KEM:  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-
+      256)
 
    Nsecret:  32
 
@@ -1243,11 +1265,12 @@ def Decaps(sk, ct):
 
    Reference:  This document
 
-10.3.  QSF-SHA3-256-ML-KEM-1024-P-384 KEM Identifier
+10.3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) KEM
+       Identifier
 
    Value:  0x0a25 (please)
 
-   KEM:  QSF-SHA3-256-ML-KEM-1024-P-384
+   KEM:  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256)
 
    Nsecret:  32
 
@@ -1266,7 +1289,8 @@ def Decaps(sk, ct):
    This section describes test vectors for each of the concrete KEMs
    specified in this document.
 
-11.1.  QSF-SHA3-256-ML-KEM-768-P-256 Test Vectors
+11.1.  QSF-KEM(ML-KEM-768,P-256)-XOF(SHAKE256)-KDF(SHA3-256) Test
+       Vectors
 
 seed     7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26
 sk     7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26
@@ -1342,7 +1366,7 @@ ct
   8f9c600dd9be8ec6219fdd507adf3397ed4d68707b8d13b24ce4cd8fb22851bfe9d63240
   7f31ed6f7cb1600d025fe300142bf6b8ca3bd4740054a10357688012c4103d274067f3fc
   18e8a4b908
-ss     3ec49c92c4a3fe3dd671b1ebbdbcac4e0f15085f79d3d122783eea8b5ddce37c
+ss     b88b984b48563068da8c1a9159542513c6ed73a77b4778f71a40677bb3e31c0f
 
 seed     df9a04302e10c8bc1cbf1a0b3a5120ea17cda7cfad765f5623474d368ccca8af
 sk     df9a04302e10c8bc1cbf1a0b3a5120ea17cda7cfad765f5623474d368ccca8af
@@ -1418,7 +1442,7 @@ ct
   91aa9a9167391a44443aac7fb1b796e5c91d3d33bb45bf6f29dac3195252f9858816b219
   88ba7ba837044e5f033625ee1296b55cc31a7ffdd8d33e495bb09bb0d5f35231979c89c1
   c401396b17
-ss     4ad24e9a6228c7fcafe345f70a64653406039a89e0b26629398cc85c527cdf7d
+ss     05b641ca0e134392312a1d2b3bb106c3dc23e19d7a9a384603f1fce497dc118a
 
 seed     22a96188d032675c8ac850933c7aff1533b94c834adbb69c6115bad4692d8619
 sk     22a96188d032675c8ac850933c7aff1533b94c834adbb69c6115bad4692d8619
@@ -1494,9 +1518,10 @@ ct
   1a2ded7314978a15024f7a6b032824901afacf7e0aed3d767cf2dcdaf68f1d803586d06b
   0061b3e1f9f677c803e958092bca5ae5d0bd7c581491a2ddd3726f8e4e535a0f991207b6
   ae712c9f5d
-ss     2ed4e7929adec0e6f86267b0b908ffd86e0e7ef2731a163afa10e00178124f8f
+ss     a268ec471cf13f7ddb07b62c505e3dfd30dedfaec332376c7fd8827ea2919c05
 
-11.2.  KitchenSink-HKDF-SHA-256-ML-KEM-768-X25519 Test Vectors
+11.2.  KitchenSink-KEM(ML-KEM-768,X25519)-XOF(SHAKE256)-KDF(HKDF-SHA-
+       256) Test Vectors
 
 seed     7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26
 sk     7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26
@@ -1571,7 +1596,7 @@ ct
   8f9c600dd9be8ec6219fdd507adf3397ed4d68707b8d13b24ce4cd8fb22851bfe9d63240
   7f31ed6f7cb1600de56f17576740ce2a32fc5145030145cfb97e63e0e41d354274a079d3
   e6fb2e15
-ss     7f62845e15bc9d96e9dd4d4cdc9d092ffbf5f05a88a9348992315b5206d53cce
+ss     7638d1bbf82029472953eca0c539c7aa4929aef3ec8c6ff6d01e692e1efff79d
 
 seed     badfd6dfaac359a5efbb7bcc4b59d538df9a04302e10c8bc1cbf1a0b3a5120ea
 sk     badfd6dfaac359a5efbb7bcc4b59d538df9a04302e10c8bc1cbf1a0b3a5120ea
@@ -1646,7 +1671,7 @@ ct
   b2040c76a61507a8020758dcc30894ad018fef98e401cc54106e20d94bd544a8f0e1fd05
   00342d123f618aa8c91bdf6e0e03200693c9651e469aee6f91c98bea4127ae66312f4ae3
   ea155b67
-ss     81a8ce7d49778780e580267d98573cf1946c9f0d3bb8653010c3120b2fbdd514
+ss     aeda5ce2b33f7852f32dd1b364280489524ee564ca9adaa3e54d8926d94e4e98
 
 seed     ef58538b8d23f87732ea63b02b4fa0f4873360e2841928cd60dd4cee8cc0d4c9
 sk     ef58538b8d23f87732ea63b02b4fa0f4873360e2841928cd60dd4cee8cc0d4c9
@@ -1721,9 +1746,10 @@ ct
   0cb1202f863090fc05eb814e2d42a03586c0b56f533847ac7b8184ce9690bc8dece32a88
   ca934f541d4cc520fa64de6b6e1c3c8e03db5971a445992227c825590688d203523f5271
   61137334
-ss     abcd3d254b08dcc1d174acc399acbe8edb0b3f6d23c4e026829657751c1ca09b
+ss     172835e85601f25be0beb40d7350e2f85117bf71c7d2ca55604401dbe4ab6f96
 
-11.3.  QSF-SHA3-256-ML-KEM-1024-P-384 Test Vectors
+11.3.  QSF-KEM(ML-KEM-1024,P-384)-XOF(SHAKE256)-KDF(SHA3-256) Test
+       Vectors
 
 seed     7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26
 sk     7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26
@@ -1823,7 +1849,7 @@ ct
   149b442a5b9f3030cf682ade82408a3df715b3a23795afd7d358c75272afa0708a4ae247
   b2bb87fc65f7a4157ecf2c7bc5589331ec2c331a03520aaa94d64aba1da116f540bb2df0
   5a0dab190395a7226fb292f94cca3054ab2377cee81d9e58a4fbe1f95aa02d05a4
-ss     6355d14217900ffc9ef9b8ba6c7500a145c8aede60f85486e93820f5e17d1f25
+ss     fc8537e9ee77cc9f8cb925b9b6754654b6ea6f4a14b480a6ba91b83158e53b59
 
 seed     23474d368ccca8af0007cd9f5e4c849f167a580b14aabdefaee7eef47cb0fca9
 sk     23474d368ccca8af0007cd9f5e4c849f167a580b14aabdefaee7eef47cb0fca9
@@ -1923,7 +1949,7 @@ ct
   b020c35e51b8dff46fc2163131dd513693334ed43dd7a8c182bc6f520ecfc8a38a3e4610
   c9bfcf782cff1f87ede42bb56681db4542783d40039bbdd642492ef1fa5230eb8a6ee5b1
   34305b73f83147912980758b390070b7931117f97833a3d7fc92b7552ecf4765ec
-ss     f62fe1a5ebf713c8d43c0ab6dd37d3e0a0b35781e48e79c3d849833c713fdad1
+ss     74d4556ed0a3709c07dd6044e15b676ead0056fda00c4adde241e7eb0eacb216
 
 seed     2801f2f4b3f70c593ea3aeeb613a7f1b1de33fd75081f592305f2e4526edc096
 sk     2801f2f4b3f70c593ea3aeeb613a7f1b1de33fd75081f592305f2e4526edc096
@@ -2023,7 +2049,7 @@ ct
   dda99eaef4edea2612bbc3369290cfc1a02a322d5e8840756489b8efa2f12c237116b398
   f783f87fd191426a973f02b9e6f92eeec46871cb02db36dcbf513ff0b3c1ddf689f6f3f2
   75d6ebbadf14b9bb9da4dc455773ec8a9902f227313247cd7dcb0784049664d286
-ss     6709ef22e6610e3b3424b13df8a606061a691df48199f0b18f32c509a26440b5
+ss     ae2cfb0ea52f32a555a49b5f4107dfd0e459008538a2bac85a0e47c5dfa97645
 
 12.  References
 
