@@ -28,7 +28,7 @@ Discussion Venues
    https://mailarchive.ietf.org/arch/browse/cfrg.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/cfrg/draft-irtf-cfrg-pq1.
+   https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems.
 
 Status of This Memo
 
