@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-25T01:02:39.997282+00:00",
+  "timestamp": "2025-02-27T01:02:07.063775+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -55,16 +55,40 @@
       "id": "I_kwDOMmhxws6rCIMm",
       "title": "Should instance labels include the XOF that's used for key generation?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/4",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "chris-wood",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "For example, `QSF-SHA3-256-ML-KEM-768-P-256` doesn't say that it uses SHAKE256 for the XOF. Should we?",
       "createdAt": "2025-02-21T16:15:05Z",
-      "updatedAt": "2025-02-21T16:15:05Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-25T17:22:50Z",
+      "closedAt": "2025-02-25T17:22:50Z",
       "comments": []
+    },
+    {
+      "number": 7,
+      "id": "I_kwDOMmhxws6rz1bb",
+      "title": "Consider renaming KitchenSink to TranscriptHash",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/7",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "See [this post](https://mailarchive.ietf.org/arch/msg/cfrg/L7G1rXH9g_acH1uhs4G2IKRN7dU/).",
+      "createdAt": "2025-02-26T18:39:03Z",
+      "updatedAt": "2025-02-26T20:24:15Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "ounsworth",
+          "authorAssociation": "NONE",
+          "body": "I'm not sure that's right thought\n\n``` \nss = LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)\n```\n\nThere's no \"transcript\" in there, unless you jam it into the label, but that's not required by the text? And I think that TLS has a well-defined concept of a \"transcript\", but I think it's less clear what counts as \"transcript\" for example if you have a JWT payload on an HTTP POST -- does \"transcript\" mean that the entire payload of the JWT should be included in the label? Or does \"transcript\" mean the entire sequence of HTTP messages exchanged so far on this connection? Obviously that's not what's intended, but might be how a non-cryptographer interprets the word \"transcript\". I don't have a better suggestion than \"KitchenSink\", but I don't think that \"TranscriptHash\" is the right connotation for protocols that aren't TLS.",
+          "createdAt": "2025-02-26T20:06:05Z",
+          "updatedAt": "2025-02-26T20:24:15Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -453,24 +477,26 @@
       "id": "PR_kwDOMmhxws6MFI2K",
       "title": "Update labels to include XOF",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/5",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Hopefully these labels are not too terrible on the eyes \ud83e\udd37 \r\n\r\nCloses #4.",
       "createdAt": "2025-02-21T17:19:15Z",
-      "updatedAt": "2025-02-21T21:14:24Z",
+      "updatedAt": "2025-02-25T17:22:49Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
-      "baseRefOid": "f50c9557531cb1237d8be28871842f6fa8675134",
+      "baseRefOid": "a1093192626f720d448880692a5d8b258fbf783c",
       "headRepository": "chris-wood/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "caw/update-labels",
-      "headRefOid": "a7175ff234e2196d897535ea810a1bdb707d85df",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "9abc6fcfb262e42878b0b67cece04cec09bba491",
+      "closedAt": "2025-02-25T17:22:49Z",
+      "mergedAt": "2025-02-25T17:22:49Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "10867607a87847ff4d9e03029dcfcd4117b83620"
+      },
       "comments": [],
       "reviews": [
         {
@@ -492,6 +518,26 @@
               "updatedAt": "2025-02-21T21:14:24Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6deCz8",
+          "commit": {
+            "abbreviatedOid": "a7175ff"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T17:21:26Z",
+          "updatedAt": "2025-02-25T17:21:27Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "merging for now, but may want to keep an eye on it",
+              "createdAt": "2025-02-25T17:21:27Z",
+              "updatedAt": "2025-02-25T17:21:27Z"
+            }
+          ]
         }
       ]
     },
@@ -500,24 +546,26 @@
       "id": "PR_kwDOMmhxws6MGGlY",
       "title": "Add generic keygen and derivation",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/6",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "@chris-wood wdyt of the attempt at including slicing of the XOF output into the bytes that go into each component algorithm? \ud83d\ude05",
       "createdAt": "2025-02-21T19:50:44Z",
-      "updatedAt": "2025-02-21T21:15:08Z",
+      "updatedAt": "2025-02-25T17:20:28Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f50c9557531cb1237d8be28871842f6fa8675134",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "generic-keygen",
       "headRefOid": "9fcef57ff286640cf383b48579c201ecec104507",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-02-25T17:20:28Z",
+      "mergedAt": "2025-02-25T17:20:28Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "a1093192626f720d448880692a5d8b258fbf783c"
+      },
       "comments": [],
       "reviews": [
         {
@@ -557,6 +605,26 @@
               "body": "Done; can you cross check the numbers for Ntradseed for the p256 and p384 instances?",
               "createdAt": "2025-02-21T21:15:08Z",
               "updatedAt": "2025-02-21T21:15:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6deB_p",
+          "commit": {
+            "abbreviatedOid": "9fcef57"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T17:20:13Z",
+          "updatedAt": "2025-02-25T17:20:13Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "confirmed out of bad - they are larger than expected  to make sure the Scalar isn't biased (not a power of 2), these match HashToCurve",
+              "createdAt": "2025-02-25T17:20:13Z",
+              "updatedAt": "2025-02-25T17:20:13Z"
             }
           ]
         }
