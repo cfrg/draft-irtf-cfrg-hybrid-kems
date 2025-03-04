@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T01:06:07.550447+00:00",
+  "timestamp": "2025-03-04T01:03:06.227150+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -87,6 +87,51 @@
           "body": "I'm not sure that's right thought\n\n``` \nss = LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)\n```\n\nThere's no \"transcript\" in there, unless you jam it into the label, but that's not required by the text? And I think that TLS has a well-defined concept of a \"transcript\", but I think it's less clear what counts as \"transcript\" for example if you have a JWT payload on an HTTP POST -- does \"transcript\" mean that the entire payload of the JWT should be included in the label? Or does \"transcript\" mean the entire sequence of HTTP messages exchanged so far on this connection? Obviously that's not what's intended, but might be how a non-cryptographer interprets the word \"transcript\". I don't have a better suggestion than \"KitchenSink\", but I don't think that \"TranscriptHash\" is the right connotation for protocols that aren't TLS.",
           "createdAt": "2025-02-26T20:06:05Z",
           "updatedAt": "2025-02-26T20:24:15Z"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "I_kwDOMmhxws6sPD0w",
+      "title": "IANA Register HPKE KDFs?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/8",
+      "state": "OPEN",
+      "author": "rohanmahy",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The IANA \"Hybrid Public Key Encryption (HPKE)\" page has registries for KEMs, KDFs, and AEADs. Currently, the only KDFs registered are HKDF-SHA256/384512.\n\nI believe that someone needs to register at least these two KDFs in the IANA registry before HPKE key derivation is truly supported:\n- KDF(SHA3-256) \u2014 referring to Section 6.1 of FIPS202\n- XOF(SHAKE256) \u2014 referring to Section 6.2 of FIPS202\n\nThis document seems a likely place for that registration. It may have the nice side effect that the names of the QSF-based KEMs can become shorter.\n",
+      "createdAt": "2025-03-02T15:52:34Z",
+      "updatedAt": "2025-03-04T00:03:06Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sorry no, the KDF and XOF's mentioned in this document are _entirely internal_ to the KEM schemes laid out here. These schemes are to be registered in HPKE KEM IANA, and any other HPKE KDF or AEAD usages are fully independent of the schemes laid out here.",
+          "createdAt": "2025-03-02T19:48:41Z",
+          "updatedAt": "2025-03-02T19:49:02Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Sorry no, the KDF and XOF's mentioned in this document are _entirely internal_ to the KEM schemes laid out here. These schemes are to be registered in HPKE KEM IANA, and any other HPKE KDF or AEAD usages are fully independent of the schemes laid out here.\n\nA separate document to register SHA3 as an HPKE KDF will probably be useful but that's apart from this one",
+          "createdAt": "2025-03-02T19:54:50Z",
+          "updatedAt": "2025-03-02T19:54:50Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Sorry no, the KDF and XOF's mentioned in this document are _entirely internal_ to the KEM schemes laid out here. These schemes are to be registered in HPKE KEM IANA, and any other HPKE KDF or AEAD usages are fully independent of the schemes laid out here.\n> \n> A separate document to register SHA3 as an HPKE KDF will probably be useful but that's apart from this one\n\nSimilarly, X-Wing is registered In IANA as an HPKE KEM. X-Wing uses SHA3 as its KDF and SHAKE256 as an XOF in its key generation/derivation. Those functions are separate from the HPKE KDFs, same with the KEMs defined and registered in this document and the functions they use internally.",
+          "createdAt": "2025-03-02T20:00:26Z",
+          "updatedAt": "2025-03-02T20:00:26Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > Sorry no, the KDF and XOF's mentioned in this document are _entirely internal_ to the KEM schemes laid out here. These schemes are to be registered in HPKE KEM IANA, and any other HPKE KDF or AEAD usages are fully independent of the schemes laid out here.\n> > \n> > \n> > A separate document to register SHA3 as an HPKE KDF will probably be useful but that's apart from this one\n> \n> Similarly, X-Wing is registered In IANA as an HPKE KEM. X-Wing uses SHA3 as its KDF and SHAKE256 as an XOF in its key generation/derivation. Those functions are separate from the HPKE KDFs, same with the KEMs defined and registered in this document and the functions they use internally.\n\n@rohanmahy I've created this to register SHA-3 for HPKE KDFs: https://datatracker.ietf.org/doc/draft-connolly-cfrg-sha3-hpke/",
+          "createdAt": "2025-03-04T00:03:04Z",
+          "updatedAt": "2025-03-04T00:03:04Z"
         }
       ]
     }
