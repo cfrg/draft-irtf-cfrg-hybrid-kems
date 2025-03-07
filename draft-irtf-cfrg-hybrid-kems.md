@@ -573,7 +573,7 @@ def Encaps(pk):
   ek = P-256.RandomScalar()
   trad_CT = P-256.SerializeElement(P-256.ScalarBaseMult(ek))
   trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(trad_PK, ek))
-  ss = SHA3-256(pq_SS || trad_SS || trad_CT || pk[1184:1217] || label)
+  ss = SHA3-256(concat(pq_SS, trad_SS, trad_CT, pk[1184:1217], label))
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -600,7 +600,7 @@ def EncapsDerand(pk, randomness):
   ek = P-256.ScalarFromBytes(randomness[32:80])
   trad_CT = P-256.SerializeElement(P-256.ScalarMultBase(ek))
   trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(ek, trad_PK))
-  ss = SHA3-256(pq_SS || trad_SS || trad_CT || trad_PK || label)
+  ss = SHA3-256(concat(pq_SS, trad_SS, trad_CT, trad_PK, label))
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -619,7 +619,7 @@ def Decaps(sk, ct):
   trad_CT = P-256.DeserializeElement(ct[1088:1121])
   pq_SS = ML-KEM-768.Decapsulate(pq_SK, pq_CT)
   trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(trad_SK, trad_CT))
-  return SHA3-256(pq_SS || trad_SS || ct[1088:1121] || trad_PK || label)
+  return SHA3-256(concat(pq_SS, trad_SS, ct[1088:1121], trad_PK, label))
 ~~~
 
 `ct` is the 1121-byte ciphertext resulting from Encaps() and `sk` is a
@@ -910,7 +910,7 @@ def Encaps(pk):
   ek = P-384.RandomScalar()
   trad_CT = P-384.SerializeElement(P-384.ScalarBaseMult(ek))
   trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(trad_PK, ek))
-  ss = SHA3-256(pq_SS || trad_SS || trad_CT || pk[1568:1629] || label)
+  ss = SHA3-256(concat(pq_SS, trad_SS, trad_CT, pk[1568:1629], label))
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -937,7 +937,7 @@ def EncapsDerand(pk, randomness):
   ek = P-384.ScalarFromBytes(randomness[32:80])
   trad_CT = P-384.SerializeElement(P-384.ScalarMultBase(ek))
   trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(ek, trad_PK))
-  ss = SHA3-256(pq_SS || trad_SS || trad_CT || pk[1568:1629] || label)
+  ss = SHA3-256(concat(pq_SS, trad_SS, trad_CT, pk[1568:1629], label))
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -956,7 +956,7 @@ def Decaps(sk, ct):
   trad_CT = P-384.DeserializeElement(ct[1568:1629])
   pq_SS = ML-KEM-1024.Decapsulate(pq_SK, pq_CT)
   trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(trad_SK, trad_CT))
-  return SHA3-256(pq_SS || trad_SS || ct[1568:1629] || trad_PK || label)
+  return SHA3-256(concat(pq_SS, trad_SS, ct[1568:1629], trad_PK, label))
 ~~~
 
 `ct` is the 1629-byte ciphertext resulting from Encaps() and `sk` is a
