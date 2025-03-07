@@ -568,12 +568,12 @@ proceeds as follows.
 ~~~
 def Encaps(pk):
   pq_PK = pk[0:1184]
-  trad_PK = P-256.DeserializeElement(pk[1184:1217])
+  trad_PK = pk[1184:1217]
   (pq_SS, pq_CT) = ML-KEM-768.Encaps(pq_PK)
   ek = P-256.RandomScalar()
   trad_CT = P-256.SerializeElement(P-256.ScalarBaseMult(ek))
-  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(trad_PK, ek))
-  ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1184:1217], label)
+  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(P-256.DeserializeElement(trad_PK), ek))
+  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -595,11 +595,11 @@ derandomized function.
 ~~~
 def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1184]
-  trad_PK = P-256.DeserializeElement(pk[1184:1217])
+  trad_PK = pk[1184:1217]
   (pq_SS, pq_CT) = ML-KEM-768.EncapsDerand(pq_PK, randomness[0:32])
   ek = P-256.ScalarFromBytes(randomness[32:80])
   trad_CT = P-256.SerializeElement(P-256.ScalarMultBase(ek))
-  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(ek, trad_PK))
+  trad_SS = P-256.SerializeElementAsSharedSecret(P-256.ScalarMult(ek, P-256.DeserializeElement(trad_PK)))
   ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
@@ -905,12 +905,12 @@ proceeds as follows.
 ~~~
 def Encaps(pk):
   pq_PK = pk[0:1568]
-  trad_PK = P-384.DeserializeElement(pk[1568:1629])
+  trad_PK = pk[1568:1629]
   (pq_SS, pq_CT) = ML-KEM-1024.Encaps(pq_PK)
   ek = P-384.RandomScalar()
   trad_CT = P-384.SerializeElement(P-384.ScalarBaseMult(ek))
-  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(trad_PK, ek))
-  ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1568:1629], label)
+  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(P-384.DeserializeElement(trad_PK), ek))
+  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
@@ -932,12 +932,12 @@ derandomized function.
 ~~~
 def EncapsDerand(pk, randomness):
   pq_PK = pk[0:1568]
-  trad_PK = P-384.DeserializeElement(pk[1568:1629])
+  trad_PK = pk[1568:1629]
   (pq_SS, pq_CT) = ML-KEM-1024.EncapsDerand(pq_PK, randomness[0:32])
   ek = P-384.ScalarFromBytes(randomness[32:80])
   trad_CT = P-384.SerializeElement(P-384.ScalarMultBase(ek))
-  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(ek, trad_PK))
-  ss = SHA3-256(pq_SS, trad_SS, trad_CT, pk[1568:1629], label)
+  trad_SS = P-384.SerializeElementAsSharedSecret(P-384.ScalarMult(ek, P-384.DeserializeElement(trad_PK)))
+  ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)
   ct = concat(pq_CT, trad_CT)
   return (ss, ct)
 ~~~
