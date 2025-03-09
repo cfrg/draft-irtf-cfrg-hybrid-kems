@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-06T01:03:10.394232+00:00",
+  "timestamp": "2025-03-09T00:55:16.718585+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -95,15 +95,15 @@
       "id": "I_kwDOMmhxws6sPD0w",
       "title": "IANA Register HPKE KDFs?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/8",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "rohanmahy",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "The IANA \"Hybrid Public Key Encryption (HPKE)\" page has registries for KEMs, KDFs, and AEADs. Currently, the only KDFs registered are HKDF-SHA256/384512.\n\nI believe that someone needs to register at least these two KDFs in the IANA registry before HPKE key derivation is truly supported:\n- KDF(SHA3-256) \u2014 referring to Section 6.1 of FIPS202\n- XOF(SHAKE256) \u2014 referring to Section 6.2 of FIPS202\n\nThis document seems a likely place for that registration. It may have the nice side effect that the names of the QSF-based KEMs can become shorter.\n",
       "createdAt": "2025-03-02T15:52:34Z",
-      "updatedAt": "2025-03-04T00:03:06Z",
-      "closedAt": null,
+      "updatedAt": "2025-03-07T20:34:52Z",
+      "closedAt": "2025-03-07T20:34:52Z",
       "comments": [
         {
           "author": "dconnolly",
@@ -132,8 +132,47 @@
           "body": "> > > Sorry no, the KDF and XOF's mentioned in this document are _entirely internal_ to the KEM schemes laid out here. These schemes are to be registered in HPKE KEM IANA, and any other HPKE KDF or AEAD usages are fully independent of the schemes laid out here.\n> > \n> > \n> > A separate document to register SHA3 as an HPKE KDF will probably be useful but that's apart from this one\n> \n> Similarly, X-Wing is registered In IANA as an HPKE KEM. X-Wing uses SHA3 as its KDF and SHAKE256 as an XOF in its key generation/derivation. Those functions are separate from the HPKE KDFs, same with the KEMs defined and registered in this document and the functions they use internally.\n\n@rohanmahy I've created this to register SHA-3 for HPKE KDFs: https://datatracker.ietf.org/doc/draft-connolly-cfrg-sha3-hpke/",
           "createdAt": "2025-03-04T00:03:04Z",
           "updatedAt": "2025-03-04T00:03:04Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "SHA-3 unfortunately doesn't match the Extract/Expand API expected by HPKE spec so it's not as easy but we can keep working on it",
+          "createdAt": "2025-03-07T20:34:44Z",
+          "updatedAt": "2025-03-07T20:34:44Z"
         }
       ]
+    },
+    {
+      "number": 10,
+      "id": "I_kwDOMmhxws6tFcFU",
+      "title": "Make concatenation of KDF inputs explicit in concrete pseudocode",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/10",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We can clarify this concatenation to match the generic QSF construction more closely using the explicit concat() routine described earlier",
+      "createdAt": "2025-03-07T20:35:32Z",
+      "updatedAt": "2025-03-07T20:35:32Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 11,
+      "id": "I_kwDOMmhxws6tFlU6",
+      "title": "Type inconsistency for `trad_PK`",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/11",
+      "state": "OPEN",
+      "author": "bluegate010",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "- In `expandDecapsulationKey` (and therefore in `KeyGen`, `DeriveKey`, and `Decaps`), `trad_PK` is a serialized byte array (`trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))`)\n- In `Encaps`, `trad_PK` is a deserialized element (`trad_PK = P-256.DeserializeElement(pk[1184:1217])`)\n- In `EncapsDerand` for QSF-P256, `trad_PK` is a deserialized element (`trad_PK = P-256.DeserializeElement(pk[1184:1217])`), but is later treated as a serialized byte array (`ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)`)\n- In `EncapsDerand` for KS-X25519, `trad_PK` is a serialized byte array (`trad_PK = pk[1184:1216]`)\n- In `EncapsDerand` for QSF-P384, `trad_PK` is deserialized element (`trad_PK = P-384.DeserializeElement(pk[1568:1629])`)\n\nFor clarity, it seems reasonable for `trad_PK` to always be a serialized byte array.",
+      "createdAt": "2025-03-07T20:55:14Z",
+      "updatedAt": "2025-03-07T20:55:14Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -674,6 +713,82 @@
           ]
         }
       ]
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOMmhxws6N0rBY",
+      "title": "Clarify concatenation operations",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/9",
+      "state": "OPEN",
+      "author": "bluegate010",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Clarify that SHA3-256 takes one input which is a concatenation of multiple values.",
+      "createdAt": "2025-03-07T20:30:38Z",
+      "updatedAt": "2025-03-07T21:01:08Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "ca4807c8b1249830e36a18dbc8b218087eb7bcb8",
+      "headRepository": "bluegate010/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "patch-1",
+      "headRefOid": "ec575c84b83fe47edd02460667e9e1eda3cc561b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We can clarify this concatenation to match the generic QSF construction more closely using the explicit `concat()` routine described earlier ",
+          "createdAt": "2025-03-07T20:33:31Z",
+          "updatedAt": "2025-03-07T20:33:31Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Opened https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/10 for this ",
+          "createdAt": "2025-03-07T20:35:50Z",
+          "updatedAt": "2025-03-07T20:35:50Z"
+        },
+        {
+          "author": "bluegate010",
+          "authorAssociation": "NONE",
+          "body": "> We can clarify this concatenation to match the generic QSF construction more closely using the explicit `concat()` routine described earlier\r\n\r\nGot it, have made this adjustment.",
+          "createdAt": "2025-03-07T21:01:07Z",
+          "updatedAt": "2025-03-07T21:01:07Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 12,
+      "id": "PR_kwDOMmhxws6N01c3",
+      "title": "Make trad_PK consistently a serialized byte array.",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/12",
+      "state": "OPEN",
+      "author": "bluegate010",
+      "authorAssociation": "NONE",
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [],
+      "body": "Resolves https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/11",
+      "createdAt": "2025-03-07T20:55:55Z",
+      "updatedAt": "2025-03-07T20:59:39Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "ca4807c8b1249830e36a18dbc8b218087eb7bcb8",
+      "headRepository": "bluegate010/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "trad_PK",
+      "headRefOid": "96dac879d6c53b62e542a06d902b46db8666e6ab",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
