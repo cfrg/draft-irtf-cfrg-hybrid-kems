@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-01T01:13:22.697463+00:00",
+  "timestamp": "2025-04-17T01:06:39.454440+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -171,6 +171,40 @@
       "body": "- In `expandDecapsulationKey` (and therefore in `KeyGen`, `DeriveKey`, and `Decaps`), `trad_PK` is a serialized byte array (`trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))`)\n- In `Encaps`, `trad_PK` is a deserialized element (`trad_PK = P-256.DeserializeElement(pk[1184:1217])`)\n- In `EncapsDerand` for QSF-P256, `trad_PK` is a deserialized element (`trad_PK = P-256.DeserializeElement(pk[1184:1217])`), but is later treated as a serialized byte array (`ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)`)\n- In `EncapsDerand` for KS-X25519, `trad_PK` is a serialized byte array (`trad_PK = pk[1184:1216]`)\n- In `EncapsDerand` for QSF-P384, `trad_PK` is deserialized element (`trad_PK = P-384.DeserializeElement(pk[1568:1629])`)\n\nFor clarity, it seems reasonable for `trad_PK` to always be a serialized byte array.",
       "createdAt": "2025-03-07T20:55:14Z",
       "updatedAt": "2025-03-07T20:55:14Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 13,
+      "id": "I_kwDOMmhxws6y1iX9",
+      "title": "Flesh out the 'out of scope' details more",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/13",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "dconnolly"
+      ],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-04-16T18:10:07Z",
+      "updatedAt": "2025-04-16T18:10:11Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 14,
+      "id": "I_kwDOMmhxws6y1lj0",
+      "title": "Flesh out tradeoffs",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/14",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-04-16T18:15:46Z",
+      "updatedAt": "2025-04-16T18:15:46Z",
       "closedAt": null,
       "comments": []
     }
