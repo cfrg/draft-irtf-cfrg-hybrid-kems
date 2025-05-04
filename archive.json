@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-29T01:07:45.621735+00:00",
+  "timestamp": "2025-05-04T01:14:56.243792+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -202,9 +202,25 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "",
+      "body": "- [ ] include not looking at 'layered' style hybrids\n- [ ] include not looking at split/dualPRF style",
       "createdAt": "2025-04-16T18:15:46Z",
-      "updatedAt": "2025-04-16T18:15:46Z",
+      "updatedAt": "2025-05-01T14:51:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOMmhxws6016Gs",
+      "title": "Rename to '-generic-hybrid-kems' to match '-concrete-hybrid-kems'",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/16",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-05-01T14:50:46Z",
+      "updatedAt": "2025-05-01T14:50:46Z",
       "closedAt": null,
       "comments": []
     }
@@ -829,26 +845,42 @@
       "id": "PR_kwDOMmhxws6UNmZE",
       "title": "Remove concrete instantiations",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/15",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This PR removes the following content from this document:\r\n\r\n* The sections defining concrete combiners\r\n* The test vectors section\r\n* The IANA considerations section\r\n* Mentions of specific combinations in the prose\r\n\r\nMost of this text should be moved to the concrete document (https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/1).  The only exception is the IANA considerations section, which should be handled by the HPKE WG.",
       "createdAt": "2025-04-28T18:26:12Z",
-      "updatedAt": "2025-04-28T18:26:13Z",
+      "updatedAt": "2025-05-01T14:47:40Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "ca4807c8b1249830e36a18dbc8b218087eb7bcb8",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "no-concrete",
       "headRefOid": "b7fbef939decc1ce486dabe8a60147f4a846fefd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-05-01T14:47:40Z",
+      "mergedAt": "2025-05-01T14:47:39Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "55400d76088569aad2bffda3dc1aca2ad5095cde"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6nfIH5",
+          "commit": {
+            "abbreviatedOid": "b7fbef9"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-05-01T14:47:33Z",
+          "updatedAt": "2025-05-01T14:47:33Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
