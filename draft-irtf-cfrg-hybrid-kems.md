@@ -162,6 +162,11 @@ The following terms are used throughout this document:
   by a cryptographically-secure random number generator.
 - `concat(x0, ..., xN)`: Concatenation of byte strings.  `concat(0x01,
   0x0203, 0x040506) = 0x010203040506`.
+- `split(N1, N2, x)`: Split a byte string `x` of length `N1 + N2` into its first
+  `N1` bytes and its last `N2` bytes.  This function is the inverse of
+  `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes long. It
+  is an error to call this function with a byte string that does not have length
+  `N1 + N2`.
 - `I2OSP(n, w)`: Convert non-negative integer `n` to a `w`-length, big-endian
   byte string, as described in {{!RFC8017}}.
 - `OS2IP(x)`: Convert byte string `x` to a non-negative integer, as described
@@ -193,15 +198,17 @@ four algorithms:
 - `KeyGen() -> (pk, sk)`: A probabilistic key generation algorithm, which
   generates a public encapsulation key `pk` and a secret decapsulation key
   `sk`, each of which are byte strings.
-- `DeriveKey(seed) -> (pk, sk)`: A deterministic algorithm, which takes as
-  input a seed `seed` and generates a public encapsulation key `pk` and a
-  secret decapsulation key `sk`, each of which are byte strings.
+- `DeriveKeyPair(seed) -> (pk, sk)`: A deterministic algorithm, which takes as
+  input a seed `seed` and generates a public encapsulation key `pk` and a secret
+  decapsulation key `sk`, each of which are byte strings.
 - `Encaps(pk) -> (ct, shared_secret)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `pk` and outputs
   a ciphertext `ct` and shared secret `shared_secret`.
 - `Decaps(sk, ct) -> shared_secret`: A decapsulation algorithm, which takes
   as input a secret decapsulation key `sk` and ciphertext `ct` and outputs a
   shared secret `shared_secret`.
+- `ToEncaps(sk) -> pk`: The mapping from a decapsulation key to an encapsulation
+  key for this algorithm.
 
 KEMs can also provide a deterministic version of `Encaps`, denoted
 `EncapsDerand`, with the following signature:
@@ -215,10 +222,17 @@ Finally, KEMs are also parameterized with the following constants:
 
 - Nseed, which denotes the number of bytes for a key seed;
 - Npk, which denotes the number of bytes in a public encapsulation key;
-- Nsk, which denotes the number of bytes in a private decapsulation key; and
-- Nct, which denotes the number of bytes in a ciphertext.
+- Nsk, which denotes the number of bytes in a private decapsulation key;
+- Nct, which denotes the number of bytes in a ciphertext; and
+- Nss, which denotes the number of bytes in a shared secret.
 
-## `XOF` {#xof}
+## Extendable-output functions {#xof}
+
+An Extendable-output function (XOF) is a function from input byte strings to
+output byte strings of arbitrary length:
+
+- `XOF(ikm, n) -> okm`: A deterministic function that produces an `n`-byte
+  output string `okm` from an arbitrary-length input byte string `ikm`.
 
 Extendable-output function (XOF). A function on bit strings in which the
 output can be extended to any desired length. Ought to satisfy the following
@@ -302,6 +316,139 @@ We now detail a number of member functions that can be invoked on `G`.
   interpreting the contents of `buf` as an unsigned integer and then
   reducing that integer modulo the group order; this ensures that the
   resulting integer is always an element of the Scalar field.
+
+# Hybrid KEM Constructions
+
+* Generic over:
+    * `KEM_T`: Traditional KEM
+    * `KEM_PQ`: Post-quantum KEM
+    * `Combiner: fn(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ) -> ss_H`
+* Note that `GenerateKeyPair()` from the constituent KEMS is not used.  This is
+  to ensure that the combined KEM has `MAL-BIND-*`.
+    * TODO: Comment on what to do if you only have GenerateKeyPair.  Alternate
+      version of GenerateKeyPair() that does parallel over constituents, has
+      potentially worse properties?
+* The remainder of this section discusses specific combiners that are applicable
+  in different use cases
+    * `H(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ)`
+    * `H(ss_T, ss_PQ, ct_T, ct_PQ, H(ek_T, ek_PQ))`
+    * `H(ss_T, ss_PQ, ct_T, ek_T)`
+    * `H(ss_T, ss_PQ)`
+    * ... where `H(x) = XOF(x, Nss)` for some XOF that can provide at least Nss
+      bytes of output.
+    * TODO: Labels, both for construction and application-provided
+* For most use cases, there will be a single selection from the above that will
+  be optimal.
+
+
+```
+Nseed = KEM_T.Nseed + KEM_PQ.Nseed
+Npk = KEM_T.Npk + KEM_PQ.Npk
+Nsk = KEM_T.Nsk + KEM_PQ.Nsk
+Nct = KEM_T.Nct + KEM_PQ.Nct
+Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+
+def GenerateKeyPair():
+    seed = random(KEM_T.Nseed + KEM_PQ.Nseed)
+
+def DeriveKeyPair(seed):
+    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    ek_H = concat(ek_T, ek_PQ)
+    dk_H = concat(dk_T, dk_PQ)
+    return (ek_H, dk_H)
+
+def Encaps(ek):
+    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
+    (ss_T, ct_T) = KEM_T.Encap(pk_T)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+    ss_H = Combiner(ss_T, ct_T, ek_T, ss_PQ, ct_PQ, ek_PQ)
+    ct_H = concat(ct_T, ct_PQ)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
+    ek_T = KEM_T.ToEncaps(dk_T)
+    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+    ss_H = Combiner(ss_T, ct_T, ek_T, ss_PQ, ct_PQ, ek_PQ)
+    return ss_H
+```
+
+## Hash Everything
+
+```
+def HashEverything(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ):
+    input = concat(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ)
+    return XOF(input, Nss)
+```
+
+Why: Universal; simple construction.
+
+Why not: Expensive if public keys / ciphertexts are large.
+
+For example: Raw ECDH + something with short keys but not good binding.
+
+## Pre-Hash Encapsulation Keys
+
+```
+def PreHashedKeys(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ):
+    ek_pre = XOF(concat(ek_T, ek_PQ), Nss)
+    input = concat(ss_T, ss_PQ, ct_T, ct_PQ, ek_pre)
+    return XOF(input, Nss)
+```
+
+Why: Universal; faster when reusing the same EK, especially if Nek is large.
+
+Why not: More layers of hashing if not reusing same EK.
+
+For example: Raw ECDH + Classic McEliece
+
+## Hash Traditional Only
+
+```
+def HashTraditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ):
+    input = concat(ss_T, ss_PQ, ct_T, ek_T)
+    return XOF(input, Nss)
+```
+
+Why: Faster when PQ KEM provides good binding properties already.
+
+Why not: Bad binding properties if PQ KEM doesn't provide them.
+
+For example: Raw ECDH + ML-KEM
+
+## Only Shared Secrets
+
+```
+def OnlySharedSecrets(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ):
+    input = concat(ss_T, ss_PQ)
+    return XOF(input, Nss)
+```
+
+Why: Fastest.
+
+Why not: Bad binding properties if T Kem or PQ KEM doesn't provide them.
+
+For example: DHKEM + ML-KEM
+
+# Security Properties
+
+For any combiner: Hybrid KEM is IND-X if either constituent KEM is.
+
+Hybrid KEM provides MAL-BIND-X if keys generated as above and:
+* HashEverything / PreHashedKeys: Unconditional
+* HashTraditional: If PQ KEM has MAL-BIND-X
+* OnlySharedSecrets: If both T and PQ KEMs have MAL-BIND-X
+
+Hybrid KEM only provides LEAK-BIND-X if keys not generated as above and:
+* HashTraditional: If PQ KEM has only LEAK-BIND-X
+* OnlySharedSecrets: Either T or PQ KEM has only LEAK-BIND-X
 
 # Hybrid KEM Constructions {#constructions}
 
