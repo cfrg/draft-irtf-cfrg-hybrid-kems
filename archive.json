@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-04T01:14:56.243792+00:00",
+  "timestamp": "2025-05-08T01:09:46.057202+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -879,6 +879,89 @@
           "createdAt": "2025-05-01T14:47:33Z",
           "updatedAt": "2025-05-01T14:47:33Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "PR_kwDOMmhxws6VGG6-",
+      "title": "Refactor KEM Constructions section",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/17",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The basic proposal here is to refactor the Hybrid KEM Constructions section so that:\r\n\r\n* It more clearly addresses the whole definition of the hybrid KEM (including all the specified methods)\r\n* It includes a slightly broader range of options (Chempat-like, TLS-like)\r\n\r\nThe current text is just a sketch; it needs to be turned into actual prose.  But it should give a pretty clear idea of the intended direction.",
+      "createdAt": "2025-05-06T12:03:54Z",
+      "updatedAt": "2025-05-07T17:28:00Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
+      "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "draft-text",
+      "headRefOid": "b774ed6c28b8d6a8d7a23a9ae36aaaae5b5efb25",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6oNUv0",
+          "commit": {
+            "abbreviatedOid": "b774ed6"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-07T14:46:08Z",
+          "updatedAt": "2025-05-07T17:28:00Z",
+          "comments": [
+            {
+              "originalPosition": 68,
+              "body": "* Treat Generate-only as an exception case; default assumption is DeriveKeyPair\r\n* RSA for example is missing DKP, though in principle it could be defined",
+              "createdAt": "2025-05-07T14:46:08Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            },
+            {
+              "originalPosition": 50,
+              "body": "TODO: Make sure that we have all the security properties we need for this.\r\n\r\n* SHAKE calls it the \"flat sponge property\" -- capacity is 2x security level.\r\n* Might need to be a dual PRF for some definition?\r\n* Might not be if we use a different tool (KDF) for the combiners.\r\n\r\nTODO: Re-add / maintain that distinction (XOF + KDF)",
+              "createdAt": "2025-05-07T14:52:16Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "* Having seed expansion makes it hard to manipulate seeds\r\n* Should be `Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)` ?\r\n* In concept, 2x security level (would need to state the security level)\r\n    * Might have a birthday collision issue?\r\n    * Could lead to generating shorter secrets from longer secrets at the higher security level",
+              "createdAt": "2025-05-07T15:03:45Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            },
+            {
+              "originalPosition": 86,
+              "body": "* Might not be natural for CT to be fixed size in some case\r\n* Only implication to variable length would be length prefixes in combiners\r\n* Assume fixed size for now, let people push back on it\r\n* Fall-back: Document how you could fit a variable-size values",
+              "createdAt": "2025-05-07T15:12:13Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            },
+            {
+              "originalPosition": 77,
+              "body": "* Could start with one label field, then build a structured label that has (construction + app)\r\n* Having a single label field can get the discussion started in the WG about why people want labels\r\n* Might call it a \"context\" if provided by the app\r\n* Some KEMs (e.g., ML-KEM) have a context input, could reflect in KEM API, probably not worthwhile",
+              "createdAt": "2025-05-07T15:21:31Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            },
+            {
+              "originalPosition": 180,
+              "body": "* Might need some additional assumptions on the KEMs to get here.\r\n* Why does it work with X25519 and ML-KEM?\r\n",
+              "createdAt": "2025-05-07T15:36:04Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            },
+            {
+              "originalPosition": 180,
+              "body": "cc @bwesterb ",
+              "createdAt": "2025-05-07T15:36:21Z",
+              "updatedAt": "2025-05-07T17:28:00Z"
+            }
+          ]
         }
       ]
     }
