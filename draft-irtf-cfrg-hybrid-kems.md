@@ -167,7 +167,7 @@ When `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to
 denote the slice of bytes in `x` starting from the beginning of `x` and
 leading up to index `i`, including the `i`-th byte, and the slice the bytes
 in `x` starting from index `i` to the end of `x`, respectively. For example,
-if `x = [0, 1, 2, 3]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3]`.
+if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 
 # Cryptographic Dependencies {#cryptographic-deps}
 
@@ -183,36 +183,70 @@ These dependencies are defined in the following subsections.
 
 ## Key encapsulation mechanisms {#kems}
 
-Key encapsulation mechanisms (KEMs) are cryptographic schemes that consist of
-four algorithms:
+~~~ aasvg
+     +-----------------+
+     | GenerateKeyPair |
+     |        or       |
+     |  DeriveKeyPair  |
+     +--------+--------+
+              |
+    +---------+----------+
+    |                    |
+    V                    V
 
-- `KeyGen() -> (ek, dk)`: A probabilistic key generation algorithm, which
-  generates a public encapsulation key `ek` and a secret decapsulation key
-  `dk`, each of which are byte strings.
-- `DeriveKey(seed) -> (ek, dk)`: A deterministic algorithm, which takes as
-  input a seed `seed` and generates a public encapsulation key `ek` and a
-  secret decapsulation key `dk`, each of which are byte strings.
-- `Encaps(ek) -> (ct, shared_secret)`: A probabilistic encapsulation
+    ek                  dk
+
+    |                    |
+    |                    |
+    V                    V
++--------+    ct    +--------+
+| Encaps |--------->| Decaps |
++--------+          +--------+
+    |                    |
+    |                    |
+    V                    V
+
+    ss        ==        ss
+~~~
+
+A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
+
+- `GenerateKeyPair() -> (ek, dk)`: A randomized algorithm that generates a
+  public encapsulation key `ek` and a secret decapsulation key `dk`, each of
+  which are byte strings.
+- `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
+  input a seed `seed` and generates a public encapsulation key `ek` and a secret
+  decapsulation key `dk`, each of which are byte strings.
+- `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
-  a ciphertext `ct` and shared secret `shared_secret`.
-- `Decaps(dk, ct) -> shared_secret`: A decapsulation algorithm, which takes
+  a ciphertext `ct` and shared secret `ss`.
+- `Decaps(dk, ct) -> ss`: A decapsulation algorithm, which takes
   as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
-  shared secret `shared_secret`.
+  shared secret `ss`.
 
-KEMs can also provide a deterministic version of `Encaps`, denoted
-`EncapsDerand`, with the following signature:
+A KEM may also provide a deterministic version of `Encaps` (e.g., for purposes
+of testing):
 
 - `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
    encapsulation algorithm, which takes as input a public encapsulation key
    `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
 
-Finally, KEMs are also parameterized with the following constants:
+We assume that the values produced and consumed by the above functions are all
+byte strings, with fixed lengths:
 
-- Nseed, which denotes the number of bytes for a key seed;
-- Nek, which denotes the number of bytes in a public encapsulation key;
-- Ndk, which denotes the number of bytes in a private decapsulation key; and
-- Nct, which denotes the number of bytes in a ciphertext.
+- `Nseed`: The length of a key seed (input to DeriveKeyPair)
+- `Nek`: The length of a public encapsulation key
+- `Ndk`: The length of a secret decapsulation key
+- `Nct`: The length of a ciphertext produced by Encaps
+- `Nss`: The length of a shared secret produced by Encaps or Decaps
+
+This interface is effectively the same as the one defined in the Hybrid Public
+Key Encryption (HPKE) specification {{?RFC9180}}.  The only difference is that
+here we assume that all values are byte strings, whereas in HPKE keys are opaque
+by default and serialized or deserialized as needed.  We also use slightly
+different terminology for keys, emphasizing "encapsulation" and "decapsulation"
+as opposed to "public" and "secret".
 
 ## `XOF` {#xof}
 
@@ -302,7 +336,7 @@ We now detail a number of member functions that can be invoked on `G`.
 # Hybrid KEM Constructions {#constructions}
 
 <!-- TODO: since NIST is OK'ing ML-KEM keygen from a NIST-approved KDF/PRF,
-specify the generic seed-stretching KeyGen for all/both constructions,
+specify the generic seed-stretching GenerateKeyPair for all/both constructions,
 here. -->
 
 During encapsulation and decapsulation, a hybrid KEM combines its component
@@ -357,29 +391,29 @@ populated by concrete instantiations:
 * `XOF`: the eXtended Output Function
 * `PQKEM`: the PQ KEM component scheme
 * `G`: the nomimal group used to construct the traditional KEM component
-  scheme as described in {{group}
+  scheme as described in {{group}}
 * Nseed: length in bytes of the seed randomness sourced from the RNG
-* Npqseed: length in bytes of the input to PQ.DeriveKey()
+* Npqseed: length in bytes of the input to PQ.DeriveKeyPair()
 * Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()
 
 ~~~
 def expandDecapsulationKey(dk):
   expanded = XOF(dk, Npqseed + Ntradseed)
-  (pq_EK, pq_DK) = PQKEM.DeriveKey(expanded[..Npqseed])
+  (pq_EK, pq_DK) = PQKEM.DeriveKeyPair(expanded[..Npqseed])
   trad_DK = G.ScalarFromBytes(expanded[Npqseed..])
   trad_EK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_DK))
   return (pq_DK, trad_DK, pq_EK, trad_EK)
 
-def KeyGen():
+def GenerateKeyPair():
   dk = random(Nseed)
   (pq_DK, trad_DK, pq_EK, trad_EK) = expandDecapsulationKey(dk)
   return dk, concat(pq_EK, trad_EK)
 ~~~
 
-Similarly, `DeriveKey` works as follows:
+Similarly, `DeriveKeyPair` works as follows:
 
 ~~~
-def DeriveKey(seed):
+def DeriveKeyPair(seed):
   (pq_DK, trad_DK, pq_EK, trad_EK) = expandDecapsulationKey(seed)
   return dk, concat(pq_EK, trad_EK)
 ~~~
