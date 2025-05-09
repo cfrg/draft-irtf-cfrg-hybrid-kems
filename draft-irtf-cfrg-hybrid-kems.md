@@ -190,32 +190,32 @@ These dependencies are defined in the following subsections.
 Key encapsulation mechanisms (KEMs) are cryptographic schemes that consist of
 four algorithms:
 
-- `KeyGen() -> (pk, sk)`: A probabilistic key generation algorithm, which
-  generates a public encapsulation key `pk` and a secret decapsulation key
-  `sk`, each of which are byte strings.
-- `DeriveKey(seed) -> (pk, sk)`: A deterministic algorithm, which takes as
-  input a seed `seed` and generates a public encapsulation key `pk` and a
-  secret decapsulation key `sk`, each of which are byte strings.
-- `Encaps(pk) -> (ct, shared_secret)`: A probabilistic encapsulation
-  algorithm, which takes as input a public encapsulation key `pk` and outputs
+- `KeyGen() -> (ek, dk)`: A probabilistic key generation algorithm, which
+  generates a public encapsulation key `ek` and a secret decapsulation key
+  `dk`, each of which are byte strings.
+- `DeriveKey(seed) -> (ek, dk)`: A deterministic algorithm, which takes as
+  input a seed `seed` and generates a public encapsulation key `ek` and a
+  secret decapsulation key `dk`, each of which are byte strings.
+- `Encaps(ek) -> (ct, shared_secret)`: A probabilistic encapsulation
+  algorithm, which takes as input a public encapsulation key `ek` and outputs
   a ciphertext `ct` and shared secret `shared_secret`.
-- `Decaps(sk, ct) -> shared_secret`: A decapsulation algorithm, which takes
-  as input a secret decapsulation key `sk` and ciphertext `ct` and outputs a
+- `Decaps(dk, ct) -> shared_secret`: A decapsulation algorithm, which takes
+  as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
   shared secret `shared_secret`.
 
 KEMs can also provide a deterministic version of `Encaps`, denoted
 `EncapsDerand`, with the following signature:
 
-- `EncapsDerand(pk, randomness) -> (ct, shared_secret)`: A deterministic
+- `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
    encapsulation algorithm, which takes as input a public encapsulation key
-   `pk` and randomness `randomness`, and outputs a ciphertext `ct` and shared
+   `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
 
 Finally, KEMs are also parameterized with the following constants:
 
 - Nseed, which denotes the number of bytes for a key seed;
-- Npk, which denotes the number of bytes in a public encapsulation key;
-- Nsk, which denotes the number of bytes in a private decapsulation key; and
+- Nek, which denotes the number of bytes in a public encapsulation key;
+- Ndk, which denotes the number of bytes in a private decapsulation key; and
 - Nct, which denotes the number of bytes in a ciphertext.
 
 ## `XOF` {#xof}
@@ -319,9 +319,9 @@ following inputs:
 - pq_SS: The PQ KEM shared secret.
 - trad_SS: The traditional KEM shared secret.
 - pq_CT: The PQ KEM ciphertext.
-- pq_PK: The PQ KEM public encapsulation key.
+- pq_EK: The PQ KEM public encapsulation key.
 - trad_CT: The traditional KEM ciphertext.
-- trad_PK: The traditional KEM public encapsulation key.
+- trad_EK: The traditional KEM public encapsulation key.
 - label: A domain-separating label; see {{domain-separation}} for more
   information on the role of the label.
 
@@ -367,25 +367,25 @@ populated by concrete instantiations:
 * Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()
 
 ~~~
-def expandDecapsulationKey(sk):
-  expanded = XOF(sk, Npqseed + Ntradseed)
-  (pq_PK, pq_SK) = PQKEM.DeriveKey(expanded[..Npqseed])
-  trad_SK = G.ScalarFromBytes(expanded[Npqseed..])
-  trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
-  return (pq_SK, trad_SK, pq_PK, trad_PK)
+def expandDecapsulationKey(dk):
+  expanded = XOF(dk, Npqseed + Ntradseed)
+  (pq_EK, pq_DK) = PQKEM.DeriveKey(expanded[..Npqseed])
+  trad_DK = G.ScalarFromBytes(expanded[Npqseed..])
+  trad_EK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_DK))
+  return (pq_DK, trad_DK, pq_EK, trad_EK)
 
 def KeyGen():
-  sk = random(Nseed)
-  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
-  return sk, concat(pq_PK, trad_PK)
+  dk = random(Nseed)
+  (pq_DK, trad_DK, pq_EK, trad_EK) = expandDecapsulationKey(dk)
+  return dk, concat(pq_EK, trad_EK)
 ~~~
 
 Similarly, `DeriveKey` works as follows:
 
 ~~~
 def DeriveKey(seed):
-  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
-  return sk, concat(pq_PK, trad_PK)
+  (pq_DK, trad_DK, pq_EK, trad_EK) = expandDecapsulationKey(seed)
+  return dk, concat(pq_EK, trad_EK)
 ~~~
 
 
@@ -397,10 +397,10 @@ component algorithms at the cost of more bytes needing to be processed by the
 KDF.
 
 ~~~
-def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
-                                 trad_PK, label):
-    input = concat(pq_SS, trad_SS, pq_CT, pq_PK,
-                   trad_CT, trad_PK, label)
+def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_EK, trad_CT,
+                                 trad_EK, label):
+    input = concat(pq_SS, trad_SS, pq_CT, pq_EK,
+                   trad_CT, trad_EK, label)
     return KDF(input)
 ~~~
 
@@ -419,12 +419,12 @@ an inlined instance of DH-KEM, to elide other public data like the PQ
 ciphertext and encapsulation key from the KDF input:
 
 ~~~
-def QSF-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
-                         trad_PK, label):
-    return KDF(concat(pq_SS, trad_SS, trad_CT, trad_PK, label))
+def QSF-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_EK, trad_CT,
+                         trad_EK, label):
+    return KDF(concat(pq_SS, trad_SS, trad_CT, trad_EK, label))
 ~~~
 
-Note that pq_CT and pq_PK are NOT included in the KDF. This is only possible
+Note that pq_CT and pq_EK are NOT included in the KDF. This is only possible
 because the component KEMs adhere to the following requirements. The QSF
 combiner MUST NOT be used in concrete KEM instances that do not satisfy these
 requirements.
