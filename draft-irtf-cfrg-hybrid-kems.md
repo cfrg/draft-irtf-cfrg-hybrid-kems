@@ -20,6 +20,17 @@ normative:
   FIPS203: DOI.10.6028/NIST.FIPS.203
 
 informative:
+  ABR01:
+    title: "The Oracle Diffie-Hellman Assumptions and an Analysis of DHIES"
+    date: Jan, 2001
+    author:
+      -
+        ins: Michel Abdalla1
+      -
+        ins: Mihir Bellare1
+      -
+        ins: Phillip Rogaway
+
   ANSIX9.62:
     title: "Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"
     date: Nov, 2005
@@ -174,12 +185,13 @@ if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 The generic hybrid PQ/T KEM constructions we define depend on the the
 following cryptographic primitives:
 
-- Key Encapsulation Mechanism {{kems}};
-- Extendable Output Function (XOF) {{xof}};
-- Key Derivation Function (KDF) {{kdf}}; and
-- Nominal Diffie-Hellman Group {{group}}.
+- Key Encapsulation Mechanism {{kems}}
+- Extendable Output Function (XOF) {{xof}}
+- Key Derivation Function (KDF) {{kdf}}
 
-These dependencies are defined in the following subsections.
+In the remainder of this section, we describe functional aspects of these
+mechanisms.  The security properties we require in order for the resulting
+hybrid KEM to be secure are discussed in {{security-properties}}.
 
 ## Key encapsulation mechanisms {#kems}
 
@@ -271,67 +283,78 @@ A secure key derivation function (KDF) that is modeled as a secure
 pseudorandom function (PRF) in the standard model {{GHP2018}} and independent
 random oracle in the random oracle model (ROM).
 
-## Nominal Diffie-Hellman Group {#group}
+## KEM from Diffie-Hellman {#group}
 
-The traditional DH-KEM construction depends on an abelian group of order
-`order`. We represent this group as the object `G` that additionally defines
-helper functions described below. The group operation for `G` is addition `+`
-with identity element `I`. For any elements `A` and `B` of the group `G`,
-`A + B = B + A` is also a member of `G`. Also, for any `A` in `G`, there
-exists an element `-A` such that `A + (-A) = (-A) + A = I`. For convenience,
-we use `-` to denote subtraction, e.g., `A - B = A + (-B)`.  Integers, taken
-modulo the group order `order`, are called scalars; arithmetic operations on
-scalars are implicitly performed modulo `order`. Scalar multiplication is
-equivalent to the repeated application of the group operation on an element
-`A` with itself `r-1` times, denoted as `ScalarMult(A, r)`. We denote the
-sum, difference, and product of two scalars using the `+`, `-`, and `*`
-operators, respectively. (Note that this means `+` may refer to group element
-addition or scalar addition, depending on the type of the operands.) For any
-element `A`, `ScalarMult(A, order) = I`.  We denote `B` as a fixed generator
-of the group. Scalar base multiplication is equivalent to the repeated
-application of the group operation on `B` with itself `r-1` times, this is
-denoted as `ScalarBaseMult(r)`. The set of scalars corresponds to
-`GF(order)`, which we refer to as the scalar field. It is assumed that group
-element addition, negation, and equality comparison can be efficiently
-computed for arbitrary group elements.
+<!-- TODO(RLB) Move this to an appendix? -->
 
-This document uses types `Element` and `Scalar` to denote elements of the
-group `G` and its set of scalars, respectively. We denote `Scalar(x)` as the
-conversion of integer input `x` to the corresponding `Scalar` value with the
-same numeric value. For example, `Scalar(1)` yields a `Scalar` representing
-the value 1.  We denote equality comparison of these types as `==` and
-assignment of values by `=`. When comparing Scalar values, e.g., for the
-purposes of sorting lists of Scalar values, the least nonnegative
-representation mod `order` is used.
+This section describes a simple KEM built from a Diffie-Hellman group.  **This
+KEM is not IND-CCA secure**. It is, however IND-CPA secure under either the
+Decisional Diffie-Hellman assumption or the Hashed Decisional Diffie-Hellman
+assumption, depending on the details of the ElementToSharedSecret function
+{{ABR01}}.
 
-We now detail a number of member functions that can be invoked on `G`.
+The KEM construction here differs from the DHKEM construction in the HPKE
+specification {{RFC9180}}.  DHKEM performs additional hashing steps to mix
+certain metadata into the shared secret; this construction is more minimal.
 
-- Order(): Outputs the order of `G` (i.e., `order`).
-- Identity(): Outputs the identity `Element` of the group (i.e., `I`).
-- RandomScalar(): Outputs a random `Scalar` element in GF(order), i.e., a
-  random scalar in \[0, order - 1\].
-- ScalarMult(A, k): Outputs the scalar multiplication between Element `A` and
-  Scalar `k`.
-- ScalarBaseMult(k): Outputs the scalar multiplication between Scalar `k` and
-  the group generator `B`.
-- SerializeElementAsSharedSecret(A): Maps an `Element` `A` to a fixed-length byte
-  array. This function is used to produce a shared secret for Diffie-Hellman
-  operations performed on the group.
-- SerializeElement(A): Maps an `Element` `A` to a canonical byte array `buf`
-  of fixed length `Ne`. This function raises an error if `A` is the identity
-  element of the group.
-- DeserializeElement(buf): Attempts to map a byte array `buf` to an `Element`
-  `A`, and fails if the input is not the valid canonical byte representation
-  of an element of the group. This function raises an error if
-  deserialization fails or if `A` is the identity element of the group.
-- SerializeScalar(s): Maps a Scalar `s` to a canonical byte array `buf` of
-  fixed length `Ns`.
-- DeserializeScalar(buf): Attempts to map a byte array `buf` to a `Scalar`
-  `s`.  This function raises an error if deserialization fails.
-- ScalarFromBytes(buf): Maps a byte array `buf` to a `Scalar` by first
-  interpreting the contents of `buf` as an unsigned integer and then
-  reducing that integer modulo the group order; this ensures that the
-  resulting integer is always an element of the Scalar field.
+The traditional Diffie-Hellman construction depends on an abelian group G with a
+chosen group generator or "base point" `B`, in which the discrete-log problem is
+hard.  Here we write the group operation in G additively, so that "scalar
+multiplication" of a non-negative integer `k` times a group element `P`
+represents repeated application of the group operation to `P`:
+
+~~~
+0 * P = O (the identity element for the group)
+1 * P = P
+2 * P = P + P
+...
+k * P = (k - 1) * P + P
+~~~
+
+We call a non-negative integer in the range `[0, n)` a "scalar", where `n` is
+the order of the group.
+
+In addition to the group operation, we require that a Diffie-Hellman group
+define the following algorithms:
+
+- `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
+  byte string `seed`.
+- `ScalarToBytes(k) -> dk`: Encode a scalar into a fixed-length byte string.
+- `BytesToScalar(dk) -> k`: Decode a scalar from a fixed-length byte string.
+- `ElementToBytes(P) -> dk`: Encode an element of the group into a fixed-length
+  byte string.
+- `BytesToElement(dk) -> P`: Decode an element of the group from a fixed-length
+  byte string.
+- `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element of
+  the group (e.g., by taking the X coordinate of an ellpitic curve point).
+
+Based on this notion of a group, we can define a DH-based KEM as follows:
+
+~~~
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+
+def DeriveKeyPair(seed):
+    p = RandomScalar(seed)
+    P = p * B
+    dk = ScalarToBytes(p)
+    ek = ElementToBytes(P)
+    return (ek, dk)
+
+def Encaps(ek):
+    P = BytesToElement(ek)
+    (Q, q) = GenerateKeyPair()
+    ct = ElementToBytes(Q)
+    ss = ElementToSharedSecret(q * P)
+    return (ct, ss)
+
+def Decaps(dk, ct)
+    p = BytesToScalar(dk)
+    Q = BytesToElement(ct)
+    ss = ElementToSharedSecret(p * Q)
+    return ss
+~~~
 
 # Hybrid KEM Constructions {#constructions}
 
