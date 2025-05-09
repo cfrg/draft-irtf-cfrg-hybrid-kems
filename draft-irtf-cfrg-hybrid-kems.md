@@ -139,24 +139,49 @@ informative:
 
 --- abstract
 
-This document defines generic techniques to achive hybrid
-post-quantum/traditional (PQ/T) key encapsulation mechanisms (KEMs) from
-post-quantum and traditional component algorithms that meet specified
-security properties.
+"Post-quantum" (PQ) algorithms promise to resist attack by a quantum computer,
+in contrast to "traditional" algorithms.  However, given the novelty of PQ
+algorithms, there is some concern that PQ algorithms currently believed to be
+secure will be broken.  Hybrid constructions that combine both PQ and
+traditional algorithms can help moderate this risk while still providing
+security against quantum attack.  In this document, we define constructions for
+hybrid Key Encapsulation Mechanisms (KEMs) based on combining a traditional KEM
+and a PQ KEM.  Hybrid KEMs using these constructions provide strong security
+properties as long as the undelying algorithms are secure.
 
 --- middle
 
 # Introduction {#intro}
 
-There are many choices that can be made when specifying a hybrid KEM: the
-constituent KEMs; their security levels; the combiner; and the hash within,
-to name but a few. Having too many similar options are a burden to the
-ecosystem.
+"Post-quantum" (PQ) algorithms promise to resist attack by a quantum computer,
+in contrast to "traditional" algorithms.  Key Encapsulation Mechanisms (KEMs)
+are an area of particular concern.  As of this writing, it is unlikely that a
+quantum computer already exists, but it is possible that one might be created in
+the near future.  In order to address "harvest now, decrypt later" attacks,
+protocols must integrate post-quantum algorithms for confidentiality protection.
+In particular, public-key algrotihsm for key establishment must be replaced with
+PQ KEMs.
 
-The aim of this document is provide a small set of techniques for
-constructing hybrid KEMs designed to achieve specific security properties
-given conforming component algorithms, that should be suitable for the vast
-majority of use cases.
+Given the novelty of PQ algorithms, however there is some concern that PQ
+algorithms currently believed to be secure will be broken.  Hybrid
+constructions that combine both PQ and traditional algorithms can help moderate
+this risk while still providing security against quantum attack.  If construted
+properly, a hybrid KEM will retain the properties of either constituent KEM
+even if the other KEM is compromised.  If the PQ KEM is broken by new
+cryptanalysis, then the hybrid KEM should continue to provide security against
+non-quantum attackers by virtue of its traditional KEM component.  If the
+traditional KEM is brken by a quantum computer, then the hybrid KEM should
+continue to resist quantum attack by virtue of its PQ KEM component.
+
+In this document, we define constructions for hybrid Key Encapsulation
+Mechanisms (KEMs) based on combining a traditional KEM and a PQ KEM.  Hybrid
+KEMs using these constructions provide strong security properties as long as
+the undelying algorithms are secure.
+
+The aim of this document is provide a small set of techniques for constructing
+hybrid KEMs designed to achieve specific security properties given conforming
+component algorithms, that should be suitable for the vast majority of use
+cases.
 
 # Requirements Notation
 
