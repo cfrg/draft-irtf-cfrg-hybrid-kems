@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-08T01:09:46.057202+00:00",
+  "timestamp": "2025-05-11T01:13:47.145969+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -960,6 +960,61 @@
               "body": "cc @bwesterb ",
               "createdAt": "2025-05-07T15:36:21Z",
               "updatedAt": "2025-05-07T17:28:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "id": "PR_kwDOMmhxws6VpV7t",
+      "title": "Several editorial changes and rewrites",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/18",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR makes several primarily editorial changes, in preparation for the more significant edits to the combiners and security properties sections.\r\n\r\n* (pk, sk) -> (ek, dk)\r\n* New text in the abstract and introduction\r\n* Removes a couple of unnecessary function definitions\r\n* Clean up in the definition of the KEM interface\r\n* Rewrote the DH section as a KEM-to-DH construction\r\n\r\nThe last change is the most substantial one.  The current combiner constructions make explicit reference to the DH functions of the T algorithm.  The idea of this rewrite is to handle both the PQ and T algorithms through the KEM interface.  \r\n\r\nHandling both algorithms through the same interface is aesthetically nicer, since things will be more parallel, but could also allow for non-DH options like RSA.  At least in principle; I would object to actually spending words on such a possibility in this document.  In fact, I'm not totally sure we need to have the DH KEM construction in the main text, as opposed to having it in an appendix that is referred to as necessary.  (I also thought about moving it to the concrete combiners document, but it seems generic enough and useful enough as a motivator to be included here.)\r\n\r\nI'm not sure why `includes.mk` got deleted.  I presume it was was something in the tooling; I didn't do it deliberately.",
+      "createdAt": "2025-05-09T22:09:06Z",
+      "updatedAt": "2025-05-10T20:22:48Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
+      "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "edit-pass",
+      "headRefOid": "e20cca74d0e78daae816b7f774fe52eee9cba5c3",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you for this revision. I think it looks largely good (a few comments added). I similarly would recommend punting description of RSA. For DH, I think it depends on whether the concrete options will be DH-based or DHKEM-based. The latter can be generalized for KEM, but we talked about efficiencies of the former. It would see odd to have a concrete document that uses DH instead of DHKEM, if the generalism is all KEM-based or DH doesn't feature heavily. So I am somewhat inclined to have the DH discussion fairly prominent.",
+          "createdAt": "2025-05-10T20:22:47Z",
+          "updatedAt": "2025-05-10T20:22:47Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6ovoVv",
+          "commit": {
+            "abbreviatedOid": "e20cca7"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-10T20:14:33Z",
+          "updatedAt": "2025-05-10T20:14:34Z",
+          "comments": [
+            {
+              "originalPosition": 52,
+              "body": "I recommend that we avoid \"timed\" statements in the draft that might not age well. This can be changed to:\r\n\r\nPost-quantum (PQ) algorithms offer a redesign of traditional algorithms tailored towards resisting attack from a quantum computer. Key Encapsulation Mechanisms (KEMs), are a standardized algorithm type that can be used to build protocols in lieu of traditional, quantum-vulnerable variants such as Diffie-Hellman (DH) based protocols. Given the novelty of PQ algorithms, however....",
+              "createdAt": "2025-05-10T20:14:33Z",
+              "updatedAt": "2025-05-10T20:14:34Z"
             }
           ]
         }
