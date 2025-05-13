@@ -25,7 +25,7 @@ informative:
     date: Jan, 2001
     author:
       -
-        ins: Michel Abdalla1
+        ins: Michel Abdalla
       -
         ins: Mihir Bellare1
       -
@@ -153,16 +153,15 @@ properties as long as the undelying algorithms are secure.
 
 # Introduction {#intro}
 
-"Post-quantum" (PQ) algorithms promise to resist attack by a quantum computer,
-in contrast to "traditional" algorithms.  Key Encapsulation Mechanisms (KEMs)
-are an area of particular concern.  As of this writing, it is unlikely that a
-quantum computer already exists, but it is possible that one might be created in
-the near future.  In order to address "harvest now, decrypt later" attacks,
-protocols must integrate post-quantum algorithms for confidentiality protection.
-In particular, public-key algrotihsm for key establishment must be replaced with
-PQ KEMs.
+Post-quantum (PQ) algorithms offer a redesign of traditional algorithms tailored
+towards resisting attack from a quantum computer. Key Encapsulation Mechanisms
+(KEMs), are a standardized algorithm type that can be used to build protocols in
+lieu of traditional, quantum-vulnerable variants such as Diffie-Hellman (DH)
+based protocols.  Upgrading protocols to use PQ KEMs is a priority for the
+protocol design community, due to the possibility of "harvest now, decrypt
+later" attacks.
 
-Given the novelty of PQ algorithms, however there is some concern that PQ
+Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help moderate
 this risk while still providing security against quantum attack.  If construted
@@ -309,8 +308,6 @@ pseudorandom function (PRF) in the standard model {{GHP2018}} and independent
 random oracle in the random oracle model (ROM).
 
 ## KEM from Diffie-Hellman {#group}
-
-<!-- TODO(RLB) Move this to an appendix? -->
 
 This section describes a simple KEM built from a Diffie-Hellman group.  **This
 KEM is not IND-CCA secure**. It is, however IND-CPA secure under either the
