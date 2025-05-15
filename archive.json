@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-11T01:13:47.145969+00:00",
+  "timestamp": "2025-05-15T01:07:06.022582+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -977,13 +977,13 @@
       "labels": [],
       "body": "This PR makes several primarily editorial changes, in preparation for the more significant edits to the combiners and security properties sections.\r\n\r\n* (pk, sk) -> (ek, dk)\r\n* New text in the abstract and introduction\r\n* Removes a couple of unnecessary function definitions\r\n* Clean up in the definition of the KEM interface\r\n* Rewrote the DH section as a KEM-to-DH construction\r\n\r\nThe last change is the most substantial one.  The current combiner constructions make explicit reference to the DH functions of the T algorithm.  The idea of this rewrite is to handle both the PQ and T algorithms through the KEM interface.  \r\n\r\nHandling both algorithms through the same interface is aesthetically nicer, since things will be more parallel, but could also allow for non-DH options like RSA.  At least in principle; I would object to actually spending words on such a possibility in this document.  In fact, I'm not totally sure we need to have the DH KEM construction in the main text, as opposed to having it in an appendix that is referred to as necessary.  (I also thought about moving it to the concrete combiners document, but it seems generic enough and useful enough as a motivator to be included here.)\r\n\r\nI'm not sure why `includes.mk` got deleted.  I presume it was was something in the tooling; I didn't do it deliberately.",
       "createdAt": "2025-05-09T22:09:06Z",
-      "updatedAt": "2025-05-10T20:22:48Z",
+      "updatedAt": "2025-05-14T11:18:28Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "edit-pass",
-      "headRefOid": "e20cca74d0e78daae816b7f774fe52eee9cba5c3",
+      "headRefOid": "41085b5bbb82e601018af9d30667fbe99b878d00",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1015,6 +1015,159 @@
               "body": "I recommend that we avoid \"timed\" statements in the draft that might not age well. This can be changed to:\r\n\r\nPost-quantum (PQ) algorithms offer a redesign of traditional algorithms tailored towards resisting attack from a quantum computer. Key Encapsulation Mechanisms (KEMs), are a standardized algorithm type that can be used to build protocols in lieu of traditional, quantum-vulnerable variants such as Diffie-Hellman (DH) based protocols. Given the novelty of PQ algorithms, however....",
               "createdAt": "2025-05-10T20:14:33Z",
               "updatedAt": "2025-05-10T20:14:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQnn8",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T10:49:19Z",
+          "updatedAt": "2025-05-14T10:49:20Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Feel free to ignore this stylistic blabbering: personally I like to write \"post-quantum algorithms are designed to resist attack of quantum computers\". Then we don't need any qualifications like \"promise\" or \"believe to\" etc. Of course it's not completely true: several schemes were first designed before quantum computers were known about.",
+              "createdAt": "2025-05-14T10:49:19Z",
+              "updatedAt": "2025-05-14T10:49:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQqh5",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T10:53:16Z",
+          "updatedAt": "2025-05-14T10:53:17Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "There are two more affordances of hybrids\u2014not sure we should go into that now.\r\n\r\n1. You can satisfy an old policy (or expectation) while already adopting PQ.\r\n2. You protect against implementation mistakes. (Say, using a hybrid we protect against a say timing-based active attack in either component.\r\n",
+              "createdAt": "2025-05-14T10:53:16Z",
+              "updatedAt": "2025-05-14T10:53:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQrRn",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T10:54:20Z",
+          "updatedAt": "2025-05-14T10:54:21Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "`brken` typo",
+              "createdAt": "2025-05-14T10:54:21Z",
+              "updatedAt": "2025-05-14T10:54:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQwCU",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T11:00:44Z",
+          "updatedAt": "2025-05-14T11:00:45Z",
+          "comments": [
+            {
+              "originalPosition": 277,
+              "body": "IND-CCA and IND-CPA might be meaningless to the reader at this point. What about the following\r\n\r\n> This KEM is not secure against active attack (not IND-CCA).",
+              "createdAt": "2025-05-14T11:00:44Z",
+              "updatedAt": "2025-05-14T11:00:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQ6Zp",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T11:14:42Z",
+          "updatedAt": "2025-05-14T11:14:43Z",
+          "comments": [
+            {
+              "originalPosition": 343,
+              "body": "I know it makes sense to define the IND-CPA KEM like this, but I'm worried that once it's defined, it's very tempting for implementors to put it in the KEM slot and have it available to users, which do not understand warnings such as \"this is only IND-CPA\".\r\n\r\nNot assigning a code points helps, but maybe we can do more.\r\n\r\nIdeally we'd make the interface of a component incompatible with a proper KEM, but I don't see any non-artificial way to do that.\r\n\r\nDifferent naming only goes so far: I think *Component* or say *PreKEM* would be better.\r\n",
+              "createdAt": "2025-05-14T11:14:42Z",
+              "updatedAt": "2025-05-14T11:14:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQ7DH",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T11:15:46Z",
+          "updatedAt": "2025-05-14T11:15:47Z",
+          "comments": [
+            {
+              "originalPosition": 392,
+              "body": "This is breaking abstraction.",
+              "createdAt": "2025-05-14T11:15:46Z",
+              "updatedAt": "2025-05-14T11:15:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQ8Pv",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-05-14T11:17:42Z",
+          "updatedAt": "2025-05-14T11:17:42Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pQ8r8",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T11:18:28Z",
+          "updatedAt": "2025-05-14T11:18:28Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Typo",
+              "createdAt": "2025-05-14T11:18:28Z",
+              "updatedAt": "2025-05-14T11:18:28Z"
             }
           ]
         }
