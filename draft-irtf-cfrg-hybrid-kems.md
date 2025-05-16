@@ -20,6 +20,17 @@ normative:
   FIPS203: DOI.10.6028/NIST.FIPS.203
 
 informative:
+  ABR01:
+    title: "The Oracle Diffie-Hellman Assumptions and an Analysis of DHIES"
+    date: Jan, 2001
+    author:
+      -
+        ins: Michel Abdalla
+      -
+        ins: Mihir Bellare
+      -
+        ins: Phillip Rogaway
+
   ANSIX9.62:
     title: "Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"
     date: Nov, 2005
@@ -128,24 +139,50 @@ informative:
 
 --- abstract
 
-This document defines generic techniques to achive hybrid
-post-quantum/traditional (PQ/T) key encapsulation mechanisms (KEMs) from
-post-quantum and traditional component algorithms that meet specified
-security properties.
+"Post-quantum" (PQ) algorithms are designed to resist attack by a quantum computer,
+in contrast to "traditional" algorithms.  However, given the novelty of PQ
+algorithms, there is some concern that PQ algorithms currently believed to be
+secure will be broken.  Hybrid constructions that combine both PQ and
+traditional algorithms can help moderate this risk while still providing
+security against quantum attack.  In this document, we define constructions for
+hybrid Key Encapsulation Mechanisms (KEMs) based on combining a traditional KEM
+and a PQ KEM.  Hybrid KEMs using these constructions provide strong security
+properties as long as the undelying algorithms are secure.
 
 --- middle
 
 # Introduction {#intro}
 
-There are many choices that can be made when specifying a hybrid KEM: the
-constituent KEMs; their security levels; the combiner; and the hash within,
-to name but a few. Having too many similar options are a burden to the
-ecosystem.
+Post-quantum (PQ) algorithms offer a redesign of traditional algorithms tailored
+towards resisting attack from a quantum computer. Key Encapsulation Mechanisms
+(KEMs), are a standardized algorithm type that can be used to build protocols in
+lieu of traditional, quantum-vulnerable variants such as Diffie-Hellman (DH)
+based protocols.  Upgrading protocols to use PQ KEMs is a priority for the
+protocol design community, due to the possibility of "harvest now, decrypt
+later" attacks.
 
-The aim of this document is provide a small set of techniques for
-constructing hybrid KEMs designed to achieve specific security properties
-given conforming component algorithms, that should be suitable for the vast
-majority of use cases.
+Given the novelty of PQ algorithms, however, there is some concern that PQ
+algorithms currently believed to be secure will be broken.  Hybrid
+constructions that combine both PQ and traditional algorithms can help moderate
+this risk while still providing security against quantum attack.  If construted
+properly, a hybrid KEM will retain the properties of either constituent KEM
+even if the other KEM is compromised.  If the PQ KEM is broken by new
+cryptanalysis, then the hybrid KEM should continue to provide security against
+non-quantum attackers by virtue of its traditional KEM component.  If the
+traditional KEM is broken by a quantum computer, then the hybrid KEM should
+continue to resist quantum attack by virtue of its PQ KEM component.
+
+In addition to guarding against algorithm flaws, this property also guards
+against flaws in implementations, such as timing attacks.  Hybrid KEMs can also
+facilitate faster deployment of PQ security by allowing applications to
+incorporate PQ algorithms while still meeting compliance requirements based on
+traditional algorithms.
+
+In this document, we define constructions for hybrid KEMs based on combining a
+traditional KEM and a PQ KEM.  The aim of this document is provide a small set
+of techniques for constructing hybrid KEMs designed to achieve specific security
+properties given conforming component algorithms, that should be suitable for
+the vast majority of use cases.
 
 # Requirements Notation
 
@@ -162,296 +199,380 @@ The following terms are used throughout this document:
   by a cryptographically-secure random number generator.
 - `concat(x0, ..., xN)`: Concatenation of byte strings.  `concat(0x01,
   0x0203, 0x040506) = 0x010203040506`.
-- `I2OSP(n, w)`: Convert non-negative integer `n` to a `w`-length, big-endian
-  byte string, as described in {{!RFC8017}}.
-- `OS2IP(x)`: Convert byte string `x` to a non-negative integer, as described
-  in {{!RFC8017}}, assuming big-endian byte order.
+- `split(N1, N2, x)`: Split a byte string `x` of length `N1 + N2` into its first
+  `N1` bytes and its last `N2` bytes.  This function is the inverse of
+  `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes long. It
+  is an error to call this function with a byte string that does not have length
+  `N1 + N2`.
 
 When `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to
 denote the slice of bytes in `x` starting from the beginning of `x` and
 leading up to index `i`, including the `i`-th byte, and the slice the bytes
 in `x` starting from index `i` to the end of `x`, respectively. For example,
-if `x = [0, 1, 2, 3]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3]`.
+if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 
 # Cryptographic Dependencies {#cryptographic-deps}
 
 The generic hybrid PQ/T KEM constructions we define depend on the the
 following cryptographic primitives:
 
-- Key Encapsulation Mechanism {{kems}};
-- Extendable Output Function (XOF) {{xof}};
-- Key Derivation Function (KDF) {{kdf}}; and
-- Nominal Diffie-Hellman Group {{group}}.
+- Key Encapsulation Mechanism {{kems}}
+- Hash Functions {{hash}}
 
-These dependencies are defined in the following subsections.
+In the remainder of this section, we describe functional aspects of these
+mechanisms.  The security properties we require in order for the resulting
+hybrid KEM to be secure are discussed in {{security-properties}}.
 
 ## Key encapsulation mechanisms {#kems}
 
-Key encapsulation mechanisms (KEMs) are cryptographic schemes that consist of
-four algorithms:
+~~~ aasvg
+     +-----------------+
+     | GenerateKeyPair |
+     |        or       |
+     |  DeriveKeyPair  |
+     +--------+--------+
+              |
+    +---------+----------+
+    |                    |
+    V                    V
 
-- `KeyGen() -> (pk, sk)`: A probabilistic key generation algorithm, which
-  generates a public encapsulation key `pk` and a secret decapsulation key
-  `sk`, each of which are byte strings.
-- `DeriveKey(seed) -> (pk, sk)`: A deterministic algorithm, which takes as
-  input a seed `seed` and generates a public encapsulation key `pk` and a
-  secret decapsulation key `sk`, each of which are byte strings.
-- `Encaps(pk) -> (ct, shared_secret)`: A probabilistic encapsulation
-  algorithm, which takes as input a public encapsulation key `pk` and outputs
-  a ciphertext `ct` and shared secret `shared_secret`.
-- `Decaps(sk, ct) -> shared_secret`: A decapsulation algorithm, which takes
-  as input a secret decapsulation key `sk` and ciphertext `ct` and outputs a
-  shared secret `shared_secret`.
+    ek                  dk
 
-KEMs can also provide a deterministic version of `Encaps`, denoted
-`EncapsDerand`, with the following signature:
+    |                    |
+    |                    |
+    V                    V
++--------+    ct    +--------+
+| Encaps |--------->| Decaps |
++--------+          +--------+
+    |                    |
+    |                    |
+    V                    V
 
-- `EncapsDerand(pk, randomness) -> (ct, shared_secret)`: A deterministic
+    ss        ==        ss
+~~~
+
+A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
+
+- `GenerateKeyPair() -> (ek, dk)`: A randomized algorithm that generates a
+  public encapsulation key `ek` and a secret decapsulation key `dk`, each of
+  which are byte strings.
+- `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
+  input a seed `seed` and generates a public encapsulation key `ek` and a secret
+  decapsulation key `dk`, each of which are byte strings.
+- `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
+  algorithm, which takes as input a public encapsulation key `ek` and outputs
+  a ciphertext `ct` and shared secret `ss`.
+- `Decaps(dk, ct) -> ss`: A decapsulation algorithm, which takes
+  as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
+  shared secret `ss`.
+
+A KEM may also provide a deterministic version of `Encaps` (e.g., for purposes
+of testing):
+
+- `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
    encapsulation algorithm, which takes as input a public encapsulation key
-   `pk` and randomness `randomness`, and outputs a ciphertext `ct` and shared
+   `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
 
-Finally, KEMs are also parameterized with the following constants:
+We assume that the values produced and consumed by the above functions are all
+byte strings, with fixed lengths:
 
-- Nseed, which denotes the number of bytes for a key seed;
-- Npk, which denotes the number of bytes in a public encapsulation key;
-- Nsk, which denotes the number of bytes in a private decapsulation key; and
-- Nct, which denotes the number of bytes in a ciphertext.
+- `Nseed`: The length in bytes of a key seed (input to DeriveKeyPair)
+- `Nek`: The length in bytes of a public encapsulation key
+- `Ndk`: The length in bytes of a secret decapsulation key
+- `Nct`: The length in bytes of a ciphertext produced by Encaps
+- `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
 
-## `XOF` {#xof}
+This interface is effectively the same as the one defined in the Hybrid Public
+Key Encryption (HPKE) specification {{?RFC9180}}.  The only difference is that
+here we assume that all values are byte strings, whereas in HPKE keys are opaque
+by default and serialized or deserialized as needed.  We also use slightly
+different terminology for keys, emphasizing "encapsulation" and "decapsulation"
+as opposed to "public" and "secret".
 
-Extendable-output function (XOF). A function on bit strings in which the
-output can be extended to any desired length. Ought to satisfy the following
-properties as long as the specified output length is sufficiently long to
-prevent trivial attacks:
+## Hash functions {#hash}
 
-1. (One-way) It is computationally infeasible to find any input that maps to
-   any new pre-specified output.
+Functionally, a hash function is simply a function that produces a fixed-length
+output byte string from an input byte string of arbitrary length.
 
-2. (Collision-resistant) It is computationally infeasible to find any two
-   distinct inputs that map to the same output.
+- `Nh` - The length in bytes of an output from this hash function.
+- `Hash(input) -> output`: Produce a byte string of length `Nh` from an input
+  byte string.
 
-MUST provide the bit-security required to source input randomness for PQ/T
-components from a seed that is expanded to a output length, of which a subset
-is passed to the component key generation algorithms.
+For simplicity, we will write invocations of a hash function without `Hash`
+being explicit.  Invoking a hash function `Foo` on input `input` will be written
+as `Foo(input)` instead of `Foo.Hash(input)`.
 
-## Key Derivation Function `KDF` {#kdf}
+Hash function used with the constructions in this document should be structured
+so that they can be regarded as random oracles in either the classical or
+quantum random oracle model.  (Note that this property implies standard hash
+function properties such as collision resistance and second preimage
+resistance.)  Each hash function we refer to should be an independent random
+oracle.
 
-A secure key derivation function (KDF) that is modeled as a secure
-pseudorandom function (PRF) in the standard model {{GHP2018}} and independent
-random oracle in the random oracle model (ROM).
+## KEM from Diffie-Hellman {#group}
 
-## Nominal Diffie-Hellman Group {#group}
+This section describes a simple KEM built from a Diffie-Hellman group.  **This
+KEM is not a secure KEM in the sense of the IND-CCA standard usually applied (it
+meets the lower IND-CPA standard {{ABR01}}), and thus should not be used on its
+own.**  However, using the constructions in this document, it can be used as a
+component of an IND-CCA hybrid KEM, as discussed in {{security-considerations}}.
 
-The traditional DH-KEM construction depends on an abelian group of order
-`order`. We represent this group as the object `G` that additionally defines
-helper functions described below. The group operation for `G` is addition `+`
-with identity element `I`. For any elements `A` and `B` of the group `G`,
-`A + B = B + A` is also a member of `G`. Also, for any `A` in `G`, there
-exists an element `-A` such that `A + (-A) = (-A) + A = I`. For convenience,
-we use `-` to denote subtraction, e.g., `A - B = A + (-B)`.  Integers, taken
-modulo the group order `order`, are called scalars; arithmetic operations on
-scalars are implicitly performed modulo `order`. Scalar multiplication is
-equivalent to the repeated application of the group operation on an element
-`A` with itself `r-1` times, denoted as `ScalarMult(A, r)`. We denote the
-sum, difference, and product of two scalars using the `+`, `-`, and `*`
-operators, respectively. (Note that this means `+` may refer to group element
-addition or scalar addition, depending on the type of the operands.) For any
-element `A`, `ScalarMult(A, order) = I`.  We denote `B` as a fixed generator
-of the group. Scalar base multiplication is equivalent to the repeated
-application of the group operation on `B` with itself `r-1` times, this is
-denoted as `ScalarBaseMult(r)`. The set of scalars corresponds to
-`GF(order)`, which we refer to as the scalar field. It is assumed that group
-element addition, negation, and equality comparison can be efficiently
-computed for arbitrary group elements.
+The traditional Diffie-Hellman construction depends on an abelian group G with a
+chosen group generator or "base point" `B`, in which the discrete-log problem is
+hard.  Here we write the group operation in G additively, so that "scalar
+multiplication" of a non-negative integer `k` times a group element `P`
+represents repeated application of the group operation to `P`:
 
-This document uses types `Element` and `Scalar` to denote elements of the
-group `G` and its set of scalars, respectively. We denote `Scalar(x)` as the
-conversion of integer input `x` to the corresponding `Scalar` value with the
-same numeric value. For example, `Scalar(1)` yields a `Scalar` representing
-the value 1.  We denote equality comparison of these types as `==` and
-assignment of values by `=`. When comparing Scalar values, e.g., for the
-purposes of sorting lists of Scalar values, the least nonnegative
-representation mod `order` is used.
+~~~
+0 * P = O (the identity element for the group)
+1 * P = P
+2 * P = P + P
+...
+k * P = (k - 1) * P + P
+~~~
 
-We now detail a number of member functions that can be invoked on `G`.
+We call a non-negative integer in the range `[0, n)` a "scalar", where `n` is
+the order of the group.
 
-- Order(): Outputs the order of `G` (i.e., `order`).
-- Identity(): Outputs the identity `Element` of the group (i.e., `I`).
-- RandomScalar(): Outputs a random `Scalar` element in GF(order), i.e., a
-  random scalar in \[0, order - 1\].
-- ScalarMult(A, k): Outputs the scalar multiplication between Element `A` and
-  Scalar `k`.
-- ScalarBaseMult(k): Outputs the scalar multiplication between Scalar `k` and
-  the group generator `B`.
-- SerializeElementAsSharedSecret(A): Maps an `Element` `A` to a fixed-length byte
-  array. This function is used to produce a shared secret for Diffie-Hellman
-  operations performed on the group.
-- SerializeElement(A): Maps an `Element` `A` to a canonical byte array `buf`
-  of fixed length `Ne`. This function raises an error if `A` is the identity
-  element of the group.
-- DeserializeElement(buf): Attempts to map a byte array `buf` to an `Element`
-  `A`, and fails if the input is not the valid canonical byte representation
-  of an element of the group. This function raises an error if
-  deserialization fails or if `A` is the identity element of the group.
-- SerializeScalar(s): Maps a Scalar `s` to a canonical byte array `buf` of
-  fixed length `Ns`.
-- DeserializeScalar(buf): Attempts to map a byte array `buf` to a `Scalar`
-  `s`.  This function raises an error if deserialization fails.
-- ScalarFromBytes(buf): Maps a byte array `buf` to a `Scalar` by first
-  interpreting the contents of `buf` as an unsigned integer and then
-  reducing that integer modulo the group order; this ensures that the
-  resulting integer is always an element of the Scalar field.
+In addition to the group operation, we require that a Diffie-Hellman group
+define the following algorithms:
+
+- `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
+  byte string `seed`.
+- `ScalarToBytes(k) -> dk`: Encode a scalar into a fixed-length byte string.
+- `BytesToScalar(dk) -> k`: Decode a scalar from a fixed-length byte string.
+- `ElementToBytes(P) -> dk`: Encode an element of the group into a fixed-length
+  byte string.
+- `BytesToElement(dk) -> P`: Decode an element of the group from a fixed-length
+  byte string.
+- `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element of
+  the group (e.g., by taking the X coordinate of an ellpitic curve point).
+
+Based on this notion of a group, we can define a DH-based KEM as follows:
+
+~~~
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+
+def DeriveKeyPair(seed):
+    p = RandomScalar(seed)
+    P = p * B
+    dk = ScalarToBytes(p)
+    ek = ElementToBytes(P)
+    return (ek, dk)
+
+def Encaps(ek):
+    P = BytesToElement(ek)
+    (Q, q) = GenerateKeyPair()
+    ct = ElementToBytes(Q)
+    ss = ElementToSharedSecret(q * P)
+    return (ct, ss)
+
+def Decaps(dk, ct)
+    p = BytesToScalar(dk)
+    Q = BytesToElement(ct)
+    ss = ElementToSharedSecret(p * Q)
+    return ss
+~~~
 
 # Hybrid KEM Constructions {#constructions}
 
-<!-- TODO: since NIST is OK'ing ML-KEM keygen from a NIST-approved KDF/PRF,
-specify the generic seed-stretching KeyGen for all/both constructions,
-here. -->
+In this section, we define a collection of constructions for hybrid KEMs. These
+constructions share a common overall structure, differing mainly in how they
+compute the final shared secret.
 
-During encapsulation and decapsulation, a hybrid KEM combines its component
-KEM shared secrets and other info, such as the KEM ciphertexts and
-encapsulation keys keys, to yield a shared secret.  The interface for this
-function, often called a 'combiner' in the literature, is the `SharedSecret`
-function for the constructions in this document. `SharedSecret` accepts the
-following inputs:
+During encapsulation and decapsulation, a hybrid KEM combines its component KEM
+shared secrets and other info, such as the KEM ciphertexts and encapsulation
+keys secret.  This function, often called a "combiner" in the literature,
+accepts the following inputs:
 
-- pq_SS: The PQ KEM shared secret.
-- trad_SS: The traditional KEM shared secret.
-- pq_CT: The PQ KEM ciphertext.
-- pq_PK: The PQ KEM public encapsulation key.
-- trad_CT: The traditional KEM ciphertext.
-- trad_PK: The traditional KEM public encapsulation key.
-- label: A domain-separating label; see {{domain-separation}} for more
+- `ss_PQ`: The PQ KEM shared secret.
+- `ct_PQ`: The PQ KEM ciphertext.
+- `ek_PQ`: The PQ KEM public encapsulation key.
+- `ss_T`: The traditional KEM shared secret.
+- `ct_T`: The traditional KEM ciphertext.
+- `ek_T`: The traditional KEM public encapsulation key.
+- `label`: A domain-separating label; see {{domain-separation}} for more
   information on the role of the label.
 
-The output of the `SharedSecret` function is a 32 byte shared secret that is,
-ultimately, the output of the KEM. <!-- TODO: this doesn't hold generically,
-right? If you instantiate with other components it can be more or less than
-32 bytes. -->
+The output of the combiner function is a byte string that is hashed to become
+the shared secret output of the KEM.
 
-This section describes two generic constructions for hybrid KEMs: one called
-the KitchenSink, specified in {{KitchenSink}}, and another called QSF,
-specified in {{QSF}}.  The KitchenSink construction is maximally conservative
-in design, opting for the least assumptions about the component KEMs. The QSF
-construction is tailored to specific component KEMs and is not generally
-reusable; specific requirements for component KEMs to be usable in the QSF
-combiner are detailed in {{QSF}}.
+## General Construction
 
-Both make use of the following requirements:
+A hybrid KEM `KEM_H` depends on the following constituent components:
 
-1. Both component KEMs have IND-CCA security.
-2. KDF as a secure PRF. A key derivation function (KDF) that is modeled as a
-secure pseudorandom function (PRF) in the standard model {{GHP2018}} and
-independent random oracle in the random oracle model (ROM).
-3. Fixed-length values. Every instantiation in concrete parameters of the
-generic constructions is for fixed parameter sizes, KDF choice, and label,
-allowing the lengths to not also be encoded into the generic
-construction. The label/KDF/component algorithm parameter sets MUST be
-disjoint and non-colliding. Moreover, the length of each each public
-encapsulation key, ciphertext, and shared secret is fixed once the algorithm
-is assumed to be fixed.
+* `KEM_H.Nseed`: The length in bytes for a key seed for the hybrid KEM
+* `KEM_H.Nss`: The length in bytes of a shared secret produced by the hybrid KEM
+* `KEM_T`: A traditional KEM
+* `KEM_PQ`: A post-quantum KEM
+* `ExpandHash`: A hash function mapping byte strings of length `KEM_H.Nseed` to
+  byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed` (`ExpandHash.Nh ==
+  KEM_T.Nseed + KEM_PQ.Nseed`)
+* `CombineHash`: A hash function mapping byte strings of length `KEM_T.Nss +
+  KEM_PQ.Nss` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
+  KEM_H.Nss`)
+* `Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label) -> input`: A function
+  that produces a byte string from the specified inputs, from which the final
+  shared secret is computed.
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used.
 
-## Key generation and derivation {#generic-keygen}
+We presume the KEMs and hash functions meet the interfaces described in
+{{cryptographic-deps}}.
 
-For both constructions in this document we provide a common key generation
-and derivation design. It relies on the following parameters that are
-populated by concrete instantiations:
+Given these constituent parts, we define the following overall structure for a
+hybrid KEM:
 
-* `XOF`: the eXtended Output Function
-* `PQKEM`: the PQ KEM component scheme
-* `G`: the nomimal group used to construct the traditional KEM component
-  scheme as described in {{group}
-* Nseed: length in bytes of the seed randomness sourced from the RNG
-* Npqseed: length in bytes of the input to PQ.DeriveKey()
-* Ntradseed: length in bytes of the input to NominalGroup.ScalarFromBytes()
+```
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
 
-~~~
-def expandDecapsulationKey(sk):
-  expanded = XOF(sk, Npqseed + Ntradseed)
-  (pq_PK, pq_SK) = PQKEM.DeriveKey(expanded[..Npqseed])
-  trad_SK = G.ScalarFromBytes(expanded[Npqseed..])
-  trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))
-  return (pq_SK, trad_SK, pq_PK, trad_PK)
+def DeriveKeyPair(seed):
+    seed_full = ExpandHash(seed)
+    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    ek_H = concat(ek_T, ek_PQ)
+    dk_H = concat(dk_T, dk_PQ)
+    return (ek_H, dk_H)
 
-def KeyGen():
-  sk = random(Nseed)
-  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(sk)
-  return sk, concat(pq_PK, trad_PK)
-~~~
+def Encaps(ek):
+    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
+    (ss_T, ct_T) = KEM_T.Encap(pk_T)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+    ss_H = CombinerHash(Combiner(ss_T, ct_T, ek_T, ss_PQ, ct_PQ, ek_PQ, Label))
+    ct_H = concat(ct_T, ct_PQ)
+    return (ss_H, ct_H)
 
-Similarly, `DeriveKey` works as follows:
+def Decaps(dk, ct):
+    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
+    ek_T = KEM_T.ToEncaps(dk_T)
+    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
 
-~~~
-def DeriveKey(seed):
-  (pq_SK, trad_SK, pq_PK, trad_PK) = expandDecapsulationKey(seed)
-  return sk, concat(pq_PK, trad_PK)
-~~~
+    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
+    ss_H = CombinerHash(Combiner(ss_T, ct_T, ek_T, ss_PQ, ct_PQ, ek_PQ, Label))
+    return ss_H
+```
 
-## 'Kitchen Sink' construction {#KitchenSink}
+The constants associated with a hybrid KEM are mostly derived from the
+concatenation of keys and ciphertexts:
 
-As indicated by the name, the `KitchenSink` puts 'the whole transcript'
-through the KDF. This relies on the minimum security properties of its
-component algorithms at the cost of more bytes needing to be processed by the
-KDF.
+```
+Npk = KEM_T.Npk + KEM_PQ.Npk
+Nsk = KEM_T.Nsk + KEM_PQ.Nsk
+Nct = KEM_T.Nct + KEM_PQ.Nct
+```
 
-~~~
-def KitchenSink-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
-                                 trad_PK, label):
-    input = concat(pq_SS, trad_SS, pq_CT, pq_PK,
-                   trad_CT, trad_PK, label)
-    return KDF(input)
-~~~
+The `Nseed` and `Nss` constants should reflect the overall security level of the
+combined KEM, with the following recommended values:
 
-### Security properties
+```
+Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
+Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+```
 
-Because the entire hybrid KEM ciphertext and encapsulation key material are
-included in the KDF preimage, the `KitchenSink` construction is resilient
-against implementation errors in the component algorithms. <!-- TODO: cite
-that thing -->
+The remainder of this section describes four options for the `Combiner`
+function.  For each combiner, we outline scenarios where it should and should
+not be used.
 
-## 'QSF' construction {#QSF}
+### Everything
 
-Inspired by the generic QSF (Quantum Superiority Fighter) framework in
-{{XWING}}, which leverages the security properties of a KEM like ML-KEM and
-an inlined instance of DH-KEM, to elide other public data like the PQ
-ciphertext and encapsulation key from the KDF input:
+```
+def Everything(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
+    return concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
+```
 
-~~~
-def QSF-KEM.SharedSecret(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT,
-                         trad_PK, label):
-    return KDF(concat(pq_SS, trad_SS, trad_CT, trad_PK, label))
-~~~
+This combiner provides a simple construction that is broadly usable, because its
+security properties are largely independent of the properties of the constituent
+components.  See {{everything-sec}} for security analysis.
 
-Note that pq_CT and pq_PK are NOT included in the KDF. This is only possible
-because the component KEMs adhere to the following requirements. The QSF
-combiner MUST NOT be used in concrete KEM instances that do not satisfy these
-requirements.
+The major drawback of this combiner is that it can be computationally expensive.
+In some PQ KEMs, the encapsulation key `ek_PQ` or ciphertext `ct_PQ` can be
+large, causing `CombinerHash` to process a large input.
 
-1. Nominal Diffie-Hellman Group with strong Diffie-Hellman security
+<!-- TODO example: Raw ECDH + something with short keys and no binding (HQC?) -->
 
-A cryptographic group modelable as a nominal group where the strong
-Diffie-Hellman assumption holds {XWING}. Specically regarding a nominal
-group, this means that especially the QSF construction's security is
-based on a computational-Diffie-Hellman-like problem, but no assumption is
-made about the format of the generated group element - no assumption is made
-that the shared group element is indistinguishable from random bytes.
+## Pre-Hash Encapsulation Keys
 
-2. Post-quantum IND-CCA KEM with ciphertext second preimage resistance
+```
+def PreHashedKeys(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
+    ek_pre = CombinerHash(ek_T, ek_PQ)
+    return concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_pre, label)
+```
 
-The QSF relies the post-quantum KEM component having IND-CCA security against
-a post-quantum attacker, and ciphertext second preimage resistance (C2SPI,
-also known as chosen ciphertext resistance, CCR). C2SPI/CCR is [equivalent to
-LEAK-BIND-K,PK-CT security][CDM23]
+This combiner is an optimization over the `Everything` combiner for the case
+where the same encapsulation key is being used repeatedly, and this
+encapsulation key is large enough that hashing it is slow.  In such a case, the
+pre-hashing can be done offline and the hash result `ek_pre` cached, so that
+invocatons of the combiner can be done more quickly.  Its security follows from
+that of the `Everything` combiner, since the intermediate hashing does not
+affect the analysis.
 
-3. KDF is a secure (post-quantum) PRF, modelable as a random oracle.
+If the operational assumptions above are not true -- for example, if
+encapsulation keys are small or single-use -- then this combiner adds extra
+hashes for no utility, and the `Everything` combiner should be preferred.
 
-Indistinguishability of the final shared secret from a random key is
-established by modeling the key-derivation function as a random
-oracle {{XWING}}.
+<!-- TODO example: Raw ECDH + Classic McEliece -->
+
+### Only Traditional
+
+```
+def Only Traditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
+    return concat(ss_PQ, ss_T, ct_T, ek_T, label)
+```
+
+This combiner produces an even smaller hash input than the `PreHashedKeys`
+combiner, even in cases where keys are not reused, by hashing only the
+traditional metadata.
+
+It is, however, less universal than the `Everything` or `PreHashedKeys`
+combiners.  Its security depends on the constituent KEMs having certain
+additional properties, as discussed in {{only-traditional-sec}}.
+
+<!-- TODO example: Raw ECDH + ML-KEM -->
+
+### Only Shared Secrets
+
+```
+def OnlySharedSecrets(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
+    return concat(ss_PQ, ss_T, label)
+```
+
+This combiner is the minimum possible combiner, covering only the shared secrets
+and a domain separation label.  In order to be secure, it places fairly
+stringent requirements on the constituent KEMs, as discussed in
+{{only-shared-secrets-sec}}.
+
+<!-- For example: DHKEM + ML-KEM -->
 
 # Security Considerations
+
+## Security Properties
+
+### INDistinguishability against Chosen-Ciphertext Attacks (IND-CCA)
+
+### Ciphertext Second Preimage Resistance (C2PR)
+
+### Binding Properties (X-BIND-P-Q)
+
+### Survival if One KEM Fails
+
+## Security of the Combiners
+
+### Everything {#everything-sec}
+
+### OnlyTraditional {#only-traditional-sec}
+
+### OnlySharedSecrets {#only-shared-secrets-sec}
+
+# Security Considerations (Original)
 
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
