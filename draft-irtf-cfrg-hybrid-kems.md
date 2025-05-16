@@ -27,7 +27,7 @@ informative:
       -
         ins: Michel Abdalla
       -
-        ins: Mihir Bellare1
+        ins: Mihir Bellare
       -
         ins: Phillip Rogaway
 
@@ -139,7 +139,7 @@ informative:
 
 --- abstract
 
-"Post-quantum" (PQ) algorithms promise to resist attack by a quantum computer,
+"Post-quantum" (PQ) algorithms are designed to resist attack by a quantum computer,
 in contrast to "traditional" algorithms.  However, given the novelty of PQ
 algorithms, there is some concern that PQ algorithms currently believed to be
 secure will be broken.  Hybrid constructions that combine both PQ and
@@ -169,18 +169,20 @@ properly, a hybrid KEM will retain the properties of either constituent KEM
 even if the other KEM is compromised.  If the PQ KEM is broken by new
 cryptanalysis, then the hybrid KEM should continue to provide security against
 non-quantum attackers by virtue of its traditional KEM component.  If the
-traditional KEM is brken by a quantum computer, then the hybrid KEM should
+traditional KEM is broken by a quantum computer, then the hybrid KEM should
 continue to resist quantum attack by virtue of its PQ KEM component.
 
-In this document, we define constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a traditional KEM and a PQ KEM.  Hybrid
-KEMs using these constructions provide strong security properties as long as
-the undelying algorithms are secure.
+In addition to guarding against algorithm flaws, this property also guards
+against flaws in implementations, such as timing attacks.  Hybrid KEMs can also
+facilitate faster deployment of PQ security by allowing applications to
+incorporate PQ algorithms while still meeting compliance requirements based on
+traditional algorithms.
 
-The aim of this document is provide a small set of techniques for constructing
-hybrid KEMs designed to achieve specific security properties given conforming
-component algorithms, that should be suitable for the vast majority of use
-cases.
+In this document, we define constructions for hybrid KEMs based on combining a
+traditional KEM and a PQ KEM.  The aim of this document is provide a small set
+of techniques for constructing hybrid KEMs designed to achieve specific security
+properties given conforming component algorithms, that should be suitable for
+the vast majority of use cases.
 
 # Requirements Notation
 
@@ -310,14 +312,10 @@ random oracle in the random oracle model (ROM).
 ## KEM from Diffie-Hellman {#group}
 
 This section describes a simple KEM built from a Diffie-Hellman group.  **This
-KEM is not IND-CCA secure**. It is, however IND-CPA secure under either the
-Decisional Diffie-Hellman assumption or the Hashed Decisional Diffie-Hellman
-assumption, depending on the details of the ElementToSharedSecret function
-{{ABR01}}.
-
-The KEM construction here differs from the DHKEM construction in the HPKE
-specification {{RFC9180}}.  DHKEM performs additional hashing steps to mix
-certain metadata into the shared secret; this construction is more minimal.
+KEM is not a secure KEM in the sense of the IND-CCA standard usually applied (it
+meets the lower IND-CPA standard {{ABR01}}), and thus should not be used on its
+own.**  However, using the constructions in this document, it can be used as a
+component of an IND-CCA hybrid KEM, as discussed in {{security-considerations}}.
 
 The traditional Diffie-Hellman construction depends on an abelian group G with a
 chosen group generator or "base point" `B`, in which the discrete-log problem is
