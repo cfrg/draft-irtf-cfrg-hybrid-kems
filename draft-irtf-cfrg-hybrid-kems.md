@@ -295,7 +295,7 @@ as opposed to "public" and "secret".
 Functionally, a hash function is simply a function that produces a fixed-length
 output byte string from an input byte string of arbitrary length.
 
-- `Nh` - The length in bytes of an output from this hash function. 
+- `Nh` - The length in bytes of an output from this hash function.
 - `Hash(input) -> output`: Produce a byte string of length `Nh` from an input
   byte string.
 
@@ -305,31 +305,10 @@ as `Foo(input)` instead of `Foo.Hash(input)`.
 
 Hash function used with the constructions in this document should be structured
 so that they can be regarded as random oracles in either the classical or
-quantum random oracle model.
-
-
-## `XOF` {#xof}
-
-Extendable-output function (XOF). A function on bit strings in which the
-output can be extended to any desired length. Ought to satisfy the following
-properties as long as the specified output length is sufficiently long to
-prevent trivial attacks:
-
-1. (One-way) It is computationally infeasible to find any input that maps to
-   any new pre-specified output.
-
-2. (Collision-resistant) It is computationally infeasible to find any two
-   distinct inputs that map to the same output.
-
-MUST provide the bit-security required to source input randomness for PQ/T
-components from a seed that is expanded to a output length, of which a subset
-is passed to the component key generation algorithms.
-
-## Key Derivation Function `KDF` {#kdf}
-
-A secure key derivation function (KDF) that is modeled as a secure
-pseudorandom function (PRF) in the standard model {{GHP2018}} and independent
-random oracle in the random oracle model (ROM).
+quantum random oracle model.  (Note that this property implies standard hash
+function properties such as collision resistance and second preimage
+resistance.)  Each hash function we refer to should be an independent random
+oracle.
 
 ## KEM from Diffie-Hellman {#group}
 
@@ -542,19 +521,20 @@ hashes for no utility, and the `Everything` combiner should be preferred.
 
 <!-- TODO example: Raw ECDH + Classic McEliece -->
 
-### Traditional Only
+### Only Traditional
 
 ```
-def Traditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
+def Only Traditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
     return concat(ss_PQ, ss_T, ct_T, ek_T, label)
 ```
 
 This combiner produces an even smaller hash input than the `PreHashedKeys`
-combiner, even in cases where keys are not reused.
+combiner, even in cases where keys are not reused, by hashing only the
+traditional metadata.
 
 It is, however, less universal than the `Everything` or `PreHashedKeys`
 combiners.  Its security depends on the constituent KEMs having certain
-additional properties, as discussed in {{traditional-only-sec}}.
+additional properties, as discussed in {{only-traditional-sec}}.
 
 <!-- TODO example: Raw ECDH + ML-KEM -->
 
@@ -573,6 +553,26 @@ stringent requirements on the constituent KEMs, as discussed in
 <!-- For example: DHKEM + ML-KEM -->
 
 # Security Considerations
+
+## Security Properties
+
+### INDistinguishability against Chosen-Ciphertext Attacks (IND-CCA)
+
+### Ciphertext Second Preimage Resistance (C2PR)
+
+### Binding Properties (X-BIND-P-Q)
+
+### Survival if One KEM Fails
+
+## Security of the Combiners
+
+### Everything {#everything-sec}
+
+### OnlyTraditional {#only-traditional-sec}
+
+### OnlySharedSecrets {#only-shared-secrets-sec}
+
+# Security Considerations (Original)
 
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
