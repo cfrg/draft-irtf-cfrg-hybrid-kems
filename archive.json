@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-15T01:07:06.022582+00:00",
+  "timestamp": "2025-05-18T01:14:32.904335+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -977,13 +977,13 @@
       "labels": [],
       "body": "This PR makes several primarily editorial changes, in preparation for the more significant edits to the combiners and security properties sections.\r\n\r\n* (pk, sk) -> (ek, dk)\r\n* New text in the abstract and introduction\r\n* Removes a couple of unnecessary function definitions\r\n* Clean up in the definition of the KEM interface\r\n* Rewrote the DH section as a KEM-to-DH construction\r\n\r\nThe last change is the most substantial one.  The current combiner constructions make explicit reference to the DH functions of the T algorithm.  The idea of this rewrite is to handle both the PQ and T algorithms through the KEM interface.  \r\n\r\nHandling both algorithms through the same interface is aesthetically nicer, since things will be more parallel, but could also allow for non-DH options like RSA.  At least in principle; I would object to actually spending words on such a possibility in this document.  In fact, I'm not totally sure we need to have the DH KEM construction in the main text, as opposed to having it in an appendix that is referred to as necessary.  (I also thought about moving it to the concrete combiners document, but it seems generic enough and useful enough as a motivator to be included here.)\r\n\r\nI'm not sure why `includes.mk` got deleted.  I presume it was was something in the tooling; I didn't do it deliberately.",
       "createdAt": "2025-05-09T22:09:06Z",
-      "updatedAt": "2025-05-14T11:18:28Z",
+      "updatedAt": "2025-05-16T16:10:14Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "edit-pass",
-      "headRefOid": "41085b5bbb82e601018af9d30667fbe99b878d00",
+      "headRefOid": "6791b7903eba16310bdfecedf6e3b96ee03fd778",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1170,8 +1170,114 @@
               "updatedAt": "2025-05-14T11:18:28Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6psmmU",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-16T15:55:48Z",
+          "updatedAt": "2025-05-16T15:55:48Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Added a couple of sentences to this effect in the Introduction.",
+              "createdAt": "2025-05-16T15:55:48Z",
+              "updatedAt": "2025-05-16T15:55:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6psr9D",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-16T16:05:45Z",
+          "updatedAt": "2025-05-16T16:05:45Z",
+          "comments": [
+            {
+              "originalPosition": 277,
+              "body": "Reworded this to be more reader-friendly, and provide a forward pointer to the security considerations.",
+              "createdAt": "2025-05-16T16:05:45Z",
+              "updatedAt": "2025-05-16T16:05:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pss52",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-16T16:07:31Z",
+          "updatedAt": "2025-05-16T16:07:31Z",
+          "comments": [
+            {
+              "originalPosition": 343,
+              "body": "I added some text that explicitly says \"This KEM should not be used on its own.\"  Unfortunately the \ud83d\udea8 emoji isn't allowed in RFCs.",
+              "createdAt": "2025-05-16T16:07:31Z",
+              "updatedAt": "2025-05-16T16:07:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6pstwr",
+          "commit": {
+            "abbreviatedOid": "41085b5"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-16T16:09:15Z",
+          "updatedAt": "2025-05-16T16:09:24Z",
+          "comments": [
+            {
+              "originalPosition": 392,
+              "body": "Yep, this will get fixed in the next PR.  The only reason this part is getting touched is the global `(sk, pk) -> (dk, ek)` terminology change.",
+              "createdAt": "2025-05-16T16:09:15Z",
+              "updatedAt": "2025-05-16T16:09:24Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOMmhxws6Wgb0y",
+      "title": "Hybrid constructions",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/19",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR builds on #18 by actually defining the hybrid KEM constructions.  First we define the overall KEM structure, being generic over combiner functions, and then we define the combiners.\r\n\r\nI have focused on functional definitions here, with security notions and arguments punted to the Security Considerations.  I added an outline of what I think we need the Security Considerations to look like at the end, mainly so that I could have targets for the cross-references above.",
+      "createdAt": "2025-05-16T18:17:04Z",
+      "updatedAt": "2025-05-16T18:17:05Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
+      "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "hybrid-constructions",
+      "headRefOid": "86bea7ef96fd3f2dfcc1a5ede3a6aeba5640da0c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
