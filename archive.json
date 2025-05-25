@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-18T01:14:32.904335+00:00",
+  "timestamp": "2025-05-25T01:16:27.628013+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -221,6 +221,22 @@
       "body": "",
       "createdAt": "2025-05-01T14:50:46Z",
       "updatedAt": "2025-05-01T14:50:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 20,
+      "id": "I_kwDOMmhxws63zN4v",
+      "title": "KitchenSick names?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/20",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "GHP? ",
+      "createdAt": "2025-05-22T14:51:19Z",
+      "updatedAt": "2025-05-22T14:51:19Z",
       "closedAt": null,
       "comments": []
     }
@@ -887,25 +903,33 @@
       "id": "PR_kwDOMmhxws6VGG6-",
       "title": "Refactor KEM Constructions section",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/17",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The basic proposal here is to refactor the Hybrid KEM Constructions section so that:\r\n\r\n* It more clearly addresses the whole definition of the hybrid KEM (including all the specified methods)\r\n* It includes a slightly broader range of options (Chempat-like, TLS-like)\r\n\r\nThe current text is just a sketch; it needs to be turned into actual prose.  But it should give a pretty clear idea of the intended direction.",
       "createdAt": "2025-05-06T12:03:54Z",
-      "updatedAt": "2025-05-07T17:28:00Z",
+      "updatedAt": "2025-05-22T14:03:27Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "draft-text",
       "headRefOid": "b774ed6c28b8d6a8d7a23a9ae36aaaae5b5efb25",
-      "closedAt": null,
+      "closedAt": "2025-05-22T14:03:27Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Replaced by #19 ",
+          "createdAt": "2025-05-22T14:03:27Z",
+          "updatedAt": "2025-05-22T14:03:27Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOMmhxws6oNUv0",
@@ -970,24 +994,26 @@
       "id": "PR_kwDOMmhxws6VpV7t",
       "title": "Several editorial changes and rewrites",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/18",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This PR makes several primarily editorial changes, in preparation for the more significant edits to the combiners and security properties sections.\r\n\r\n* (pk, sk) -> (ek, dk)\r\n* New text in the abstract and introduction\r\n* Removes a couple of unnecessary function definitions\r\n* Clean up in the definition of the KEM interface\r\n* Rewrote the DH section as a KEM-to-DH construction\r\n\r\nThe last change is the most substantial one.  The current combiner constructions make explicit reference to the DH functions of the T algorithm.  The idea of this rewrite is to handle both the PQ and T algorithms through the KEM interface.  \r\n\r\nHandling both algorithms through the same interface is aesthetically nicer, since things will be more parallel, but could also allow for non-DH options like RSA.  At least in principle; I would object to actually spending words on such a possibility in this document.  In fact, I'm not totally sure we need to have the DH KEM construction in the main text, as opposed to having it in an appendix that is referred to as necessary.  (I also thought about moving it to the concrete combiners document, but it seems generic enough and useful enough as a motivator to be included here.)\r\n\r\nI'm not sure why `includes.mk` got deleted.  I presume it was was something in the tooling; I didn't do it deliberately.",
       "createdAt": "2025-05-09T22:09:06Z",
-      "updatedAt": "2025-05-16T16:10:14Z",
+      "updatedAt": "2025-05-22T14:57:45Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "edit-pass",
-      "headRefOid": "6791b7903eba16310bdfecedf6e3b96ee03fd778",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "37bda778108e222e735cd5f1f630da10a421c730",
+      "closedAt": "2025-05-22T14:56:21Z",
+      "mergedAt": "2025-05-22T14:56:21Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "9e85013a9da7226a2e54c098de0ab5043034a158"
+      },
       "comments": [
         {
           "author": "br-hale",
@@ -995,6 +1021,13 @@
           "body": "Thank you for this revision. I think it looks largely good (a few comments added). I similarly would recommend punting description of RSA. For DH, I think it depends on whether the concrete options will be DH-based or DHKEM-based. The latter can be generalized for KEM, but we talked about efficiencies of the former. It would see odd to have a concrete document that uses DH instead of DHKEM, if the generalism is all KEM-based or DH doesn't feature heavily. So I am somewhat inclined to have the DH discussion fairly prominent.",
           "createdAt": "2025-05-10T20:22:47Z",
           "updatedAt": "2025-05-10T20:22:47Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "As discussed on authors call, will revert the IND-CPA DH section back to an explicit group section.\r\n\r\nAlso @dconnolly sorry I missed your comments here, will address them in the next round.",
+          "createdAt": "2025-05-22T14:57:44Z",
+          "updatedAt": "2025-05-22T14:57:44Z"
         }
       ],
       "reviews": [
@@ -1250,6 +1283,299 @@
               "updatedAt": "2025-05-16T16:09:24Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdlcX",
+          "commit": {
+            "abbreviatedOid": "6791b79"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:00:09Z",
+          "updatedAt": "2025-05-22T06:00:10Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nsecurity against quantum attack. In this document, we define constructions for\r\nhybrid Key Encapsulation Mechanisms (KEMs) based on combining a traditional KEM\r\nand a PQ KEM. Hybrid KEMs using these constructions provide strong security\r\nproperties as long as the undelying algorithms are secure.\r\n```",
+              "createdAt": "2025-05-22T06:00:09Z",
+              "updatedAt": "2025-05-22T06:00:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdlzu",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:01:02Z",
+          "updatedAt": "2025-05-22T06:01:03Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "```suggestion\r\nPost-quantum (PQ) algorithms offer new constructions based on problems tailored\r\ntowards resisting attack from a quantum computer. Key Encapsulation Mechanisms\r\n(KEMs), are a standardized algorithm type that can be used to build protocols in\r\n```",
+              "createdAt": "2025-05-22T06:01:02Z",
+              "updatedAt": "2025-05-22T06:01:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdmNf",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:02:03Z",
+          "updatedAt": "2025-05-22T06:02:03Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nlieu of traditional, quantum-vulnerable variants such as finite field\r\nor elliptic curve Diffie-Hellman (DH) based protocols. Upgrading protocols\r\nto use PQ KEMs is a priority for the\r\n```",
+              "createdAt": "2025-05-22T06:02:03Z",
+              "updatedAt": "2025-05-22T06:02:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdmvn",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:03:17Z",
+          "updatedAt": "2025-05-22T06:03:18Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nbased protocols.  Upgrading key establishment protocols to use PQ KEMs is a\r\npriority for the protocol design community, due to the possibility of\r\n\"harvest now, decrypt later\" attacks.\r\n```",
+              "createdAt": "2025-05-22T06:03:18Z",
+              "updatedAt": "2025-05-22T06:03:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdnAf",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:03:55Z",
+          "updatedAt": "2025-05-22T06:03:55Z",
+          "comments": [
+            {
+              "originalPosition": 62,
+              "body": "'retains the properties' needs clarity",
+              "createdAt": "2025-05-22T06:03:55Z",
+              "updatedAt": "2025-05-22T06:03:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdnbg",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:04:28Z",
+          "updatedAt": "2025-05-22T06:04:28Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "```suggestion\r\neven if the other KEM is compromised.  If the PQ KEM is broken, then the hybrid\r\nKEM should continue to provide security against\r\n```",
+              "createdAt": "2025-05-22T06:04:28Z",
+              "updatedAt": "2025-05-22T06:04:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdoAZ",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:05:05Z",
+          "updatedAt": "2025-05-22T06:05:06Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "```suggestion\r\nIn addition to guarding against algorithm weakness, this property also guards\r\nagainst flaws in implementations, such as timing attacks.  Hybrid KEMs can also\r\nfacilitate faster deployment of PQ security by allowing applications to\r\n```",
+              "createdAt": "2025-05-22T06:05:05Z",
+              "updatedAt": "2025-05-22T06:05:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdocC",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:05:58Z",
+          "updatedAt": "2025-05-22T06:05:59Z",
+          "comments": [
+            {
+              "originalPosition": 75,
+              "body": "But not only KEMs as components, as in QSF - we combine traditional components and PQ KEMs",
+              "createdAt": "2025-05-22T06:05:59Z",
+              "updatedAt": "2025-05-22T06:05:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdoi5",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:06:13Z",
+          "updatedAt": "2025-05-22T06:06:14Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "```suggestion\r\nof techniques for constructing hybrid KEMs designed to achieve specific security\r\nproperties given conforming component algorithms, that should be suitable for\r\nthe majority of use cases.\r\n```",
+              "createdAt": "2025-05-22T06:06:14Z",
+              "updatedAt": "2025-05-22T06:06:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdo3B",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:06:58Z",
+          "updatedAt": "2025-05-22T06:06:58Z",
+          "comments": [
+            {
+              "originalPosition": 162,
+              "body": "nice ",
+              "createdAt": "2025-05-22T06:06:58Z",
+              "updatedAt": "2025-05-22T06:06:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdpZM",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:08:16Z",
+          "updatedAt": "2025-05-22T06:08:17Z",
+          "comments": [
+            {
+              "originalPosition": 177,
+              "body": "'Yes but', in the literature there is just keygen, so idk if we want to add a word or two to like, make this more 'applied', or applicable just in this document, or something",
+              "createdAt": "2025-05-22T06:08:16Z",
+              "updatedAt": "2025-05-22T06:08:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdpsH",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:08:58Z",
+          "updatedAt": "2025-05-22T06:08:58Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "```suggestion\r\nWe assume that the values produced and consumed by the above functions are all\r\nbyte strings, with fixed lengths per parameter set:\r\n```",
+              "createdAt": "2025-05-22T06:08:58Z",
+              "updatedAt": "2025-05-22T06:08:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdqB2",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:09:44Z",
+          "updatedAt": "2025-05-22T06:09:44Z",
+          "comments": [
+            {
+              "originalPosition": 207,
+              "body": "True, but why mention it?",
+              "createdAt": "2025-05-22T06:09:44Z",
+              "updatedAt": "2025-05-22T06:09:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qdqSP",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T06:10:17Z",
+          "updatedAt": "2025-05-22T06:10:17Z",
+          "comments": [
+            {
+              "originalPosition": 343,
+              "body": "I really don't think we should do this, this is not a secure IND-CCA KEM (it doesn't match DH-KEM in HPKE, for example)",
+              "createdAt": "2025-05-22T06:10:17Z",
+              "updatedAt": "2025-05-22T06:10:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6qkDOU",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "assuming future changes",
+          "createdAt": "2025-05-22T14:56:01Z",
+          "updatedAt": "2025-05-22T14:56:01Z",
+          "comments": []
         }
       ]
     },
@@ -1265,7 +1591,7 @@
       "labels": [],
       "body": "This PR builds on #18 by actually defining the hybrid KEM constructions.  First we define the overall KEM structure, being generic over combiner functions, and then we define the combiners.\r\n\r\nI have focused on functional definitions here, with security notions and arguments punted to the Security Considerations.  I added an outline of what I think we need the Security Considerations to look like at the end, mainly so that I could have targets for the cross-references above.",
       "createdAt": "2025-05-16T18:17:04Z",
-      "updatedAt": "2025-05-16T18:17:05Z",
+      "updatedAt": "2025-05-22T14:58:44Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
@@ -1276,8 +1602,30 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "As discussed on authors call, will remove the \"OnlySharedSecrets\" option (nobody's asking for it; arguably not sound) and reframe the OnlyTraditional option in terms of a T group.",
+          "createdAt": "2025-05-22T14:58:43Z",
+          "updatedAt": "2025-05-22T14:58:43Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6qkD1h",
+          "commit": {
+            "abbreviatedOid": "86bea7e"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "assuming future changes",
+          "createdAt": "2025-05-22T14:56:43Z",
+          "updatedAt": "2025-05-22T14:56:43Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
