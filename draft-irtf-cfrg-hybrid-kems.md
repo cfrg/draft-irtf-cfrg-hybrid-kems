@@ -31,6 +31,22 @@ informative:
       -
         ins: Phillip Rogaway
 
+  ABH+21:
+    title: "Analysing the HPKE standard."
+    date: April, 2021
+    author:
+      -
+        ins: Joël Alwen
+      -
+        ins: Bruno Blanchet
+      -
+        ins: Eduard Hauck
+      -
+        ins: Eike Kiltz
+      -
+        ins: Benjamin Lipp
+      -
+        ins: Doreen Riepel
   ANSIX9.62:
     title: "Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"
     date: Nov, 2005
@@ -216,7 +232,8 @@ if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 The generic hybrid PQ/T KEM constructions we define depend on the the
 following cryptographic primitives:
 
-- Key Encapsulation Mechanism {{kems}}
+- Key Encapsulation Mechanisms {{kems}}
+- Nominal Groups {{group}}
 - Hash Functions {{hash}}
 
 In the remainder of this section, we describe functional aspects of these
@@ -320,34 +337,49 @@ function properties such as collision resistance and second preimage
 resistance.)  Each hash function we refer to should be an independent random
 oracle.
 
-## KEM from Diffie-Hellman {#group}
+## Nominal Groups {#group}
 
-This section describes a simple KEM built from a Diffie-Hellman group.  **This
-KEM is not a secure KEM in the sense of the IND-CCA standard usually applied (it
-meets the lower IND-CPA standard {{ABR01}}), and thus should not be used on its
-own.**  However, using the constructions in this document, it can be used as a
-component of an IND-CCA hybrid KEM, as discussed in {{security-considerations}}.
-
-The traditional Diffie-Hellman construction depends on an abelian group G with a
-chosen group generator or "base point" `B`, in which the discrete-log problem is
-hard.  Here we write the group operation in G additively, so that "scalar
-multiplication" of a non-negative integer `k` times a group element `P`
-represents repeated application of the group operation to `P`:
-
+~~~ aasvg
+                            g
+                            |
+             +--------------+---------------+
+             |                              |
+             V                              V
+          +-----+                        +-----+
+       +->| Exp |                        | Exp |<-+
+       |  +-----+                        +-----+  |
+       |     |                              |     |
+       |     |                              |     |
+       |     V                              V     |
+       |    pkA                            pkB    |
+       |     |                              |     |
+ skA --+     +-------------.  .-------------+     +-- skB
+       |                    \/                    |
+       |                    /\                    |
+       |     +-------------'  '-------------+     |
+       |     |                              |     |
+       |     V                              V     |
+       |  +-----+                        +-----+  |
+       +->| Exp |                        | Exp |<-+
+          +-----+                        +-----+
+             |                              |
+             |                              |
+             V                              V
+           pkAB ========================= pkBA
 ~~~
-0 * P = O (the identity element for the group)
-1 * P = P
-2 * P = P + P
-...
-k * P = (k - 1) * P + P
-~~~
 
-We call a non-negative integer in the range `[0, n)` a "scalar", where `n` is
-the order of the group.
+Nominal groups are an abstraction that represents the core mechanics of
+Diffie-Hellman key exchange, including both finite field and elliptic-curve
+Diffie-Hellman {{ABH+21}}.  A nominal group comprises a set `G` together with a
+distinguished basis element `g`, an "exponentiation" map, and some auxiliary
+functions:
 
-In addition to the group operation, we require that a Diffie-Hellman group
-define the following algorithms:
-
+- `Exp(p, x) -> q`: An algorithm that produces an element `q` of `G` from an
+  element `p` and an integer `x`.
+    * The integers `x` are called "scalars" to distinguish them from group
+      elements.
+    * `Exp` must respect multiplication in its scalar argument `x`, so that
+      `Exp(Exp(p, x), y) = Exp(p, x * y)`.  
 - `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
   byte string `seed`.
 - `ScalarToBytes(k) -> dk`: Encode a scalar into a fixed-length byte string.
@@ -359,56 +391,36 @@ define the following algorithms:
 - `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element of
   the group (e.g., by taking the X coordinate of an ellpitic curve point).
 
-Based on this notion of a group, we can define a DH-based KEM as follows:
+We assume that the byte strings produced and consumed by the above functions all
+have fixed lengths:
 
-~~~
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
+- `Nseed`: The length in bytes of a key seed (input to DeriveKeyPair)
+- `Npk`: The length in bytes of a public encapsulation key
+- `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
 
-def DeriveKeyPair(seed):
-    p = RandomScalar(seed)
-    P = p * B
-    dk = ScalarToBytes(p)
-    ek = ElementToBytes(P)
-    return (ek, dk)
-
-def Encaps(ek):
-    P = BytesToElement(ek)
-    (Q, q) = GenerateKeyPair()
-    ct = ElementToBytes(Q)
-    ss = ElementToSharedSecret(q * P)
-    return (ct, ss)
-
-def Decaps(dk, ct)
-    p = BytesToScalar(dk)
-    Q = BytesToElement(ct)
-    ss = ElementToSharedSecret(p * Q)
-    return ss
-~~~
+> It is possible to satisfy the KEM API using a nominal group, by generating an
+> ephemeral element that serves as the ciphertext.  Despite satisfying the KEM
+> API, however, this KEM would not be secure, so we have preferred to address
+> hybrid KEMs that use elliptic curves directly.
 
 # Hybrid KEM Constructions {#constructions}
+
+In this section, we define three constructions for hybrid KEMs:
+
+* HashEverything - A generic combiner that is suitable for use with any choice
+  of traditional and PQ KEMs, with minimal security assumptions on the
+  constituent KEMs
+* PreHashedKeys - A performance optimization of HashEverything for the case
+  where encapsulation keys are large and frequently reused
+* HashTraditionalOnly - An optimized combiner for the case where the traditional
+  component is a nominal group and the PQ component has strong binding
+  properties
 
 In this section, we define a collection of constructions for hybrid KEMs. These
 constructions share a common overall structure, differing mainly in how they
 compute the final shared secret.
 
-During encapsulation and decapsulation, a hybrid KEM combines its component KEM
-shared secrets and other info, such as the KEM ciphertexts and encapsulation
-keys secret.  This function, often called a "combiner" in the literature,
-accepts the following inputs:
-
-- `ss_PQ`: The PQ KEM shared secret.
-- `ct_PQ`: The PQ KEM ciphertext.
-- `ek_PQ`: The PQ KEM public encapsulation key.
-- `ss_T`: The traditional KEM shared secret.
-- `ct_T`: The traditional KEM ciphertext.
-- `ek_T`: The traditional KEM public encapsulation key.
-- `label`: A domain-separating label; see {{domain-separation}} for more
-  information on the role of the label.
-
-The output of the combiner function is a byte string that is hashed to become
-the shared secret output of the KEM.
+<!-- TODO: Actually rewrite the combiners -->
 
 ## General Construction
 
