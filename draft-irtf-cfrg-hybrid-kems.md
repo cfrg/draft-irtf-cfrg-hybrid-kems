@@ -153,36 +153,36 @@ properties as long as the undelying algorithms are secure.
 
 # Introduction {#intro}
 
-Post-quantum (PQ) algorithms offer a redesign of traditional algorithms tailored
+Post-quantum (PQ) algorithms offer new constructions based on problems tailored
 towards resisting attack from a quantum computer. Key Encapsulation Mechanisms
 (KEMs), are a standardized algorithm type that can be used to build protocols in
-lieu of traditional, quantum-vulnerable variants such as Diffie-Hellman (DH)
-based protocols.  Upgrading protocols to use PQ KEMs is a priority for the
-protocol design community, due to the possibility of "harvest now, decrypt
-later" attacks.
+lieu of traditional, quantum-vulnerable variants such as finite field or
+elliptic curve Diffie-Hellman (DH) based protocols. Upgrading key establishment
+protocols to use PQ KEMs is a priority for the protocol design community, due to
+the possibility of "harvest now, decrypt later" attacks.
 
 Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help moderate
 this risk while still providing security against quantum attack.  If construted
-properly, a hybrid KEM will retain the properties of either constituent KEM
-even if the other KEM is compromised.  If the PQ KEM is broken by new
-cryptanalysis, then the hybrid KEM should continue to provide security against
-non-quantum attackers by virtue of its traditional KEM component.  If the
-traditional KEM is broken by a quantum computer, then the hybrid KEM should
-continue to resist quantum attack by virtue of its PQ KEM component.
+properly, a hybrid KEM will retain certain security properties even if one of
+the two constituent KEMs is compromised.  If the PQ KEM is broken, then the
+hybrid KEM should continue to provide security against non-quantum attackers by
+virtue of its traditional KEM component.  If the traditional KEM is broken by a
+quantum computer, then the hybrid KEM should continue to resist quantum attack
+by virtue of its PQ KEM component.
 
-In addition to guarding against algorithm flaws, this property also guards
+In addition to guarding against algorithm weaknesses, this property also guards
 against flaws in implementations, such as timing attacks.  Hybrid KEMs can also
 facilitate faster deployment of PQ security by allowing applications to
 incorporate PQ algorithms while still meeting compliance requirements based on
 traditional algorithms.
 
 In this document, we define constructions for hybrid KEMs based on combining a
-traditional KEM and a PQ KEM.  The aim of this document is provide a small set
-of techniques for constructing hybrid KEMs designed to achieve specific security
-properties given conforming component algorithms, that should be suitable for
-the vast majority of use cases.
+traditional algorithm and a PQ KEM.  The aim of this document is provide a small
+set of techniques for constructing hybrid KEMs designed to achieve specific
+security properties given conforming component algorithms, which should make it
+suitable for the majority of use cases.
 
 # Requirements Notation
 
@@ -266,6 +266,13 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
   shared secret `ss`.
 
+> Definitions of KEM in the literature typically do not explicitly include the
+> `DeriveKeyPair` function.  It can be viewed as a "derandomized" version of
+> `GenerateKeyPair`, in which the randomness used by the randomized algorithm is
+> made explicit.  We call it out explicitly here because `DeriveKeyPair` is
+> important to allow KEMs to integrate with protocols such as HPKE {{?RFC9180}}
+> and MLS {{?RFC9420}}.
+
 A KEM may also provide a deterministic version of `Encaps` (e.g., for purposes
 of testing):
 
@@ -273,6 +280,9 @@ of testing):
    encapsulation algorithm, which takes as input a public encapsulation key
    `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
+
+<!-- XXX(RLB): Maybe we should make this optional and parallel to `EncapsDerand`
+-->
 
 We assume that the values produced and consumed by the above functions are all
 byte strings, with fixed lengths:
@@ -283,12 +293,12 @@ byte strings, with fixed lengths:
 - `Nct`: The length in bytes of a ciphertext produced by Encaps
 - `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
 
-This interface is effectively the same as the one defined in the Hybrid Public
-Key Encryption (HPKE) specification {{?RFC9180}}.  The only difference is that
-here we assume that all values are byte strings, whereas in HPKE keys are opaque
-by default and serialized or deserialized as needed.  We also use slightly
-different terminology for keys, emphasizing "encapsulation" and "decapsulation"
-as opposed to "public" and "secret".
+> This interface is effectively the same as the one defined in the Hybrid Public
+> Key Encryption (HPKE) specification {{?RFC9180}}.  The only difference is that
+> here we assume that all values are byte strings, whereas in HPKE keys are
+> opaque by default and serialized or deserialized as needed.  We also use
+> slightly different terminology for keys, emphasizing "encapsulation" and
+> "decapsulation" as opposed to "public" and "secret".
 
 ## Hash functions {#hash}
 
@@ -499,7 +509,7 @@ large, causing `CombinerHash` to process a large input.
 
 <!-- TODO example: Raw ECDH + something with short keys and no binding (HQC?) -->
 
-## Pre-Hash Encapsulation Keys
+### Pre-Hash Encapsulation Keys
 
 ```
 def PreHashedKeys(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
@@ -524,7 +534,7 @@ hashes for no utility, and the `Everything` combiner should be preferred.
 ### Only Traditional
 
 ```
-def Only Traditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
+def OnlyTraditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
     return concat(ss_PQ, ss_T, ct_T, ek_T, label)
 ```
 
@@ -537,20 +547,6 @@ combiners.  Its security depends on the constituent KEMs having certain
 additional properties, as discussed in {{only-traditional-sec}}.
 
 <!-- TODO example: Raw ECDH + ML-KEM -->
-
-### Only Shared Secrets
-
-```
-def OnlySharedSecrets(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
-    return concat(ss_PQ, ss_T, label)
-```
-
-This combiner is the minimum possible combiner, covering only the shared secrets
-and a domain separation label.  In order to be secure, it places fairly
-stringent requirements on the constituent KEMs, as discussed in
-{{only-shared-secrets-sec}}.
-
-<!-- For example: DHKEM + ML-KEM -->
 
 # Security Considerations
 
