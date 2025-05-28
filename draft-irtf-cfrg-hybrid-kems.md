@@ -379,24 +379,19 @@ functions:
     * The integers `x` are called "scalars" to distinguish them from group
       elements.
     * `Exp` must respect multiplication in its scalar argument `x`, so that
-      `Exp(Exp(p, x), y) = Exp(p, x * y)`.  
+      `Exp(Exp(p, x), y) = Exp(p, x * y)`.
 - `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
   byte string `seed`.
-- `ScalarToBytes(k) -> dk`: Encode a scalar into a fixed-length byte string.
-- `BytesToScalar(dk) -> k`: Decode a scalar from a fixed-length byte string.
-- `ElementToBytes(P) -> dk`: Encode an element of the group into a fixed-length
-  byte string.
-- `BytesToElement(dk) -> P`: Decode an element of the group from a fixed-length
-  byte string.
 - `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element of
   the group (e.g., by taking the X coordinate of an ellpitic curve point).
 
-We assume that the byte strings produced and consumed by the above functions all
-have fixed lengths:
+We assume that scalars and group elements are represented by byte strings with
+fixed lengths:
 
 - `Nseed`: The length in bytes of a key seed (input to DeriveKeyPair)
-- `Npk`: The length in bytes of a public encapsulation key
-- `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
+- `Nelem`: The length in bytes of a serialized group element
+- `Nss`: The length in bytes of a shared secret produced by
+  ElementToSharedSecret
 
 > It is possible to satisfy the KEM API using a nominal group, by generating an
 > ephemeral element that serves as the ciphertext.  Despite satisfying the KEM
@@ -421,6 +416,89 @@ constructions share a common overall structure, differing mainly in how they
 compute the final shared secret.
 
 <!-- TODO: Actually rewrite the combiners -->
+
+## HashTraditionalOnly
+
+The HashTraditionalOnly hybrid KEM `KEM_H` depends on the following constituent
+components:
+
+* `Group_T`: A nominal group
+* `KEM_PQ`: A post-quantum KEM
+* `ExpandHash`: A hash function mapping byte strings of length `KEM_H.Nseed` to
+  byte strings of length `Group_T.Nseed + KEM_PQ.Nseed` (`ExpandHash.Nh ==
+  Group_T.Nseed + KEM_PQ.Nseed`)
+* `CombineHash`: A hash function mapping byte strings of length `Group_T.Nss +
+  KEM_PQ.Nss` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
+  KEM_H.Nss`)
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used.
+
+We presume the KEMs and hash functions meet the interfaces described in
+{{cryptographic-deps}}.
+
+The constants associated with the hybrid KEM are mostly derived from the
+concatenation of keys and ciphertexts:
+
+```
+Npk = KEM_T.Npk + KEM_PQ.Npk
+Nsk = KEM_T.Nsk + KEM_PQ.Nsk
+Nct = KEM_T.Nct + KEM_PQ.Nct
+```
+
+The `Nseed` and `Nss` constants should reflect the overall security level of the
+combined KEM, with the following recommended values:
+
+```
+Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
+Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+```
+
+Given these constituent parts, we define the following hybrid KEM:
+
+```
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+
+def DeriveKeyPair(seed):
+    seed_full = ExpandHash(seed)
+    (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
+
+    dk_T = Group_T.RandomScalar(seed_T))
+    ek_T = Group_T.Exp(Group_T.g, dk_T)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+
+    ek_H = concat(ek_T, ek_PQ)
+    dk_H = concat(dk_T, dk_PQ)
+    return (ek_H, dk_H)
+
+def Encaps(ek):
+    (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
+
+    sk_E = Group_T.RandomScalar(random(GroupT.nseed))
+    ct_T = Group_T.Exp(GroupT.g, sk_E)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+
+    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_T, ct_PQ)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (dk_T, dk_PQ) = split(Group_T.Ndk, KEM_PQ.Ndk, dk)
+    (ct_T, ct_PQ) = split(Group_T.Nct, KEM_PQ.Nct, ct)
+
+    ek_T = Group_T.ToEncaps(dk_T)
+    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+```
+
+<!-- XXX: Earlier text below this line -->
 
 ## General Construction
 
