@@ -399,7 +399,7 @@ fixed lengths:
 
 # Hybrid KEM Generic Constructions {#generic-constructions}
 
-In this section, we define three constructions for hybrid KEMs:
+In this section, we define three generic constructions for hybrid KEMs:
 
 * HashEverything - A generic construction that is suitable for use with any choice
   of traditional and PQ KEMs, with minimal security assumptions on the
