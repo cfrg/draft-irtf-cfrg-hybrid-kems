@@ -272,7 +272,7 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   public encapsulation key `ek` and a secret decapsulation key `dk`, each of
   which are byte strings.
 - `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
-input a seed `seed` and generates a public encapsulation key `ek` and a secret
+  input a seed `seed` and generates a public encapsulation key `ek` and a secret
   decapsulation key `dk`, each of which are byte strings.
 - `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
