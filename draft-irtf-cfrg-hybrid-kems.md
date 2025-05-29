@@ -397,7 +397,7 @@ fixed lengths:
 > API, however, this KEM would not be secure, so we have preferred to address
 > hybrid KEMs that use elliptic curves directly.
 
-# Hybrid KEM Constructions {#constructions}
+# Hybrid KEM Generic Constructions {#generic-constructions}
 
 In this section, we define three constructions for hybrid KEMs:
 
