@@ -335,6 +335,10 @@ function properties such as collision resistance and second preimage
 resistance.)  Each hash function we refer to should be an independent random
 oracle.
 
+For QSF, the KDF function must be a secure random oracle in the random oracle
+model and quantum random oracle model and as a secure pseudorandom
+function (PRF) in the standard model.
+
 ## Nominal Groups {#group}
 
 ~~~ aasvg
