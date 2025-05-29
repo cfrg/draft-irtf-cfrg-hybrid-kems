@@ -14,6 +14,10 @@ author:
     fullname: Deirdre Connolly
     organization: SandboxAQ
     email: durumcrustulum@gmail.com
+ -
+    fullname: Richard Barnes
+    organization: Cisco
+    email: rlb@ipv.sx
 
 normative:
   FIPS202: DOI.10.6028/NIST.FIPS.202
@@ -175,7 +179,7 @@ Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic schem
 that can be used to build protocols in lieu of traditional, quantum-vulnerable
 variants such as finite field or elliptic curve Diffie-Hellman (DH) based protocols.
 
-Given the novelty of these PQ schemes however, there is some concern that PQ
+Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help moderate
 this risk while still providing security against quantum attack.  If construted
@@ -192,11 +196,20 @@ facilitate faster deployment of PQ security by allowing applications to
 incorporate PQ algorithms while still meeting compliance requirements based on
 traditional algorithms.
 
-In this document, we define generic constructions for hybrid KEMs based on combining a
+In this document, we define generic schemes for constructing hybrid KEMs from a
 traditional algorithm and a PQ KEM.  The aim of this document is provide a small
-set of techniques for constructing hybrid KEMs designed to achieve specific
-security properties given conforming component algorithms, which should make it
-suitable for the majority of use cases.
+set of techniques to achieve specific security properties given conforming
+component algorithms, which should make these techniques suitable for a broad
+variety of use cases.
+
+The remainder of this document is structured as follows: First, in
+{{cryptographic-deps}} and {{schemes}}, we define the abstractions on which the
+schemes are built, and then the schemes themselves.  Then, in {{security}}, we
+lay out the security analyses that support these constructions, including the
+security requirements for constituent components and the security notions
+satisfied by hybrid KEMS constructed according to the schemes in the document.
+Finally, we discuss some "path not taken", related topics that might be of
+interest to readers, but which are not treated in depth.
 
 # Requirements Notation
 
@@ -205,7 +218,7 @@ suitable for the majority of use cases.
 # Notation
 
 This document is consistent with all terminology defined in
-{{I-D.driscoll-pqt-hybrid-terminology}}.
+{{I-D.ietf-pquip-pqt-hybrid-terminology}}.
 
 The following terms are used throughout this document:
 
@@ -217,7 +230,8 @@ The following terms are used throughout this document:
   `N1` bytes and its last `N2` bytes.  This function is the inverse of
   `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes long. It
   is an error to call this function with a byte string that does not have length
-  `N1 + N2`. Since this function operates over secret data it MUST be constant-time.
+  `N1 + N2`. Since this function operates over secret data `x`, it MUST be
+  constant-time for a given `N1` and `N2`.
 
 When `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to
 denote the slice of bytes in `x` starting from the beginning of `x` and
@@ -238,7 +252,7 @@ following cryptographic primitives:
 
 In the remainder of this section, we describe functional aspects of these
 mechanisms.  The security properties we require in order for the resulting
-hybrid KEM to be secure are discussed in {{security-properties}}.
+hybrid KEM to be secure are discussed in {{security}}.
 
 ## Key encapsulation mechanisms {#kems}
 
@@ -283,13 +297,6 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
   shared secret `ss`.
 
-> Definitions of KEM in the literature typically do not explicitly include the
-> `DeriveKeyPair` function.  It can be viewed as a "derandomized" version of
-> `GenerateKeyPair`, in which the randomness used by the randomized algorithm is
-> made explicit.  We call it out explicitly here because `DeriveKeyPair` is
-> important to allow KEMs to integrate with protocols such as HPKE {{?RFC9180}}
-> and MLS {{?RFC9420}}.
-
 A KEM may also provide a deterministic version of `Encaps` (e.g., for purposes
 of testing):
 
@@ -297,9 +304,6 @@ of testing):
    encapsulation algorithm, which takes as input a public encapsulation key
    `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
-
-<!-- XXX(RLB): Maybe we should make this optional and parallel to `EncapsDerand`
--->
 
 We assume that the values produced and consumed by the above functions are all
 byte strings, with fixed lengths:
@@ -309,66 +313,6 @@ byte strings, with fixed lengths:
 - `Ndk`: The length in bytes of a secret decapsulation key
 - `Nct`: The length in bytes of a ciphertext produced by Encaps
 - `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
-
-> This interface is effectively the same as the one defined in the Hybrid Public
-> Key Encryption (HPKE) specification {{?RFC9180}}.  The only difference is that
-> here we assume that all values are byte strings, whereas in HPKE keys are
-> opaque by default and serialized or deserialized as needed.  We also use
-> slightly different terminology for keys, emphasizing "encapsulation" and
-> "decapsulation" as opposed to "public" and "secret".
-
-## Key Derivation Function `KDF` {#kdf}
-
-A secure key derivation function (KDF) that is modeled as a secure
-pseudorandom function (PRF) in the standard model {{GHP2018}} and
-independent random oracle in the random oracle model (ROM) and quantum
-random oracle model. Generally a strong KDF will have a proof of
-indifferentiability from a random oracle.
-
-Examples of secure KDFs in practice include HKDF-SHA256 and SHA3.
-SHA-256 is not generally considered a strong KDF except under
-constrained circumstances {{CDMP2005}}.
-
-## Extendable-output function `XOF` {#xof}
-
-Extendable-output function (XOF). A function on bit strings in which the
-output can be extended to any desired length. Ought to satisfy the following
-properties as long as the specified output length is sufficiently long to
-prevent trivial attacks:
-
-1. (One-way) It is computationally infeasible to find any input that maps to
-   any new pre-specified output.
-
-2. (Collision-resistant) It is computationally infeasible to find any two
-   distinct inputs that map to the same output.
-
-MUST provide the bit-security required to source input randomness for PQ/T
-components from a seed that is expanded to a output length, of which a subset
-is passed to the component key generation algorithms.
-
-## Hash functions {#hash}
-
-Functionally, a hash function is simply a function that produces a fixed-length
-output byte string from an input byte string of arbitrary length.
-
-- `Nh` - The length in bytes of an output from this hash function.
-- `Hash(input) -> output`: Produce a byte string of length `Nh` from an input
-  byte string.
-
-For simplicity, we will write invocations of a hash function without `Hash`
-being explicit.  Invoking a hash function `Foo` on input `input` will be written
-as `Foo(input)` instead of `Foo.Hash(input)`.
-
-Hash function used with the constructions in this document should be structured
-so that they can be regarded as random oracles in either the classical or
-quantum random oracle model.  (Note that this property implies standard hash
-function properties such as collision resistance and second preimage
-resistance.)  Each hash function we refer to should be an independent random
-oracle.
-
-For QSF, the KDF function must be a secure random oracle in the random oracle
-model and quantum random oracle model and as a secure pseudorandom
-function (PRF) in the standard model.
 
 ## Nominal Groups {#group}
 
@@ -432,9 +376,27 @@ fixed lengths:
 > API, however, this KEM would not be secure, so we have preferred to address
 > hybrid KEMs that use elliptic curves directly.
 
-# Hybrid KEM Generic Constructions {#generic-constructions}
+## Hash functions {#hash}
 
-In this section, we define three generic constructions for hybrid KEMs:
+Functionally, a hash function is simply a function that produces a fixed-length
+output byte string from an input byte string of arbitrary length.
+
+- `Nh` - The length in bytes of an output from this hash function.
+- `Hash(input) -> output`: Produce a byte string of length `Nh` from an input
+  byte string.
+
+For simplicity, we will write invocations of a hash function without `Hash`
+being explicit.  Invoking a hash function `Foo` on input `input` will be written
+as `Foo(input)` instead of `Foo.Hash(input)`.
+
+Note that while we use the generic term "hash function", the security
+requirements laid out in {#security} are more stringent than the normal
+definition of a hash function.  Only functions meeting those stronger
+requirements are safe to use in the schemes here.
+
+# Hybrid KEM Schemes {#schemes}
+
+In this section, we define three schemes for building for hybrid KEMs:
 
 * HashEverything - A generic construction that is suitable for use with any choice
   of traditional and PQ KEMs, with minimal security assumptions on the
@@ -451,7 +413,8 @@ compute the final shared secret.
 
 ## HashEverything
 
-The HashEverything hybrid KEM depends on the following constituent components:
+The HashEverything hybrid KEM (`KEM_H` below) depends on the following
+constituent components:
 
 * `KEM_T`: A traditional KEM
 * `KEM_PQ`: A post-quantum KEM
@@ -484,7 +447,7 @@ Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
 Nss = min(KEM_T.Nss, KEM_PQ.Nss)
 ~~~
 
-Given these constituent parts, we define the HashEverything hybrid KEM as
+Given these constituent parts, the HashEverything hybrid KEM is defined as
 follows:
 
 ~~~
@@ -522,7 +485,7 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## PreHash {#prehash}
+## PreHashedKeys {#prehash}
 
 The PreHashedKeys hybrid KEM is a performance optimization of the HashEverything
 KEM, optimized for the case where encapsulation keys are large and frequently
@@ -538,24 +501,40 @@ shared secret computation.  One additional hash function is required:
   KEM_PQ.Nek` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
   KEM_H.Nss`)
 
-The shared secret computation in `Encaps` and `Decaps` is then modified as
-follows:
+The `GenerateKeyPair` and `DeriveKeyPair` algorithms for PreHashedKeys are
+identical to those of the HashEverything KEM.  The `Encaps` and `Decaps` method
+use a modified shared secret computation:
 
 ~~~
-ekh = KeyHash(concat(ek_T, ek_PQ))
-ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+def Encaps(ek):
+    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
+    (ss_T, ct_T) = KEM_T.Encap(pk_T)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+
+    ekh = KeyHash(concat(ek_T, ek_PQ))
+    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+    
+    ct_H = concat(ct_T, ct_PQ)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
+    ek_T = KEM_T.ToEncaps(dk_T)
+    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+    ekh = KeyHash(concat(ek_T, ek_PQ))
+    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+    return ss_H
 ~~~
-
-
-
-
-~~~
-
 
 ## HashTraditionalOnly
 
-The HashTraditionalOnly hybrid KEM `KEM_H` depends on the following constituent
-components:
+The HashTraditionalOnly hybrid KEM (`KEM_H` below) depends on the following
+constituent components:
 
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
@@ -568,8 +547,8 @@ components:
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-We presume the KEMs and hash functions meet the interfaces described in
-{{cryptographic-deps}}.
+We presume that `Group_T`, `KEM_PQ`, and the hash functions meet the interfaces
+described in {{cryptographic-deps}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:
@@ -634,7 +613,7 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-# Security Considerations
+# Security Considerations {#security}
 
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
@@ -642,7 +621,9 @@ an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the `KDF`
 is secure, and either the elliptic curve is secure, or the post-quantum KEM is
 secure: this is the 'hybrid' property.
 
-## IND-CCA security
+## Security Properties
+
+### IND-CCA Security
 
 Also known as IND-CCA2 security for general public key encryption, for KEMs
 that encapsulate a new random 'message' each time.
@@ -654,7 +635,9 @@ adversary can recognize which of two messages is encrypted in a given
 ciphertext, even if the two candidate messages are chosen by the adversary
 himself.
 
-## Ciphertext second preimage resistant (C2PRI) security / ciphertext collision resistance (CCR)
+### Ciphertext Second Preimage Resistant (C2SPI) Security
+
+Also known in the literature as ciphertext collision resistance (CCR).
 
 The notion where, even if a KEM has broken IND-CCA security (either due to
 construction, implementation, or other), its internal structure, based on the
@@ -664,21 +647,33 @@ known as ciphertext second preimage resistance (C2SPI) for KEMs
 {{XWING}}. The same notion has also been described as chosen ciphertext
 resistance elsewhere {{CDM23}}.
 
-## Binding properties
+## Binding Properties
 
-TODO
+It is often useful for a KEM to have certain "binding properties", by which
+certain parameters determine certain others {{CDM23}}.  These properties are
+referred to with labels of the form X-BIND-P-Q.  For example, LEAK-BIND-K-PK
+means that for a given shared secret (K), there is a unique encapsulation key
+(PK) that could have produced it, even if all of the secrets involved are given
+to the adversary after the encapsulation operation is completed (LEAK).
 
-### X-BIND-K-PK security
-
-TODO
-
-### X-BIND-K-CT security
-
-Ciphertext second preimage resistance for KEMs ([C2PRI]{{XWING}}). Related to
-the ciphertext collision-freeness of the underlying PKE scheme of a
+The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed above.
+Related to the ciphertext collision-freeness of the underlying PKE scheme of a
 FO-transform KEM. Also called ciphertext collision resistance.
 
-## Domain Separation {#domain-separation}
+[[ TODO: Discuss other salient binding properties. ]]
+
+## Security Requirements for Constituent Components {#security-requirements}
+
+[[ TODO: Define requirements for KEMs, nominal groups, and hash functions ]]
+
+## Security Properties of Hybrid KEMs
+
+[[ TODO: Define which properties are provided by the hybrid KEMs in this
+document, and citations to the papers with the corresponding proofs. ]]
+
+## Other Considerations
+
+### Domain Separation {#domain-separation}
 
 ASCII-encoded bytes provide oracle cloning {{BDG2020}} in the security
 game via domain separation. The IND-CCA security of hybrid KEMs often
@@ -698,7 +693,7 @@ Length diffentiation is sometimes used to achieve domain separation but as a
 technique it is [brittle and prone to misuse]{{BDG2020}} in practice so we
 favor the use of an explicit post-fix label.
 
-## Fixed-length
+### Fixed-length
 
 Variable-length secrets are generally dangerous. In particular, using key
 material of variable length and processing it using hash functions may result
@@ -733,13 +728,6 @@ traditional and a post-quantum KEM.
 
 Not analyzed as part of any security proofs in the literature, and a
 complicatation deemed unnecessary.
-
-## Other Component Primitives
-
-There is demand for other hybrid variants that either use different
-primitives (RSA, NTRU, Classic McEliece, FrodoKEM), parameters, or that use a
-combiner optimized for a specific use case. Other use cases could be covered
-in subsequent documents and not included here.
 
 --- back
 
