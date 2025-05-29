@@ -232,6 +232,8 @@ following cryptographic primitives:
 
 - Key Encapsulation Mechanisms {{kems}}
 - Nominal Groups {{group}}
+- Key-derivation Functions {{kdfs}}
+- Extendable-output Functions {{xofs}}
 - Hash Functions {{hash}}
 
 In the remainder of this section, we describe functional aspects of these
@@ -314,6 +316,35 @@ byte strings, with fixed lengths:
 > opaque by default and serialized or deserialized as needed.  We also use
 > slightly different terminology for keys, emphasizing "encapsulation" and
 > "decapsulation" as opposed to "public" and "secret".
+
+## Key Derivation Function `KDF` {#kdf}
+
+A secure key derivation function (KDF) that is modeled as a secure
+pseudorandom function (PRF) in the standard model {{GHP2018}} and
+independent random oracle in the random oracle model (ROM) and quantum
+random oracle model. Generally a strong KDF will have a proof of
+indifferentiability from a random oracle.
+
+Examples of secure KDFs in practice include HKDF-SHA256 and SHA3.
+SHA-256 is not generally considered a strong KDF except under
+constrained circumstances {{CDMP2005}}.
+
+## Extendable-output function `XOF` {#xof}
+
+Extendable-output function (XOF). A function on bit strings in which the
+output can be extended to any desired length. Ought to satisfy the following
+properties as long as the specified output length is sufficiently long to
+prevent trivial attacks:
+
+1. (One-way) It is computationally infeasible to find any input that maps to
+   any new pre-specified output.
+
+2. (Collision-resistant) It is computationally infeasible to find any two
+   distinct inputs that map to the same output.
+
+MUST provide the bit-security required to source input randomness for PQ/T
+components from a seed that is expanded to a output length, of which a subset
+is passed to the component key generation algorithms.
 
 ## Hash functions {#hash}
 
