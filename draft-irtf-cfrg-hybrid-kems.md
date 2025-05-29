@@ -557,7 +557,7 @@ def PseudoDecaps(dk, ct):
 
 The HashEverything and PreHashedKeys hybrid KEMs are instantiated with a
 nominal group by replacing the `KEM_T` methods with the corresponding `Pseudo`
-methods. 
+methods.
 
 ## HashTraditionalOnly
 
