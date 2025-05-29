@@ -401,12 +401,12 @@ fixed lengths:
 
 In this section, we define three constructions for hybrid KEMs:
 
-* HashEverything - A generic combiner that is suitable for use with any choice
+* HashEverything - A generic construction that is suitable for use with any choice
   of traditional and PQ KEMs, with minimal security assumptions on the
   constituent KEMs
 * PreHashedKeys - A performance optimization of HashEverything for the case
   where encapsulation keys are large and frequently reused
-* HashTraditionalOnly - An optimized combiner for the case where the traditional
+* HashTraditionalOnly - An optimized generic construction for the case where the traditional
   component is a nominal group and the PQ component has strong binding
   properties
 
