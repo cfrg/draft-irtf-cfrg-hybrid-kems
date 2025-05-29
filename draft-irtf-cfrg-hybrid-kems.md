@@ -175,7 +175,7 @@ Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic schem
 that can be used to build protocols in lieu of traditional, quantum-vulnerable
 variants such as finite field or elliptic curve Diffie-Hellman (DH) based protocols.
 
-Given the novelty of PQ algorithms, however, there is some concern that PQ
+Given the novelty of these PQ schemes however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help moderate
 this risk while still providing security against quantum attack.  If construted
