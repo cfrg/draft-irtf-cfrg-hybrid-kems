@@ -192,7 +192,7 @@ facilitate faster deployment of PQ security by allowing applications to
 incorporate PQ algorithms while still meeting compliance requirements based on
 traditional algorithms.
 
-In this document, we define constructions for hybrid KEMs based on combining a
+In this document, we define generic constructions for hybrid KEMs based on combining a
 traditional algorithm and a PQ KEM.  The aim of this document is provide a small
 set of techniques for constructing hybrid KEMs designed to achieve specific
 security properties given conforming component algorithms, which should make it
