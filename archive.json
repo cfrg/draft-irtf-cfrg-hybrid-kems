@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-25T01:16:27.628013+00:00",
+  "timestamp": "2025-05-29T01:10:40.617074+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -227,7 +227,7 @@
     {
       "number": 20,
       "id": "I_kwDOMmhxws63zN4v",
-      "title": "KitchenSick names?",
+      "title": "KitchenSink names?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/20",
       "state": "OPEN",
       "author": "dconnolly",
@@ -236,9 +236,24 @@
       "labels": [],
       "body": "GHP? ",
       "createdAt": "2025-05-22T14:51:19Z",
-      "updatedAt": "2025-05-22T14:51:19Z",
+      "updatedAt": "2025-05-28T13:35:56Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I presume you mean \"KitchenSink\" \ud83d\ude04  \n\nWhat does \"GHP\" mean?",
+          "createdAt": "2025-05-27T21:32:25Z",
+          "updatedAt": "2025-05-27T21:32:25Z"
+        },
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I presume [Giacon, Heuer, Poettering](https://eprint.iacr.org/2018/024.pdf)\n",
+          "createdAt": "2025-05-27T21:41:19Z",
+          "updatedAt": "2025-05-27T21:41:19Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -1001,7 +1016,7 @@
       "labels": [],
       "body": "This PR makes several primarily editorial changes, in preparation for the more significant edits to the combiners and security properties sections.\r\n\r\n* (pk, sk) -> (ek, dk)\r\n* New text in the abstract and introduction\r\n* Removes a couple of unnecessary function definitions\r\n* Clean up in the definition of the KEM interface\r\n* Rewrote the DH section as a KEM-to-DH construction\r\n\r\nThe last change is the most substantial one.  The current combiner constructions make explicit reference to the DH functions of the T algorithm.  The idea of this rewrite is to handle both the PQ and T algorithms through the KEM interface.  \r\n\r\nHandling both algorithms through the same interface is aesthetically nicer, since things will be more parallel, but could also allow for non-DH options like RSA.  At least in principle; I would object to actually spending words on such a possibility in this document.  In fact, I'm not totally sure we need to have the DH KEM construction in the main text, as opposed to having it in an appendix that is referred to as necessary.  (I also thought about moving it to the concrete combiners document, but it seems generic enough and useful enough as a motivator to be included here.)\r\n\r\nI'm not sure why `includes.mk` got deleted.  I presume it was was something in the tooling; I didn't do it deliberately.",
       "createdAt": "2025-05-09T22:09:06Z",
-      "updatedAt": "2025-05-22T14:57:45Z",
+      "updatedAt": "2025-05-27T21:26:53Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
@@ -1576,6 +1591,46 @@
           "createdAt": "2025-05-22T14:56:01Z",
           "updatedAt": "2025-05-22T14:56:01Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rOlnI",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-27T21:25:29Z",
+          "updatedAt": "2025-05-27T21:25:29Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "I'm putting in a note for now, but I suspect we should make this optional and parallel to `EncapsDerand`.",
+              "createdAt": "2025-05-27T21:25:29Z",
+              "updatedAt": "2025-05-27T21:25:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rOmja",
+          "commit": {
+            "abbreviatedOid": "37bda77"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-27T21:26:52Z",
+          "updatedAt": "2025-05-27T21:26:53Z",
+          "comments": [
+            {
+              "originalPosition": 207,
+              "body": "In case people have already read HPKE and are looking at this.  I have added markup to make it an inset note / aside.  I'm not that committed to it; happy to delete it if people feel strongly.",
+              "createdAt": "2025-05-27T21:26:52Z",
+              "updatedAt": "2025-05-27T21:26:53Z"
+            }
+          ]
         }
       ]
     },
@@ -1591,13 +1646,13 @@
       "labels": [],
       "body": "This PR builds on #18 by actually defining the hybrid KEM constructions.  First we define the overall KEM structure, being generic over combiner functions, and then we define the combiners.\r\n\r\nI have focused on functional definitions here, with security notions and arguments punted to the Security Considerations.  I added an outline of what I think we need the Security Considerations to look like at the end, mainly so that I could have targets for the cross-references above.",
       "createdAt": "2025-05-16T18:17:04Z",
-      "updatedAt": "2025-05-22T14:58:44Z",
+      "updatedAt": "2025-05-27T20:39:39Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
-      "baseRefOid": "55400d76088569aad2bffda3dc1aca2ad5095cde",
+      "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "hybrid-constructions",
-      "headRefOid": "86bea7ef96fd3f2dfcc1a5ede3a6aeba5640da0c",
+      "headRefOid": "dcced8928ede11206cddb706f87e15b95b947005",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1626,6 +1681,58 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 21,
+      "id": "PR_kwDOMmhxws6X2tuT",
+      "title": "Post #18 edits",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/21",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "* Addresses a bunch of editorial comments from @dconnolly.  \r\n* Removes the OnlySharedSecrets combiner, as discussed on the authors call",
+      "createdAt": "2025-05-27T21:30:37Z",
+      "updatedAt": "2025-05-27T21:30:50Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
+      "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "post-18",
+      "headRefOid": "1138e27278bb141638319d458ea782badc538f59",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 22,
+      "id": "PR_kwDOMmhxws6YCzWa",
+      "title": "Reframe in terms of groups ",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/22",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR rewrites the hybrid KEMs in terms of nominal groups as appropriate.\r\n\r\n* Adds a \"nominal group\" API much like the KEM API.\r\n* The HashEverything hybrid is defined in terms of KEM+KEM\r\n    * The PreHashKeys hybrid is defined as an optimization of HashEverything\r\n    * We define a way of instantiating the above with a group instead of a KEM\r\n* The HashTraditionalOnly hybrid is define in terms of Group+KEM (as in [BCD+24])\r\n",
+      "createdAt": "2025-05-29T00:34:54Z",
+      "updatedAt": "2025-05-29T01:05:16Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
+      "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "kem-vs-curve",
+      "headRefOid": "bdd309c15d94d2f4049430f1a2d29e4c3ed2c0bb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
