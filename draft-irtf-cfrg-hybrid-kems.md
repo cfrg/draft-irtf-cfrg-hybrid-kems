@@ -641,26 +641,6 @@ def Decaps(dk, ct):
 
 # Security Considerations
 
-## Security Properties
-
-### INDistinguishability against Chosen-Ciphertext Attacks (IND-CCA)
-
-### Ciphertext Second Preimage Resistance (C2PR)
-
-### Binding Properties (X-BIND-P-Q)
-
-### Survival if One KEM Fails
-
-## Security of the Combiners
-
-### Everything {#everything-sec}
-
-### OnlyTraditional {#only-traditional-sec}
-
-### OnlySharedSecrets {#only-shared-secrets-sec}
-
-# Security Considerations (Original)
-
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
 an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the `KDF`
