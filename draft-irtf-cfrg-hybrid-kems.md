@@ -217,7 +217,7 @@ The following terms are used throughout this document:
   `N1` bytes and its last `N2` bytes.  This function is the inverse of
   `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes long. It
   is an error to call this function with a byte string that does not have length
-  `N1 + N2`.
+  `N1 + N2`. Since this function operates over secret data it MUST be constant-time.
 
 When `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to
 denote the slice of bytes in `x` starting from the beginning of `x` and
