@@ -274,7 +274,7 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   public encapsulation key `ek` and a secret decapsulation key `dk`, each of
   which are byte strings.
 - `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
-  input a seed `seed` and generates a public encapsulation key `ek` and a secret
+input a seed `seed` and generates a public encapsulation key `ek` and a secret
   decapsulation key `dk`, each of which are byte strings.
 - `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
@@ -388,7 +388,8 @@ functions:
 We assume that scalars and group elements are represented by byte strings with
 fixed lengths:
 
-- `Nseed`: The length in bytes of a key seed (input to DeriveKeyPair)
+- `Nseed`: The length in bytes of a seed (input to RandomScalar)
+- `Nscalar`: The length in bytes of a scalar
 - `Nelem`: The length in bytes of a serialized group element
 - `Nss`: The length in bytes of a shared secret produced by
   ElementToSharedSecret
@@ -415,7 +416,148 @@ In this section, we define a collection of constructions for hybrid KEMs. These
 constructions share a common overall structure, differing mainly in how they
 compute the final shared secret.
 
-<!-- TODO: Actually rewrite the combiners -->
+## HashEverything
+
+The HashEverything hybrid KEM depends on the following constituent components:
+
+* `KEM_T`: A traditional KEM
+* `KEM_PQ`: A post-quantum KEM
+* `ExpandHash`: A hash function mapping byte strings of length `KEM_H.Nseed` to
+  byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed` (`ExpandHash.Nh ==
+  KEM_T.Nseed + KEM_PQ.Nseed`)
+* `CombineHash`: A hash function mapping byte strings of length `KEM_T.Nss +
+  KEM_PQ.Nss` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
+  KEM_H.Nss`)
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used.
+
+We presume the KEMs and hash functions meet the interfaces described in
+{{cryptographic-deps}}.
+
+The constants associated with the hybrid KEM are mostly derived from the
+concatenation of keys and ciphertexts:
+
+~~~
+Nek = KEM_T.Nek + KEM_PQ.Nek
+Ndk = KEM_T.Ndk + KEM_PQ.Ndk
+Nct = KEM_T.Nct + KEM_PQ.Nct
+~~~
+
+The `Nseed` and `Nss` constants should reflect the overall security level of the
+combined KEM, with the following recommended values:
+
+~~~
+Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
+Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+~~~
+
+Given these constituent parts, we define the HashEverything hybrid KEM as
+follows:
+
+~~~
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+
+def DeriveKeyPair(seed):
+    seed_full = ExpandHash(seed)
+    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    ek_H = concat(ek_T, ek_PQ)
+    dk_H = concat(dk_T, dk_PQ)
+    return (ek_H, dk_H)
+
+def Encaps(ek):
+    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
+    (ss_T, ct_T) = KEM_T.Encap(pk_T)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ct_H = concat(ct_T, ct_PQ)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
+    ek_T = KEM_T.ToEncaps(dk_T)
+    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    return ss_H
+~~~
+
+### Optimization for Encapsulation Key Reuse
+
+The PreHashedKeys hybrid KEM is a performance optimization of the HashEverything
+KEM, optimized for the case where encapsulation keys are large and frequently
+reused. In such cases, hashing the entire encapsulation key is expensive, and
+the same value is hashed repeatedly.  The PreHashedKeys KEM thus computes an
+intermediate hash of the hybrid encapsulation key, so that the hash value can be
+computed once and used across many encapsulation or decapsulation operations.
+
+The PreHashedKeys KEM is identical to the HashEverything KEM except for the
+shared secret computation.  One additional hash function is required:
+
+* `KeyHash`: A hash function mapping byte strings of length `KEM_T.Nek +
+  KEM_PQ.Nek` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
+  KEM_H.Nss`)
+
+The shared secret computation in `Encaps` and `Decaps` is then modified as
+follows:
+
+~~~
+ekh = KeyHash(concat(ek_T, ek_PQ))
+ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+~~~
+
+### Instantiation with a Nominal Group
+
+The HashEverything and PreHashedKeys hybrid KEMs can be instantiated with a
+nominal group in place of the traditional KEM.  However, because the group
+construction used as a constituent does not comprise a secure KEM, these
+constructions are defined and analyzed separately.
+
+To instantiate the HashEverything or PreHashedKeys hybrid KEM with a nominal
+group, the traditional KEM `KEM_T` is replaced with a "pseudo-KEM" `PseudoKEM_T`
+based on a nominal group `Group_T`.  We use the term "pseudo-KEM" because while
+this construction meets the KEM API definition, it is not a secure KEM.
+
+The constants for the pseudo-KEM are defined as follows:
+
+~~~
+PseudoKEM_T.Nseed = Group_T.Nseed
+PseudoKEM_T.Nek = GroupT.Nelem
+PseudoKEM_T.Ndk = GroupT.Nscalar
+PseudoKEM_T.Nct = GroupT.Nelem
+PseudoKEM_T.Nss = GroupT.Nss
+~~~
+
+The pseudo-KEM interface methods are defined as follows:
+
+~~~
+def PseudoGenerateKeyPair():
+    return DeriveKeyPair(random(Group_T.Nseed))
+
+def PseudoDeriveKeyPair(seed):
+    dk = Group_T.RandomScalar(seed)
+    ek = Group_T.Exp(Group_T.g, dk)
+    return (ek, dk)
+
+def PseudoEncaps(ek):
+    ct, sk_E = GenerateKeyPair()
+    ss = GroupT.ElementToSharedSecret(Group_T.Exp(ek, sk_E))
+    return (ct, ss)
+
+def PseudoDecaps(dk, ct):
+    return GroupT.ElementToSharedSecret(Group_T.Exp(ct, dk))
+~~~
+
+The HashEverything and PreHashedKeys hybrid KEMs are instantiated with a
+nominal group by replacing the `KEM_T` methods with the corresponding `Pseudo`
+methods. 
 
 ## HashTraditionalOnly
 
@@ -439,23 +581,24 @@ We presume the KEMs and hash functions meet the interfaces described in
 The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:
 
-```
-Npk = KEM_T.Npk + KEM_PQ.Npk
-Nsk = KEM_T.Nsk + KEM_PQ.Nsk
-Nct = KEM_T.Nct + KEM_PQ.Nct
-```
+~~~
+Nek = Group_T.Nelem + KEM_PQ.Nek
+Ndk = Group_T.Nscalar + KEM_PQ.Ndk
+Nct = Group_T.Nelem + KEM_PQ.Nct
+~~~
 
 The `Nseed` and `Nss` constants should reflect the overall security level of the
 combined KEM, with the following recommended values:
 
-```
-Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
-Nss = min(KEM_T.Nss, KEM_PQ.Nss)
-```
+~~~
+Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
+Nss = min(Group_T.Nss, KEM_PQ.Nss)
+~~~
 
-Given these constituent parts, we define the following hybrid KEM:
+Given these constituent parts, we define the HashTraditionalOnly hybrid KEM as
+follows:
 
-```
+~~~
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
@@ -496,147 +639,7 @@ def Decaps(dk, ct):
 
     ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
-```
-
-<!-- XXX: Earlier text below this line -->
-
-## General Construction
-
-A hybrid KEM `KEM_H` depends on the following constituent components:
-
-* `KEM_H.Nseed`: The length in bytes for a key seed for the hybrid KEM
-* `KEM_H.Nss`: The length in bytes of a shared secret produced by the hybrid KEM
-* `KEM_T`: A traditional KEM
-* `KEM_PQ`: A post-quantum KEM
-* `ExpandHash`: A hash function mapping byte strings of length `KEM_H.Nseed` to
-  byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed` (`ExpandHash.Nh ==
-  KEM_T.Nseed + KEM_PQ.Nseed`)
-* `CombineHash`: A hash function mapping byte strings of length `KEM_T.Nss +
-  KEM_PQ.Nss` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
-  KEM_H.Nss`)
-* `Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label) -> input`: A function
-  that produces a byte string from the specified inputs, from which the final
-  shared secret is computed.
-* `Label` - A byte string used to label the specific combination of the above
-  constituents being used.
-
-We presume the KEMs and hash functions meet the interfaces described in
-{{cryptographic-deps}}.
-
-Given these constituent parts, we define the following overall structure for a
-hybrid KEM:
-
-```
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def DeriveKeyPair(seed):
-    seed_full = ExpandHash(seed)
-    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    ek_H = concat(ek_T, ek_PQ)
-    dk_H = concat(dk_T, dk_PQ)
-    return (ek_H, dk_H)
-
-def Encaps(ek):
-    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
-    (ss_T, ct_T) = KEM_T.Encap(pk_T)
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
-    ss_H = CombinerHash(Combiner(ss_T, ct_T, ek_T, ss_PQ, ct_PQ, ek_PQ, Label))
-    ct_H = concat(ct_T, ct_PQ)
-    return (ss_H, ct_H)
-
-def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-    ek_T = KEM_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
-
-    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-
-    ss_H = CombinerHash(Combiner(ss_T, ct_T, ek_T, ss_PQ, ct_PQ, ek_PQ, Label))
-    return ss_H
-```
-
-The constants associated with a hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:
-
-```
-Npk = KEM_T.Npk + KEM_PQ.Npk
-Nsk = KEM_T.Nsk + KEM_PQ.Nsk
-Nct = KEM_T.Nct + KEM_PQ.Nct
-```
-
-The `Nseed` and `Nss` constants should reflect the overall security level of the
-combined KEM, with the following recommended values:
-
-```
-Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
-Nss = min(KEM_T.Nss, KEM_PQ.Nss)
-```
-
-The remainder of this section describes four options for the `Combiner`
-function.  For each combiner, we outline scenarios where it should and should
-not be used.
-
-### Everything
-
-```
-def Everything(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
-    return concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
-```
-
-This combiner provides a simple construction that is broadly usable, because its
-security properties are largely independent of the properties of the constituent
-components.  See {{everything-sec}} for security analysis.
-
-The major drawback of this combiner is that it can be computationally expensive.
-In some PQ KEMs, the encapsulation key `ek_PQ` or ciphertext `ct_PQ` can be
-large, causing `CombinerHash` to process a large input.
-
-<!-- TODO example: Raw ECDH + something with short keys and no binding (HQC?) -->
-
-### Pre-Hash Encapsulation Keys
-
-```
-def PreHashedKeys(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
-    ek_pre = CombinerHash(ek_T, ek_PQ)
-    return concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_pre, label)
-```
-
-This combiner is an optimization over the `Everything` combiner for the case
-where the same encapsulation key is being used repeatedly, and this
-encapsulation key is large enough that hashing it is slow.  In such a case, the
-pre-hashing can be done offline and the hash result `ek_pre` cached, so that
-invocatons of the combiner can be done more quickly.  Its security follows from
-that of the `Everything` combiner, since the intermediate hashing does not
-affect the analysis.
-
-If the operational assumptions above are not true -- for example, if
-encapsulation keys are small or single-use -- then this combiner adds extra
-hashes for no utility, and the `Everything` combiner should be preferred.
-
-<!-- TODO example: Raw ECDH + Classic McEliece -->
-
-### Only Traditional
-
-```
-def OnlyTraditional(ss_T, ss_PQ, ct_T, ct_PQ, ek_T, ek_PQ, label):
-    return concat(ss_PQ, ss_T, ct_T, ek_T, label)
-```
-
-This combiner produces an even smaller hash input than the `PreHashedKeys`
-combiner, even in cases where keys are not reused, by hashing only the
-traditional metadata.
-
-It is, however, less universal than the `Everything` or `PreHashedKeys`
-combiners.  Its security depends on the constituent KEMs having certain
-additional properties, as discussed in {{only-traditional-sec}}.
-
-<!-- TODO example: Raw ECDH + ML-KEM -->
+~~~
 
 # Security Considerations
 
