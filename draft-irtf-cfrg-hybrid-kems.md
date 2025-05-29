@@ -515,51 +515,11 @@ ekh = KeyHash(concat(ek_T, ek_PQ))
 ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
 ~~~
 
-### Instantiation with a Nominal Group
 
-The HashEverything and PreHashedKeys hybrid KEMs can be instantiated with a
-nominal group in place of the traditional KEM.  However, because the group
-construction used as a constituent does not comprise a secure KEM, these
-constructions are defined and analyzed separately.
 
-To instantiate the HashEverything or PreHashedKeys hybrid KEM with a nominal
-group, the traditional KEM `KEM_T` is replaced with a "pseudo-KEM" `PseudoKEM_T`
-based on a nominal group `Group_T`.  We use the term "pseudo-KEM" because while
-this construction meets the KEM API definition, it is not a secure KEM.
-
-The constants for the pseudo-KEM are defined as follows:
 
 ~~~
-PseudoKEM_T.Nseed = Group_T.Nseed
-PseudoKEM_T.Nek = GroupT.Nelem
-PseudoKEM_T.Ndk = GroupT.Nscalar
-PseudoKEM_T.Nct = GroupT.Nelem
-PseudoKEM_T.Nss = GroupT.Nss
-~~~
 
-The pseudo-KEM interface methods are defined as follows:
-
-~~~
-def PseudoGenerateKeyPair():
-    return DeriveKeyPair(random(Group_T.Nseed))
-
-def PseudoDeriveKeyPair(seed):
-    dk = Group_T.RandomScalar(seed)
-    ek = Group_T.Exp(Group_T.g, dk)
-    return (ek, dk)
-
-def PseudoEncaps(ek):
-    ct, sk_E = GenerateKeyPair()
-    ss = GroupT.ElementToSharedSecret(Group_T.Exp(ek, sk_E))
-    return (ct, ss)
-
-def PseudoDecaps(dk, ct):
-    return GroupT.ElementToSharedSecret(Group_T.Exp(ct, dk))
-~~~
-
-The HashEverything and PreHashedKeys hybrid KEMs are instantiated with a
-nominal group by replacing the `KEM_T` methods with the corresponding `Pseudo`
-methods.
 
 ## HashTraditionalOnly
 
