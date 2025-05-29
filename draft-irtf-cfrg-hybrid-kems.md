@@ -491,7 +491,7 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-### Optimization for Encapsulation Key Reuse
+## PreHash {#prehash}
 
 The PreHashedKeys hybrid KEM is a performance optimization of the HashEverything
 KEM, optimized for the case where encapsulation keys are large and frequently
