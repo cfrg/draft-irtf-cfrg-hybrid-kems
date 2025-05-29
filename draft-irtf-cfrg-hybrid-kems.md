@@ -169,8 +169,10 @@ properties as long as the undelying algorithms are secure.
 
 # Introduction {#intro}
 
-Post-quantum (PQ) cryptographic schemes offer new constructions based on problems conjectured as resistant to attacks possible on a quantum computer. Key Encapsulation Mechanisms
-(KEMs), are a standardized algorithm type that can be used to build protocols in
+Post-quantum (PQ) cryptographic schemes offer new constructions based on problems
+conjectured as resistant to attacks possible on a quantum computer. Key Encapsulation
+Mechanisms (KEMs), are a standardized class of cryptographic scheme that can be used
+to build protocols in
 lieu of traditional, quantum-vulnerable variants such as finite field or
 lieu of traditional, quantum-vulnerable variants such as finite field or
 elliptic curve Diffie-Hellman (DH) based protocols.
