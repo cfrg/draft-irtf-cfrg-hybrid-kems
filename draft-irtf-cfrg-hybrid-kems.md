@@ -244,9 +244,9 @@ if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 The generic hybrid PQ/T KEM constructions we define depend on the the
 following cryptographic primitives:
 
-- Key Encapsulation Mechanisms {{kems}}
-- Nominal Groups {{group}}
-- Hash Functions {{hash}}
+- Key Encapsulation Mechanisms ({{kems}})
+- Nominal Groups ({{groups}})
+- Key Derivation Functions ({{kdfs}})
 
 In the remainder of this section, we describe functional aspects of these
 mechanisms.  The security properties we require in order for the resulting
@@ -312,7 +312,7 @@ byte strings, with fixed lengths:
 - `Nct`: The length in bytes of a ciphertext produced by Encaps
 - `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
 
-## Nominal Groups {#group}
+## Nominal Groups {#groups}
 
 ~~~ aasvg
                             g
@@ -374,23 +374,26 @@ fixed lengths:
 > API, however, this KEM would not be secure, so we have preferred to address
 > hybrid KEMs that use elliptic curves directly.
 
-## Hash functions {#hash}
+## Key Derivation Functions {#kdfs}
 
-Functionally, a hash function is simply a function that produces a fixed-length
-output byte string from an input byte string of arbitrary length.
+A Key Derivation Function (KDF) is a function that a function that produces
+keying material based on an input secret and other information.
 
-- `Nh` - The length in bytes of an output from this hash function.
-- `Hash(input) -> output`: Produce a byte string of length `Nh` from an input
+While KDFs in the literature can typically consume and produce byte strings of
+arbitrary length, the KDFs used in this document have a simpler form, with a fixed
+output lengths:
+
+- `Nin` - The length in bytes of an input to this KDF.
+- `Nout` - The length in bytes of an output from this KDF.
+- `Derive(input) -> output`: Produce a byte string of length `Nout` from an input
   byte string.
 
-For simplicity, we will write invocations of a hash function without `Hash`
-being explicit.  Invoking a hash function `Foo` on input `input` will be written
-as `Foo(input)` instead of `Foo.Hash(input)`.
+For simplicity, we will write invocations of a KDF without `Derive` being
+explicit.  Invoking a KDF `Foo` on input `input` will be written as `Foo(input)`
+instead of `Foo.Derive(input)`.
 
-Note that while we use the generic term "hash function", the security
-requirements laid out in {#security} are more stringent than the normal
-definition of a hash function.  Only functions meeting those stronger
-requirements are safe to use in the schemes here.
+The security requirements for KDFs used with the schemes in this document are
+laid out in {{security-requirements}}.
 
 # Hybrid KEM Schemes {#schemes}
 
@@ -416,16 +419,14 @@ constituent components:
 
 * `KEM_T`: A traditional KEM
 * `KEM_PQ`: A post-quantum KEM
-* `ExpandHash`: A hash function mapping byte strings of length `KEM_H.Nseed` to
-  byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed` (`ExpandHash.Nh ==
-  KEM_T.Nseed + KEM_PQ.Nseed`)
-* `CombineHash`: A hash function mapping byte strings of length `KEM_T.Nss +
-  KEM_PQ.Nss` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
-  KEM_H.Nss`)
+* `Expand`: A KDF producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`
+  (`Expand.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)
+* `Combine`: A KDF producing byte strings of length `KEM_H.Nss` (`Combine.Nout
+  == KEM_H.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-We presume the KEMs and hash functions meet the interfaces described in
+We presume the KEMs and KDFs meet the interfaces described in
 {{cryptographic-deps}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
@@ -454,7 +455,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = ExpandHash(seed)
+    seed_full = Expand(seed)
     (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
@@ -466,7 +467,7 @@ def Encaps(ek):
     (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
     (ss_T, ct_T) = KEM_T.Encap(pk_T)
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
-    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
 
@@ -479,7 +480,7 @@ def Decaps(dk, ct):
     ss_T = KEM_T.Decap(dk_T, ct_T)
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
-    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
     return ss_H
 ~~~
 
@@ -493,11 +494,10 @@ intermediate hash of the hybrid encapsulation key, so that the hash value can be
 computed once and used across many encapsulation or decapsulation operations.
 
 The PreHashedKeys KEM is identical to the HashEverything KEM except for the
-shared secret computation.  One additional hash function is required:
+shared secret computation.  One additional KDF is required:
 
-* `KeyHash`: A hash function mapping byte strings of length `KEM_T.Nek +
-  KEM_PQ.Nek` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
-  KEM_H.Nss`)
+* `KeyHash`: A KDF producing byte strings of length `KEM_H.Nss` (`KeyHash.Nout
+  == KEM_H.Nss`)
 
 The `GenerateKeyPair` and `DeriveKeyPair` algorithms for PreHashedKeys are
 identical to those of the HashEverything KEM.  The `Encaps` and `Decaps` method
@@ -510,7 +510,7 @@ def Encaps(ek):
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
 
     ekh = KeyHash(concat(ek_T, ek_PQ))
-    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
 
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
@@ -525,7 +525,7 @@ def Decaps(dk, ct):
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
     ekh = KeyHash(concat(ek_T, ek_PQ))
-    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
     return ss_H
 ~~~
 
@@ -536,16 +536,14 @@ constituent components:
 
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
-* `ExpandHash`: A hash function mapping byte strings of length `KEM_H.Nseed` to
-  byte strings of length `Group_T.Nseed + KEM_PQ.Nseed` (`ExpandHash.Nh ==
-  Group_T.Nseed + KEM_PQ.Nseed`)
-* `CombineHash`: A hash function mapping byte strings of length `Group_T.Nss +
-  KEM_PQ.Nss` to byte strings of length `KEM_H.Nss` (`CombineHash.Nh ==
-  KEM_H.Nss`)
+* `Expand`: A KDF producing byte strings of length `Group_T.Nseed +
+  KEM_PQ.Nseed` (`Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed`)
+* `Combine`: A KDF producing byte strings of length `KEM_H.Nss` (`Combine.Nout
+  == KEM_H.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-We presume that `Group_T`, `KEM_PQ`, and the hash functions meet the interfaces
+We presume that `Group_T`, `KEM_PQ`, and the KDFs meet the interfaces
 described in {{cryptographic-deps}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
@@ -574,7 +572,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = ExpandHash(seed)
+    seed_full = Expand(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
     dk_T = Group_T.RandomScalar(seed_T))
@@ -593,7 +591,7 @@ def Encaps(ek):
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
 
-    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = Combine(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
 
@@ -607,7 +605,7 @@ def Decaps(dk, ct):
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
-    ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = Combine(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
 
@@ -662,7 +660,22 @@ FO-transform KEM. Also called ciphertext collision resistance.
 
 ## Security Requirements for Constituent Components {#security-requirements}
 
-[[ TODO: Define requirements for KEMs, nominal groups, and hash functions ]]
+> TODO: The text in this section is provisional, intended to give a general idea of
+> direction.  We need to provide more thorough description, and verify that
+> these requirements align with the requirements of the security proofs in the
+> literature, especially {{GHP2018}} and {{XWING}}.
+
+KEMs must be IND-CCA, except for in HashTraditionalOnly, where they must provide
+certain binding properties as specified in {{XWING}}.
+
+Nominal groups must be ones in which appropriate Diffie-Hellman hardness results
+apply.
+
+KDFs must be random oracles in the ROM and QROM.  (This seems to be the
+assumption made in both {{GHP2018}} and {{XWING}}.)  The choice of the KDF for
+HPKE SHOULD be made based on the security level provided by the constituent
+KEMs. The KDF SHOULD at least have the security level of the strongest
+constituent KEM.
 
 ## Security Properties of Hybrid KEMs
 
