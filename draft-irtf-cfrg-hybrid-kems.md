@@ -174,7 +174,7 @@ properties as long as the undelying algorithms are secure.
 # Introduction {#intro}
 
 Post-quantum (PQ) cryptographic schemes offer new constructions based on problems
-conjectured as resistant to attacks possible on a quantum computer. Key 
+conjectured as resistant to attacks possible on a quantum computer. Key
 Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic scheme
 that can be used to build protocols in lieu of traditional, quantum-vulnerable
 variants such as finite field or elliptic curve Diffie-Hellman (DH) based protocols.
@@ -218,7 +218,7 @@ interest to readers, but which are not treated in depth.
 # Notation
 
 This document is consistent with all terminology defined in
-{{I-D.ietf-pquip-pqt-hybrid-terminology}}.
+{{?I-D.ietf-pquip-pqt-hybrid-terminology}}.
 
 The following terms are used throughout this document:
 
@@ -246,8 +246,6 @@ following cryptographic primitives:
 
 - Key Encapsulation Mechanisms {{kems}}
 - Nominal Groups {{group}}
-- Key-derivation Functions {{kdfs}}
-- Extendable-output Functions {{xofs}}
 - Hash Functions {{hash}}
 
 In the remainder of this section, we describe functional aspects of these
@@ -513,7 +511,7 @@ def Encaps(ek):
 
     ekh = KeyHash(concat(ek_T, ek_PQ))
     ss_H = CombinerHash(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
-    
+
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
 
