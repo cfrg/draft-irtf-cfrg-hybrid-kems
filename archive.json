@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-29T01:10:40.617074+00:00",
+  "timestamp": "2025-06-01T01:23:34.105129+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -47,6 +47,16 @@
       "name": "wontfix",
       "description": "This will not be worked on",
       "color": "ffffff"
+    },
+    {
+      "name": "TODO",
+      "description": "Known gap in the document",
+      "color": "28F613"
+    },
+    {
+      "name": "discuss",
+      "description": "Needs discussion to identify the right outcome",
+      "color": "C96DEA"
     }
   ],
   "issues": [
@@ -71,15 +81,15 @@
       "id": "I_kwDOMmhxws6rz1bb",
       "title": "Consider renaming KitchenSink to TranscriptHash",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/7",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "chris-wood",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "See [this post](https://mailarchive.ietf.org/arch/msg/cfrg/L7G1rXH9g_acH1uhs4G2IKRN7dU/).",
       "createdAt": "2025-02-26T18:39:03Z",
-      "updatedAt": "2025-02-26T20:24:15Z",
-      "closedAt": null,
+      "updatedAt": "2025-05-29T21:54:19Z",
+      "closedAt": "2025-05-29T21:54:18Z",
       "comments": [
         {
           "author": "ounsworth",
@@ -87,6 +97,13 @@
           "body": "I'm not sure that's right thought\n\n``` \nss = LabeledHKDF(pq_SS, trad_SS, pq_CT, pq_PK, trad_CT, trad_PK, label)\n```\n\nThere's no \"transcript\" in there, unless you jam it into the label, but that's not required by the text? And I think that TLS has a well-defined concept of a \"transcript\", but I think it's less clear what counts as \"transcript\" for example if you have a JWT payload on an HTTP POST -- does \"transcript\" mean that the entire payload of the JWT should be included in the label? Or does \"transcript\" mean the entire sequence of HTTP messages exchanged so far on this connection? Obviously that's not what's intended, but might be how a non-cryptographer interprets the word \"transcript\". I don't have a better suggestion than \"KitchenSink\", but I don't think that \"TranscriptHash\" is the right connotation for protocols that aren't TLS.",
           "createdAt": "2025-02-26T20:06:05Z",
           "updatedAt": "2025-02-26T20:24:15Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Dupe of #20 ",
+          "createdAt": "2025-05-29T21:54:18Z",
+          "updatedAt": "2025-05-29T21:54:18Z"
         }
       ]
     },
@@ -147,32 +164,48 @@
       "id": "I_kwDOMmhxws6tFcFU",
       "title": "Make concatenation of KDF inputs explicit in concrete pseudocode",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/10",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "We can clarify this concatenation to match the generic QSF construction more closely using the explicit concat() routine described earlier",
       "createdAt": "2025-03-07T20:35:32Z",
-      "updatedAt": "2025-03-07T20:35:32Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-05-29T21:53:00Z",
+      "closedAt": "2025-05-29T21:52:58Z",
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed in current `main`.",
+          "createdAt": "2025-05-29T21:52:59Z",
+          "updatedAt": "2025-05-29T21:52:59Z"
+        }
+      ]
     },
     {
       "number": 11,
       "id": "I_kwDOMmhxws6tFlU6",
       "title": "Type inconsistency for `trad_PK`",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/11",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bluegate010",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "- In `expandDecapsulationKey` (and therefore in `KeyGen`, `DeriveKey`, and `Decaps`), `trad_PK` is a serialized byte array (`trad_PK = G.SerializeElement(NominalGroup.ScalarMultBase(trad_SK))`)\n- In `Encaps`, `trad_PK` is a deserialized element (`trad_PK = P-256.DeserializeElement(pk[1184:1217])`)\n- In `EncapsDerand` for QSF-P256, `trad_PK` is a deserialized element (`trad_PK = P-256.DeserializeElement(pk[1184:1217])`), but is later treated as a serialized byte array (`ss = SHA3-256(pq_SS, trad_SS, trad_CT, trad_PK, label)`)\n- In `EncapsDerand` for KS-X25519, `trad_PK` is a serialized byte array (`trad_PK = pk[1184:1216]`)\n- In `EncapsDerand` for QSF-P384, `trad_PK` is deserialized element (`trad_PK = P-384.DeserializeElement(pk[1568:1629])`)\n\nFor clarity, it seems reasonable for `trad_PK` to always be a serialized byte array.",
       "createdAt": "2025-03-07T20:55:14Z",
-      "updatedAt": "2025-03-07T20:55:14Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-05-29T21:49:21Z",
+      "closedAt": "2025-05-29T21:49:21Z",
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This has been fixed in the latest `main`.  All the values the KEM interface deals with are fixed-length byte arrays.",
+          "createdAt": "2025-05-29T21:49:21Z",
+          "updatedAt": "2025-05-29T21:49:21Z"
+        }
+      ]
     },
     {
       "number": 13,
@@ -185,10 +218,12 @@
       "assignees": [
         "dconnolly"
       ],
-      "labels": [],
+      "labels": [
+        "TODO"
+      ],
       "body": "",
       "createdAt": "2025-04-16T18:10:07Z",
-      "updatedAt": "2025-04-16T18:10:11Z",
+      "updatedAt": "2025-05-29T21:56:34Z",
       "closedAt": null,
       "comments": []
     },
@@ -201,12 +236,22 @@
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "TODO"
+      ],
       "body": "- [ ] include not looking at 'layered' style hybrids\n- [ ] include not looking at split/dualPRF style",
       "createdAt": "2025-04-16T18:15:46Z",
-      "updatedAt": "2025-05-01T14:51:54Z",
+      "updatedAt": "2025-05-29T21:56:34Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Duplicate / subset of #13 ?",
+          "createdAt": "2025-05-29T21:52:38Z",
+          "updatedAt": "2025-05-29T21:52:38Z"
+        }
+      ]
     },
     {
       "number": 16,
@@ -217,31 +262,43 @@
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "discuss"
+      ],
       "body": "",
       "createdAt": "2025-05-01T14:50:46Z",
-      "updatedAt": "2025-05-01T14:50:46Z",
+      "updatedAt": "2025-05-29T22:45:57Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Seems like more keystrokes for no real value.",
+          "createdAt": "2025-05-29T21:57:18Z",
+          "updatedAt": "2025-05-29T21:57:18Z"
+        }
+      ]
     },
     {
       "number": 20,
       "id": "I_kwDOMmhxws63zN4v",
-      "title": "KitchenSink names?",
+      "title": "Names for the schemes",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/20",
       "state": "OPEN",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "discuss"
+      ],
       "body": "GHP? ",
       "createdAt": "2025-05-22T14:51:19Z",
-      "updatedAt": "2025-05-28T13:35:56Z",
+      "updatedAt": "2025-05-29T21:55:13Z",
       "closedAt": null,
       "comments": [
         {
           "author": "bifurcation",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "I presume you mean \"KitchenSink\" \ud83d\ude04  \n\nWhat does \"GHP\" mean?",
           "createdAt": "2025-05-27T21:32:25Z",
           "updatedAt": "2025-05-27T21:32:25Z"
@@ -252,8 +309,171 @@
           "body": "I presume [Giacon, Heuer, Poettering](https://eprint.iacr.org/2018/024.pdf)\n",
           "createdAt": "2025-05-27T21:41:19Z",
           "updatedAt": "2025-05-27T21:41:19Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Renamed the issue to be a little more generic.  Current `main` renames things to try to be more neutral / descriptive: HashEverything / PreHashKeys / HashTraditionalOnly.  The original names (KitchenSink / Chempat / QSF) are a little catchier.  It would be nice if there were something catchy that was also more descriptive of what's going on.  Suggestions welcome.",
+          "createdAt": "2025-05-29T21:51:45Z",
+          "updatedAt": "2025-05-29T21:51:45Z"
         }
       ]
+    },
+    {
+      "number": 23,
+      "id": "I_kwDOMmhxws6401jO",
+      "title": "Instantiation of KitchenSink / HashEverything with a nominal group instead of a KEM",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/23",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "",
+      "createdAt": "2025-05-29T16:31:47Z",
+      "updatedAt": "2025-05-29T22:08:32Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It is technically possible to instantiate the KitchenSink / HashEverything scheme with a nominal group (e.g., ECDH) in place of the IND-CCA KEM called for in the current text.  You just define a pseudo-KEM where the CT is a group element and Encap/Decap are DH operations.\n\nOn the one hand, it seems like this should be secure.  In the case where the PQ KEM is broken, it is effecitively DH-KEM, which is IND-CCA.\n\nOn the other hand, it's not clear that this is a construction that has been analyzed in the literature.  The GHP paper that underlies KitchenSink / HashEverything requires that the inputs be IND-CCA KEMs.\n\nIf we are going to specify this, then we have two choices as to how to define it:\n\n1. Define the \"pseudo-KEM\" sketched above.  This option is notationally compact, but risks people implementing ECDH as a KEM even though it's not secure.\n2. Write out the full instantiation using the Group API.  This option is verbose, but doesn't define a KEM that is not IND-CCA.",
+          "createdAt": "2025-05-29T22:08:26Z",
+          "updatedAt": "2025-05-29T22:08:26Z"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "I_kwDOMmhxws641cOD",
+      "title": "Refactor security properties subsection of Security Considerations section",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/24",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "TODO"
+      ],
+      "body": "We have some language on IND-CCA and C2PRI but need more on the rest:\n\n## Security Properties\n\n### INDistinguishability against Chosen-Ciphertext Attacks (IND-CCA)\n\n### Ciphertext Second Preimage Resistance (C2PR)\n\n### Binding Properties (X-BIND-P-Q)\n\n### Survival if One KEM Fails\n\n## Security of the Combiners\n\n### Everything {#everything-sec}\n\n### OnlyTraditional {#only-traditional-sec}\n\n### OnlySharedSecrets {#only-shared-secrets-sec}",
+      "createdAt": "2025-05-29T17:36:01Z",
+      "updatedAt": "2025-05-29T21:56:35Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 25,
+      "id": "I_kwDOMmhxws643qD-",
+      "title": "Specify the security requirements for constituent elements",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/25",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "pag-crypto"
+      ],
+      "labels": [
+        "discuss"
+      ],
+      "body": "We have three types of constituents that go into our hybrid schemes:\n\n1. KEMs\n2. Nominal groups\n3. Hash functions\n\nThe security requirements for the former two are pretty clear: A KEM needs to be IND-CCA, and if it is going to be used with QSF / HashTraditionalOnly, it needs to have some additional binding properties.  A nominal group needs to be secure in the sense of [ABH+20].\n\nFor the \"hash functions\", we should define a requirement that aligns well with the constructions in the literature, some combination of notions of XOF, KDF, and RO.",
+      "createdAt": "2025-05-29T22:12:54Z",
+      "updatedAt": "2025-05-29T22:16:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 26,
+      "id": "I_kwDOMmhxws643qoZ",
+      "title": "Define the desired security properties for the hybrid KEMs",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/26",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "pag-crypto"
+      ],
+      "labels": [
+        "TODO"
+      ],
+      "body": "Normal KEM security notions apply, particularly IND-CCA and X-BIND-P-Q.\n\nThe interesting thing will be how to discuss the \"hybrid\" security notion, i.e., the survival of at least IND-CCA when at least one KEM fails -- for some definition of \"fails\".",
+      "createdAt": "2025-05-29T22:14:34Z",
+      "updatedAt": "2025-05-29T22:45:38Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 27,
+      "id": "I_kwDOMmhxws643rU2",
+      "title": "Describe how the hybrid schemes meet the security goals",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/27",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "pag-crypto"
+      ],
+      "labels": [
+        "TODO"
+      ],
+      "body": "We should provide citations to proofs in the literature that the schemes we describe are secure given our requirements on the inputs.\n\n* HashEverything should map to one of the schemes in GHP20\n* PreHashKeys - not clear what the right citation is here?\n* HashTraditionalOnly maps to the QSF construction in BCD+24",
+      "createdAt": "2025-05-29T22:16:33Z",
+      "updatedAt": "2025-05-29T22:16:55Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 28,
+      "id": "I_kwDOMmhxws643s8r",
+      "title": "Serialization of compound values",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/28",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "The values that a hybrid KEM deals with are compound:\n\n* `dk_H = (dk_T, dk_PQ)`\n* `ek_H = (ek_T, ek_PQ)`\n* `ct_H = (ct_T, ct_PQ)`\n\nThe constituent values are fixed-length byte strings, which is needed because we want to feed them into hash functions without ambiguity and without length prefixes.\n\nThe current text specifies that the hybrid values are just the concatenation of the constituent values, and does `concat()` and `split()` as appropriate.  On the one hand, this is a simple construction (avoiding encoding ambiguities one sees, e.g., with ECDSA signatures), and means that the hybrid KEM meets the same KEM API as the constituents.  On the other hand, there's no real need to specify an encoding for these values, so we could punt on the question.",
+      "createdAt": "2025-05-29T22:21:23Z",
+      "updatedAt": "2025-05-29T23:03:24Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 29,
+      "id": "I_kwDOMmhxws6437i1",
+      "title": "Should DeriveKeyPair be optional?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/29",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "In the KEM interface, we currently require a DeriveKeyPair algorithm.  We could make this optional, in the same way that `EncapsDerand` is optional.\n\nOn the one hand, this algorithm is not typically included in descriptions of KEMs in the literature.  On the other hand, it is important for integration with things like HPKE and MLS, and most KEMs provide such an algorithm in practice (even if just by making the randomness used by GenerateKeyPair explicit).",
+      "createdAt": "2025-05-29T23:05:53Z",
+      "updatedAt": "2025-05-29T23:05:53Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 30,
+      "id": "I_kwDOMmhxws6438FT",
+      "title": "EncapsDerand: Use it or lose it.",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/30",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, we define `EncapsDerand` as an optional method on the KEM interface.  But we don't use it anywhere, and we don't define it for the hybrid KEMs.  We should either define this method for the hybrid KEMs when the constituents support it (and thus use it), or delete it.\n\nIf we want it just for purposes of test vectors, we could move it to an appendix.",
+      "createdAt": "2025-05-29T23:07:52Z",
+      "updatedAt": "2025-05-29T23:07:52Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -800,21 +1020,21 @@
       "id": "PR_kwDOMmhxws6N0rBY",
       "title": "Clarify concatenation operations",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/9",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bluegate010",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Clarify that SHA3-256 takes one input which is a concatenation of multiple values.",
       "createdAt": "2025-03-07T20:30:38Z",
-      "updatedAt": "2025-03-07T21:01:08Z",
+      "updatedAt": "2025-05-29T22:03:37Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "ca4807c8b1249830e36a18dbc8b218087eb7bcb8",
       "headRepository": "bluegate010/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "patch-1",
       "headRefOid": "ec575c84b83fe47edd02460667e9e1eda3cc561b",
-      "closedAt": null,
+      "closedAt": "2025-05-29T22:03:37Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -839,6 +1059,13 @@
           "body": "> We can clarify this concatenation to match the generic QSF construction more closely using the explicit `concat()` routine described earlier\r\n\r\nGot it, have made this adjustment.",
           "createdAt": "2025-03-07T21:01:07Z",
           "updatedAt": "2025-03-07T21:01:07Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Overcome by events",
+          "createdAt": "2025-05-29T22:03:37Z",
+          "updatedAt": "2025-05-29T22:03:37Z"
         }
       ],
       "reviews": []
@@ -848,7 +1075,7 @@
       "id": "PR_kwDOMmhxws6N01c3",
       "title": "Make trad_PK consistently a serialized byte array.",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/12",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bluegate010",
       "authorAssociation": "NONE",
       "assignees": [
@@ -857,18 +1084,26 @@
       "labels": [],
       "body": "Resolves https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/11",
       "createdAt": "2025-03-07T20:55:55Z",
-      "updatedAt": "2025-03-07T20:59:39Z",
+      "updatedAt": "2025-05-29T22:03:18Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "ca4807c8b1249830e36a18dbc8b218087eb7bcb8",
       "headRepository": "bluegate010/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "trad_PK",
       "headRefOid": "96dac879d6c53b62e542a06d902b46db8666e6ab",
-      "closedAt": null,
+      "closedAt": "2025-05-29T22:03:18Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Overcome by events.",
+          "createdAt": "2025-05-29T22:03:18Z",
+          "updatedAt": "2025-05-29T22:03:18Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -1639,31 +1874,38 @@
       "id": "PR_kwDOMmhxws6Wgb0y",
       "title": "Hybrid constructions",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/19",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR builds on #18 by actually defining the hybrid KEM constructions.  First we define the overall KEM structure, being generic over combiner functions, and then we define the combiners.\r\n\r\nI have focused on functional definitions here, with security notions and arguments punted to the Security Considerations.  I added an outline of what I think we need the Security Considerations to look like at the end, mainly so that I could have targets for the cross-references above.",
       "createdAt": "2025-05-16T18:17:04Z",
-      "updatedAt": "2025-05-27T20:39:39Z",
+      "updatedAt": "2025-05-29T22:02:53Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "hybrid-constructions",
       "headRefOid": "dcced8928ede11206cddb706f87e15b95b947005",
-      "closedAt": null,
+      "closedAt": "2025-05-29T22:02:53Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [
         {
           "author": "bifurcation",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "As discussed on authors call, will remove the \"OnlySharedSecrets\" option (nobody's asking for it; arguably not sound) and reframe the OnlyTraditional option in terms of a T group.",
           "createdAt": "2025-05-22T14:58:43Z",
           "updatedAt": "2025-05-22T14:58:43Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Subsumed in #22 ",
+          "createdAt": "2025-05-29T22:02:50Z",
+          "updatedAt": "2025-05-29T22:02:50Z"
         }
       ],
       "reviews": [
@@ -1687,25 +1929,33 @@
       "id": "PR_kwDOMmhxws6X2tuT",
       "title": "Post #18 edits",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/21",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "* Addresses a bunch of editorial comments from @dconnolly.  \r\n* Removes the OnlySharedSecrets combiner, as discussed on the authors call",
       "createdAt": "2025-05-27T21:30:37Z",
-      "updatedAt": "2025-05-27T21:30:50Z",
+      "updatedAt": "2025-05-29T22:03:05Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "post-18",
       "headRefOid": "1138e27278bb141638319d458ea782badc538f59",
-      "closedAt": null,
+      "closedAt": "2025-05-29T22:03:04Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Subsumed in #22 ",
+          "createdAt": "2025-05-29T22:03:04Z",
+          "updatedAt": "2025-05-29T22:03:04Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -1715,24 +1965,1057 @@
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/22",
       "state": "OPEN",
       "author": "bifurcation",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR rewrites the hybrid KEMs in terms of nominal groups as appropriate.\r\n\r\n* Adds a \"nominal group\" API much like the KEM API.\r\n* The HashEverything hybrid is defined in terms of KEM+KEM\r\n    * The PreHashKeys hybrid is defined as an optimization of HashEverything\r\n    * We define a way of instantiating the above with a group instead of a KEM\r\n* The HashTraditionalOnly hybrid is define in terms of Group+KEM (as in [BCD+24])\r\n",
       "createdAt": "2025-05-29T00:34:54Z",
-      "updatedAt": "2025-05-29T01:05:16Z",
+      "updatedAt": "2025-05-30T15:34:40Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "kem-vs-curve",
-      "headRefOid": "bdd309c15d94d2f4049430f1a2d29e4c3ed2c0bb",
+      "headRefOid": "c4d01b2b2566e5cfa3e0deca8f651c3c7369eefd",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@bifurcation is this branch all the commits from PR #18 and #21? ",
+          "createdAt": "2025-05-29T15:23:53Z",
+          "updatedAt": "2025-05-29T15:23:53Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@dconnolly - Yes, i've just been building ahead linearly.",
+          "createdAt": "2025-05-29T15:24:54Z",
+          "updatedAt": "2025-05-29T15:24:54Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6rkRSP",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T13:55:19Z",
+          "updatedAt": "2025-05-29T13:55:19Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Recommend removal of HNDL attacks. Motivation for PQC is not specific to that, but due to quantum threats.",
+              "createdAt": "2025-05-29T13:55:19Z",
+              "updatedAt": "2025-05-29T13:55:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rkaq8",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T14:07:54Z",
+          "updatedAt": "2025-05-29T14:07:54Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "The idea of mentioning HNDL is just to explain why the focus on KEMs vs. Authentication.  But I don't feel super strongly.",
+              "createdAt": "2025-05-29T14:07:54Z",
+              "updatedAt": "2025-05-29T14:07:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rkmIx",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T14:23:43Z",
+          "updatedAt": "2025-05-29T14:23:44Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Well, the whole draft is about KEMs only, so...",
+              "createdAt": "2025-05-29T14:23:43Z",
+              "updatedAt": "2025-05-29T14:23:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rlSL4",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T15:21:58Z",
+          "updatedAt": "2025-05-29T15:21:58Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "And KEMs are not only used for key establishment, sometimes they are used for auth too",
+              "createdAt": "2025-05-29T15:21:58Z",
+              "updatedAt": "2025-05-29T15:21:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rlTZ0",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T15:23:42Z",
+          "updatedAt": "2025-05-29T15:23:43Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Fine, fine, we can delete it :)",
+              "createdAt": "2025-05-29T15:23:43Z",
+              "updatedAt": "2025-05-29T15:23:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rl8nU",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T16:14:03Z",
+          "updatedAt": "2025-05-29T16:14:03Z",
+          "comments": [
+            {
+              "originalPosition": 258,
+              "body": "```suggestion\r\n# Hybrid KEM Generic Constructions {#generic-constructions}\r\n```",
+              "createdAt": "2025-05-29T16:14:03Z",
+              "updatedAt": "2025-05-29T16:14:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rl886",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T16:14:37Z",
+          "updatedAt": "2025-05-29T16:14:37Z",
+          "comments": [
+            {
+              "originalPosition": 265,
+              "body": "```suggestion\r\nIn this section, we define three generic constructions for hybrid KEMs:\r\n```",
+              "createdAt": "2025-05-29T16:14:37Z",
+              "updatedAt": "2025-05-29T16:14:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rl9km",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T16:15:39Z",
+          "updatedAt": "2025-05-29T16:15:39Z",
+          "comments": [
+            {
+              "originalPosition": 279,
+              "body": "```suggestion\r\n* HashEverything - A generic construction that is suitable for use with any choice\r\n  of traditional and PQ KEMs, with minimal security assumptions on the\r\n  constituent KEMs\r\n* PreHashedKeys - A performance optimization of HashEverything for the case\r\n  where encapsulation keys are large and frequently reused\r\n* HashTraditionalOnly - An optimized generic construction for the case where the traditional\r\n  component is a nominal group and the PQ component has strong binding\r\n  properties\r\n```",
+              "createdAt": "2025-05-29T16:15:39Z",
+              "updatedAt": "2025-05-29T16:15:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmAVm",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T16:20:17Z",
+          "updatedAt": "2025-05-29T16:20:17Z",
+          "comments": [
+            {
+              "originalPosition": 493,
+              "body": "Let's duplicate Encaps and Decaps from HashEverything here and just change/add these lines",
+              "createdAt": "2025-05-29T16:20:17Z",
+              "updatedAt": "2025-05-29T17:57:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmLUB",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T16:33:23Z",
+          "updatedAt": "2025-05-29T16:33:23Z",
+          "comments": [
+            {
+              "originalPosition": 496,
+              "body": "Let's remove this for now, tracked with #23 ",
+              "createdAt": "2025-05-29T16:33:23Z",
+              "updatedAt": "2025-05-29T16:33:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmpfv",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:17:09Z",
+          "updatedAt": "2025-05-29T17:17:09Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\nPost-quantum (PQ) cryptographic schemes offer new constructions based on problems conjectured as resistant to attacks possible on a quantum computer. Key Encapsulation Mechanisms\r\n```",
+              "createdAt": "2025-05-29T17:17:09Z",
+              "updatedAt": "2025-05-29T17:17:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmp0U",
+          "commit": {
+            "abbreviatedOid": "c8874d0"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:17:43Z",
+          "updatedAt": "2025-05-29T17:17:44Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "```suggestion\r\nlieu of traditional, quantum-vulnerable variants such as finite field or\r\nelliptic curve Diffie-Hellman (DH) based protocols.\r\n```",
+              "createdAt": "2025-05-29T17:17:43Z",
+              "updatedAt": "2025-05-29T17:17:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmrwH",
+          "commit": {
+            "abbreviatedOid": "d64370f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:20:11Z",
+          "updatedAt": "2025-05-29T17:20:11Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nPost-quantum (PQ) cryptographic schemes offer new constructions based on problems\r\nconjectured as resistant to attacks possible on a quantum computer. Key Encapsulation\r\nMechanisms (KEMs), are a standardized class of cryptographic scheme that can be used\r\nto build protocols in\r\n```",
+              "createdAt": "2025-05-29T17:20:11Z",
+              "updatedAt": "2025-05-29T17:20:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmsgF",
+          "commit": {
+            "abbreviatedOid": "a6ee732"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:21:02Z",
+          "updatedAt": "2025-05-29T17:21:03Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\nPost-quantum (PQ) cryptographic schemes offer new constructions based on problems\r\nconjectured as resistant to attacks possible on a quantum computer. Key \r\nEncapsulation Mechanisms (KEMs), are a standardized class of cryptographic scheme\r\nthat can be used to build protocols in lieu of traditional, quantum-vulnerable\r\nvariants such as finite field or elliptic curve Diffie-Hellman (DH) based protocols.\r\n```",
+              "createdAt": "2025-05-29T17:21:02Z",
+              "updatedAt": "2025-05-29T17:21:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmtSu",
+          "commit": {
+            "abbreviatedOid": "c80503e"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:22:06Z",
+          "updatedAt": "2025-05-29T17:22:06Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "```suggestion\r\nIn this document, we define generic constructions for hybrid KEMs based on combining a\r\n```",
+              "createdAt": "2025-05-29T17:22:06Z",
+              "updatedAt": "2025-05-29T17:22:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmulX",
+          "commit": {
+            "abbreviatedOid": "7eca073"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:23:25Z",
+          "updatedAt": "2025-05-29T17:23:25Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "So this is tricky, it's being used to split secret key material and public key material, and being leaky on one is acceptable and being leaky on the other is not...",
+              "createdAt": "2025-05-29T17:23:25Z",
+              "updatedAt": "2025-05-29T17:23:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmvel",
+          "commit": {
+            "abbreviatedOid": "407a07b"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:24:30Z",
+          "updatedAt": "2025-05-29T17:24:30Z",
+          "comments": [
+            {
+              "originalPosition": 108,
+              "body": "```suggestion\r\n  input a seed `seed` and generates a public encapsulation key `ek` and a secret\r\n```",
+              "createdAt": "2025-05-29T17:24:30Z",
+              "updatedAt": "2025-05-29T17:24:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmxKK",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:26:43Z",
+          "updatedAt": "2025-05-29T17:26:43Z",
+          "comments": [
+            {
+              "originalPosition": 177,
+              "body": "All mention of 'KDF' and 'XOF' has been removed and 'hash functions' has been added, these things are not the same",
+              "createdAt": "2025-05-29T17:26:43Z",
+              "updatedAt": "2025-05-29T17:26:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rmxhB",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "blocked on KDF, XOF ",
+          "createdAt": "2025-05-29T17:27:08Z",
+          "updatedAt": "2025-05-29T17:27:08Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rm0Wf",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:31:01Z",
+          "updatedAt": "2025-05-29T17:31:01Z",
+          "comments": [
+            {
+              "originalPosition": 176,
+              "body": "These things are not isomorphic and I don't think we should talk about them this way, I think we should bring back the language about KDFs and XOFs @pag-crypto @br-hale @bwesterb \r\n",
+              "createdAt": "2025-05-29T17:31:01Z",
+              "updatedAt": "2025-05-29T17:37:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rm2Sl",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:33:47Z",
+          "updatedAt": "2025-05-29T17:33:48Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "```suggestion\r\n- `split(N1, N2, x)`: Split a byte string `x` of length `N1 + N2` into its first\r\n  `N1` bytes and its last `N2` bytes.  This function is the inverse of\r\n  `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes long. It\r\n  is an error to call this function with a byte string that does not have length\r\n  `N1 + N2`. Since this function operates over secret data it MUST be constant-time.\r\n```",
+              "createdAt": "2025-05-29T17:33:47Z",
+              "updatedAt": "2025-05-29T17:33:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rm3-k",
+          "commit": {
+            "abbreviatedOid": "ac43444"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:36:40Z",
+          "updatedAt": "2025-05-29T17:36:41Z",
+          "comments": [
+            {
+              "originalPosition": 681,
+              "body": "Removed for now but tracked in https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/24\r\n\r\n```suggestion\r\n```",
+              "createdAt": "2025-05-29T17:36:40Z",
+              "updatedAt": "2025-05-29T17:36:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rm62L",
+          "commit": {
+            "abbreviatedOid": "43f5e03"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:41:35Z",
+          "updatedAt": "2025-05-29T17:41:35Z",
+          "comments": [
+            {
+              "originalPosition": 375,
+              "body": "I might not even define 'split()` in this document, it may be generic enough to decompose into component dk's with an explicit `Decompose()` or something, leave the byte-wise notions to -concrete",
+              "createdAt": "2025-05-29T17:41:35Z",
+              "updatedAt": "2025-05-29T18:18:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rm9Wb",
+          "commit": {
+            "abbreviatedOid": "43f5e03"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T17:45:49Z",
+          "updatedAt": "2025-05-29T17:45:49Z",
+          "comments": [
+            {
+              "originalPosition": 283,
+              "body": "Found it; this is not just a hash function, it has to be a secure KDF (it can't be SHA1 or SHA-256, it should be something like SHA3 or HKDF-SHA256)",
+              "createdAt": "2025-05-29T17:45:49Z",
+              "updatedAt": "2025-05-29T17:45:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnHxg",
+          "commit": {
+            "abbreviatedOid": "43f5e03"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:01:02Z",
+          "updatedAt": "2025-05-29T18:01:02Z",
+          "comments": [
+            {
+              "originalPosition": 163,
+              "body": "```suggestion\r\noracle.\r\n\r\nFor QSF, the KDF function must be a secure random oracle in the random oracle\r\nmodel and quantum random oracle model and as a secure pseudorandom\r\nfunction (PRF) in the standard model.\r\n```",
+              "createdAt": "2025-05-29T18:01:02Z",
+              "updatedAt": "2025-05-29T18:01:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnPN3",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:12:30Z",
+          "updatedAt": "2025-05-29T18:12:30Z",
+          "comments": [
+            {
+              "originalPosition": 554,
+              "body": "I don't love this name (I don't quite understand what it's trying to say) and think `QSF` is as good a name as any, short, and unless you already know it's associated with X-Wing, non-controversial?",
+              "createdAt": "2025-05-29T18:12:30Z",
+              "updatedAt": "2025-05-29T18:12:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnPnN",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:13:14Z",
+          "updatedAt": "2025-05-29T18:13:14Z",
+          "comments": [
+            {
+              "originalPosition": 498,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-05-29T18:13:14Z",
+              "updatedAt": "2025-05-29T18:13:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnPuw",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:13:28Z",
+          "updatedAt": "2025-05-29T18:13:28Z",
+          "comments": [
+            {
+              "originalPosition": 504,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-05-29T18:13:28Z",
+              "updatedAt": "2025-05-29T18:13:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnP04",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:13:38Z",
+          "updatedAt": "2025-05-29T18:13:39Z",
+          "comments": [
+            {
+              "originalPosition": 510,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-05-29T18:13:39Z",
+              "updatedAt": "2025-05-29T18:13:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnP_9",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:13:57Z",
+          "updatedAt": "2025-05-29T18:13:58Z",
+          "comments": [
+            {
+              "originalPosition": 542,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-05-29T18:13:57Z",
+              "updatedAt": "2025-05-29T18:13:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnQKi",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:14:16Z",
+          "updatedAt": "2025-05-29T18:14:16Z",
+          "comments": [
+            {
+              "originalPosition": 543,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-05-29T18:14:16Z",
+              "updatedAt": "2025-05-29T18:14:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnQWW",
+          "commit": {
+            "abbreviatedOid": "05af476"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:14:37Z",
+          "updatedAt": "2025-05-29T18:14:37Z",
+          "comments": [
+            {
+              "originalPosition": 548,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-05-29T18:14:37Z",
+              "updatedAt": "2025-05-29T18:14:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnTkz",
+          "commit": {
+            "abbreviatedOid": "89fd845"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:20:12Z",
+          "updatedAt": "2025-05-29T18:20:12Z",
+          "comments": [
+            {
+              "originalPosition": 292,
+              "body": "I really think we should explicitly call these what they are, XOF's and KDF's, 'hash function' blends them together in a way that is not correct and can lead to security issues",
+              "createdAt": "2025-05-29T18:20:12Z",
+              "updatedAt": "2025-05-29T18:20:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnXG5",
+          "commit": {
+            "abbreviatedOid": "89fd845"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:26:09Z",
+          "updatedAt": "2025-05-29T18:26:09Z",
+          "comments": [
+            {
+              "originalPosition": 453,
+              "body": "```suggestion\r\n## PreHash {#prehash}\r\n```",
+              "createdAt": "2025-05-29T18:26:09Z",
+              "updatedAt": "2025-05-29T18:26:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnX1E",
+          "commit": {
+            "abbreviatedOid": "09a30e9"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:27:06Z",
+          "updatedAt": "2025-05-29T18:27:07Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "```suggestion\r\nGiven the novelty of these PQ schemes however, there is some concern that PQ\r\nalgorithms currently believed to be secure will be broken.  Hybrid\r\nconstructions that combine both PQ and traditional algorithms can help moderate\r\nthis risk while still providing security against quantum attack.  If construted\r\n```",
+              "createdAt": "2025-05-29T18:27:07Z",
+              "updatedAt": "2025-05-29T18:27:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnZZk",
+          "commit": {
+            "abbreviatedOid": "487c1fc"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:29:15Z",
+          "updatedAt": "2025-05-29T18:29:16Z",
+          "comments": [
+            {
+              "originalPosition": 100,
+              "body": "```suggestion\r\n- Key Encapsulation Mechanisms {{kems}}\r\n- Nominal Groups {{group}}\r\n- Key-derivation Functions {{kdfs}}\r\n- Extendable-output Functions {{xofs}}\r\n- Hash Functions {{hash}}\r\n```",
+              "createdAt": "2025-05-29T18:29:15Z",
+              "updatedAt": "2025-05-29T18:29:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rng1R",
+          "commit": {
+            "abbreviatedOid": "487c1fc"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:39:41Z",
+          "updatedAt": "2025-05-29T18:39:41Z",
+          "comments": [
+            {
+              "originalPosition": 146,
+              "body": "```suggestion\r\n> \"decapsulation\" as opposed to \"public\" and \"secret\".\r\n\r\n## Key Derivation Function `KDF` {#kdf}\r\n\r\nA secure key derivation function (KDF) that is modeled as a secure\r\npseudorandom function (PRF) in the standard model {{GHP2018}} and\r\nindependent random oracle in the random oracle model (ROM) and quantum\r\nrandom oracle model. Generally a strong KDF will have a proof of\r\nindifferentiability from a random oracle.\r\n\r\nExamples of secure KDFs in practice include HKDF-SHA256 and SHA3.\r\nSHA-256 is not generally considered a strong KDF except under\r\nconstrained circumstances {{CDMP2005}}.\r\n\r\n## Extendable-output function `XOF` {#xof}\r\n\r\nExtendable-output function (XOF). A function on bit strings in which the\r\noutput can be extended to any desired length. Ought to satisfy the following\r\nproperties as long as the specified output length is sufficiently long to\r\nprevent trivial attacks:\r\n\r\n1. (One-way) It is computationally infeasible to find any input that maps to\r\n   any new pre-specified output.\r\n\r\n2. (Collision-resistant) It is computationally infeasible to find any two\r\n   distinct inputs that map to the same output.\r\n\r\nMUST provide the bit-security required to source input randomness for PQ/T\r\ncomponents from a seed that is expanded to a output length, of which a subset\r\nis passed to the component key generation algorithms.\r\n\r\n## Hash functions {#hash}\r\n```",
+              "createdAt": "2025-05-29T18:39:41Z",
+              "updatedAt": "2025-05-29T18:39:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnhBx",
+          "commit": {
+            "abbreviatedOid": "487c1fc"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:40:02Z",
+          "updatedAt": "2025-05-29T18:40:02Z",
+          "comments": [
+            {
+              "originalPosition": 146,
+              "body": "@br-hale @bwesterb thoughts?",
+              "createdAt": "2025-05-29T18:40:02Z",
+              "updatedAt": "2025-05-29T18:40:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnknM",
+          "commit": {
+            "abbreviatedOid": "487c1fc"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:45:33Z",
+          "updatedAt": "2025-05-29T18:45:33Z",
+          "comments": [
+            {
+              "originalPosition": 146,
+              "body": "I would concure that this is 'encapulation' and 'decapsulation' (vs enc / dec). Those are the functions. For the key, a \"secret encapsulation key\" and \"public decapsultation key\" seem appropriate.",
+              "createdAt": "2025-05-29T18:45:33Z",
+              "updatedAt": "2025-05-29T18:45:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnm1y",
+          "commit": {
+            "abbreviatedOid": "89fd845"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:48:58Z",
+          "updatedAt": "2025-05-29T18:48:59Z",
+          "comments": [
+            {
+              "originalPosition": 292,
+              "body": "Concur",
+              "createdAt": "2025-05-29T18:48:58Z",
+              "updatedAt": "2025-05-29T18:48:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnpJT",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:52:37Z",
+          "updatedAt": "2025-05-29T18:52:38Z",
+          "comments": [
+            {
+              "originalPosition": 177,
+              "body": "Concur",
+              "createdAt": "2025-05-29T18:52:38Z",
+              "updatedAt": "2025-05-29T18:52:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnr1Q",
+          "commit": {
+            "abbreviatedOid": "89fd845"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:57:14Z",
+          "updatedAt": "2025-05-29T18:57:14Z",
+          "comments": [
+            {
+              "originalPosition": 292,
+              "body": "I've added some short sections on what they are and will take a stab at utilizing the them in the generic schemes' pseudocode next",
+              "createdAt": "2025-05-29T18:57:14Z",
+              "updatedAt": "2025-05-29T18:57:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rnsLg",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "br-hale",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T18:57:53Z",
+          "updatedAt": "2025-05-29T18:57:54Z",
+          "comments": [
+            {
+              "originalPosition": 176,
+              "body": "Yes, there is a very significant difference for security. The descriptions (generic and concrete) need to match the generic building blocks used in the analyses. \r\n\r\nALSO, we need to look at and discuss if the write concrete choices are used for the end goal (e.g., if something is using SHA256, SHA384, or SHA3). This may or may not be the same as used in the analysis - which means that if we change a building block from what is used in the analysis we need to take a closer look that the right properties are statisfied. \r\n\r\nI am also concerned the properties stated (e.g., collision resistance and second preimage resis) may not align to the properties needed for security, i.e., per what analysis has shown. We need to cite the write attributes.  ",
+              "createdAt": "2025-05-29T18:57:54Z",
+              "updatedAt": "2025-05-29T18:57:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rn0YG",
+          "commit": {
+            "abbreviatedOid": "869f45b"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T19:12:42Z",
+          "updatedAt": "2025-05-29T19:12:42Z",
+          "comments": [
+            {
+              "originalPosition": 176,
+              "body": "Agreed; 'KitchenSink'/'HashEverything' seems closest to GHP2018, QSF to QSF ofc, which both require the KDF to be a 'good' random oracle (and QSF in the standard model requires a 'secure' PRF) which seems to basically mean 'indiff. from an RO' now, even if it's assumed/understated? Chempat doesn't have a proof but maybe we can deduce requirements from GHP2018?",
+              "createdAt": "2025-05-29T19:12:42Z",
+              "updatedAt": "2025-05-29T19:12:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ro5H_",
+          "commit": {
+            "abbreviatedOid": "8f7bcfb"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T21:11:00Z",
+          "updatedAt": "2025-05-29T21:11:01Z",
+          "comments": [
+            {
+              "originalPosition": 176,
+              "body": "I think the proposed change is an improvement. QROM is clearly the strongest requirement on a hash function, and for the PQ KEMs I checked, they all require one anyway.\r\n\r\nLet me entertain a brief tangent. If I could go back a decade or so, I'd propose the CFRG to write a document with the title \"What is a good hash?\". It'd explain ROM, PRF, and all subtle academic differences in security properties. But in the end it'd simply say: length-prefixed-SHA2 & SHA-3 good; MD5, SHA-1 bad.",
+              "createdAt": "2025-05-29T21:11:01Z",
+              "updatedAt": "2025-05-29T21:11:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rpAiY",
+          "commit": {
+            "abbreviatedOid": "869f45b"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T21:26:41Z",
+          "updatedAt": "2025-05-29T21:26:42Z",
+          "comments": [
+            {
+              "originalPosition": 176,
+              "body": "I think it will actually be cleanest just to delete this text for now, and punt on it like we have for all of the other security descriptions.  I will also add some text at the top of this section clarifying that we're just defining functional definitions here, and the security requirements are below.",
+              "createdAt": "2025-05-29T21:26:41Z",
+              "updatedAt": "2025-05-29T21:26:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rpB1q",
+          "commit": {
+            "abbreviatedOid": "869f45b"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T21:29:51Z",
+          "updatedAt": "2025-05-29T21:33:53Z",
+          "comments": [
+            {
+              "originalPosition": 292,
+              "body": "Disagree.  (1) XOF brings a lot more baggage than is necessary, (2) definitions of KDF in the literature are all over the place, and (3) as Bas points out, everyone uses RO for this anyway.\r\n\r\nI agree that the notion of \"hash function\" here is stronger than the usual definition (requiring RO instead of just collision/preimage resistance).  So maybe we need a different word.",
+              "createdAt": "2025-05-29T21:29:51Z",
+              "updatedAt": "2025-05-29T21:33:53Z"
+            },
+            {
+              "originalPosition": 375,
+              "body": "FWIW, we're using it for all of the concatenated things: `dk`, `ek`, and `ct`.\r\n\r\nI agree that the compound serialization doesn't matter.  But the constituent values need to be fixed-length byte strings since they're going into a hash function and you want `concat()` to be unambiguous without length prefixing.  So there's no need for anything more complicated.\r\n\r\nI'm going to leave this for now, and maybe file an issue.",
+              "createdAt": "2025-05-29T21:33:45Z",
+              "updatedAt": "2025-05-29T21:33:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rpEzD",
+          "commit": {
+            "abbreviatedOid": "869f45b"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T21:36:56Z",
+          "updatedAt": "2025-05-29T21:36:56Z",
+          "comments": [
+            {
+              "originalPosition": 554,
+              "body": "I don't love it either, but trying to separate from earlier names to be more neutral / give this document more coherence.\r\n\r\nAnother thing to file an issue on. Maybe you could backronym it to something?  ",
+              "createdAt": "2025-05-29T21:36:56Z",
+              "updatedAt": "2025-05-29T21:36:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rpHsT",
+          "commit": {
+            "abbreviatedOid": "869f45b"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T21:42:43Z",
+          "updatedAt": "2025-05-29T21:42:57Z",
+          "comments": [
+            {
+              "originalPosition": 554,
+              "body": "@BTW, what it's trying to say is that the only metadata you hash in is on the T side.  \ud83e\udd37 ",
+              "createdAt": "2025-05-29T21:42:43Z",
+              "updatedAt": "2025-05-29T21:42:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6rpRQ6",
+          "commit": {
+            "abbreviatedOid": "869f45b"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-29T22:08:26Z",
+          "updatedAt": "2025-05-29T22:21:02Z",
+          "comments": [
+            {
+              "originalPosition": 283,
+              "body": "@dconnolly citation?",
+              "createdAt": "2025-05-29T22:08:26Z",
+              "updatedAt": "2025-05-29T22:21:02Z"
+            },
+            {
+              "originalPosition": 375,
+              "body": "+1 to @bifurcation -- since these are being thrown into the hash, parsing them at this layer seems necessary.",
+              "createdAt": "2025-05-29T22:11:45Z",
+              "updatedAt": "2025-05-29T22:21:02Z"
+            },
+            {
+              "originalPosition": 493,
+              "body": "Agreed.",
+              "createdAt": "2025-05-29T22:20:26Z",
+              "updatedAt": "2025-05-29T22:21:02Z"
+            },
+            {
+              "originalPosition": 554,
+              "body": "Let's leave it as-is and bike shed the name later. I think it's clear enough for now.",
+              "createdAt": "2025-05-29T22:20:49Z",
+              "updatedAt": "2025-05-29T22:21:02Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
