@@ -438,9 +438,9 @@ In this section, we define three schemes for building for hybrid KEMs:
   component is a nominal group and the PQ component has strong binding
   properties
 
-In this section, we define a collection of constructions for hybrid KEMs. These
+In this section, we define several generic constructions for hybrid KEMs. These
 constructions share a common overall structure, differing mainly in how they
-compute the final shared secret.
+compute the final shared secret and the security requirements of their components.
 
 ## HashEverything
 
