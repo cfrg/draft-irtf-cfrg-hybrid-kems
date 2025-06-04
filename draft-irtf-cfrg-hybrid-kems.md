@@ -202,7 +202,7 @@ set of techniques to achieve specific security properties given conforming
 component algorithms, which should make these techniques suitable for a broad
 variety of use cases.
 
-The remainder of this document is structured as follows: First, in
+The remainder of this document is structured as follows: first, in
 {{cryptographic-deps}} and {{schemes}}, we define the abstractions on which the
 schemes are built, and then the schemes themselves.  Then, in {{security}}, we
 lay out the security analyses that support these constructions, including the
