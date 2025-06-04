@@ -692,22 +692,81 @@ FO-transform KEM. Also called ciphertext collision resistance.
 
 ## Security Requirements for Constituent Components {#security-requirements}
 
-> TODO: The text in this section is provisional, intended to give a general idea of
-> direction.  We need to provide more thorough description, and verify that
+> TODO: We need to provide more thorough description, and verify that
 > these requirements align with the requirements of the security proofs in the
 > literature, especially {{GHP2018}} and {{XWING}}.
 
-KEMs must be IND-CCA, except for in HashTraditionalOnly, where they must provide
-certain binding properties as specified in {{XWING}}.
+### Security Requirements for KEMs
 
-Nominal groups must be ones in which appropriate Diffie-Hellman hardness results
-apply.
+Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
 
-KDFs must be random oracles in the ROM and QROM.  (This seems to be the
-assumption made in both {{GHP2018}} and {{XWING}}.)  The choice of the KDF for
-HPKE SHOULD be made based on the security level provided by the constituent
-KEMs. The KDF SHOULD at least have the security level of the strongest
-constituent KEM.
+For instances of QSF, the component KEM MUST also be ciphertext second
+preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
+encapsulation key and ciphertext to be left out from the KDF input. 
+
+### Security Requirements for Groups
+
+The groups MUST be modelable as nominal groups in which the strong
+Diffie-Hellman problem holds {{ABH+21}} {{XWING}}.
+
+The Montgomery curves Curve25519 and Curve448 have been shown to be
+modelable as nominal groups in {{ABH+21}} as well as showing the 
+`X25519()` and `X448()` functions respectively pertain to the nominal
+group `exp(X, y)` function, specifically clamping secret keys when
+they are generated, instead of clamping secret keys together with
+exponentiation.
+
+<!-- The short Weierstrass NIST curves have also been shown to be
+modelable as nominal groups but I can't find the reference --> 
+
+### Security Requirements for KDFs
+
+KDFs MUST be secure pseudorandom functions (PRFs) when keyed with
+the shared secret output from the post-quantum IND-CCA-secure
+KEM component algorithm in QSF {{XWING}} or any of the component
+IND-CCA-secure KEMs when used in KitchenSink {{GHP2018}} or
+PreHash.
+
+KDFs must be secure instances of random oracles in the ROM and
+QROM {{GHP2018}} {{XWING}}. Proofs of indifferentiability from
+random oracles {{MRH03 https://eprint.iacr.org/2003/161.pdf}}
+give good confidence here, as any function proven indifferentiable
+from a random oracle is resistant against collision, first, and
+second preimage attacks {{need a good cite here}}. An indifferentiability
+bound guarantees security against specific attacks. Although
+indifferentiability does not capture all properties of a random
+oracle {{RSS11 https://eprint.iacr.org/2011/339.pdf}}, indifferentiability
+still remains the best way to rule out structural attacks.
+
+Sponge-based constructions such as SHA-3 have been shown to be
+indifferentiable against classical {{BDP+08 https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf}}
+as well as quantum adversaries 
+{{ACM+25 https://eprint.iacr.org/2025/731.pdf}}. 
+
+HKDF has been shown to be indifferentiable from a random oracle under
+specific constraints {{LBB20 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8806752}}: 
+
+- that HMAC is indifferentiable from a random oracle,
+which for HMAC-SHA-256 has been shown in {{}} {{DRS+13 https://eprint.iacr.org/2013/382.pdf}}, assuming the
+compression function underlying SHA-256 is a random oracle,
+which it is indifferentiably when used prefix-free.
+
+- the values of `HKDF`'s `IKM` input do not collide with
+values of `info` `||` `0x01`. This MUST be enforced by the
+concrete instantiations that use `HKDF` as its KDF. 
+
+The choice of the KDF security level SHOULD be made based on the
+security level provided by the constituent KEMs. The KDF SHOULD
+at least have the security level of the strongest constituent KEM.
+
+### Security Requirements for XOFs
+
+XOFs accept arbitrary bitstrings as input, and produce
+a caller-chosen-length prefix of an infinite bitstream
+deterministically defined by the input.
+
+<!-- requirements: secure PRF, bc key material? -->
+
 
 ## Security Properties of Hybrid KEMs
 
