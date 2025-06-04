@@ -395,6 +395,25 @@ instead of `Foo.Derive(input)`.
 The security requirements for KDFs used with the schemes in this document are
 laid out in {{security-requirements}}.
 
+<!-- We must include XOFs because of X-Wing at the least but also because different KEMs/ groups may need different input seed sizes out the back of the function, and pure hash functions are not well suited for this; HKDF allows this via Expand(..., length) but X-Wing does not use HKDF -->
+
+## `XOF` {#xofs}
+
+Extendable-output function (XOF). A function on bit strings in which the
+output can be extended to any desired length. Ought to satisfy the following
+properties as long as the specified output length is sufficiently long to
+prevent trivial attacks:
+
+1. (One-way) It is computationally infeasible to find any input that maps to
+   any new pre-specified output.
+
+2. (Collision-resistant) It is computationally infeasible to find any two
+   distinct inputs that map to the same output.
+
+MUST provide the bit-security required to source input randomness for PQ/T
+components from a seed that is expanded to a output length, of which a subset
+is passed to the component key generation algorithms.
+
 # Hybrid KEM Schemes {#schemes}
 
 In this section, we define three schemes for building for hybrid KEMs:
