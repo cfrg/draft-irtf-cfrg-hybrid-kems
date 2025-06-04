@@ -397,12 +397,16 @@ output lengths:
 
 The fixed sizes are for both security and simplicity. 
 
-For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix the salt s and sizes to fit this form.
+For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
+the salt and sizes to fit this form.
 
 The security requirements for KDFs used with the schemes in this document are
 laid out in {{security-requirements}}.
 
-<!-- We must include XOFs because of X-Wing at the least but also because different KEMs/ groups may need different input seed sizes out the back of the function, and pure hash functions are not well suited for this; HKDF allows this via Expand(..., length) but X-Wing does not use HKDF -->
+<!-- We must include XOFs because of X-Wing at the least but also because
+different KEMs/ groups may need different input seed sizes out the back of
+the function, and pure hash functions are not well suited for this; HKDF
+allows this via Expand(..., length) but X-Wing does not use HKDF -->
 
 ## `XOF` {#xofs}
 
