@@ -649,9 +649,9 @@ an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the `KDF`
 is secure, and either the elliptic curve is secure, or the post-quantum KEM is
 secure: this is the 'hybrid' property.
 
-## Security Properties
+## Security Properties {#security-properties}
 
-### IND-CCA Security
+### IND-CCA Security {#ind-cca}
 
 Also known as IND-CCA2 security for general public key encryption, for KEMs
 that encapsulate a new random 'message' each time.
@@ -663,7 +663,7 @@ adversary can recognize which of two messages is encrypted in a given
 ciphertext, even if the two candidate messages are chosen by the adversary
 himself.
 
-### Ciphertext Second Preimage Resistant (C2PRI) Security
+### Ciphertext Second Preimage Resistant (C2PRI) Security {#c2pri}
 
 Also known in the literature as ciphertext collision resistance (CCR).
 
@@ -675,7 +675,7 @@ known as ciphertext second preimage resistance (C2SPI) for KEMs
 {{XWING}}. The same notion has also been described as chosen ciphertext
 resistance elsewhere {{CDM23}}.
 
-## Binding Properties
+## Binding Properties {#binding-properties}
 
 It is often useful for a KEM to have certain "binding properties", by which
 certain parameters determine certain others {{CDM23}}.  These properties are
