@@ -663,7 +663,7 @@ adversary can recognize which of two messages is encrypted in a given
 ciphertext, even if the two candidate messages are chosen by the adversary
 himself.
 
-### Ciphertext Second Preimage Resistant (C2SPI) Security
+### Ciphertext Second Preimage Resistant (C2PRI) Security
 
 Also known in the literature as ciphertext collision resistance (CCR).
 
