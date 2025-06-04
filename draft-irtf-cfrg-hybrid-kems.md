@@ -344,7 +344,12 @@ byte strings, with fixed lengths:
            pkAB ========================= pkBA
 ~~~
 
-<!-- Yes we need to be able to model the group as a nominal group to make the proofs work, but we have proofs for the NIST curves and the Montgomery curves, I wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd could also be shown to be a nominal group; thoughts on putting the 'nominal' requirements in the bit at the bottom of the doc, and just leave this as 'Groups'? --> 
+<!-- Yes we need to be able to model the group as a nominal group to make the
+proofs work, but we have proofs for the NIST curves and the Montgomery curves,
+I wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd
+could also be shown to be a nominal group; thoughts on putting the 'nominal'
+requirements in the security bits at the bottom of the doc, and just leave this as
+'Groups'? --> 
 
 Nominal groups are an abstract model of elliptic curve groups, over which we
 instantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group comprises
