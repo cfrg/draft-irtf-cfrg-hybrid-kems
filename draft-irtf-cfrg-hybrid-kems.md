@@ -385,12 +385,12 @@ output lengths:
 
 - `Nin` - The length in bytes of an input to this KDF.
 - `Nout` - The length in bytes of an output from this KDF.
-- `Derive(input) -> output`: Produce a byte string of length `Nout` from an input
+- `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
   byte string.
 
-For simplicity, we will write invocations of a KDF without `Derive` being
-explicit.  Invoking a KDF `Foo` on input `input` will be written as `Foo(input)`
-instead of `Foo.Derive(input)`.
+The fixed sizes are for both security and simplicity. 
+
+For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix the salt s and sizes to fit this form.
 
 The security requirements for KDFs used with the schemes in this document are
 laid out in {{security-requirements}}.
