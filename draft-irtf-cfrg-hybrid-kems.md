@@ -696,7 +696,7 @@ FO-transform KEM. Also called ciphertext collision resistance.
 > these requirements align with the requirements of the security proofs in the
 > literature, especially {{GHP2018}} and {{XWING}}.
 
-### Security Requirements for KEMs
+### Security Requirements for KEMs {#security-kems}
 
 Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
 
@@ -704,7 +704,7 @@ For instances of QSF, the component KEM MUST also be ciphertext second
 preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
 encapsulation key and ciphertext to be left out from the KDF input. 
 
-### Security Requirements for Groups
+### Security Requirements for Groups {#security-groups}
 
 The groups MUST be modelable as nominal groups in which the strong
 Diffie-Hellman problem holds {{ABH+21}} {{XWING}}.
@@ -719,7 +719,7 @@ exponentiation.
 <!-- The short Weierstrass NIST curves have also been shown to be
 modelable as nominal groups but I can't find the reference --> 
 
-### Security Requirements for KDFs
+### Security Requirements for KDFs {#security-kdfs}
 
 KDFs MUST be secure pseudorandom functions (PRFs) when keyed with
 the shared secret output from the post-quantum IND-CCA-secure
@@ -759,7 +759,7 @@ The choice of the KDF security level SHOULD be made based on the
 security level provided by the constituent KEMs. The KDF SHOULD
 at least have the security level of the strongest constituent KEM.
 
-### Security Requirements for XOFs
+### Security Requirements for XOFs {#security-xofs}
 
 XOFs accept arbitrary bitstrings as input, and produce
 a caller-chosen-length prefix of an infinite bitstream
