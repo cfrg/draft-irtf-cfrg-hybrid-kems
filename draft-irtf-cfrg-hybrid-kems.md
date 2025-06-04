@@ -456,7 +456,7 @@ constituent components:
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-The KEMs, groups, KDFs, and XOFs MSUT meet the security requirements in {{#security-requirements}}.
+The KEMs, groups, KDFs, and XOFs MUST meet the security requirements in {{#security-requirements}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:
