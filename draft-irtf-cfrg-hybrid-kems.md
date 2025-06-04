@@ -773,6 +773,12 @@ deterministically defined by the input.
 [[ TODO: Define which properties are provided by the hybrid KEMs in this
 document, and citations to the papers with the corresponding proofs. ]]
 
+All generic constructions in this document produce IND-CCA-secure KEMs 
+when correctly instantiated concretely with cryptographic components that
+meet the respective security requirements. Any changes to the routines,
+including key generation/derivation, are not guaranteed to produce
+secure results.
+
 ## Other Considerations
 
 ### Domain Separation {#domain-separation}
