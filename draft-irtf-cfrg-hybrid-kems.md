@@ -449,15 +449,14 @@ constituent components:
 
 * `KEM_T`: A traditional KEM
 * `KEM_PQ`: A post-quantum KEM
-* `Expand`: A KDF producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`
-  (`Expand.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)
-* `Combine`: A KDF producing byte strings of length `KEM_H.Nss` (`Combine.Nout
+* `XOF`: An XOF producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`
+  (`XOF.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)
+* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
   == KEM_H.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-We presume the KEMs and KDFs meet the interfaces described in
-{{cryptographic-deps}}.
+The KEMs, groups, KDFs, and XOFs MSUT meet the security requirements in {{#security-requirements}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:
@@ -485,7 +484,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = Expand(seed)
+    seed_full = XOF(seed)
     (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
@@ -497,7 +496,7 @@ def Encaps(ek):
     (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
     (ss_T, ct_T) = KEM_T.Encap(pk_T)
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
-    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
 
@@ -510,7 +509,7 @@ def Decaps(dk, ct):
     ss_T = KEM_T.Decap(dk_T, ct_T)
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
-    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
     return ss_H
 ~~~
 
@@ -526,6 +525,9 @@ computed once and used across many encapsulation or decapsulation operations.
 The PreHashedKeys KEM is identical to the HashEverything KEM except for the
 shared secret computation.  One additional KDF is required:
 
+We don't actually know the requirements of _this_ function, we don't have a proof or 
+requirements laid out; the only example from Chempat is SHA3-256.
+
 * `KeyHash`: A KDF producing byte strings of length `KEM_H.Nss` (`KeyHash.Nout
   == KEM_H.Nss`)
 
@@ -540,7 +542,7 @@ def Encaps(ek):
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
 
     ekh = KeyHash(concat(ek_T, ek_PQ))
-    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
 
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
@@ -555,7 +557,7 @@ def Decaps(dk, ct):
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
     ekh = KeyHash(concat(ek_T, ek_PQ))
-    ss_H = Combine(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
     return ss_H
 ~~~
 
@@ -566,7 +568,7 @@ constituent components:
 
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
-* `Expand`: A KDF producing byte strings of length `Group_T.Nseed +
+* `XOF`: A XOF producing byte strings of length `Group_T.Nseed +
   KEM_PQ.Nseed` (`Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed`)
 * `Combine`: A KDF producing byte strings of length `KEM_H.Nss` (`Combine.Nout
   == KEM_H.Nss`)
@@ -602,7 +604,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = Expand(seed)
+    seed_full = XOF(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
     dk_T = Group_T.RandomScalar(seed_T))
@@ -621,7 +623,7 @@ def Encaps(ek):
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
 
-    ss_H = Combine(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_T, ct_PQ)
     return (ss_H, ct_H)
 
@@ -635,7 +637,7 @@ def Decaps(dk, ct):
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
 
-    ss_H = Combine(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
 
