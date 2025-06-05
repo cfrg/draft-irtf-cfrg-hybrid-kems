@@ -51,6 +51,10 @@ informative:
         ins: Benjamin Lipp
       -
         ins: Doreen Riepel
+  ACM+25:
+    title: "The Sponge is Quantum Indifferentiable"
+    date: 2025
+    target: https://eprint.iacr.org/2025/731.pdf
   ANSIX9.62:
     title: "Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"
     date: Nov, 2005
@@ -80,6 +84,10 @@ informative:
     title: "Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"
     target: https://eprint.iacr.org/2020/241.pdf
     date: 2020
+  BDP+08:
+    title: "On the Indifferentiability of the Sponge Construction"
+    target: https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf
+    date: 2008
   CDM23:
     title: "Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"
     target: https://eprint.iacr.org/2023/1933.pdf
@@ -117,6 +125,10 @@ informative:
         ins: P. Struck
       -
         ins: M. Weishaupl
+  LBB20:
+    title: "A Mechanised Cryptographic Proof of the WireGuard Virtual Private Network Protocol"
+    date: 2019
+    target: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8806752
   LUCKY13:
     target: https://ieeexplore.ieee.org/iel7/6547086/6547088/06547131.pdf
     title: "Lucky Thirteen: Breaking the TLS and DTLS record protocols"
@@ -143,6 +155,14 @@ informative:
       ins: J. Schwenk
     date: 2020-09
   HKDF: RFC5869
+  MRH03:
+    title: "Indifferentiability, Impossibility Results on Reductions, and Applications to the Random Oracle Methodology"
+    date: 2003
+    target: https://eprint.iacr.org/2003/161.pdf
+  RSS11:
+    title: "Careful with Composition: Limitations of Indifferentiability and Universal Composability"
+    date: 2011
+    target: https://eprint.iacr.org/2011/339.pdf
   SCHMIEG2024:
     title: "Unbindable Kemmy Schmidt: ML-KEM is neither MAL-BIND-K-CT nor MAL-BIND-K-PK"
     target: https://eprint.iacr.org/2024/523.pdf
@@ -265,7 +285,7 @@ hybrid KEM to be secure are discussed in {{security}}.
 ~~~ aasvg
      +-----------------+
      | GenerateKeyPair |
-     |        or       |
+     |       or        |
      |  DeriveKeyPair  |
      +--------+--------+
               |
@@ -437,33 +457,34 @@ is passed to the component key generation algorithms.
 
 # Hybrid KEM Schemes {#schemes}
 
-In this section, we define three schemes for building for hybrid KEMs:
+In this section, we define three generic schemes for building for hybrid
+KEMs:
 
-* HashEverything - A generic construction that is suitable for use with any
-  choice of traditional and PQ KEMs, with minimal security assumptions on the
+* `GHP` - A generic construction that is suitable for use with any choice of
+  traditional and PQ KEMs, with minimal security assumptions on the
   constituent KEMs
-* PreHashedKeys - A performance optimization of HashEverything for the case
-  where encapsulation keys are large and frequently reused
-* HashTraditionalOnly - An optimized generic construction for the case where
-  the traditional component is a nominal group and the PQ component has
-  strong binding properties
+* `PRE` - A performance optimization of `GHP` for the case where
+  encapsulation keys are large and frequently reused
+* `QSF` - An optimized generic construction for the case where the
+  traditional component is a nominal group and the PQ component has strong
+  binding properties
 
 In this section, we define several generic constructions for hybrid
 KEMs. These constructions share a common overall structure, differing mainly
 in how they compute the final shared secret and the security requirements of
 their components.
 
-## HashEverything
+## `GHP` {#ghp}
 
-The HashEverything hybrid KEM (`KEM_H` below) depends on the following
-constituent components:
+The `GHP` hybrid KEM (`GHP` below) depends on the following constituent
+components:
 
 * `KEM_T`: A traditional KEM
 * `KEM_PQ`: A post-quantum KEM
 * `XOF`: An XOF producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`
   (`XOF.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)
-* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
-  == KEM_H.Nss`)
+* `KDF`: A KDF producing byte strings of length `GHP.Nss` (`KDF.Nout
+  == GHP.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
@@ -487,7 +508,7 @@ Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
 Nss = min(KEM_T.Nss, KEM_PQ.Nss)
 ~~~
 
-Given these constituent parts, the HashEverything hybrid KEM is defined as
+Given these constituent parts, the `GHP` hybrid KEM is defined as
 follows:
 
 ~~~
@@ -525,27 +546,28 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## PreHashedKeys {#prehash}
+## `PRE`  {#pre}
 
-The PreHashedKeys hybrid KEM is a performance optimization of the HashEverything
-KEM, optimized for the case where encapsulation keys are large and frequently
+The `PRE` hybrid KEM is a performance optimization of the `GHP` KEM,
+optimized for the case where encapsulation keys are large and frequently
 reused. In such cases, hashing the entire encapsulation key is expensive, and
-the same value is hashed repeatedly.  The PreHashedKeys KEM thus computes an
-intermediate hash of the hybrid encapsulation key, so that the hash value can be
-computed once and used across many encapsulation or decapsulation operations.
+the same value is hashed repeatedly.  The `PRE` KEM thus computes an
+intermediate hash of the hybrid encapsulation key, so that the hash value can
+be computed once and used across many encapsulation or decapsulation
+operations.
 
-The PreHashedKeys KEM is identical to the HashEverything KEM except for the
+The `PRE` KEM is identical to the `GHP` KEM except for the
 shared secret computation.  One additional KDF is required:
 
-We don't actually know the requirements of _this_ function, we don't have a proof or
-requirements laid out; the only example from Chempat is SHA3-256.
+<!-- We don't actually know the requirements of _this_ function, we don't have a -->
+<!-- proof or requirements laid out; the only example from Chempat is SHA3-256. -->
 
-* `KeyHash`: A KDF producing byte strings of length `KEM_H.Nss` (`KeyHash.Nout
-  == KEM_H.Nss`)
+* `KeyHash`: A KDF producing byte strings of length `GHP.Nss` (`KeyHash.Nout
+  == GHP.Nss`)
 
-The `GenerateKeyPair` and `DeriveKeyPair` algorithms for PreHashedKeys are
-identical to those of the HashEverything KEM.  The `Encaps` and `Decaps` method
-use a modified shared secret computation:
+The `GenerateKeyPair` and `DeriveKeyPair` algorithms for `PRE` are
+identical to those of the `GHP` KEM.  The `Encaps` and `Decaps`
+method use a modified shared secret computation:
 
 ~~~
 def Encaps(ek):
@@ -573,22 +595,23 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## HashTraditionalOnly
+## `QSF` {#qsf}
 
-The HashTraditionalOnly hybrid KEM (`KEM_H` below) depends on the following
-constituent components:
+The `QSF` hybrid KEM (`QSF` below) depends on the following constituent
+components:
 
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
 * `XOF`: A XOF producing byte strings of length `Group_T.Nseed +
   KEM_PQ.Nseed` (`Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed`)
-* `Combine`: A KDF producing byte strings of length `KEM_H.Nss` (`Combine.Nout
-  == KEM_H.Nss`)
+* `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
+  == KDF.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
 We presume that `Group_T`, `KEM_PQ`, and the KDFs meet the interfaces
-described in {{cryptographic-deps}}.
+described in {{cryptographic-deps}} and MUST meet the security requirements
+described in {{security-requirements}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:
@@ -599,16 +622,15 @@ Ndk = Group_T.Nscalar + KEM_PQ.Ndk
 Nct = Group_T.Nelem + KEM_PQ.Nct
 ~~~
 
-The `Nseed` and `Nss` constants should reflect the overall security level of the
-combined KEM, with the following recommended values:
+The `Nseed` and `Nss` constants should reflect the overall security level of
+the combined KEM, with the following recommended values:
 
 ~~~
 Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
 Nss = min(Group_T.Nss, KEM_PQ.Nss)
 ~~~
 
-Given these constituent parts, we define the HashTraditionalOnly hybrid KEM as
-follows:
+Given these constituent parts, we define the `QSF` hybrid KEM as follows:
 
 ~~~
 def GenerateKeyPair():
@@ -657,9 +679,9 @@ def Decaps(dk, ct):
 
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
-an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the `KDF`
-is secure, and either the elliptic curve is secure, or the post-quantum KEM is
-secure: this is the 'hybrid' property.
+an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
+`KDF` is secure, and either the elliptic curve is secure, or the post-quantum
+KEM is secure: this is the 'hybrid' property.
 
 ## Security Properties {#security-properties}
 
@@ -693,26 +715,26 @@ It is often useful for a KEM to have certain "binding properties", by which
 certain parameters determine certain others {{CDM23}}.  These properties are
 referred to with labels of the form X-BIND-P-Q.  For example, LEAK-BIND-K-PK
 means that for a given shared secret (K), there is a unique encapsulation key
-(PK) that could have produced it, even if all of the secrets involved are given
-to the adversary after the encapsulation operation is completed (LEAK).
+(PK) that could have produced it, even if all of the secrets involved are
+given to the adversary after the encapsulation operation is completed (LEAK).
 
-The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed above.
-Related to the ciphertext collision-freeness of the underlying PKE scheme of a
-FO-transform KEM. Also called ciphertext collision resistance.
+The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed
+above.  Related to the ciphertext collision-freeness of the underlying PKE
+scheme of a FO-transform KEM. Also called ciphertext collision resistance.
 
 [[ TODO: Discuss other salient binding properties. ]]
 
 ## Security Requirements for Constituent Components {#security-requirements}
 
-> TODO: We need to provide more thorough description, and verify that
-> these requirements align with the requirements of the security proofs in the
+> TODO: We need to provide more thorough description, and verify that these
+> requirements align with the requirements of the security proofs in the
 > literature, especially {{GHP2018}} and {{XWING}}.
 
 ### Security Requirements for KEMs {#security-kems}
 
 Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
 
-For instances of QSF, the component KEM MUST also be ciphertext second
+For instances of `QSF`, the component KEM MUST also be ciphertext second
 preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
 encapsulation key and ciphertext to be left out from the KDF input.
 
@@ -721,42 +743,39 @@ encapsulation key and ciphertext to be left out from the KDF input.
 The groups MUST be modelable as nominal groups in which the strong
 Diffie-Hellman problem holds {{ABH+21}} {{XWING}}.
 
-The Montgomery curves Curve25519 and Curve448 have been shown to be
-modelable as nominal groups in {{ABH+21}} as well as showing the
-`X25519()` and `X448()` functions respectively pertain to the nominal
-group `exp(X, y)` function, specifically clamping secret keys when
-they are generated, instead of clamping secret keys together with
-exponentiation.
+The Montgomery curves Curve25519 and Curve448 have been shown to be modelable
+as nominal groups in {{ABH+21}} as well as showing the `X25519()` and
+`X448()` functions respectively pertain to the nominal group `exp(X, y)`
+function, specifically clamping secret keys when they are generated, instead
+of clamping secret keys together with exponentiation.
 
-<!-- The short Weierstrass NIST curves have also been shown to be
-modelable as nominal groups but I can't find the reference -->
+<!-- The short Weierstrass NIST curves have also been shown to be modelable
+as nominal groups but I can't find the reference -->
 
 ### Security Requirements for KDFs {#security-kdfs}
 
-KDFs MUST be secure pseudorandom functions (PRFs) when keyed with
-the shared secret output from the post-quantum IND-CCA-secure
-KEM component algorithm in QSF {{XWING}} or any of the component
-IND-CCA-secure KEMs when used in KitchenSink {{GHP2018}} or
-PreHash.
+KDFs MUST be secure pseudorandom functions (PRFs) when keyed with the shared
+secret output from the post-quantum IND-CCA-secure KEM component algorithm in
+`QSF` {{XWING}} or any of the component IND-CCA-secure KEMs when used in
+KitchenSink {{GHP2018}} or PreHash.
 
-KDFs must be secure instances of random oracles in the ROM and
-QROM {{GHP2018}} {{XWING}}. Proofs of indifferentiability from
-random oracles {{MRH03 https://eprint.iacr.org/2003/161.pdf}}
-give good confidence here, as any function proven indifferentiable
-from a random oracle is resistant against collision, first, and
-second preimage attacks {{need a good cite here}}. An indifferentiability
-bound guarantees security against specific attacks. Although
-indifferentiability does not capture all properties of a random
-oracle {{RSS11 https://eprint.iacr.org/2011/339.pdf}}, indifferentiability
-still remains the best way to rule out structural attacks.
+KDFs must be secure instances of random oracles in the ROM and QROM
+{{GHP2018}} {{XWING}}. Proofs of indifferentiability from random oracles
+{{MRH03}} give good confidence here, as
+any function proven indifferentiable from a random oracle is resistant
+against collision, first, and second preimage attacks {{need a good cite
+here}}. An indifferentiability bound guarantees security against specific
+attacks. Although indifferentiability does not capture all properties of a
+random oracle {{RSS11}},
+indifferentiability still remains the best way to rule out structural
+attacks.
 
 Sponge-based constructions such as SHA-3 have been shown to be
-indifferentiable against classical {{BDP+08 https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf}}
-as well as quantum adversaries
-{{ACM+25 https://eprint.iacr.org/2025/731.pdf}}.
+indifferentiable against classical {{BDP+08}} as well as quantum adversaries
+{{ACM+25}}.
 
 HKDF has been shown to be indifferentiable from a random oracle under
-specific constraints {{LBB20 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8806752}}:
+specific constraints {{LBB20}}:
 
 - that HMAC is indifferentiable from a random oracle,
 which for HMAC-SHA-256 has been shown in {{DRS+13}}, assuming the
