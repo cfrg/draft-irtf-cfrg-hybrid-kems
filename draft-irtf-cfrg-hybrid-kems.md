@@ -97,6 +97,10 @@ informative:
         ins: N. Medinger
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
+  DRS+13:
+    title: "To Hash or Not to Hash Again? (In)differentiability Results for H^2 and HMAC"
+    target: https://eprint.iacr.org/2013/382.pdf
+    date: 2013
   FIPS186: DOI.10.6028/NIST.FIPS.186-5 #https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
   GHP2018:
     title: "KEM Combiners"
@@ -159,57 +163,60 @@ informative:
 
 --- abstract
 
-"Post-quantum" (PQ) algorithms are designed to resist attack by a quantum computer,
-in contrast to "traditional" algorithms.  However, given the novelty of PQ
-algorithms, there is some concern that PQ algorithms currently believed to be
-secure will be broken.  Hybrid constructions that combine both PQ and
-traditional algorithms can help moderate this risk while still providing
-security against quantum attack. In this document, we define constructions for
-hybrid Key Encapsulation Mechanisms (KEMs) based on combining a traditional KEM
-and a PQ KEM. Hybrid KEMs using these constructions provide strong security
-properties as long as the undelying algorithms are secure.
+Post-quantum (PQ) algorithms are designed to resist attack by a quantum
+computer, in contrast to "traditional" algorithms.  However, given the
+novelty of PQ algorithms, there is some concern that PQ algorithms currently
+believed to be secure will be broken.  Hybrid constructions that combine both
+PQ and traditional algorithms can help moderate this risk while still
+providing security against quantum attack. In this document, we define
+constructions for hybrid Key Encapsulation Mechanisms (KEMs) based on
+combining a traditional KEM and a PQ KEM. Hybrid KEMs using these
+constructions provide strong security properties as long as the undelying
+algorithms are secure.
 
 --- middle
 
 # Introduction {#intro}
 
-Post-quantum (PQ) cryptographic schemes offer new constructions based on problems
-conjectured as resistant to attacks possible on a quantum computer. Key
-Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic scheme
-that can be used to build protocols in lieu of traditional, quantum-vulnerable
-variants such as finite field or elliptic curve Diffie-Hellman (DH) based protocols.
+Post-quantum (PQ) cryptographic schemes offer new constructions based on
+problems conjectured as resistant to attacks possible on a quantum
+computer. Key Encapsulation Mechanisms (KEMs), are a standardized class of
+cryptographic scheme that can be used to build protocols in lieu of
+traditional, quantum-vulnerable variants such as finite field or elliptic
+curve Diffie-Hellman (DH) based protocols.
 
 Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
-constructions that combine both PQ and traditional algorithms can help moderate
-this risk while still providing security against quantum attack.  If construted
-properly, a hybrid KEM will retain certain security properties even if one of
-the two constituent KEMs is compromised.  If the PQ KEM is broken, then the
-hybrid KEM should continue to provide security against non-quantum attackers by
-virtue of its traditional KEM component.  If the traditional KEM is broken by a
-quantum computer, then the hybrid KEM should continue to resist quantum attack
-by virtue of its PQ KEM component.
+constructions that combine both PQ and traditional algorithms can help
+moderate this risk while still providing security against quantum attack.  If
+construted properly, a hybrid KEM will retain certain security properties
+even if one of the two constituent KEMs is compromised. If the PQ KEM is
+broken, then the hybrid KEM should continue to provide security against
+non-quantum attackers by virtue of its traditional KEM component. If the
+traditional KEM is broken by a quantum computer, then the hybrid KEM should
+continue to resist quantum attack by virtue of its PQ KEM component.
 
-In addition to guarding against algorithm weaknesses, this property also guards
-against flaws in implementations, such as timing attacks.  Hybrid KEMs can also
-facilitate faster deployment of PQ security by allowing applications to
-incorporate PQ algorithms while still meeting compliance requirements based on
-traditional algorithms.
+In addition to guarding against algorithm weaknesses, this property also
+guards against flaws in implementations, such as timing attacks.  Hybrid KEMs
+can also facilitate faster deployment of PQ security by allowing applications
+to incorporate PQ algorithms while still meeting compliance requirements
+based on traditional algorithms.
 
-In this document, we define generic schemes for constructing hybrid KEMs from a
-traditional algorithm and a PQ KEM.  The aim of this document is provide a small
-set of techniques to achieve specific security properties given conforming
-component algorithms, which should make these techniques suitable for a broad
-variety of use cases.
+In this document, we define generic schemes for constructing hybrid KEMs from
+a traditional algorithm and a PQ KEM.  The aim of this document is provide a
+small set of techniques to achieve specific security properties given
+conforming component algorithms, which should make these techniques suitable
+for a broad variety of use cases.
 
 The remainder of this document is structured as follows: first, in
-{{cryptographic-deps}} and {{schemes}}, we define the abstractions on which the
-schemes are built, and then the schemes themselves.  Then, in {{security}}, we
-lay out the security analyses that support these constructions, including the
-security requirements for constituent components and the security notions
-satisfied by hybrid KEMS constructed according to the schemes in the document.
-Finally, we discuss some "path not taken", related topics that might be of
-interest to readers, but which are not treated in depth.
+{{cryptographic-deps}} and {{schemes}}, we define the abstractions on which
+the schemes are built, and then the schemes themselves.  Then, in
+{{security}}, we lay out the security analyses that support these
+constructions, including the security requirements for constituent components
+and the security notions satisfied by hybrid KEMS constructed according to
+the schemes in the document {{security-requirements}}.  Finally, we discuss
+some "path not taken", related topics that might be of interest to readers,
+but which are not treated in depth.
 
 # Requirements Notation
 
@@ -226,12 +233,12 @@ The following terms are used throughout this document:
   by a cryptographically-secure random number generator.
 - `concat(x0, ..., xN)`: Concatenation of byte strings.  `concat(0x01,
   0x0203, 0x040506) = 0x010203040506`.
-- `split(N1, N2, x)`: Split a byte string `x` of length `N1 + N2` into its first
-  `N1` bytes and its last `N2` bytes.  This function is the inverse of
-  `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes long. It
-  is an error to call this function with a byte string that does not have length
-  `N1 + N2`. Since this function operates over secret data `x`, it MUST be
-  constant-time for a given `N1` and `N2`.
+- `split(N1, N2, x)`: Split a byte string `x` of length `N1 + N2` into its
+  first `N1` bytes and its last `N2` bytes.  This function is the inverse of
+  `concat(x1, x2)` when `x1` is `N1` bytes long and `x2` is `N2` bytes
+  long. It is an error to call this function with a byte string that does not
+  have length `N1 + N2`. Since this function operates over secret data `x`,
+  it MUST be constant-time for a given `N1` and `N2`.
 
 When `x` is a byte string, we use the notation `x[..i]` and `x[i..]` to
 denote the slice of bytes in `x` starting from the beginning of `x` and
@@ -287,8 +294,8 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   public encapsulation key `ek` and a secret decapsulation key `dk`, each of
   which are byte strings.
 - `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
-  input a seed `seed` and generates a public encapsulation key `ek` and a secret
-  decapsulation key `dk`, each of which are byte strings.
+  input a seed `seed` and generates a public encapsulation key `ek` and a
+  secret decapsulation key `dk`, each of which are byte strings.
 - `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
   a ciphertext `ct` and shared secret `ss`.
@@ -296,16 +303,16 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
   shared secret `ss`.
 
-A KEM may also provide a deterministic version of `Encaps` (e.g., for purposes
-of testing):
+A KEM may also provide a deterministic version of `Encaps` (e.g., for
+purposes of testing):
 
 - `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
    encapsulation algorithm, which takes as input a public encapsulation key
    `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
 
-We assume that the values produced and consumed by the above functions are all
-byte strings, with fixed lengths:
+We assume that the values produced and consumed by the above functions are
+all byte strings, with fixed lengths:
 
 - `Nseed`: The length in bytes of a key seed (input to DeriveKeyPair)
 - `Nek`: The length in bytes of a public encapsulation key
@@ -349,7 +356,7 @@ proofs work, but we have proofs for the NIST curves and the Montgomery curves,
 I wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd
 could also be shown to be a nominal group; thoughts on putting the 'nominal'
 requirements in the security bits at the bottom of the doc, and just leave this as
-'Groups'? --> 
+'Groups'? -->
 
 Nominal groups are an abstract model of elliptic curve groups, over which we
 instantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group comprises
@@ -381,6 +388,9 @@ fixed lengths:
 > API, however, this KEM would not be secure, so we have preferred to address
 > hybrid KEMs that use elliptic curves directly.
 
+The security requirements for groups used with the schemes in this document
+are laid out in {{security-groups}}.
+
 ## Key Derivation Functions {#kdfs}
 
 A Key Derivation Function (KDF) is a function that a function that produces
@@ -395,20 +405,20 @@ output lengths:
 - `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
   byte string.
 
-The fixed sizes are for both security and simplicity. 
+The fixed sizes are for both security and simplicity.
 
 For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
 the salt and sizes to fit this form.
 
 The security requirements for KDFs used with the schemes in this document are
-laid out in {{security-requirements}}.
+laid out in {{security-kdfs}}.
+
+## `XOF` {#xofs}
 
 <!-- We must include XOFs because of X-Wing at the least but also because
 different KEMs/ groups may need different input seed sizes out the back of
 the function, and pure hash functions are not well suited for this; HKDF
 allows this via Expand(..., length) but X-Wing does not use HKDF -->
-
-## `XOF` {#xofs}
 
 Extendable-output function (XOF). A function on bit strings in which the
 output can be extended to any desired length. Ought to satisfy the following
@@ -429,18 +439,19 @@ is passed to the component key generation algorithms.
 
 In this section, we define three schemes for building for hybrid KEMs:
 
-* HashEverything - A generic construction that is suitable for use with any choice
-  of traditional and PQ KEMs, with minimal security assumptions on the
+* HashEverything - A generic construction that is suitable for use with any
+  choice of traditional and PQ KEMs, with minimal security assumptions on the
   constituent KEMs
 * PreHashedKeys - A performance optimization of HashEverything for the case
   where encapsulation keys are large and frequently reused
-* HashTraditionalOnly - An optimized generic construction for the case where the traditional
-  component is a nominal group and the PQ component has strong binding
-  properties
+* HashTraditionalOnly - An optimized generic construction for the case where
+  the traditional component is a nominal group and the PQ component has
+  strong binding properties
 
-In this section, we define several generic constructions for hybrid KEMs. These
-constructions share a common overall structure, differing mainly in how they
-compute the final shared secret and the security requirements of their components.
+In this section, we define several generic constructions for hybrid
+KEMs. These constructions share a common overall structure, differing mainly
+in how they compute the final shared secret and the security requirements of
+their components.
 
 ## HashEverything
 
@@ -456,7 +467,8 @@ constituent components:
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-The KEMs, groups, KDFs, and XOFs MUST meet the security requirements in {{#security-requirements}}.
+The KEMs, groups, KDFs, and XOFs MUST meet the security requirements in
+{{security-requirements}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:
@@ -525,7 +537,7 @@ computed once and used across many encapsulation or decapsulation operations.
 The PreHashedKeys KEM is identical to the HashEverything KEM except for the
 shared secret computation.  One additional KDF is required:
 
-We don't actually know the requirements of _this_ function, we don't have a proof or 
+We don't actually know the requirements of _this_ function, we don't have a proof or
 requirements laid out; the only example from Chempat is SHA3-256.
 
 * `KeyHash`: A KDF producing byte strings of length `KEM_H.Nss` (`KeyHash.Nout
@@ -702,7 +714,7 @@ Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
 
 For instances of QSF, the component KEM MUST also be ciphertext second
 preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
-encapsulation key and ciphertext to be left out from the KDF input. 
+encapsulation key and ciphertext to be left out from the KDF input.
 
 ### Security Requirements for Groups {#security-groups}
 
@@ -710,14 +722,14 @@ The groups MUST be modelable as nominal groups in which the strong
 Diffie-Hellman problem holds {{ABH+21}} {{XWING}}.
 
 The Montgomery curves Curve25519 and Curve448 have been shown to be
-modelable as nominal groups in {{ABH+21}} as well as showing the 
+modelable as nominal groups in {{ABH+21}} as well as showing the
 `X25519()` and `X448()` functions respectively pertain to the nominal
 group `exp(X, y)` function, specifically clamping secret keys when
 they are generated, instead of clamping secret keys together with
 exponentiation.
 
 <!-- The short Weierstrass NIST curves have also been shown to be
-modelable as nominal groups but I can't find the reference --> 
+modelable as nominal groups but I can't find the reference -->
 
 ### Security Requirements for KDFs {#security-kdfs}
 
@@ -740,20 +752,20 @@ still remains the best way to rule out structural attacks.
 
 Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical {{BDP+08 https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf}}
-as well as quantum adversaries 
-{{ACM+25 https://eprint.iacr.org/2025/731.pdf}}. 
+as well as quantum adversaries
+{{ACM+25 https://eprint.iacr.org/2025/731.pdf}}.
 
 HKDF has been shown to be indifferentiable from a random oracle under
-specific constraints {{LBB20 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8806752}}: 
+specific constraints {{LBB20 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8806752}}:
 
 - that HMAC is indifferentiable from a random oracle,
-which for HMAC-SHA-256 has been shown in {{}} {{DRS+13 https://eprint.iacr.org/2013/382.pdf}}, assuming the
+which for HMAC-SHA-256 has been shown in {{DRS+13}}, assuming the
 compression function underlying SHA-256 is a random oracle,
 which it is indifferentiably when used prefix-free.
 
 - the values of `HKDF`'s `IKM` input do not collide with
 values of `info` `||` `0x01`. This MUST be enforced by the
-concrete instantiations that use `HKDF` as its KDF. 
+concrete instantiations that use `HKDF` as its KDF.
 
 The choice of the KDF security level SHOULD be made based on the
 security level provided by the constituent KEMs. The KDF SHOULD
@@ -761,11 +773,40 @@ at least have the security level of the strongest constituent KEM.
 
 ### Security Requirements for XOFs {#security-xofs}
 
-XOFs accept arbitrary bitstrings as input, and produce
-a caller-chosen-length prefix of an infinite bitstream
-deterministically defined by the input.
+XOFs accept arbitrary bitstrings as input, and produce a caller-chosen-length
+prefix of an infinite bitstream deterministically defined by the input.
 
-<!-- requirements: secure PRF, bc key material? -->
+Ought to satisfy the following properties as long as the specified output
+length is sufficiently long to prevent trivial attacks:
+
+- (Preimage-resistant) It is computationally infeasible to find any input
+   that maps to any new pre-specified output.
+
+- (Collision-resistant) It is computationally infeasible to find any two
+   distinct inputs that map to the same output.
+
+The XOFs used here MUST be modelable as secure random oracle.
+
+### Security Requirements for PRGs {#security-prgs}
+
+The functions used to expand a key seed to multiple key seeds is closer to a
+pseudorandom generator (PRG) in its security requirements
+{{https://cryptojedi.org/papers/hakyberv-20240529.pdf}}. A secure PRG is an
+algorithm PRG : {0, 1}^n → {0, 1}^m, such that no polynomial-time adversary
+can distinguish between PRG(r) (for r $← {0, 1}^n) and a random z $← {0, 1}^m
+{{}}. The uniform string r ∈ {0, 1}^n is called the seed of the PRG.
+
+<!-- TODO: nicer citation for secure PRG definition, I don't love Boneh &
+Shoup, nor Katz-Lindell, I kinda like Rouslek? -->
+
+A PRG is not to be confused with a random (or pseudorandom) _number_
+generator (RNG): a PRG requires the seed randomness to be chosen uniformly
+and extend it; an RNG takes sources of noisy data and transforms them into
+uniform outputs.
+
+A PRG is a particular mode of use of a random oracle
+{{https://keccak.team/files/CSF-0.1.pdf}}.  Examples used in such a manner
+include SHA3 and SHAKE.
 
 
 ## Security Properties of Hybrid KEMs
@@ -773,7 +814,7 @@ deterministically defined by the input.
 [[ TODO: Define which properties are provided by the hybrid KEMs in this
 document, and citations to the papers with the corresponding proofs. ]]
 
-All generic constructions in this document produce IND-CCA-secure KEMs 
+All generic constructions in this document produce IND-CCA-secure KEMs
 when correctly instantiated concretely with cryptographic components that
 meet the respective security requirements. Any changes to the routines,
 including key generation/derivation, are not guaranteed to produce
