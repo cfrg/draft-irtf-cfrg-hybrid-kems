@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-01T01:23:34.105129+00:00",
+  "timestamp": "2025-06-05T01:10:53.900673+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1961,7 +1961,7 @@
     {
       "number": 22,
       "id": "PR_kwDOMmhxws6YCzWa",
-      "title": "Reframe in terms of groups ",
+      "title": "Reframe in terms of groups ++",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/22",
       "state": "OPEN",
       "author": "bifurcation",
@@ -1970,13 +1970,13 @@
       "labels": [],
       "body": "This PR rewrites the hybrid KEMs in terms of nominal groups as appropriate.\r\n\r\n* Adds a \"nominal group\" API much like the KEM API.\r\n* The HashEverything hybrid is defined in terms of KEM+KEM\r\n    * The PreHashKeys hybrid is defined as an optimization of HashEverything\r\n    * We define a way of instantiating the above with a group instead of a KEM\r\n* The HashTraditionalOnly hybrid is define in terms of Group+KEM (as in [BCD+24])\r\n",
       "createdAt": "2025-05-29T00:34:54Z",
-      "updatedAt": "2025-05-30T15:34:40Z",
+      "updatedAt": "2025-06-04T20:07:50Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "kem-vs-curve",
-      "headRefOid": "c4d01b2b2566e5cfa3e0deca8f651c3c7369eefd",
+      "headRefOid": "85abd303cacb9d72fc4b6204a080efb43f353c81",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -3012,6 +3012,946 @@
               "body": "Let's leave it as-is and bike shed the name later. I think it's clear enough for now.",
               "createdAt": "2025-05-29T22:20:49Z",
               "updatedAt": "2025-05-29T22:21:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6srheq",
+          "commit": {
+            "abbreviatedOid": "c4d01b2"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T14:53:39Z",
+          "updatedAt": "2025-06-04T14:53:40Z",
+          "comments": [
+            {
+              "originalPosition": 89,
+              "body": "```suggestion\r\nThe remainder of this document is structured as follows: first, in\r\n{{cryptographic-deps}} and {{schemes}}, we define the abstractions on which the\r\nschemes are built, and then the schemes themselves.  Then, in {{security}}, we\r\n```",
+              "createdAt": "2025-06-04T14:53:39Z",
+              "updatedAt": "2025-06-04T14:53:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ssS1p",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T15:53:37Z",
+          "updatedAt": "2025-06-04T15:53:37Z",
+          "comments": [
+            {
+              "originalPosition": 129,
+              "body": "<3",
+              "createdAt": "2025-06-04T15:53:37Z",
+              "updatedAt": "2025-06-04T15:53:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ssdcX",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:08:12Z",
+          "updatedAt": "2025-06-04T16:08:12Z",
+          "comments": [
+            {
+              "originalPosition": 266,
+              "body": "Suggestions:\r\n- `All` - except it's not really all as the lengths aren't encoded necessarily in the preimage but\r\n- `Curich` - this is kinda stupid but 'Chempat' is the name of a star wars fictional manufacturer, 'Curich' is another star wars fictional manufacturer that's similar to Chempat, but not, bc the generic scheme written here is similar to the Chempat design, but not \r\n- `QSF` - short, established, at least less misleading than 'HashTraditionalOnly`\r\n\r\nI don't think including 'hash' in the names is helping",
+              "createdAt": "2025-06-04T16:08:12Z",
+              "updatedAt": "2025-06-04T16:09:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ssfSc",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:10:34Z",
+          "updatedAt": "2025-06-04T16:10:34Z",
+          "comments": [
+            {
+              "originalPosition": 375,
+              "body": "fair enough",
+              "createdAt": "2025-06-04T16:10:34Z",
+              "updatedAt": "2025-06-04T16:10:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ssf0a",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:11:18Z",
+          "updatedAt": "2025-06-04T16:11:18Z",
+          "comments": [
+            {
+              "originalPosition": 355,
+              "body": "Not defined",
+              "createdAt": "2025-06-04T16:11:18Z",
+              "updatedAt": "2025-06-04T16:11:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ssgEw",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:11:37Z",
+          "updatedAt": "2025-06-04T16:11:37Z",
+          "comments": [
+            {
+              "originalPosition": 378,
+              "body": "Not defined",
+              "createdAt": "2025-06-04T16:11:37Z",
+              "updatedAt": "2025-06-04T16:11:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ssidx",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:14:42Z",
+          "updatedAt": "2025-06-04T16:14:42Z",
+          "comments": [
+            {
+              "originalPosition": 554,
+              "body": "Yes leaving it the existing document names as-is seems fine (QSF)",
+              "createdAt": "2025-06-04T16:14:42Z",
+              "updatedAt": "2025-06-04T16:14:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sss9Z",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:31:08Z",
+          "updatedAt": "2025-06-04T16:31:09Z",
+          "comments": [
+            {
+              "originalPosition": 539,
+              "body": "QSF (or rather the X-Wing style of QSF) specifically uses an XOF, skewing away seems fraught because of inputs and outputs sizes re: security levels, skewing away from proven schemes and established reviewed designs seems fraught",
+              "createdAt": "2025-06-04T16:31:09Z",
+              "updatedAt": "2025-06-04T16:32:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ss2Mj",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:46:00Z",
+          "updatedAt": "2025-06-04T16:46:00Z",
+          "comments": [
+            {
+              "originalPosition": 129,
+              "body": "```suggestion\r\n- Key Derivation Functions ({{kdfs}})\r\n- Extendable-Output Functions ({{xofs}})\r\n```",
+              "createdAt": "2025-06-04T16:46:00Z",
+              "updatedAt": "2025-06-04T16:46:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ss6gc",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:51:52Z",
+          "updatedAt": "2025-06-04T16:51:52Z",
+          "comments": [
+            {
+              "originalPosition": 254,
+              "body": "We must include XOFs because of X-Wing at the least but also because different KEMs/ groups may need different input seed sizes and pure hash functions are not well suited for this; HKDF allows this via Expand(..., length) but X-Wing does not use HKDF\r\n\r\n```suggestion\r\n<!-- We must include XOFs because of X-Wing at the least but also because different KEMs/ groups may need different input seed sizes out the back of the function, and pure hash functions are not well suited for this; HKDF allows this via Expand(..., length) but X-Wing does not use HKDF -->\r\n\r\n## `XOF` {#xofs}\r\n\r\nExtendable-output function (XOF). A function on bit strings in which the\r\noutput can be extended to any desired length. Ought to satisfy the following\r\nproperties as long as the specified output length is sufficiently long to\r\nprevent trivial attacks:\r\n\r\n1. (One-way) It is computationally infeasible to find any input that maps to\r\n   any new pre-specified output.\r\n\r\n2. (Collision-resistant) It is computationally infeasible to find any two\r\n   distinct inputs that map to the same output.\r\n\r\nMUST provide the bit-security required to source input randomness for PQ/T\r\ncomponents from a seed that is expanded to a output length, of which a subset\r\nis passed to the component key generation algorithms.\r\n\r\n# Hybrid KEM Schemes {#schemes}\r\n```",
+              "createdAt": "2025-06-04T16:51:52Z",
+              "updatedAt": "2025-06-04T16:58:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ss8Jl",
+          "commit": {
+            "abbreviatedOid": "fed4538"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T16:54:28Z",
+          "updatedAt": "2025-06-04T16:54:29Z",
+          "comments": [
+            {
+              "originalPosition": 249,
+              "body": "`.Derive()` is never used, shall we go back to `KDF(..)` ?",
+              "createdAt": "2025-06-04T16:54:29Z",
+              "updatedAt": "2025-06-04T16:54:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stCBy",
+          "commit": {
+            "abbreviatedOid": "3df988c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:03:50Z",
+          "updatedAt": "2025-06-04T17:03:51Z",
+          "comments": [
+            {
+              "originalPosition": 238,
+              "body": "```suggestion\r\nWhile KDFs in the literature can typically consume and produce byte strings of\r\narbitrary length, the KDFs used in this document have a simpler form, with a fixed\r\noutput lengths:\r\n\r\n- `Nin` - The length in bytes of an input to this KDF.\r\n- `Nout` - The length in bytes of an output from this KDF.\r\n- `KDF(input) -> output`: Produce a byte string of length `Nout` from an input\r\n  byte string.\r\n\r\nThe fixed sizes are for both security and simplicity. \r\n\r\nFor instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix the salt s and sizes to fit this form.\r\n```",
+              "createdAt": "2025-06-04T17:03:50Z",
+              "updatedAt": "2025-06-04T17:03:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stCyY",
+          "commit": {
+            "abbreviatedOid": "06b4ae4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:05:03Z",
+          "updatedAt": "2025-06-04T17:05:04Z",
+          "comments": [
+            {
+              "originalPosition": 213,
+              "body": "Do we need to even say this?",
+              "createdAt": "2025-06-04T17:05:03Z",
+              "updatedAt": "2025-06-04T17:05:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stP9Y",
+          "commit": {
+            "abbreviatedOid": "689f696"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:27:01Z",
+          "updatedAt": "2025-06-04T17:27:02Z",
+          "comments": [
+            {
+              "originalPosition": 189,
+              "body": "This is incorrect, nominal groups do not align with finite fields especially regarding Diffie-Hellman - finite fields have other algebraic structure that ofc make them weaker to instantiate DH over than groups.\r\n\r\n```suggestion\r\n<!-- Yes we need to be able to model the group as a nominal group to make the proofs work, but we have proofs for the NIST curves and the Montgomery curves, I wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd could also be shown to be a nominal group; thoughts on putting the 'nominal' requirements in the bit at the bottom of the doc, and just leave this as 'Groups'? --> \r\n\r\nNominal groups are an abstract model of elliptic curve groups, over which we\r\ninstantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group comprises\r\na set `G` together with a distinguished basis element `g`, an \"exponentiation\"\r\nmap, and some auxiliary functions:\r\n```",
+              "createdAt": "2025-06-04T17:27:01Z",
+              "updatedAt": "2025-06-04T17:29:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stSgS",
+          "commit": {
+            "abbreviatedOid": "877df2d"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:30:30Z",
+          "updatedAt": "2025-06-04T17:30:31Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "```suggestion\r\n<!-- Yes we need to be able to model the group as a nominal group to make the\r\nproofs work, but we have proofs for the NIST curves and the Montgomery curves,\r\nI wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd\r\ncould also be shown to be a nominal group; thoughts on putting the 'nominal'\r\nrequirements in the security bits at the bottom of the doc, and just leave this as\r\n'Groups'? --> \r\n\r\nNominal groups are an abstract model of elliptic curve groups, over which we\r\ninstantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group comprises\r\na set `G` together with a distinguished basis element `g`, an \"exponentiation\"\r\nmap, and some auxiliary functions:\r\n```",
+              "createdAt": "2025-06-04T17:30:30Z",
+              "updatedAt": "2025-06-04T17:30:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stTrg",
+          "commit": {
+            "abbreviatedOid": "c3bc748"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:32:02Z",
+          "updatedAt": "2025-06-04T17:32:03Z",
+          "comments": [
+            {
+              "originalPosition": 250,
+              "body": "```suggestion\r\nA Key Derivation Function (KDF) is a function that a function that produces\r\nkeying material based on an input secret and other information.\r\n\r\nWhile KDFs in the literature can typically consume and produce byte strings of\r\narbitrary length, the KDFs used in this document have a simpler form, with a fixed\r\noutput lengths:\r\n\r\n- `Nin` - The length in bytes of an input to this KDF.\r\n- `Nout` - The length in bytes of an output from this KDF.\r\n- `KDF(input) -> output`: Produce a byte string of length `Nout` from an input\r\n  byte string.\r\n\r\nThe fixed sizes are for both security and simplicity. \r\n\r\nFor instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix\r\nthe salt and sizes to fit this form.\r\n\r\nThe security requirements for KDFs used with the schemes in this document are\r\nlaid out in {{security-requirements}}.\r\n\r\n<!-- We must include XOFs because of X-Wing at the least but also because\r\ndifferent KEMs/ groups may need different input seed sizes out the back of\r\nthe function, and pure hash functions are not well suited for this; HKDF\r\nallows this via Expand(..., length) but X-Wing does not use HKDF -->\r\n```",
+              "createdAt": "2025-06-04T17:32:03Z",
+              "updatedAt": "2025-06-04T17:32:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stTxx",
+          "commit": {
+            "abbreviatedOid": "c3bc748"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:32:13Z",
+          "updatedAt": "2025-06-04T17:32:14Z",
+          "comments": [
+            {
+              "originalPosition": 250,
+              "body": "Line wrap",
+              "createdAt": "2025-06-04T17:32:14Z",
+              "updatedAt": "2025-06-04T17:32:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stUsR",
+          "commit": {
+            "abbreviatedOid": "503cf12"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:33:29Z",
+          "updatedAt": "2025-06-04T17:33:29Z",
+          "comments": [
+            {
+              "originalPosition": 283,
+              "body": "```suggestion\r\nIn this section, we define several generic constructions for hybrid KEMs. These\r\nconstructions share a common overall structure, differing mainly in how they\r\ncompute the final shared secret and the security requirements of their components.\r\n```",
+              "createdAt": "2025-06-04T17:33:29Z",
+              "updatedAt": "2025-06-04T17:33:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stVe8",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:34:41Z",
+          "updatedAt": "2025-06-04T17:34:41Z",
+          "comments": [
+            {
+              "originalPosition": 306,
+              "body": "```suggestion\r\n* `XOF`: An XOF producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`\r\n  (`XOF.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)\r\n* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout\r\n  == KEM_H.Nss`)\r\n```",
+              "createdAt": "2025-06-04T17:34:41Z",
+              "updatedAt": "2025-06-04T17:34:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stW_J",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:36:37Z",
+          "updatedAt": "2025-06-04T17:36:37Z",
+          "comments": [
+            {
+              "originalPosition": 311,
+              "body": "```suggestion\r\nThe KEMs, groups, KDFs, and XOFs MSUT meet the security requirements in {{#security-requirements}}.\r\n```",
+              "createdAt": "2025-06-04T17:36:37Z",
+              "updatedAt": "2025-06-04T17:36:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stXpP",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:37:24Z",
+          "updatedAt": "2025-06-04T17:37:26Z",
+          "comments": [
+            {
+              "originalPosition": 348,
+              "body": "@bwesterb @br-hale @pag-crypto \r\n\r\nI feel like there's a little bit more to this than mix/max'ing but I'm not sure",
+              "createdAt": "2025-06-04T17:37:24Z",
+              "updatedAt": "2025-06-04T17:37:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stX2J",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:37:45Z",
+          "updatedAt": "2025-06-04T17:37:45Z",
+          "comments": [
+            {
+              "originalPosition": 365,
+              "body": "```suggestion\r\n    seed_full = XOF(seed)\r\n```",
+              "createdAt": "2025-06-04T17:37:45Z",
+              "updatedAt": "2025-06-04T17:37:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stYHY",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:38:14Z",
+          "updatedAt": "2025-06-04T17:38:14Z",
+          "comments": [
+            {
+              "originalPosition": 388,
+              "body": "```suggestion\r\n    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))\r\n```",
+              "createdAt": "2025-06-04T17:38:14Z",
+              "updatedAt": "2025-06-04T17:38:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stYXN",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:38:39Z",
+          "updatedAt": "2025-06-04T17:38:39Z",
+          "comments": [
+            {
+              "originalPosition": 401,
+              "body": "```suggestion\r\n    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))\r\n```",
+              "createdAt": "2025-06-04T17:38:39Z",
+              "updatedAt": "2025-06-04T17:38:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stZTe",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:40:22Z",
+          "updatedAt": "2025-06-04T17:40:23Z",
+          "comments": [
+            {
+              "originalPosition": 116,
+              "body": "can `split()` be `split(x, N1, N2)`? Why are the input byte to be split last?",
+              "createdAt": "2025-06-04T17:40:22Z",
+              "updatedAt": "2025-06-04T17:40:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6staUT",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:42:09Z",
+          "updatedAt": "2025-06-04T17:42:10Z",
+          "comments": [
+            {
+              "originalPosition": 492,
+              "body": "`KeyHash` does not have to have the same requirements of a KDF, it probably only needs collision resistance (but I'm not sure because we don't have a proof! @pag-crypto )",
+              "createdAt": "2025-06-04T17:42:10Z",
+              "updatedAt": "2025-06-04T17:42:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6steoA",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:49:18Z",
+          "updatedAt": "2025-06-04T17:49:19Z",
+          "comments": [
+            {
+              "originalPosition": 493,
+              "body": "```suggestion\r\nWe don't actually know the requirements of _this_ function, we don't have a proof or \r\nrequirements laid out; the only example from Chempat is SHA3-256.\r\n\r\n* `KeyHash`: A KDF producing byte strings of length `KEM_H.Nss` (`KeyHash.Nout\r\n  == KEM_H.Nss`)\r\n```",
+              "createdAt": "2025-06-04T17:49:19Z",
+              "updatedAt": "2025-06-04T17:49:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ste1Q",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:49:36Z",
+          "updatedAt": "2025-06-04T17:49:37Z",
+          "comments": [
+            {
+              "originalPosition": 510,
+              "body": "```suggestion\r\n    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))\r\n```",
+              "createdAt": "2025-06-04T17:49:37Z",
+              "updatedAt": "2025-06-04T17:49:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6ste9B",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:49:50Z",
+          "updatedAt": "2025-06-04T17:49:50Z",
+          "comments": [
+            {
+              "originalPosition": 536,
+              "body": "```suggestion\r\n    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))\r\n```",
+              "createdAt": "2025-06-04T17:49:50Z",
+              "updatedAt": "2025-06-04T17:49:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stfLJ",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:50:14Z",
+          "updatedAt": "2025-06-04T17:50:15Z",
+          "comments": [
+            {
+              "originalPosition": 554,
+              "body": "```suggestion\r\n* `XOF`: A XOF producing byte strings of length `Group_T.Nseed +\r\n  KEM_PQ.Nseed` (`Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed`)\r\n```",
+              "createdAt": "2025-06-04T17:50:14Z",
+              "updatedAt": "2025-06-04T17:50:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stfar",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:50:39Z",
+          "updatedAt": "2025-06-04T17:50:39Z",
+          "comments": [
+            {
+              "originalPosition": 608,
+              "body": "```suggestion\r\n    seed_full = XOF(seed)\r\n```",
+              "createdAt": "2025-06-04T17:50:39Z",
+              "updatedAt": "2025-06-04T17:50:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stfqU",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:51:05Z",
+          "updatedAt": "2025-06-04T17:51:05Z",
+          "comments": [
+            {
+              "originalPosition": 636,
+              "body": "```suggestion\r\n    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))\r\n```",
+              "createdAt": "2025-06-04T17:51:05Z",
+              "updatedAt": "2025-06-04T17:51:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6stfxV",
+          "commit": {
+            "abbreviatedOid": "f0c20d5"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T17:51:16Z",
+          "updatedAt": "2025-06-04T17:51:16Z",
+          "comments": [
+            {
+              "originalPosition": 650,
+              "body": "```suggestion\r\n    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))\r\n```",
+              "createdAt": "2025-06-04T17:51:16Z",
+              "updatedAt": "2025-06-04T17:51:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sudvy",
+          "commit": {
+            "abbreviatedOid": "09473a3"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:25:55Z",
+          "updatedAt": "2025-06-04T19:25:55Z",
+          "comments": [
+            {
+              "originalPosition": 726,
+              "body": "```suggestion\r\n> TODO: We need to provide more thorough description, and verify that\r\n> these requirements align with the requirements of the security proofs in the\r\n> literature, especially {{GHP2018}} and {{XWING}}.\r\n\r\n### Security Requirements for KEMs\r\n\r\nComponent KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.\r\n\r\nFor instances of QSF, the component KEM MUST also be ciphertext second\r\npreimage resistant (C2PRI) {{XWING}}: this allows the component KEM\r\nencapsulation key and ciphertext to be left out from the KDF input. \r\n\r\n### Security Requirements for Groups\r\n\r\nThe groups MUST be modelable as nominal groups in which the strong\r\nDiffie-Hellman problem holds {{ABH+21}} {{XWING}}.\r\n\r\nThe Montgomery curves Curve25519 and Curve448 have been shown to be\r\nmodelable as nominal groups in {{ABH+21}} as well as showing the \r\n`X25519()` and `X448()` functions respectively pertain to the nominal\r\ngroup `exp(X, y)` function, specifically clamping secret keys when\r\nthey are generated, instead of clamping secret keys together with\r\nexponentiation.\r\n\r\n<!-- The short Weierstrass NIST curves have also been shown to be\r\nmodelable as nominal groups but I can't find the reference --> \r\n\r\n### Security Requirements for KDFs\r\n\r\nKDFs MUST be secure pseudorandom functions (PRFs) when keyed with\r\nthe shared secret output from the post-quantum IND-CCA-secure\r\nKEM component algorithm in QSF {{XWING}} or any of the component\r\nIND-CCA-secure KEMs when used in KitchenSink {{GHP2018}} or\r\nPreHash.\r\n\r\nKDFs must be secure instances of random oracles in the ROM and\r\nQROM {{GHP2018}} {{XWING}}. Proofs of indifferentiability from\r\nrandom oracles {{MRH03 https://eprint.iacr.org/2003/161.pdf}}\r\ngive good confidence here, as any function proven indifferentiable\r\nfrom a random oracle is resistant against collision, first, and\r\nsecond preimage attacks {{need a good cite here}}. An indifferentiability\r\nbound guarantees security against specific attacks. Although\r\nindifferentiability does not capture all properties of a random\r\noracle {{RSS11 https://eprint.iacr.org/2011/339.pdf}}, indifferentiability\r\nstill remains the best way to rule out structural attacks.\r\n\r\nSponge-based constructions such as SHA-3 have been shown to be\r\nindifferentiable against classical {{BDP+08 https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf}}\r\nas well as quantum adversaries \r\n{{ACM+25 https://eprint.iacr.org/2025/731.pdf}}. \r\n\r\nHKDF has been shown to be indifferentiable from a random oracle under\r\nspecific constraints {{LBB20 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8806752}}: \r\n\r\n- that HMAC is indifferentiable from a random oracle,\r\nwhich for HMAC-SHA-256 has been shown in {{}} {{DRS+13 https://eprint.iacr.org/2013/382.pdf}}, assuming the\r\ncompression function underlying SHA-256 is a random oracle,\r\nwhich it is indifferentiably when used prefix-free.\r\n\r\n- the values of `HKDF`'s `IKM` input do not collide with\r\nvalues of `info` `||` `0x01`. This MUST be enforced by the\r\nconcrete instantiations that use `HKDF` as its KDF. \r\n\r\nThe choice of the KDF security level SHOULD be made based on the\r\nsecurity level provided by the constituent KEMs. The KDF SHOULD\r\nat least have the security level of the strongest constituent KEM.\r\n\r\n### Security Requirements for XOFs\r\n\r\nXOFs accept arbitrary bitstrings as input, and produce\r\na caller-chosen-length prefix of an infinite bitstream\r\ndeterministically defined by the input.\r\n\r\n<!-- requirements: secure PRF, bc key material? -->\r\n\r\n```",
+              "createdAt": "2025-06-04T19:25:55Z",
+              "updatedAt": "2025-06-04T19:25:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6suev0",
+          "commit": {
+            "abbreviatedOid": "75615b1"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:27:17Z",
+          "updatedAt": "2025-06-04T19:27:18Z",
+          "comments": [
+            {
+              "originalPosition": 785,
+              "body": "@br-hale @pag-crypto @bwesterb ",
+              "createdAt": "2025-06-04T19:27:17Z",
+              "updatedAt": "2025-06-04T19:27:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sufDd",
+          "commit": {
+            "abbreviatedOid": "75615b1"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:27:48Z",
+          "updatedAt": "2025-06-04T19:27:49Z",
+          "comments": [
+            {
+              "originalPosition": 678,
+              "body": "```suggestion\r\n### Ciphertext Second Preimage Resistant (C2PRI) Security\r\n\r\nAlso known in the literature as ciphertext collision resistance (CCR).\r\n```",
+              "createdAt": "2025-06-04T19:27:49Z",
+              "updatedAt": "2025-06-04T19:27:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sufv2",
+          "commit": {
+            "abbreviatedOid": "5681b6f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:29:02Z",
+          "updatedAt": "2025-06-04T19:29:02Z",
+          "comments": [
+            {
+              "originalPosition": 716,
+              "body": "```suggestion\r\n### Security Requirements for KEMs {#security-kems}\r\n```",
+              "createdAt": "2025-06-04T19:29:02Z",
+              "updatedAt": "2025-06-04T19:29:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6suf0m",
+          "commit": {
+            "abbreviatedOid": "5681b6f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:29:11Z",
+          "updatedAt": "2025-06-04T19:29:12Z",
+          "comments": [
+            {
+              "originalPosition": 724,
+              "body": "```suggestion\r\n### Security Requirements for Groups {#security-groups}\r\n```",
+              "createdAt": "2025-06-04T19:29:11Z",
+              "updatedAt": "2025-06-04T19:29:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6suf6P",
+          "commit": {
+            "abbreviatedOid": "5681b6f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:29:20Z",
+          "updatedAt": "2025-06-04T19:29:21Z",
+          "comments": [
+            {
+              "originalPosition": 739,
+              "body": "```suggestion\r\n### Security Requirements for KDFs {#security-kdfs}\r\n```",
+              "createdAt": "2025-06-04T19:29:20Z",
+              "updatedAt": "2025-06-04T19:29:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sugA0",
+          "commit": {
+            "abbreviatedOid": "5681b6f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:29:33Z",
+          "updatedAt": "2025-06-04T19:29:33Z",
+          "comments": [
+            {
+              "originalPosition": 779,
+              "body": "```suggestion\r\n### Security Requirements for XOFs {#security-xofs}\r\n```",
+              "createdAt": "2025-06-04T19:29:33Z",
+              "updatedAt": "2025-06-04T19:29:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sui11",
+          "commit": {
+            "abbreviatedOid": "2d3ea4f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:34:05Z",
+          "updatedAt": "2025-06-04T19:34:05Z",
+          "comments": [
+            {
+              "originalPosition": 792,
+              "body": "```suggestion\r\n## Security Properties of Hybrid KEMs\r\n\r\n[[ TODO: Define which properties are provided by the hybrid KEMs in this\r\ndocument, and citations to the papers with the corresponding proofs. ]]\r\n\r\nAll generic constructions in this document produce IND-CCA-secure KEMs \r\nwhen correctly instantiated concretely with cryptographic components that\r\nmeet the respective security requirements. Any changes to the routines,\r\nincluding key generation/derivation, are not guaranteed to produce\r\nsecure results.\r\n\r\n```",
+              "createdAt": "2025-06-04T19:34:05Z",
+              "updatedAt": "2025-06-04T19:34:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sujmc",
+          "commit": {
+            "abbreviatedOid": "6b0cc87"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:35:12Z",
+          "updatedAt": "2025-06-04T19:35:12Z",
+          "comments": [
+            {
+              "originalPosition": 665,
+              "body": "```suggestion\r\n## Security Properties {#security-properties}\r\n```",
+              "createdAt": "2025-06-04T19:35:12Z",
+              "updatedAt": "2025-06-04T19:35:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sujsA",
+          "commit": {
+            "abbreviatedOid": "6b0cc87"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:35:23Z",
+          "updatedAt": "2025-06-04T19:35:23Z",
+          "comments": [
+            {
+              "originalPosition": 667,
+              "body": "```suggestion\r\n### IND-CCA Security {#ind-cca}\r\n```",
+              "createdAt": "2025-06-04T19:35:23Z",
+              "updatedAt": "2025-06-04T19:35:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sujzS",
+          "commit": {
+            "abbreviatedOid": "6b0cc87"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:35:36Z",
+          "updatedAt": "2025-06-04T19:35:36Z",
+          "comments": [
+            {
+              "originalPosition": 676,
+              "body": "```suggestion\r\n### Ciphertext Second Preimage Resistant (C2PRI) Security {#c2pri}\r\n```",
+              "createdAt": "2025-06-04T19:35:36Z",
+              "updatedAt": "2025-06-04T19:35:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6suj6V",
+          "commit": {
+            "abbreviatedOid": "6b0cc87"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:35:48Z",
+          "updatedAt": "2025-06-04T19:35:48Z",
+          "comments": [
+            {
+              "originalPosition": 687,
+              "body": "```suggestion\r\n## Binding Properties {#binding-properties}\r\n```",
+              "createdAt": "2025-06-04T19:35:48Z",
+              "updatedAt": "2025-06-04T19:35:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6sum1u",
+          "commit": {
+            "abbreviatedOid": "bbad377"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:40:50Z",
+          "updatedAt": "2025-06-04T19:40:51Z",
+          "comments": [
+            {
+              "originalPosition": 276,
+              "body": "Concrete suggestions:\r\n\r\nGHP - named after GHP2018 which is the foundation of all other combiners basically\r\nPRE - prehash\r\nQSF - same as QSF in X-Wing\r\n\r\nShort, mostly meaningful, done.\r\n\r\n```suggestion\r\n* GHP - A generic construction that is suitable for use with any choice\r\n  of traditional and PQ KEMs, with minimal security assumptions on the\r\n  constituent KEMs\r\n* PRE - A performance optimization of HashEverything for the case\r\n  where encapsulation keys are large and frequently reused\r\n* QSF - An optimized generic construction for the case where the traditional\r\n  component is a nominal group and the PQ component has strong binding\r\n  properties\r\n```\r\n\r\n@bifurcation @br-hale @bwesterb @pag-crypto ",
+              "createdAt": "2025-06-04T19:40:50Z",
+              "updatedAt": "2025-06-04T19:40:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6suwT4",
+          "commit": {
+            "abbreviatedOid": "bbad377"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T19:54:44Z",
+          "updatedAt": "2025-06-04T19:54:44Z",
+          "comments": [
+            {
+              "originalPosition": 310,
+              "body": "```suggestion\r\nThe KEMs, groups, KDFs, and XOFs MUST meet the security requirements in {{#security-requirements}}.\r\n```",
+              "createdAt": "2025-06-04T19:54:44Z",
+              "updatedAt": "2025-06-04T19:54:44Z"
             }
           ]
         }
