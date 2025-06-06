@@ -1578,9 +1578,9 @@ all byte strings, with fixed lengths:<a href="#section-4.1-6" class="pilcrow">¶
 </div>
 </div>
 <p id="section-4.2-2">Nominal groups are an abstract model of elliptic curve groups, over which we
-instantiate Diffie-Hellman key agreement <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>.  A nominal group comprises
-a set <code>G</code> together with a distinguished basis element <code>g</code>, an "exponentiation"
-map, and some auxiliary functions:<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+instantiate Diffie-Hellman key agreement <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>.  A nominal group
+comprises a set <code>G</code> together with a distinguished basis element <code>g</code>, an
+"exponentiation" map, and some auxiliary functions:<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.2-3.1">
             <p id="section-4.2-3.1.1"><code>Exp(p, x) -&gt; q</code>: An algorithm that produces an element <code>q</code> of <code>G</code> from an
@@ -1672,7 +1672,8 @@ output lengths:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
             <p id="section-4.4-3.1.1"><code>Nin</code> - The length in bytes of an input to this PRG.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.4-3.2">
-            <p id="section-4.4-3.2.1"><code>Nout</code> - The length in bytes of an output from this PRG which is longer than <code>Nin</code>.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.4-3.2.1"><code>Nout</code> - The length in bytes of an output from this PRG which is longer
+than <code>Nin</code>.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.4-3.3">
             <p id="section-4.4-3.3.1"><code>PRG(seed) -&gt; output</code>: Produce a byte string of length <code>Nout</code> from an input
@@ -2134,11 +2135,10 @@ secure results.<a href="#section-6.4-1" class="pilcrow">¶</a></p>
           <h4 id="name-domain-separation">
 <a href="#section-6.5.1" class="section-number selfRef">6.5.1. </a><a href="#name-domain-separation" class="section-name selfRef">Domain Separation</a>
           </h4>
-<p id="section-6.5.1-1">ASCII-encoded bytes provide oracle cloning <span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in the security
-game via domain separation. The IND-CCA security of hybrid KEMs often
-relies on the KDF function <code>KDF</code> to behave as an independent
-random oracle, which the inclusion of the <code>label</code> achieves via domain
-separation <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>.<a href="#section-6.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.5.1-1">ASCII-encoded bytes provide oracle cloning <span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in the security game
+via domain separation. The IND-CCA security of hybrid KEMs often relies on
+the KDF function <code>KDF</code> to behave as an independent random oracle, which the
+inclusion of the <code>label</code> achieves via domain separation <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>.<a href="#section-6.5.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.5.1-2">By design, the calls to <code>KDF</code> in these constructions and usage anywhere else
 in higher level protoocl use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed paramters. This
@@ -2170,8 +2170,7 @@ length prefix or other unambiguous encoding would need to be used to ensure
 that the composition of the two values is injective and requires a mechanism
 different from that specified in this document.<a href="#section-6.5.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.5.2-4">Therefore, this specification <span class="bcp14">MUST</span> only be used with algorithms which have
-fixed-length shared secrets (after the variant has been fixed by the
-algorithm identifier in the NamedGroup negotiation in Section 3.1).<a href="#section-6.5.2-4" class="pilcrow">¶</a></p>
+fixed-length shared secrets.<a href="#section-6.5.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

@@ -785,9 +785,7 @@ Table of Contents
    document.
 
    Therefore, this specification MUST only be used with algorithms which
-   have fixed-length shared secrets (after the variant has been fixed by
-   the algorithm identifier in the NamedGroup negotiation in
-   Section 3.1).
+   have fixed-length shared secrets.
 
 7.  Out of Scope
 
