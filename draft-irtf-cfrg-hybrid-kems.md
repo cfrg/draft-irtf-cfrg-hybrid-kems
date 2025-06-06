@@ -732,7 +732,7 @@ The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed
 above.  Related to the ciphertext collision-freeness of the underlying PKE
 scheme of a FO-transform KEM. Also called ciphertext collision resistance.
 
-[[ TODO: Discuss other salient binding properties. ]]
+<!-- TODO: Discuss other salient binding properties. -->
 
 ## Security Requirements for Constituent Components {#security-requirements}
 
@@ -834,8 +834,8 @@ used in such a manner include SHA3 and SHAKE.
 
 ## Security Properties of Hybrid KEMs
 
-[[ TODO: Define which properties are provided by the hybrid KEMs in this
-document, and citations to the papers with the corresponding proofs. ]]
+<!-- TODO: Define which properties are provided by the hybrid KEMs in this -->
+<!-- document, and citations to the papers with the corresponding proofs. -->
 
 All generic constructions in this document produce IND-CCA-secure KEMs
 when correctly instantiated concretely with cryptographic components that
