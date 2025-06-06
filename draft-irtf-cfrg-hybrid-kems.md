@@ -773,12 +773,11 @@ KitchenSink {{GHP2018}} or PreHash.
 
 KDFs must be secure instances of random oracles in the ROM and QROM
 {{GHP2018}} {{XWING}}. Proofs of indifferentiability from random oracles
-{{MRH03}} give good confidence here, as
-any function proven indifferentiable from a random oracle is resistant
-against collision, first, and second preimage attacks {{need a good cite
-here}}. An indifferentiability bound guarantees security against specific
-attacks. Although indifferentiability does not capture all properties of a
-random oracle {{RSS11}},
+{{MRH03}} give good confidence here, as any function proven indifferentiable
+from a random oracle is resistant against collision, first, and second
+preimage attacks <!-- need a good cite here -->. An indifferentiability bound
+guarantees security against specific attacks. Although indifferentiability
+does not capture all properties of a random oracle {{RSS11}},
 indifferentiability still remains the best way to rule out structural
 attacks.
 
@@ -865,7 +864,7 @@ same KDF. This domain separation is achieved by using prefix-free sets of
 another within the set.
 
 Length diffentiation is sometimes used to achieve domain separation but as a
-technique it is [brittle and prone to misuse]{{BDG2020}} in practice so we
+technique it is brittle and prone to misuse {{BDG2020}} in practice so we
 favor the use of an explicit post-fix label.
 
 ### Fixed-length
