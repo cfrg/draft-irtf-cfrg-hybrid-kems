@@ -145,6 +145,11 @@ informative:
       ins: N. J. Al Fardan
     -
       ins: K. G. Paterson
+  HKDF: RFC5869
+  MRH03:
+    title: "Indifferentiability, Impossibility Results on Reductions, and Applications to the Random Oracle Methodology"
+    date: 2003
+    target: https://eprint.iacr.org/2003/161.pdf
   RACCOON:
     target: https://raccoon-attack.com/
     title: "Raccoon Attack: Finding and Exploiting Most-Significant-Bit-Oracles in TLS-DH(E)"
@@ -162,11 +167,10 @@ informative:
     -
       ins: J. Schwenk
     date: 2020-09
-  HKDF: RFC5869
-  MRH03:
-    title: "Indifferentiability, Impossibility Results on Reductions, and Applications to the Random Oracle Methodology"
-    date: 2003
-    target: https://eprint.iacr.org/2003/161.pdf
+  RS92:
+    title: "Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack."
+    date: 1992
+    target: https://link.springer.com/chapter/10.1007/3-540-46766-1_35
   Rosulek:
     title: "The Joy of Cryptography"
     date: 2021
@@ -701,7 +705,7 @@ Also known as IND-CCA2 security for general public key encryption, for KEMs
 that encapsulate a new random 'message' each time.
 
 The notion of INDistinguishability against Chosen-Ciphertext Attacks
-(IND-CCA) [RS92] is now widely accepted as the standard security notion for
+(IND-CCA) {{RS92}} is now widely accepted as the standard security notion for
 asymmetric encryption schemes. IND-CCA security requires that no efficient
 adversary can recognize which of two messages is encrypted in a given
 ciphertext, even if the two candidate messages are chosen by the adversary
