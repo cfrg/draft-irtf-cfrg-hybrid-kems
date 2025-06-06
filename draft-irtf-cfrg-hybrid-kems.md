@@ -395,9 +395,9 @@ requirements in the security bits at the bottom of the doc, and just leave this 
 'Groups'? -->
 
 Nominal groups are an abstract model of elliptic curve groups, over which we
-instantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group comprises
-a set `G` together with a distinguished basis element `g`, an "exponentiation"
-map, and some auxiliary functions:
+instantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group
+comprises a set `G` together with a distinguished basis element `g`, an
+"exponentiation" map, and some auxiliary functions:
 
 - `Exp(p, x) -> q`: An algorithm that produces an element `q` of `G` from an
   element `p` and an integer `x`.
@@ -456,7 +456,8 @@ The PRGs used in this document have a simpler form, with a fixed
 output lengths:
 
 - `Nin` - The length in bytes of an input to this PRG.
-- `Nout` - The length in bytes of an output from this PRG which is longer than `Nin`.
+- `Nout` - The length in bytes of an output from this PRG which is longer
+  than `Nin`.
 - `PRG(seed) -> output`: Produce a byte string of length `Nout` from an input
   byte string `seed`.
 
@@ -851,11 +852,10 @@ secure results.
 
 ### Domain Separation {#domain-separation}
 
-ASCII-encoded bytes provide oracle cloning {{BDG2020}} in the security
-game via domain separation. The IND-CCA security of hybrid KEMs often
-relies on the KDF function `KDF` to behave as an independent
-random oracle, which the inclusion of the `label` achieves via domain
-separation {{GHP2018}}.
+ASCII-encoded bytes provide oracle cloning {{BDG2020}} in the security game
+via domain separation. The IND-CCA security of hybrid KEMs often relies on
+the KDF function `KDF` to behave as an independent random oracle, which the
+inclusion of the `label` achieves via domain separation {{GHP2018}}.
 
 By design, the calls to `KDF` in these constructions and usage anywhere else
 in higher level protoocl use separate input domains unless intentionally
@@ -888,8 +888,7 @@ that the composition of the two values is injective and requires a mechanism
 different from that specified in this document.
 
 Therefore, this specification MUST only be used with algorithms which have
-fixed-length shared secrets (after the variant has been fixed by the
-algorithm identifier in the NamedGroup negotiation in Section 3.1).
+fixed-length shared secrets.
 
 # Out of Scope
 
