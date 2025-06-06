@@ -63,6 +63,10 @@ informative:
     author:
       -
         org: ANS
+  AOB+24:
+    title: "Formally verifying Kyber Episode V: Machine-checked IND-CCA security and correctness of ML-KEM in EasyCrypt"
+    date: 2024
+    target: https://eprint.iacr.org/2024/843.pdf
   AVIRAM:
     target: https://mailarchive.ietf.org/arch/msg/tls/F4SVeL2xbGPaPB2GW_GkBbD_a5M/
     title: "[TLS] Combining Secrets in Hybrid Key Exchange in TLS 1.3"
@@ -88,6 +92,10 @@ informative:
     title: "On the Indifferentiability of the Sponge Construction"
     target: https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf
     date: 2008
+  BDP+11:
+    title: "Cryptographic sponge functions"
+    target: https://keccak.team/files/CSF-0.1.pdf
+    date: 2011
   CDM23:
     title: "Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"
     target: https://eprint.iacr.org/2023/1933.pdf
@@ -159,6 +167,10 @@ informative:
     title: "Indifferentiability, Impossibility Results on Reductions, and Applications to the Random Oracle Methodology"
     date: 2003
     target: https://eprint.iacr.org/2003/161.pdf
+  Rosulek:
+    title: "The Joy of Cryptography"
+    date: 2021
+    target: https://joyofcryptography.com/pdf/book.pdf
   RSS11:
     title: "Careful with Composition: Limitations of Indifferentiability and Universal Composability"
     date: 2011
@@ -809,24 +821,19 @@ The XOFs used here MUST be modelable as secure random oracle.
 ### Security Requirements for PRGs {#security-prgs}
 
 The functions used to expand a key seed to multiple key seeds is closer to a
-pseudorandom generator (PRG) in its security requirements
-{{https://cryptojedi.org/papers/hakyberv-20240529.pdf}}. A secure PRG is an
-algorithm PRG : {0, 1}^n → {0, 1}^m, such that no polynomial-time adversary
-can distinguish between PRG(r) (for r $← {0, 1}^n) and a random z $← {0, 1}^m
-{{}}. The uniform string r ∈ {0, 1}^n is called the seed of the PRG.
-
-<!-- TODO: nicer citation for secure PRG definition, I don't love Boneh &
-Shoup, nor Katz-Lindell, I kinda like Rouslek? -->
+pseudorandom generator (PRG) in its security requirements {{AOB+24}}. A
+secure PRG is an algorithm PRG : {0, 1}^n → {0, 1}^m, such that no
+polynomial-time adversary can distinguish between PRG(r) (for r $← {0, 1}^n)
+and a random z $← {0, 1}^m {{Rosulek}}. The uniform string r ∈ {0, 1}^n is
+called the seed of the PRG.
 
 A PRG is not to be confused with a random (or pseudorandom) _number_
 generator (RNG): a PRG requires the seed randomness to be chosen uniformly
 and extend it; an RNG takes sources of noisy data and transforms them into
 uniform outputs.
 
-A PRG is a particular mode of use of a random oracle
-{{https://keccak.team/files/CSF-0.1.pdf}}.  Examples used in such a manner
-include SHA3 and SHAKE.
-
+A PRG is a particular mode of use of a random oracle {{BDP+11}}.  Examples
+used in such a manner include SHA3 and SHAKE.
 
 ## Security Properties of Hybrid KEMs
 
