@@ -1181,7 +1181,7 @@ algorithms are secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-key-derivation-functions" class="internal xref">Key Derivation Functions</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
-                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-xof" class="internal xref"><code>XOF</code></a></p>
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-prg" class="internal xref"><code>PRG</code></a></p>
 </li>
             </ul>
 </li>
@@ -1229,10 +1229,7 @@ algorithms are secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                     <p id="section-toc.1-1.6.2.3.2.3.1"><a href="#section-6.3.3" class="auto internal xref">6.3.3</a>.  <a href="#name-security-requirements-for-kd" class="internal xref">Security Requirements for KDFs</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.4">
-                    <p id="section-toc.1-1.6.2.3.2.4.1"><a href="#section-6.3.4" class="auto internal xref">6.3.4</a>.  <a href="#name-security-requirements-for-x" class="internal xref">Security Requirements for XOFs</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.5">
-                    <p id="section-toc.1-1.6.2.3.2.5.1"><a href="#section-6.3.5" class="auto internal xref">6.3.5</a>.  <a href="#name-security-requirements-for-p" class="internal xref">Security Requirements for PRGs</a></p>
+                    <p id="section-toc.1-1.6.2.3.2.4.1"><a href="#section-6.3.4" class="auto internal xref">6.3.4</a>.  <a href="#name-security-requirements-for-p" class="internal xref">Security Requirements for PRGs</a></p>
 </li>
                 </ul>
 </li>
@@ -1388,7 +1385,7 @@ following cryptographic primitives:<a href="#section-4-1" class="pilcrow">¶</a>
           <p id="section-4-2.3.1">Key Derivation Functions (<a href="#kdfs" class="auto internal xref">Section 4.3</a>)<a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-2.4">
-          <p id="section-4-2.4.1">Extendable-Output Functions (<a href="#xofs" class="auto internal xref">Section 4.4</a>)<a href="#section-4-2.4.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.4.1">Pseudorandom Generators (<a href="#prgs" class="auto internal xref">Section 4.4</a>)<a href="#section-4-2.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-4-3">In the remainder of this section, we describe functional aspects of these
@@ -1625,16 +1622,8 @@ fixed lengths:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 ElementToSharedSecret<a href="#section-4.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-4.2-6.1">
-            <p id="section-4.2-6.1.1">It is possible to satisfy the KEM API using a nominal group, by generating an
-ephemeral element that serves as the ciphertext.  Despite satisfying the KEM
-API, however, this KEM would not be secure, so we have preferred to address
-hybrid KEMs that use elliptic curves directly.<a href="#section-4.2-6.1.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-4.2-7">The security requirements for groups used with the schemes in this document
-are laid out in <a href="#security-groups" class="auto internal xref">Section 6.3.2</a>.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">The security requirements for groups used with the schemes in this document
+are laid out in <a href="#security-groups" class="auto internal xref">Section 6.3.2</a>.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="kdfs">
@@ -1666,28 +1655,36 @@ the salt and sizes to fit this form.<a href="#section-4.3-5" class="pilcrow">¶<
 laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.3.3</a>.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="xofs">
+<div id="prgs">
 <section id="section-4.4">
-        <h3 id="name-xof">
-<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-xof" class="section-name selfRef"><code>XOF</code></a>
+        <h3 id="name-prg">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-prg" class="section-name selfRef"><code>PRG</code></a>
         </h3>
-<p id="section-4.4-1">Extendable-output function (XOF). A function on bit strings in which the
-output can be extended to any desired length. Ought to satisfy the following
-properties as long as the specified output length is sufficiently long to
-prevent trivial attacks:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.4-2">
-<li id="section-4.4-2.1">
-            <p id="section-4.4-2.1.1">(One-way) It is computationally infeasible to find any input that maps to
-any new pre-specified output.<a href="#section-4.4-2.1.1" class="pilcrow">¶</a></p>
+<p id="section-4.4-1">A pseudorandom generator (PRG) is a deterministic function <code>G</code> whose outputs
+are longer than its inputs. When the input to <code>G</code> is chosen uniformly at
+random, it induces a certain distribution over the possible output. The
+output distribution is pseudorandom if it is indistinguishable from the
+uniform distribution.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">The PRGs used in this document have a simpler form, with a fixed
+output lengths:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.4-3.1">
+            <p id="section-4.4-3.1.1"><code>Nin</code> - The length in bytes of an input to this PRG.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-4.4-2.2">
-            <p id="section-4.4-2.2.1">(Collision-resistant) It is computationally infeasible to find any two
-distinct inputs that map to the same output.<a href="#section-4.4-2.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.4-3.2">
+            <p id="section-4.4-3.2.1"><code>Nout</code> - The length in bytes of an output from this PRG which is longer than <code>Nin</code>.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
 </li>
-        </ol>
-<p id="section-4.4-3"><span class="bcp14">MUST</span> provide the bit-security required to source input randomness for PQ/T
+          <li class="normal" id="section-4.4-3.3">
+            <p id="section-4.4-3.3.1"><code>PRG(seed) -&gt; output</code>: Produce a byte string of length <code>Nout</code> from an input
+byte string <code>seed</code>.<a href="#section-4.4-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.4-4">The fixed sizes are for both security and simplicity.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+<p id="section-4.4-5"><span class="bcp14">MUST</span> provide the bit-security required to source input randomness for PQ/T
 components from a seed that is expanded to a output length, of which a subset
-is passed to the component key generation algorithms.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+is passed to the component key generation algorithms.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+<p id="section-4.4-6">The security requirements for PRGs used with the schemes in this document are
+laid out in <a href="#security-prgs" class="auto internal xref">Section 6.3.4</a>.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1734,8 +1731,8 @@ components:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
             <p id="section-5.1-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.3">
-            <p id="section-5.1-2.3.1"><code>XOF</code>: An XOF producing byte strings of length <code>KEM_T.Nseed + KEM_PQ.Nseed</code>
-(<code>XOF.Nout == KEM_T.Nseed + KEM_PQ.Nseed</code>)<a href="#section-5.1-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_T.Nseed + KEM_PQ.Nseed</code>
+(<code>PRG.Nout == KEM_T.Nseed + KEM_PQ.Nseed</code>)<a href="#section-5.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.4">
             <p id="section-5.1-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>GHP.Nss</code> (<code>KDF.Nout
@@ -1746,7 +1743,7 @@ components:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 constituents being used.<a href="#section-5.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.1-3">The KEMs, groups, KDFs, and XOFs <span class="bcp14">MUST</span> meet the security requirements in
+<p id="section-5.1-3">The KEMs, groups, KDFs, and PRGs <span class="bcp14">MUST</span> meet the security requirements in
 <a href="#security-requirements" class="auto internal xref">Section 6.3</a>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1-4">The constants associated with the hybrid KEM are mostly derived from the
 concatenation of keys and ciphertexts:<a href="#section-5.1-4" class="pilcrow">¶</a></p>
@@ -1774,7 +1771,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = XOF(seed)
+    seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
@@ -1872,7 +1869,7 @@ components:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
             <p id="section-5.3-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.3-2.3">
-            <p id="section-5.3-2.3.1"><code>XOF</code>: A XOF producing byte strings of length <code>Group_T.Nseed +
+            <p id="section-5.3-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>Group_T.Nseed +
 KEM_PQ.Nseed</code> (<code>Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed</code>)<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.3-2.4">
@@ -1912,7 +1909,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = XOF(seed)
+    seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
     dk_T = Group_T.RandomScalar(seed_T))
@@ -1976,7 +1973,7 @@ KEM is secure: this is the 'hybrid' property.<a href="#section-6-1" class="pilcr
 <p id="section-6.1.1-1">Also known as IND-CCA2 security for general public key encryption, for KEMs
 that encapsulate a new random 'message' each time.<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-2">The notion of INDistinguishability against Chosen-Ciphertext Attacks
-(IND-CCA) [RS92] is now widely accepted as the standard security notion for
+(IND-CCA) <span>[<a href="#RS92" class="cite xref">RS92</a>]</span> is now widely accepted as the standard security notion for
 asymmetric encryption schemes. IND-CCA security requires that no efficient
 adversary can recognize which of two messages is encrypted in a given
 ciphertext, even if the two candidate messages are chosen by the adversary
@@ -2014,7 +2011,6 @@ given to the adversary after the encapsulation operation is completed (LEAK).<a 
 <p id="section-6.2-2">The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed
 above.  Related to the ciphertext collision-freeness of the underlying PKE
 scheme of a FO-transform KEM. Also called ciphertext collision resistance.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.2-3">[[ TODO: Discuss other salient binding properties. ]]<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-requirements">
@@ -2095,45 +2091,23 @@ security level provided by the constituent KEMs. The KDF <span class="bcp14">SHO
 at least have the security level of the strongest constituent KEM.<a href="#section-6.3.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security-xofs">
-<section id="section-6.3.4">
-          <h4 id="name-security-requirements-for-x">
-<a href="#section-6.3.4" class="section-number selfRef">6.3.4. </a><a href="#name-security-requirements-for-x" class="section-name selfRef">Security Requirements for XOFs</a>
-          </h4>
-<p id="section-6.3.4-1">XOFs accept arbitrary bitstrings as input, and produce a caller-chosen-length
-prefix of an infinite bitstream deterministically defined by the input.<a href="#section-6.3.4-1" class="pilcrow">¶</a></p>
-<p id="section-6.3.4-2">Ought to satisfy the following properties as long as the specified output
-length is sufficiently long to prevent trivial attacks:<a href="#section-6.3.4-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.3.4-3.1">
-              <p id="section-6.3.4-3.1.1">(Preimage-resistant) It is computationally infeasible to find any input
- that maps to any new pre-specified output.<a href="#section-6.3.4-3.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-6.3.4-3.2">
-              <p id="section-6.3.4-3.2.1">(Collision-resistant) It is computationally infeasible to find any two
- distinct inputs that map to the same output.<a href="#section-6.3.4-3.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
-<p id="section-6.3.4-4">The XOFs used here <span class="bcp14">MUST</span> be modelable as secure random oracle.<a href="#section-6.3.4-4" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="security-prgs">
-<section id="section-6.3.5">
+<section id="section-6.3.4">
           <h4 id="name-security-requirements-for-p">
-<a href="#section-6.3.5" class="section-number selfRef">6.3.5. </a><a href="#name-security-requirements-for-p" class="section-name selfRef">Security Requirements for PRGs</a>
+<a href="#section-6.3.4" class="section-number selfRef">6.3.4. </a><a href="#name-security-requirements-for-p" class="section-name selfRef">Security Requirements for PRGs</a>
           </h4>
-<p id="section-6.3.5-1">The functions used to expand a key seed to multiple key seeds is closer to a
+<p id="section-6.3.4-1">The functions used to expand a key seed to multiple key seeds is closer to a
 pseudorandom generator (PRG) in its security requirements <span>[<a href="#AOB_24" class="cite xref">AOB_24</a>]</span>. A
 secure PRG is an algorithm PRG : {0, 1}^n → {0, 1}^m, such that no
 polynomial-time adversary can distinguish between PRG(r) (for r $← {0, 1}^n)
 and a random z $← {0, 1}^m <span>[<a href="#Rosulek" class="cite xref">Rosulek</a>]</span>. The uniform string r ∈ {0, 1}^n is
-called the seed of the PRG.<a href="#section-6.3.5-1" class="pilcrow">¶</a></p>
-<p id="section-6.3.5-2">A PRG is not to be confused with a random (or pseudorandom) <em>number</em>
+called the seed of the PRG.<a href="#section-6.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.3.4-2">A PRG is not to be confused with a random (or pseudorandom) <em>number</em>
 generator (RNG): a PRG requires the seed randomness to be chosen uniformly
 and extend it; an RNG takes sources of noisy data and transforms them into
-uniform outputs.<a href="#section-6.3.5-2" class="pilcrow">¶</a></p>
-<p id="section-6.3.5-3">A PRG is a particular mode of use of a random oracle <span>[<a href="#BDP_11" class="cite xref">BDP_11</a>]</span>.  Examples
-used in such a manner include SHA3 and SHAKE.<a href="#section-6.3.5-3" class="pilcrow">¶</a></p>
+uniform outputs.<a href="#section-6.3.4-2" class="pilcrow">¶</a></p>
+<p id="section-6.3.4-3">A PRG is a particular mode of use of a random oracle <span>[<a href="#BDP_11" class="cite xref">BDP_11</a>]</span>.  Examples
+used in such a manner include SHA3 and SHAKE.<a href="#section-6.3.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2143,13 +2117,11 @@ used in such a manner include SHA3 and SHAKE.<a href="#section-6.3.5-3" class="p
         <h3 id="name-security-properties-of-hybr">
 <a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-security-properties-of-hybr" class="section-name selfRef">Security Properties of Hybrid KEMs</a>
         </h3>
-<p id="section-6.4-1">[[ TODO: Define which properties are provided by the hybrid KEMs in this
-document, and citations to the papers with the corresponding proofs. ]]<a href="#section-6.4-1" class="pilcrow">¶</a></p>
-<p id="section-6.4-2">All generic constructions in this document produce IND-CCA-secure KEMs
+<p id="section-6.4-1">All generic constructions in this document produce IND-CCA-secure KEMs
 when correctly instantiated concretely with cryptographic components that
 meet the respective security requirements. Any changes to the routines,
 including key generation/derivation, are not guaranteed to produce
-secure results.<a href="#section-6.4-2" class="pilcrow">¶</a></p>
+secure results.<a href="#section-6.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="other-considerations">
@@ -2355,6 +2327,10 @@ complicatation deemed unnecessary.<a href="#section-7.2-1" class="pilcrow">¶</a
 <dt id="Rosulek">[Rosulek]</dt>
         <dd>
 <span class="refTitle">"The Joy of Cryptography"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://joyofcryptography.com/pdf/book.pdf">https://joyofcryptography.com/pdf/book.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RS92">[RS92]</dt>
+        <dd>
+<span class="refTitle">"Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack."</span>, <time datetime="1992" class="refDate">1992</time>, <span>&lt;<a href="https://link.springer.com/chapter/10.1007/3-540-46766-1_35">https://link.springer.com/chapter/10.1007/3-540-46766-1_35</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RSS11">[RSS11]</dt>
         <dd>
