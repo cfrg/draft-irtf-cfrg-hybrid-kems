@@ -415,11 +415,6 @@ fixed lengths:
 - `Nss`: The length in bytes of a shared secret produced by
   ElementToSharedSecret
 
-> It is possible to satisfy the KEM API using a nominal group, by generating an
-> ephemeral element that serves as the ciphertext.  Despite satisfying the KEM
-> API, however, this KEM would not be secure, so we have preferred to address
-> hybrid KEMs that use elliptic curves directly.
-
 The security requirements for groups used with the schemes in this document
 are laid out in {{security-groups}}.
 
@@ -445,27 +440,30 @@ the salt and sizes to fit this form.
 The security requirements for KDFs used with the schemes in this document are
 laid out in {{security-kdfs}}.
 
-## `XOF` {#xofs}
+## `PRG` {#prgs}
 
-<!-- We must include XOFs because of X-Wing at the least but also because
-different KEMs/ groups may need different input seed sizes out the back of
-the function, and pure hash functions are not well suited for this; HKDF
-allows this via Expand(..., length) but X-Wing does not use HKDF -->
+A pseudorandom generator (PRG) is a deterministic function `G` whose outputs
+are longer than its inputs. When the input to `G` is chosen uniformly at
+random, it induces a certain distribution over the possible output. The
+output distribution is pseudorandom if it is indistinguishable from the
+uniform distribution.
 
-Extendable-output function (XOF). A function on bit strings in which the
-output can be extended to any desired length. Ought to satisfy the following
-properties as long as the specified output length is sufficiently long to
-prevent trivial attacks:
+The PRGs used in this document have a simpler form, with a fixed
+output lengths:
 
-1. (One-way) It is computationally infeasible to find any input that maps to
-   any new pre-specified output.
+- `Nin` - The length in bytes of an input to this PRG.
+- `Nout` - The length in bytes of an output from this PRG which is longer than `Nin`.
+- `PRG(seed) -> output`: Produce a byte string of length `Nout` from an input
+  byte string `seed`.
 
-2. (Collision-resistant) It is computationally infeasible to find any two
-   distinct inputs that map to the same output.
+The fixed sizes are for both security and simplicity.
 
 MUST provide the bit-security required to source input randomness for PQ/T
 components from a seed that is expanded to a output length, of which a subset
 is passed to the component key generation algorithms.
+
+The security requirements for PRGs used with the schemes in this document are
+laid out in {{security-prgs}}.
 
 # Hybrid KEM Schemes {#schemes}
 
@@ -493,14 +491,14 @@ components:
 
 * `KEM_T`: A traditional KEM
 * `KEM_PQ`: A post-quantum KEM
-* `XOF`: An XOF producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`
-  (`XOF.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)
+* `PRG`: A PRG producing byte strings of length `KEM_T.Nseed + KEM_PQ.Nseed`
+  (`PRG.Nout == KEM_T.Nseed + KEM_PQ.Nseed`)
 * `KDF`: A KDF producing byte strings of length `GHP.Nss` (`KDF.Nout
   == GHP.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-The KEMs, groups, KDFs, and XOFs MUST meet the security requirements in
+The KEMs, groups, KDFs, and PRGs MUST meet the security requirements in
 {{security-requirements}}.
 
 The constants associated with the hybrid KEM are mostly derived from the
@@ -529,7 +527,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = XOF(seed)
+    seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
@@ -614,7 +612,7 @@ components:
 
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
-* `XOF`: A XOF producing byte strings of length `Group_T.Nseed +
+* `PRG`: A PRG producing byte strings of length `Group_T.Nseed +
   KEM_PQ.Nseed` (`Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed`)
 * `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
   == KDF.Nss`)
@@ -650,7 +648,7 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 
 def DeriveKeyPair(seed):
-    seed_full = XOF(seed)
+    seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
     dk_T = Group_T.RandomScalar(seed_T))
@@ -801,21 +799,21 @@ The choice of the KDF security level SHOULD be made based on the
 security level provided by the constituent KEMs. The KDF SHOULD
 at least have the security level of the strongest constituent KEM.
 
-### Security Requirements for XOFs {#security-xofs}
+<!-- ### Security Requirements for XOFs {#security-xofs} -->
 
-XOFs accept arbitrary bitstrings as input, and produce a caller-chosen-length
-prefix of an infinite bitstream deterministically defined by the input.
+<!-- XOFs accept arbitrary bitstrings as input, and produce a caller-chosen-length -->
+<!-- prefix of an infinite bitstream deterministically defined by the input. -->
 
-Ought to satisfy the following properties as long as the specified output
-length is sufficiently long to prevent trivial attacks:
+<!-- Ought to satisfy the following properties as long as the specified output -->
+<!-- length is sufficiently long to prevent trivial attacks: -->
 
-- (Preimage-resistant) It is computationally infeasible to find any input
-   that maps to any new pre-specified output.
+<!-- - (Preimage-resistant) It is computationally infeasible to find any input -->
+<!--    that maps to any new pre-specified output. -->
 
-- (Collision-resistant) It is computationally infeasible to find any two
-   distinct inputs that map to the same output.
+<!-- - (Collision-resistant) It is computationally infeasible to find any two -->
+<!--    distinct inputs that map to the same output. -->
 
-The XOFs used here MUST be modelable as secure random oracle.
+<!-- The XOFs used here MUST be modelable as secure random oracle. -->
 
 ### Security Requirements for PRGs {#security-prgs}
 
