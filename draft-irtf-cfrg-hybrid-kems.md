@@ -290,7 +290,7 @@ following cryptographic primitives:
 - Key Encapsulation Mechanisms ({{kems}})
 - Nominal Groups ({{groups}})
 - Key Derivation Functions ({{kdfs}})
-- Extendable-Output Functions ({{xofs}})
+- Pseudorandom Generators ({{prgs}})
 
 In the remainder of this section, we describe functional aspects of these
 mechanisms.  The security properties we require in order for the resulting
