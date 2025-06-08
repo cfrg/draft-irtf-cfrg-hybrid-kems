@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-05T01:10:53.900673+00:00",
+  "timestamp": "2025-06-08T01:17:46.965086+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1963,21 +1963,21 @@
       "id": "PR_kwDOMmhxws6YCzWa",
       "title": "Reframe in terms of groups ++",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/22",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR rewrites the hybrid KEMs in terms of nominal groups as appropriate.\r\n\r\n* Adds a \"nominal group\" API much like the KEM API.\r\n* The HashEverything hybrid is defined in terms of KEM+KEM\r\n    * The PreHashKeys hybrid is defined as an optimization of HashEverything\r\n    * We define a way of instantiating the above with a group instead of a KEM\r\n* The HashTraditionalOnly hybrid is define in terms of Group+KEM (as in [BCD+24])\r\n",
       "createdAt": "2025-05-29T00:34:54Z",
-      "updatedAt": "2025-06-04T20:07:50Z",
+      "updatedAt": "2025-06-06T15:44:09Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
       "headRepository": "bifurcation/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "kem-vs-curve",
       "headRefOid": "85abd303cacb9d72fc4b6204a080efb43f353c81",
-      "closedAt": null,
+      "closedAt": "2025-06-06T15:44:08Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -1995,6 +1995,13 @@
           "body": "@dconnolly - Yes, i've just been building ahead linearly.",
           "createdAt": "2025-05-29T15:24:54Z",
           "updatedAt": "2025-05-29T15:24:54Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "All these changes have been included in #31, closing",
+          "createdAt": "2025-06-06T15:44:08Z",
+          "updatedAt": "2025-06-06T15:44:08Z"
         }
       ],
       "reviews": [
@@ -3954,8 +3961,56 @@
               "updatedAt": "2025-06-04T19:54:44Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6tK6lh",
+          "commit": {
+            "abbreviatedOid": "bdd309c"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T15:43:39Z",
+          "updatedAt": "2025-06-06T15:43:39Z",
+          "comments": [
+            {
+              "originalPosition": 493,
+              "body": "Done",
+              "createdAt": "2025-06-06T15:43:39Z",
+              "updatedAt": "2025-06-06T15:43:39Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 31,
+      "id": "PR_kwDOMmhxws6ZaT7W",
+      "title": "#22 with changes on top",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/31",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-06T15:39:59Z",
+      "updatedAt": "2025-06-06T19:08:29Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "9e85013a9da7226a2e54c098de0ab5043034a158",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "target-kem-vs-curve",
+      "headRefOid": "c43bc983d6a4cae8d0d499d8928c8931143cb163",
+      "closedAt": "2025-06-06T19:08:28Z",
+      "mergedAt": "2025-06-06T19:08:28Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "c43bc983d6a4cae8d0d499d8928c8931143cb163"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
