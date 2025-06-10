@@ -303,6 +303,14 @@ following cryptographic primitives:
 - Key Derivation Functions ({{kdfs}})
 - Pseudorandom Generators ({{prgs}})
 
+<!-- [RLB] Why do we need PRGs and KDFs?  It seems like the proofs that we're
+trying to match don't make different assumptions about them (they're all ROs),
+and the API is clearly the same.  But if we can't come to agreement, I'm fine
+throwing this to the WG. -->
+
+<!-- [RLB] Nit: I would reverse the order of the PRG and KDF sections, to match
+the order in which they are used. -->
+
 In the remainder of this section, we describe functional aspects of these
 mechanisms.  The security properties we require in order for the resulting
 hybrid KEM to be secure are discussed in {{security}}.
@@ -398,12 +406,16 @@ all byte strings, with fixed lengths:
            pkAB ========================= pkBA
 ~~~
 
-<!-- Yes we need to be able to model the group as a nominal group to make the
+<!-- [DC] Yes we need to be able to model the group as a nominal group to make the
 proofs work, but we have proofs for the NIST curves and the Montgomery curves,
 I wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd
 could also be shown to be a nominal group; thoughts on putting the 'nominal'
 requirements in the security bits at the bottom of the doc, and just leave this as
 'Groups'? -->
+
+<!-- [RLB] I'm fine keeping the "Nominal" for now, since it's what they're
+called in ABH+21.  It doesn't hurt to restate the criteria below, just like we
+do (should) with KDFs / PRGs / whatever. -->
 
 Nominal groups are an abstract model of elliptic curve groups, over which we
 instantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group
@@ -446,6 +458,11 @@ output lengths:
 - `Nout` - The length in bytes of an output from this KDF.
 - `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
   byte string.
+
+<!-- [RLB] We don't actually need to refer to `Nin` below, so we could safely
+drop it.  Or if we keep it, we should treat it as a maximum and specify that it
+is at least a certain size, `Nin >= Nseed` for PRG.  I would probably just drop
+it, though. -->
 
 The fixed sizes are for both security and simplicity.
 
@@ -495,14 +512,25 @@ KEMs:
   traditional component is a nominal group and the PQ component has strong
   binding properties
 
-In this section, we define several generic constructions for hybrid
-KEMs. These constructions share a common overall structure, differing mainly
-in how they compute the final shared secret and the security requirements of
-their components.
+<!-- [RLB] Nit: I wouldn't surround these names in backticks -->
+
+<!-- [RLB] Some notes on names:
+* Willing to consider QSF on the grounds that it's from the paper.
+* I don't love "PRE", just because it's not an acronym.  If we're going with
+  QSF, maybe we just call it "Chempat"?
+* Is there some name in the GHP paper for the construction we're using here?
+
+In other words, "We use names from the papers that describe these things" seems
+like a plausible theory, let's just work it through.
+-->
+
+These schemes share a common overall structure, differing mainly in how they
+compute the final shared secret and the security requirements of their
+components.
 
 ## `GHP` {#ghp}
 
-The `GHP` hybrid KEM (`GHP` below) depends on the following constituent
+The `GHP` hybrid KEM depends on the following constituent
 components:
 
 * `KEM_T`: A traditional KEM
@@ -585,8 +613,11 @@ operations.
 The `PRE` KEM is identical to the `GHP` KEM except for the
 shared secret computation.  One additional KDF is required:
 
-<!-- We don't actually know the requirements of _this_ function, we don't have a -->
-<!-- proof or requirements laid out; the only example from Chempat is SHA3-256. -->
+<!-- [DC] We don't actually know the requirements of _this_ function, we don't
+have a proof or requirements laid out; the only example from Chempat is
+SHA3-256. -->
+
+<!-- [RLB] That seems like a fine thing to flag for the RG. -->
 
 * `KeyHash`: A KDF producing byte strings of length `GHP.Nss` (`KeyHash.Nout
   == GHP.Nss`)
@@ -706,7 +737,7 @@ def Decaps(dk, ct):
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
 an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
-`KDF` is secure, and either the elliptic curve is secure, or the post-quantum
+`KDF` is secure, and either the traditional component is secure, or the post-quantum
 KEM is secure: this is the 'hybrid' property.
 
 ## Security Properties {#security-properties}
@@ -815,22 +846,6 @@ The choice of the KDF security level SHOULD be made based on the
 security level provided by the constituent KEMs. The KDF SHOULD
 at least have the security level of the strongest constituent KEM.
 
-<!-- ### Security Requirements for XOFs {#security-xofs} -->
-
-<!-- XOFs accept arbitrary bitstrings as input, and produce a caller-chosen-length -->
-<!-- prefix of an infinite bitstream deterministically defined by the input. -->
-
-<!-- Ought to satisfy the following properties as long as the specified output -->
-<!-- length is sufficiently long to prevent trivial attacks: -->
-
-<!-- - (Preimage-resistant) It is computationally infeasible to find any input -->
-<!--    that maps to any new pre-specified output. -->
-
-<!-- - (Collision-resistant) It is computationally infeasible to find any two -->
-<!--    distinct inputs that map to the same output. -->
-
-<!-- The XOFs used here MUST be modelable as secure random oracle. -->
-
 ### Security Requirements for PRGs {#security-prgs}
 
 The functions used to expand a key seed to multiple key seeds is closer to a
@@ -918,6 +933,11 @@ traditional and a post-quantum KEM.
 
 Not analyzed as part of any security proofs in the literature, and a
 complicatation deemed unnecessary.
+
+<!-- [RLB] It might help with domain separation if we made a registry of labels,
+basicaly just (label, reference), specification required.  Maybe (label, scheme,
+T, PQ, PRG, KDF, reference) if you want to put a summary there.  Though in the
+latter case I would not require uniqueness of the non-label values. -->
 
 --- back
 
