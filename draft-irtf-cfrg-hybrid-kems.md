@@ -195,6 +195,17 @@ informative:
     title: "X-Wing: The Hybrid KEM You’ve Been Looking For"
     target: https://eprint.iacr.org/2024/039.pdf
     date: 2024
+  GMP22:
+    title: "Anonymous, Robust Post-Quantum Public-Key Encryption"
+    target: https://eprint.iacr.org/2021/708.pdf
+    date: 2022
+    author:
+      -
+        name: P. Grubbs
+      -
+        name: V. Maram
+      -
+        name: K.G. Paterson
   # XWING-EC-PROOF: https://github.com/formosa-crypto/formosa-x-wing/
 
 --- abstract
@@ -893,6 +904,10 @@ fixed-length shared secrets.
 # Out of Scope
 
 Considerations that were considered and not included in these designs:
+
+Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness or binding {{GMP22}}, {{CDM23}}
+
+TODO: deniable KEM cite and Kemeleon paper cite
 
 ## More than two component KEMs
 
