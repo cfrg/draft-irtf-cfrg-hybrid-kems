@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 8 December 2025                                           Cisco
-                                                             6 June 2025
+Expires: 13 December 2025                                          Cisco
+                                                            11 June 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 December 2025.
+   This Internet-Draft will expire on 13 December 2025.
 
 Copyright Notice
 
@@ -792,6 +792,11 @@ Table of Contents
    Considerations that were considered and not included in these
    designs:
 
+   Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
+   robustness or binding [GMP22], [CDM23]
+
+   TODO: deniable KEM cite and Kemeleon paper cite
+
 7.1.  More than two component KEMs
 
    Design team decided to restrict the space to only two components, a
@@ -880,6 +885,10 @@ Table of Contents
 
    [GHP2018]  "KEM Combiners", 2018,
               <https://eprint.iacr.org/2018/024.pdf>.
+
+   [GMP22]    Grubbs, P., Maram, V., and K.G. Paterson, "Anonymous,
+              Robust Post-Quantum Public-Key Encryption", 2022,
+              <https://eprint.iacr.org/2021/708.pdf>.
 
    [HKDF]     Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
               Key Derivation Function (HKDF)", RFC 5869,
