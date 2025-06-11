@@ -1,0 +1,43 @@
+name: Test reference implementation
+
+on:
+  push:
+    branches: [ main, vibe-code ]
+    paths:
+      - 'reference-implementation/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'reference-implementation/**'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          reference-implementation/target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('reference-implementation/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+    
+    - name: Run tests
+      run: cargo test
+      working-directory: ./reference-implementation
+      
+    - name: Run tests with all features
+      run: cargo test --all-features
+      working-directory: ./reference-implementation
