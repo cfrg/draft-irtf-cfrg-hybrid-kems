@@ -401,13 +401,15 @@ Table of Contents
       traditional component is a nominal group and the PQ component has
       strong binding properties
 
-   These schemes share a common overall structure, differing mainly in
-   how they compute the final shared secret and the security
-   requirements of their components.
+   In this section, we define several generic constructions for hybrid
+   KEMs.  These constructions share a common overall structure,
+   differing mainly in how they compute the final shared secret and the
+   security requirements of their components.
 
 5.1.  GHP
 
-   The GHP hybrid KEM depends on the following constituent components:
+   The GHP hybrid KEM (GHP below) depends on the following constituent
+   components:
 
    *  KEM_T: A traditional KEM
 
@@ -602,8 +604,8 @@ Table of Contents
    Hybrid KEM constructions aim to provide security by combining two or
    more schemes so that security is preserved if all but one schemes are
    replaced by an arbitrarily bad scheme.  Informally, these hybrid KEMs
-   are secure if the KDF is secure, and either the traditional component
-   is secure, or the post-quantum KEM is secure: this is the 'hybrid'
+   are secure if the KDF is secure, and either the elliptic curve is
+   secure, or the post-quantum KEM is secure: this is the 'hybrid'
    property.
 
 6.1.  Security Properties

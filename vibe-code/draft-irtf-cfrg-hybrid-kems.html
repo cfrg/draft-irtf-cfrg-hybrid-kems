@@ -1713,15 +1713,16 @@ traditional component is a nominal group and the PQ component has strong
 binding properties<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-5-3">These schemes share a common overall structure, differing mainly in how they
-compute the final shared secret and the security requirements of their
-components.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-3">In this section, we define several generic constructions for hybrid
+KEMs. These constructions share a common overall structure, differing mainly
+in how they compute the final shared secret and the security requirements of
+their components.<a href="#section-5-3" class="pilcrow">¶</a></p>
 <div id="ghp">
 <section id="section-5.1">
         <h3 id="name-ghp">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-ghp" class="section-name selfRef"><code>GHP</code></a>
         </h3>
-<p id="section-5.1-1">The <code>GHP</code> hybrid KEM depends on the following constituent
+<p id="section-5.1-1">The <code>GHP</code> hybrid KEM (<code>GHP</code> below) depends on the following constituent
 components:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-2.1">
@@ -1958,7 +1959,7 @@ def Decaps(dk, ct):
 <p id="section-6-1">Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
 an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
-<code>KDF</code> is secure, and either the traditional component is secure, or the post-quantum
+<code>KDF</code> is secure, and either the elliptic curve is secure, or the post-quantum
 KEM is secure: this is the 'hybrid' property.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <div id="security-properties">
 <section id="section-6.1">
