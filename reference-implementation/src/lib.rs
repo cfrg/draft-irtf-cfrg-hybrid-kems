@@ -37,6 +37,11 @@ pub mod error;
 pub mod ghp;
 pub mod pre;
 pub mod qsf;
+pub mod test_impls;
+pub mod test_utils;
+
+#[cfg(test)]
+mod hybrid_tests;
 
 // Re-export commonly used items
 pub use error::HybridKemError;
