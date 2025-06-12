@@ -729,7 +729,7 @@ Table of Contents
    transforms them into uniform outputs.
 
    A PRG is a particular mode of use of a random oracle [BDP_11].
-   Examples used in such a manner include SHA3 and SHAKE.
+   Examples used in such a manner include SHAKE256.
 
 6.4.  Security Properties of Hybrid KEMs
 
