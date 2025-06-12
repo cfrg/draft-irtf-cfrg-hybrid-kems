@@ -17,14 +17,62 @@ pub struct HybridEncapsulationKey {
     pub bytes: Vec<u8>,
 }
 
+impl AsRef<[u8]> for HybridEncapsulationKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridEncapsulationKey {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridEncapsulationKey {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
 /// Hybrid decapsulation key as concatenated byte string
 pub struct HybridDecapsulationKey {
     pub bytes: Vec<u8>,
 }
 
+impl AsRef<[u8]> for HybridDecapsulationKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridDecapsulationKey {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridDecapsulationKey {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
 /// Hybrid ciphertext as concatenated byte string
 pub struct HybridCiphertext {
     pub bytes: Vec<u8>,
+}
+
+impl AsRef<[u8]> for HybridCiphertext {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridCiphertext {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridCiphertext {
+            bytes: bytes.to_vec(),
+        })
+    }
 }
 
 
@@ -89,8 +137,8 @@ where
 
         // Concatenate serialized keys
         let mut ek_bytes = Vec::new();
-        ek_bytes.extend_from_slice(KemT::serialize_encapsulation_key(&ek_t));
-        ek_bytes.extend_from_slice(KemPq::serialize_encapsulation_key(&ek_pq));
+        ek_bytes.extend_from_slice(ek_t.as_ref());
+        ek_bytes.extend_from_slice(ek_pq.as_ref());
 
         let mut dk_bytes = Vec::new();
         dk_bytes.extend_from_slice(KemT::serialize_decapsulation_key(&dk_t));
@@ -246,43 +294,6 @@ where
         Ok((ct_hybrid, ss_hybrid))
     }
 
-    fn serialize_encapsulation_key(ek: &Self::EncapsulationKey) -> &[u8] {
-        &ek.bytes
-    }
-
-    fn serialize_decapsulation_key(dk: &Self::DecapsulationKey) -> &[u8] {
-        &dk.bytes
-    }
-
-    fn serialize_ciphertext(ct: &Self::Ciphertext) -> &[u8] {
-        &ct.bytes
-    }
-
-    fn serialize_shared_secret(ss: &Self::SharedSecret) -> &[u8] {
-        ss.as_slice()
-    }
-
-    fn deserialize_encapsulation_key(bytes: &[u8]) -> Result<Self::EncapsulationKey, Self::Error> {
-        Ok(HybridEncapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_decapsulation_key(bytes: &[u8]) -> Result<Self::DecapsulationKey, Self::Error> {
-        Ok(HybridDecapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_ciphertext(bytes: &[u8]) -> Result<Self::Ciphertext, Self::Error> {
-        Ok(HybridCiphertext {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_shared_secret(bytes: &[u8]) -> Result<Self::SharedSecret, Self::Error> {
-        Ok(bytes.to_vec())
-    }
 
     fn to_encapsulation_key(dk: &Self::DecapsulationKey) -> Result<Self::EncapsulationKey, Self::Error> {
         // Deserialize component decapsulation keys

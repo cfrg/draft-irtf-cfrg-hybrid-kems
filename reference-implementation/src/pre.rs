@@ -240,43 +240,6 @@ where
         Ok((ct_hybrid, ss_hybrid))
     }
 
-    fn serialize_encapsulation_key(ek: &Self::EncapsulationKey) -> &[u8] {
-        &ek.bytes
-    }
-
-    fn serialize_decapsulation_key(dk: &Self::DecapsulationKey) -> &[u8] {
-        &dk.bytes
-    }
-
-    fn serialize_ciphertext(ct: &Self::Ciphertext) -> &[u8] {
-        &ct.bytes
-    }
-
-    fn serialize_shared_secret(ss: &Self::SharedSecret) -> &[u8] {
-        ss.as_slice()
-    }
-
-    fn deserialize_encapsulation_key(bytes: &[u8]) -> Result<Self::EncapsulationKey, Self::Error> {
-        Ok(HybridEncapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_decapsulation_key(bytes: &[u8]) -> Result<Self::DecapsulationKey, Self::Error> {
-        Ok(HybridDecapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_ciphertext(bytes: &[u8]) -> Result<Self::Ciphertext, Self::Error> {
-        Ok(HybridCiphertext {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_shared_secret(bytes: &[u8]) -> Result<Self::SharedSecret, Self::Error> {
-        Ok(bytes.to_vec())
-    }
 
     fn to_encapsulation_key(dk: &Self::DecapsulationKey) -> Result<Self::EncapsulationKey, Self::Error> {
         // Deserialize component decapsulation keys

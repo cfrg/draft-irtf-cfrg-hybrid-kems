@@ -52,16 +52,16 @@ pub trait Kem {
     const SHARED_SECRET_LENGTH: usize;
 
     /// Public encapsulation key type
-    type EncapsulationKey;
+    type EncapsulationKey: AsRef<[u8]> + for<'a> TryFrom<&'a [u8]>;
     
     /// Secret decapsulation key type
-    type DecapsulationKey;
+    type DecapsulationKey: AsRef<[u8]> + for<'a> TryFrom<&'a [u8]>;
     
     /// Ciphertext type
-    type Ciphertext;
+    type Ciphertext: AsRef<[u8]> + for<'a> TryFrom<&'a [u8]>;
     
     /// Shared secret type
-    type SharedSecret;
+    type SharedSecret: AsRef<[u8]> + for<'a> TryFrom<&'a [u8]>;
     
     /// Error type for KEM operations
     type Error;
@@ -91,30 +91,6 @@ pub trait Kem {
     /// Takes a public encapsulation key and randomness, returns (ciphertext, shared_secret)
     fn encaps_derand(ek: &Self::EncapsulationKey, randomness: &[u8]) -> Result<(Self::Ciphertext, Self::SharedSecret), Self::Error>;
     
-    /// Serialize encapsulation key to bytes
-    fn serialize_encapsulation_key(ek: &Self::EncapsulationKey) -> &[u8];
-    
-    /// Serialize decapsulation key to bytes
-    fn serialize_decapsulation_key(dk: &Self::DecapsulationKey) -> &[u8];
-    
-    /// Serialize ciphertext to bytes
-    fn serialize_ciphertext(ct: &Self::Ciphertext) -> &[u8];
-    
-    /// Serialize shared secret to bytes
-    fn serialize_shared_secret(ss: &Self::SharedSecret) -> &[u8];
-    
-    /// Deserialize encapsulation key from bytes
-    fn deserialize_encapsulation_key(bytes: &[u8]) -> Result<Self::EncapsulationKey, Self::Error>;
-    
-    /// Deserialize decapsulation key from bytes
-    fn deserialize_decapsulation_key(bytes: &[u8]) -> Result<Self::DecapsulationKey, Self::Error>;
-    
-    /// Deserialize ciphertext from bytes
-    fn deserialize_ciphertext(bytes: &[u8]) -> Result<Self::Ciphertext, Self::Error>;
-    
-    /// Deserialize shared secret from bytes
-    fn deserialize_shared_secret(bytes: &[u8]) -> Result<Self::SharedSecret, Self::Error>;
-    
     /// Derive encapsulation key from decapsulation key
     fn to_encapsulation_key(dk: &Self::DecapsulationKey) -> Result<Self::EncapsulationKey, Self::Error>;
 }
@@ -137,10 +113,10 @@ pub trait NominalGroup {
     const SHARED_SECRET_LENGTH: usize;
 
     /// Scalar type
-    type Scalar;
+    type Scalar: AsRef<[u8]> + for<'a> TryFrom<&'a [u8]>;
     
     /// Group element type
-    type Element;
+    type Element: AsRef<[u8]> + for<'a> TryFrom<&'a [u8]>;
     
     /// Error type
     type Error;
@@ -156,18 +132,6 @@ pub trait NominalGroup {
 
     /// Extract a shared secret from a group element
     fn element_to_shared_secret(p: &Self::Element) -> Vec<u8>;
-
-    /// Serialize scalar to bytes
-    fn serialize_scalar(s: &Self::Scalar) -> &[u8];
-    
-    /// Serialize element to bytes
-    fn serialize_element(e: &Self::Element) -> &[u8];
-    
-    /// Deserialize scalar from bytes
-    fn deserialize_scalar(bytes: &[u8]) -> Result<Self::Scalar, Self::Error>;
-    
-    /// Deserialize element from bytes
-    fn deserialize_element(bytes: &[u8]) -> Result<Self::Element, Self::Error>;
 }
 
 /// Hybrid KEM Label trait
