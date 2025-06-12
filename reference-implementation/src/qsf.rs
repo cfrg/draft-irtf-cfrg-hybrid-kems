@@ -5,6 +5,7 @@ use crate::error::HybridKemError;
 /// 
 /// Optimized construction for the case where the traditional component is a 
 /// nominal group and the PQ component has strong binding properties.
+#[derive(Default)]
 pub struct QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl> {
     _phantom: std::marker::PhantomData<(GroupT, KemPq, KdfImpl, PrgImpl)>,
 }
@@ -25,20 +26,6 @@ pub struct QsfCiphertext {
 }
 
 
-impl<GroupT, KemPq, KdfImpl, PrgImpl> QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl>
-where
-    GroupT: NominalGroup,
-    KemPq: Kem,
-    KdfImpl: Kdf,
-    PrgImpl: Prg,
-{
-    /// Create a new QSF Hybrid KEM instance
-    pub fn new() -> Self {
-        Self {
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
 
 impl<GroupT, KemPq, KdfImpl, PrgImpl> Kem for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl>
 where

@@ -7,25 +7,11 @@ use crate::error::HybridKemError;
 /// Performance optimization of GHP for cases where encapsulation keys are large
 /// and frequently reused. Uses an additional KeyHash KDF to pre-hash the hybrid
 /// encapsulation key.
+#[derive(Default)]
 pub struct PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl> {
     _phantom: std::marker::PhantomData<(KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl)>,
 }
 
-impl<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl> PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl>
-where
-    KemT: Kem,
-    KemPq: Kem,
-    KdfImpl: Kdf,
-    PrgImpl: Prg,
-    KeyHashImpl: Kdf,
-{
-    /// Create a new PRE Hybrid KEM instance
-    pub fn new() -> Self {
-        Self {
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
 
 impl<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl> Kem for PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl>
 where

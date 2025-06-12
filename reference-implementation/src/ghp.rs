@@ -5,25 +5,12 @@ use crate::error::HybridKemError;
 /// 
 /// Generic hybrid KEM construction based on the GHP scheme described in
 /// draft-irtf-cfrg-hybrid-kems, combining a traditional KEM and a post-quantum KEM.
+#[derive(Default)]
 pub struct GhpHybridKem<KemT, KemPq, KdfImpl, PrgImpl> {
     _phantom: std::marker::PhantomData<(KemT, KemPq, KdfImpl, PrgImpl)>,
 }
 
 
-impl<KemT, KemPq, KdfImpl, PrgImpl> GhpHybridKem<KemT, KemPq, KdfImpl, PrgImpl>
-where
-    KemT: Kem,
-    KemPq: Kem,
-    KdfImpl: Kdf,
-    PrgImpl: Prg,
-{
-    /// Create a new GHP Hybrid KEM instance
-    pub fn new() -> Self {
-        Self {
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
 
 /// Hybrid encapsulation key as concatenated byte string
 pub struct HybridEncapsulationKey {
