@@ -15,14 +15,62 @@ pub struct QsfEncapsulationKey {
     pub bytes: Vec<u8>,
 }
 
+impl AsRef<[u8]> for QsfEncapsulationKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for QsfEncapsulationKey {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(QsfEncapsulationKey {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
 /// QSF decapsulation key combining scalar and post-quantum key
 pub struct QsfDecapsulationKey {
     pub bytes: Vec<u8>,
 }
 
+impl AsRef<[u8]> for QsfDecapsulationKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for QsfDecapsulationKey {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(QsfDecapsulationKey {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
 /// QSF ciphertext combining group element and post-quantum ciphertext
 pub struct QsfCiphertext {
     pub bytes: Vec<u8>,
+}
+
+impl AsRef<[u8]> for QsfCiphertext {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for QsfCiphertext {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(QsfCiphertext {
+            bytes: bytes.to_vec(),
+        })
+    }
 }
 
 
@@ -246,43 +294,6 @@ where
         Ok((ct_hybrid, ss_hybrid))
     }
 
-    fn serialize_encapsulation_key(ek: &Self::EncapsulationKey) -> &[u8] {
-        &ek.bytes
-    }
-
-    fn serialize_decapsulation_key(dk: &Self::DecapsulationKey) -> &[u8] {
-        &dk.bytes
-    }
-
-    fn serialize_ciphertext(ct: &Self::Ciphertext) -> &[u8] {
-        &ct.bytes
-    }
-
-    fn serialize_shared_secret(ss: &Self::SharedSecret) -> &[u8] {
-        ss.as_slice()
-    }
-
-    fn deserialize_encapsulation_key(bytes: &[u8]) -> Result<Self::EncapsulationKey, Self::Error> {
-        Ok(QsfEncapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_decapsulation_key(bytes: &[u8]) -> Result<Self::DecapsulationKey, Self::Error> {
-        Ok(QsfDecapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_ciphertext(bytes: &[u8]) -> Result<Self::Ciphertext, Self::Error> {
-        Ok(QsfCiphertext {
-            bytes: bytes.to_vec(),
-        })
-    }
-
-    fn deserialize_shared_secret(bytes: &[u8]) -> Result<Self::SharedSecret, Self::Error> {
-        Ok(bytes.to_vec())
-    }
 
     fn to_encapsulation_key(dk: &Self::DecapsulationKey) -> Result<Self::EncapsulationKey, Self::Error> {
         // Deserialize component decapsulation keys

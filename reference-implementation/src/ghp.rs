@@ -141,8 +141,8 @@ where
         ek_bytes.extend_from_slice(ek_pq.as_ref());
 
         let mut dk_bytes = Vec::new();
-        dk_bytes.extend_from_slice(KemT::serialize_decapsulation_key(&dk_t));
-        dk_bytes.extend_from_slice(KemPq::serialize_decapsulation_key(&dk_pq));
+        dk_bytes.extend_from_slice(dk_t.as_ref());
+        dk_bytes.extend_from_slice(dk_pq.as_ref());
 
         let ek_hybrid = HybridEncapsulationKey { bytes: ek_bytes };
         let dk_hybrid = HybridDecapsulationKey { bytes: dk_bytes };

@@ -69,12 +69,92 @@ pub struct TestEncapsulationKey {
     pub bytes: [u8; 32],
 }
 
+impl AsRef<[u8]> for TestEncapsulationKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for TestEncapsulationKey {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 32 {
+            return Err(());
+        }
+        let mut key_bytes = [0u8; 32];
+        key_bytes.copy_from_slice(bytes);
+        Ok(TestEncapsulationKey { bytes: key_bytes })
+    }
+}
+
 pub struct TestDecapsulationKey {
     pub bytes: [u8; 16],
 }
 
+impl AsRef<[u8]> for TestDecapsulationKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for TestDecapsulationKey {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 16 {
+            return Err(());
+        }
+        let mut key_bytes = [0u8; 16];
+        key_bytes.copy_from_slice(bytes);
+        Ok(TestDecapsulationKey { bytes: key_bytes })
+    }
+}
+
 pub struct TestCiphertext {
     pub bytes: [u8; 48],
+}
+
+impl AsRef<[u8]> for TestCiphertext {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for TestCiphertext {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 48 {
+            return Err(());
+        }
+        let mut ct_bytes = [0u8; 48];
+        ct_bytes.copy_from_slice(bytes);
+        Ok(TestCiphertext { bytes: ct_bytes })
+    }
+}
+
+pub struct TestSharedSecret {
+    pub bytes: [u8; 32],
+}
+
+impl AsRef<[u8]> for TestSharedSecret {
+    fn as_ref(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for TestSharedSecret {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 32 {
+            return Err(());
+        }
+        let mut array = [0u8; 32];
+        array.copy_from_slice(bytes);
+        Ok(TestSharedSecret { bytes: array })
+    }
 }
 
 impl Kem for TestKem {
@@ -87,7 +167,7 @@ impl Kem for TestKem {
     type EncapsulationKey = TestEncapsulationKey;
     type DecapsulationKey = TestDecapsulationKey;
     type Ciphertext = TestCiphertext;
-    type SharedSecret = [u8; 32];
+    type SharedSecret = TestSharedSecret;
     type Error = ();
     
     fn generate_key_pair<R: CryptoRng>(rng: &mut R) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), Self::Error> {
@@ -148,7 +228,7 @@ impl Kem for TestKem {
             shared_secret[i] = pk_byte.wrapping_add(rand_byte).wrapping_mul(5) ^ 0xAA;
         }
         
-        Ok((TestCiphertext { bytes: ct_bytes }, shared_secret))
+        Ok((TestCiphertext { bytes: ct_bytes }, TestSharedSecret { bytes: shared_secret }))
     }
     
     fn decaps(dk: &Self::DecapsulationKey, ct: &Self::Ciphertext) -> Result<Self::SharedSecret, Self::Error> {
@@ -169,60 +249,9 @@ impl Kem for TestKem {
             shared_secret[i] = pk_byte.wrapping_add(rand_byte).wrapping_mul(5) ^ 0xAA;
         }
         
-        Ok(shared_secret)
+        Ok(TestSharedSecret { bytes: shared_secret })
     }
     
-    fn serialize_encapsulation_key(ek: &Self::EncapsulationKey) -> &[u8] {
-        &ek.bytes
-    }
-    
-    fn serialize_decapsulation_key(dk: &Self::DecapsulationKey) -> &[u8] {
-        &dk.bytes
-    }
-    
-    fn serialize_ciphertext(ct: &Self::Ciphertext) -> &[u8] {
-        &ct.bytes
-    }
-    
-    fn serialize_shared_secret(ss: &Self::SharedSecret) -> &[u8] {
-        ss
-    }
-    
-    fn deserialize_encapsulation_key(bytes: &[u8]) -> Result<Self::EncapsulationKey, Self::Error> {
-        if bytes.len() != Self::ENCAPSULATION_KEY_LENGTH {
-            return Err(());
-        }
-        let mut key_bytes = [0u8; 32];
-        key_bytes.copy_from_slice(bytes);
-        Ok(TestEncapsulationKey { bytes: key_bytes })
-    }
-    
-    fn deserialize_decapsulation_key(bytes: &[u8]) -> Result<Self::DecapsulationKey, Self::Error> {
-        if bytes.len() != Self::DECAPSULATION_KEY_LENGTH {
-            return Err(());
-        }
-        let mut key_bytes = [0u8; 16];
-        key_bytes.copy_from_slice(bytes);
-        Ok(TestDecapsulationKey { bytes: key_bytes })
-    }
-    
-    fn deserialize_ciphertext(bytes: &[u8]) -> Result<Self::Ciphertext, Self::Error> {
-        if bytes.len() != Self::CIPHERTEXT_LENGTH {
-            return Err(());
-        }
-        let mut ct_bytes = [0u8; 48];
-        ct_bytes.copy_from_slice(bytes);
-        Ok(TestCiphertext { bytes: ct_bytes })
-    }
-    
-    fn deserialize_shared_secret(bytes: &[u8]) -> Result<Self::SharedSecret, Self::Error> {
-        if bytes.len() != Self::SHARED_SECRET_LENGTH {
-            return Err(());
-        }
-        let mut ss = [0u8; 32];
-        ss.copy_from_slice(bytes);
-        Ok(ss)
-    }
     
     fn to_encapsulation_key(dk: &Self::DecapsulationKey) -> Result<Self::EncapsulationKey, Self::Error> {
         // Reconstruct public key from private key
@@ -241,8 +270,50 @@ pub struct TestScalar {
     pub value: u64,
 }
 
+impl AsRef<[u8]> for TestScalar {
+    fn as_ref(&self) -> &[u8] {
+        // Return the value as bytes (little-endian)
+        unsafe { std::slice::from_raw_parts(&self.value as *const u64 as *const u8, 8) }
+    }
+}
+
+impl TryFrom<&[u8]> for TestScalar {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 8 {
+            return Err(());
+        }
+        let mut value_bytes = [0u8; 8];
+        value_bytes.copy_from_slice(bytes);
+        let value = u64::from_le_bytes(value_bytes);
+        Ok(TestScalar { value })
+    }
+}
+
 pub struct TestElement {
     pub value: u64,
+}
+
+impl AsRef<[u8]> for TestElement {
+    fn as_ref(&self) -> &[u8] {
+        // Return the value as bytes (little-endian)
+        unsafe { std::slice::from_raw_parts(&self.value as *const u64 as *const u8, 8) }
+    }
+}
+
+impl TryFrom<&[u8]> for TestElement {
+    type Error = ();
+    
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 8 {
+            return Err(());
+        }
+        let mut value_bytes = [0u8; 8];
+        value_bytes.copy_from_slice(bytes);
+        let value = u64::from_le_bytes(value_bytes);
+        Ok(TestElement { value })
+    }
 }
 
 impl NominalGroup for TestGroup {
@@ -310,50 +381,6 @@ impl NominalGroup for TestGroup {
         shared_secret
     }
     
-    fn serialize_scalar(s: &Self::Scalar) -> &[u8] {
-        // This is a simplification - in practice we'd need proper lifetime management
-        // For test purposes, we'll use a different approach in the actual serialization
-        unsafe {
-            std::slice::from_raw_parts(
-                &s.value as *const u64 as *const u8,
-                8
-            )
-        }
-    }
-    
-    fn serialize_element(e: &Self::Element) -> &[u8] {
-        // This is a simplification - in practice we'd need proper lifetime management
-        unsafe {
-            std::slice::from_raw_parts(
-                &e.value as *const u64 as *const u8,
-                8
-            )
-        }
-    }
-    
-    fn deserialize_scalar(bytes: &[u8]) -> Result<Self::Scalar, Self::Error> {
-        if bytes.len() != Self::SCALAR_LENGTH {
-            return Err(());
-        }
-        
-        let mut value_bytes = [0u8; 8];
-        value_bytes.copy_from_slice(bytes);
-        let value = u64::from_le_bytes(value_bytes);
-        
-        Ok(TestScalar { value })
-    }
-    
-    fn deserialize_element(bytes: &[u8]) -> Result<Self::Element, Self::Error> {
-        if bytes.len() != Self::ELEMENT_LENGTH {
-            return Err(());
-        }
-        
-        let mut value_bytes = [0u8; 8];
-        value_bytes.copy_from_slice(bytes);
-        let value = u64::from_le_bytes(value_bytes);
-        
-        Ok(TestElement { value })
-    }
 }
 
 #[cfg(test)]

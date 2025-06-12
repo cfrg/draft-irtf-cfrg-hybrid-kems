@@ -72,25 +72,25 @@ where
     let (ek, dk) = K::generate_key_pair(rng).expect("Key generation should succeed");
     
     // Test serialization lengths
-    let ek_bytes = K::serialize_encapsulation_key(&ek);
-    let dk_bytes = K::serialize_decapsulation_key(&dk);
+    let ek_bytes = ek.as_ref();
+    let dk_bytes = dk.as_ref();
     
     assert_eq!(ek_bytes.len(), K::ENCAPSULATION_KEY_LENGTH, "Encapsulation key serialization length mismatch");
     assert_eq!(dk_bytes.len(), K::DECAPSULATION_KEY_LENGTH, "Decapsulation key serialization length mismatch");
     
     // Test deserialization roundtrip
-    let ek2 = K::deserialize_encapsulation_key(ek_bytes).expect("Encapsulation key deserialization should succeed");
-    let dk2 = K::deserialize_decapsulation_key(dk_bytes).expect("Decapsulation key deserialization should succeed");
+    let ek2 = K::EncapsulationKey::try_from(ek_bytes).expect("Encapsulation key deserialization should succeed");
+    let dk2 = K::DecapsulationKey::try_from(dk_bytes).expect("Decapsulation key deserialization should succeed");
     
-    let ek2_bytes = K::serialize_encapsulation_key(&ek2);
-    let dk2_bytes = K::serialize_decapsulation_key(&dk2);
+    let ek2_bytes = ek2.as_ref();
+    let dk2_bytes = dk2.as_ref();
     
     assert_eq!(ek_bytes, ek2_bytes, "Encapsulation key serialization should be stable");
     assert_eq!(dk_bytes, dk2_bytes, "Decapsulation key serialization should be stable");
     
     // Test to_encapsulation_key
     let ek3 = K::to_encapsulation_key(&dk).expect("to_encapsulation_key should succeed");
-    let ek3_bytes = K::serialize_encapsulation_key(&ek3);
+    let ek3_bytes = ek3.as_ref();
     assert_eq!(ek_bytes, ek3_bytes, "to_encapsulation_key should produce consistent result");
 }
 
@@ -109,10 +109,10 @@ where
     let (ek1, dk1) = K::derive_key_pair(&seed).expect("Key derivation should succeed");
     let (ek2, dk2) = K::derive_key_pair(&seed).expect("Key derivation should be deterministic");
     
-    let ek1_bytes = K::serialize_encapsulation_key(&ek1);
-    let ek2_bytes = K::serialize_encapsulation_key(&ek2);
-    let dk1_bytes = K::serialize_decapsulation_key(&dk1);
-    let dk2_bytes = K::serialize_decapsulation_key(&dk2);
+    let ek1_bytes = ek1.as_ref();
+    let ek2_bytes = ek2.as_ref();
+    let dk1_bytes = dk1.as_ref();
+    let dk2_bytes = dk2.as_ref();
     
     assert_eq!(ek1_bytes, ek2_bytes, "Deterministic key derivation should produce same encapsulation key");
     assert_eq!(dk1_bytes, dk2_bytes, "Deterministic key derivation should produce same decapsulation key");
@@ -130,22 +130,22 @@ where
     let (ct, ss1) = K::encaps(&ek, rng).expect("Encapsulation should succeed");
     
     // Test serialization lengths
-    let ct_bytes = K::serialize_ciphertext(&ct);
-    let ss1_bytes = K::serialize_shared_secret(&ss1);
+    let ct_bytes = ct.as_ref();
+    let ss1_bytes = ss1.as_ref();
     
     assert_eq!(ct_bytes.len(), K::CIPHERTEXT_LENGTH, "Ciphertext serialization length mismatch");
     assert_eq!(ss1_bytes.len(), K::SHARED_SECRET_LENGTH, "Shared secret serialization length mismatch");
     
     // Test decapsulation
     let ss2 = K::decaps(&dk, &ct).expect("Decapsulation should succeed");
-    let ss2_bytes = K::serialize_shared_secret(&ss2);
+    let ss2_bytes = ss2.as_ref();
     
     assert_eq!(ss1_bytes, ss2_bytes, "Encapsulation and decapsulation should produce same shared secret");
     
     // Test ciphertext deserialization roundtrip
-    let ct2 = K::deserialize_ciphertext(ct_bytes).expect("Ciphertext deserialization should succeed");
+    let ct2 = K::Ciphertext::try_from(ct_bytes).expect("Ciphertext deserialization should succeed");
     let ss3 = K::decaps(&dk, &ct2).expect("Decapsulation with deserialized ciphertext should succeed");
-    let ss3_bytes = K::serialize_shared_secret(&ss3);
+    let ss3_bytes = ss3.as_ref();
     
     assert_eq!(ss1_bytes, ss3_bytes, "Deserialized ciphertext should work correctly");
 }
@@ -165,17 +165,17 @@ where
     let (ct1, ss1) = K::encaps_derand(&ek, &randomness).expect("Deterministic encapsulation should succeed");
     let (ct2, ss2) = K::encaps_derand(&ek, &randomness).expect("Deterministic encapsulation should be repeatable");
     
-    let ct1_bytes = K::serialize_ciphertext(&ct1);
-    let ct2_bytes = K::serialize_ciphertext(&ct2);
-    let ss1_bytes = K::serialize_shared_secret(&ss1);
-    let ss2_bytes = K::serialize_shared_secret(&ss2);
+    let ct1_bytes = ct1.as_ref();
+    let ct2_bytes = ct2.as_ref();
+    let ss1_bytes = ss1.as_ref();
+    let ss2_bytes = ss2.as_ref();
     
     assert_eq!(ct1_bytes, ct2_bytes, "Deterministic encapsulation should produce same ciphertext");
     assert_eq!(ss1_bytes, ss2_bytes, "Deterministic encapsulation should produce same shared secret");
     
     // Test that it decapsulates correctly
     let ss3 = K::decaps(&dk, &ct1).expect("Decapsulation should succeed");
-    let ss3_bytes = K::serialize_shared_secret(&ss3);
+    let ss3_bytes = ss3.as_ref();
     
     assert_eq!(ss1_bytes, ss3_bytes, "Deterministic encapsulation should be compatible with decapsulation");
 }
@@ -187,7 +187,7 @@ where
 {
     // Test generator
     let generator = G::generator();
-    let gen_bytes = G::serialize_element(&generator);
+    let gen_bytes = generator.as_ref();
     assert_eq!(gen_bytes.len(), G::ELEMENT_LENGTH, "Generator serialization length mismatch");
     
     // Test scalar generation
@@ -197,12 +197,12 @@ where
     }
     
     let scalar = G::random_scalar(&seed).expect("Scalar generation should succeed");
-    let scalar_bytes = G::serialize_scalar(&scalar);
+    let scalar_bytes = scalar.as_ref();
     assert_eq!(scalar_bytes.len(), G::SCALAR_LENGTH, "Scalar serialization length mismatch");
     
     // Test exponentiation
     let element = G::exp(&generator, &scalar);
-    let elem_bytes = G::serialize_element(&element);
+    let elem_bytes = element.as_ref();
     assert_eq!(elem_bytes.len(), G::ELEMENT_LENGTH, "Element serialization length mismatch");
     
     // Test shared secret extraction
@@ -218,25 +218,25 @@ where
     // Test scalar serialization roundtrip
     let seed = vec![42u8; G::SEED_LENGTH];
     let scalar1 = G::random_scalar(&seed).expect("Scalar generation should succeed");
-    let scalar_bytes = G::serialize_scalar(&scalar1);
-    let scalar2 = G::deserialize_scalar(scalar_bytes).expect("Scalar deserialization should succeed");
-    let scalar2_bytes = G::serialize_scalar(&scalar2);
+    let scalar_bytes = scalar1.as_ref();
+    let scalar2 = G::Scalar::try_from(scalar_bytes).expect("Scalar deserialization should succeed");
+    let scalar2_bytes = scalar2.as_ref();
     
     assert_eq!(scalar_bytes, scalar2_bytes, "Scalar serialization should be stable");
     
     // Test element serialization roundtrip
     let generator = G::generator();
-    let gen_bytes = G::serialize_element(&generator);
-    let gen2 = G::deserialize_element(gen_bytes).expect("Element deserialization should succeed");
-    let gen2_bytes = G::serialize_element(&gen2);
+    let gen_bytes = generator.as_ref();
+    let gen2 = G::Element::try_from(gen_bytes).expect("Element deserialization should succeed");
+    let gen2_bytes = gen2.as_ref();
     
     assert_eq!(gen_bytes, gen2_bytes, "Element serialization should be stable");
     
     // Test exponentiation result serialization
     let element1 = G::exp(&generator, &scalar1);
-    let elem_bytes = G::serialize_element(&element1);
-    let element2 = G::deserialize_element(elem_bytes).expect("Element deserialization should succeed");
-    let elem2_bytes = G::serialize_element(&element2);
+    let elem_bytes = element1.as_ref();
+    let element2 = G::Element::try_from(elem_bytes).expect("Element deserialization should succeed");
+    let elem2_bytes = element2.as_ref();
     
     assert_eq!(elem_bytes, elem2_bytes, "Exponentiation result serialization should be stable");
 }
@@ -270,8 +270,8 @@ where
     
     // Test deterministic scalar generation
     let scalar_a2 = G::random_scalar(&seed_a).expect("Scalar generation should be deterministic");
-    let scalar_a_bytes = G::serialize_scalar(&scalar_a);
-    let scalar_a2_bytes = G::serialize_scalar(&scalar_a2);
+    let scalar_a_bytes = scalar_a.as_ref();
+    let scalar_a2_bytes = scalar_a2.as_ref();
     
     assert_eq!(scalar_a_bytes, scalar_a2_bytes, "Scalar generation should be deterministic");
 }
