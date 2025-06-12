@@ -32,17 +32,17 @@
 //! assert_eq!(ss1, ss2);
 //! ```
 
-pub mod traits;
 pub mod error;
 pub mod ghp;
 pub mod pre;
 pub mod qsf;
 pub mod test_impls;
 pub mod test_utils;
+pub mod traits;
 
 #[cfg(test)]
 mod hybrid_tests;
 
 // Re-export commonly used items
 pub use error::HybridKemError;
-pub use traits::{Kem, Kdf, Prg, NominalGroup, HybridKemLabel};
+pub use traits::{HybridKemLabel, Kdf, Kem, NominalGroup, Prg};

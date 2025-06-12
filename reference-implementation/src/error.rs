@@ -1,13 +1,19 @@
+use std::convert::Infallible;
 use std::error::Error;
 use std::fmt;
-use std::convert::Infallible;
 
 /// Hybrid KEM error type
-/// 
+///
 /// Generic error type that can be used by all hybrid KEM implementations
 /// (GHP, PRE, QSF) to handle errors from their constituent components.
 #[derive(Debug)]
-pub enum HybridKemError<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError = Infallible> {
+pub enum HybridKemError<
+    TraditionalError,
+    PostQuantumError,
+    KdfError,
+    PrgError,
+    KeyHashError = Infallible,
+> {
     /// Error from traditional component (KEM or nominal group)
     Traditional(TraditionalError),
     /// Error from post-quantum KEM component
@@ -24,7 +30,7 @@ pub enum HybridKemError<TraditionalError, PostQuantumError, KdfError, PrgError, 
     InvalidInputLength,
 }
 
-impl<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError> fmt::Display 
+impl<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError> fmt::Display
     for HybridKemError<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError>
 where
     TraditionalError: fmt::Display,
@@ -46,7 +52,7 @@ where
     }
 }
 
-impl<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError> Error 
+impl<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError> Error
     for HybridKemError<TraditionalError, PostQuantumError, KdfError, PrgError, KeyHashError>
 where
     TraditionalError: Error + 'static,
