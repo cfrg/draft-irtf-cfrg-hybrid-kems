@@ -846,7 +846,7 @@ and extend it; an RNG takes sources of noisy data and transforms them into
 uniform outputs.
 
 A PRG is a particular mode of use of a random oracle {{BDP+11}}.  Examples
-used in such a manner include SHA3 and SHAKE.
+used in such a manner include SHAKE256.
 
 ## Security Properties of Hybrid KEMs
 
@@ -905,7 +905,8 @@ fixed-length shared secrets.
 
 Considerations that were considered and not included in these designs:
 
-Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness or binding {{GMP22}}, {{CDM23}}
+Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
+or binding {{GMP22}}, {{CDM23}}
 
 TODO: deniable KEM cite and Kemeleon paper cite
 
