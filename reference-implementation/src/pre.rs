@@ -1,4 +1,4 @@
-use crate::traits::{Kem, Kdf, Prg};
+use crate::traits::{Kem, Kdf, Prg, HybridKemLabel};
 use crate::ghp::{HybridEncapsulationKey, HybridDecapsulationKey, HybridCiphertext};
 use crate::error::HybridKemError;
 
@@ -34,6 +34,7 @@ where
     KdfImpl: Kdf,
     PrgImpl: Prg,
     KeyHashImpl: Kdf,
+    Self: HybridKemLabel,
 {
     // Same constants as GHP
     const SEED_LENGTH: usize = {
@@ -141,8 +142,7 @@ where
         kdf_input.extend_from_slice(ct_pq_bytes);
         kdf_input.extend_from_slice(ct_t_bytes);
         kdf_input.extend_from_slice(&ekh);
-        // Note: In a real implementation, the label would be provided via configuration
-        // kdf_input.extend_from_slice(&config.label);
+        kdf_input.extend_from_slice(Self::LABEL);
         
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(HybridKemError::Kdf)?;
 

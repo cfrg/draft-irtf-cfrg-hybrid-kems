@@ -1,4 +1,4 @@
-use crate::traits::{Kem, Kdf, Prg};
+use crate::traits::{Kem, Kdf, Prg, HybridKemLabel};
 use crate::error::HybridKemError;
 
 /// GHP Hybrid KEM implementation
@@ -9,11 +9,6 @@ pub struct GhpHybridKem<KemT, KemPq, KdfImpl, PrgImpl> {
     _phantom: std::marker::PhantomData<(KemT, KemPq, KdfImpl, PrgImpl)>,
 }
 
-/// Configuration for GHP Hybrid KEM
-pub struct GhpConfig {
-    /// Label used to identify the specific combination of constituents
-    pub label: Vec<u8>,
-}
 
 impl<KemT, KemPq, KdfImpl, PrgImpl> GhpHybridKem<KemT, KemPq, KdfImpl, PrgImpl>
 where
@@ -52,6 +47,7 @@ where
     KemPq: Kem,
     KdfImpl: Kdf,
     PrgImpl: Prg,
+    Self: HybridKemLabel,
 {
     // Hybrid constants derived from constituent KEMs
     const SEED_LENGTH: usize = {
@@ -156,8 +152,7 @@ where
         kdf_input.extend_from_slice(ct_t_bytes);
         kdf_input.extend_from_slice(ek_pq_bytes);
         kdf_input.extend_from_slice(ek_t_bytes);
-        // Note: In a real implementation, the label would be provided via configuration
-        // kdf_input.extend_from_slice(&config.label);
+        kdf_input.extend_from_slice(Self::LABEL);
         
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(HybridKemError::Kdf)?;
 

@@ -169,3 +169,12 @@ pub trait NominalGroup {
     /// Deserialize element from bytes
     fn deserialize_element(bytes: &[u8]) -> Result<Self::Element, Self::Error>;
 }
+
+/// Hybrid KEM Label trait
+/// 
+/// Provides a label to identify the specific combination of constituent algorithms
+/// used in a hybrid KEM construction.
+pub trait HybridKemLabel {
+    /// Label used to identify the specific combination of constituents
+    const LABEL: &'static [u8];
+}

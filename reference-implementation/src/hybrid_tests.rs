@@ -8,7 +8,7 @@
 mod tests {
     use crate::test_impls::{TestKem, TestKdf, TestPrg, TestGroup};
     use crate::test_utils::test_kem_all;
-    use crate::traits::{Kem, NominalGroup};
+    use crate::traits::{Kem, NominalGroup, HybridKemLabel};
     use crate::ghp::GhpHybridKem;
     use crate::pre::PreHybridKem;
     use crate::qsf::QsfHybridKem;
@@ -18,6 +18,19 @@ mod tests {
     type GhpTestKem = GhpHybridKem<TestKem, TestKem, TestKdf, TestPrg>;
     type PreTestKem = PreHybridKem<TestKem, TestKem, TestKdf, TestPrg, TestKdf>;
     type QsfTestKem = QsfHybridKem<TestGroup, TestKem, TestKdf, TestPrg>;
+
+    // HybridKemLabel implementations for test types
+    impl HybridKemLabel for GhpTestKem {
+        const LABEL: &'static [u8] = b"GHP-Test-Label";
+    }
+
+    impl HybridKemLabel for PreTestKem {
+        const LABEL: &'static [u8] = b"PRE-Test-Label";
+    }
+
+    impl HybridKemLabel for QsfTestKem {
+        const LABEL: &'static [u8] = b"QSF-Test-Label";
+    }
 
     #[test]
     fn test_ghp_hybrid_kem() {

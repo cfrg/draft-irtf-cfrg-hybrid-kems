@@ -1,4 +1,4 @@
-use crate::traits::{Kem, Kdf, Prg, NominalGroup};
+use crate::traits::{Kem, Kdf, Prg, NominalGroup, HybridKemLabel};
 use crate::error::HybridKemError;
 
 /// QSF Hybrid KEM implementation
@@ -46,6 +46,7 @@ where
     KemPq: Kem,
     KdfImpl: Kdf,
     PrgImpl: Prg,
+    Self: HybridKemLabel,
 {
     // Hybrid constants derived from group and KEM
     const SEED_LENGTH: usize = {
@@ -157,8 +158,7 @@ where
         kdf_input.extend_from_slice(&ss_t);
         kdf_input.extend_from_slice(ct_t_bytes);
         kdf_input.extend_from_slice(ek_t_bytes);
-        // Note: In a real implementation, the label would be provided via configuration
-        // kdf_input.extend_from_slice(&config.label);
+        kdf_input.extend_from_slice(Self::LABEL);
         
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(HybridKemError::Kdf)?;
 
