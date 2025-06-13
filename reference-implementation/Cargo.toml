@@ -1,0 +1,18 @@
+[package]
+name = "hybrid-kem-ref"
+version = "0.1.0"
+edition = "2021"
+description = "Reference implementation of hybrid KEMs from draft-irtf-cfrg-hybrid-kems"
+license = "MIT OR Apache-2.0"
+authors = ["Deirdre Connolly <durumcrustulum@gmail.com>", "Richard Barnes <rlb@ipv.sx>"]
+repository = "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems"
+documentation = "https://docs.rs/hybrid-kem-ref"
+readme = "README.md"
+keywords = ["cryptography", "kem", "post-quantum", "hybrid"]
+categories = ["cryptography"]
+
+[lib]
+name = "hybrid_kem_ref"
+
+[dependencies]
+rand = "0.9"
