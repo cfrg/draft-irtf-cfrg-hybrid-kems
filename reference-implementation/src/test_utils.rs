@@ -9,7 +9,6 @@ use rand::CryptoRng;
 /// Generic test for KDF determinism and output length
 pub fn test_kdf_basic<K: Kdf>()
 where
-    K::Error: std::fmt::Debug,
 {
     // Create test input of the correct length
     let mut input = vec![0u8; K::INPUT_LENGTH];
@@ -40,7 +39,6 @@ where
 /// Generic test for PRG determinism, output length, and expansion
 pub fn test_prg_basic<P: Prg>()
 where
-    P::Error: std::fmt::Debug,
 {
     // Create test seed of the correct length
     let mut seed = vec![0u8; P::INPUT_LENGTH];
@@ -75,7 +73,6 @@ where
 /// Generic test for KEM key generation and serialization
 pub fn test_kem_key_generation<K: Kem, R: CryptoRng>(rng: &mut R)
 where
-    K::Error: std::fmt::Debug,
     for<'a> <K::EncapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
     for<'a> <K::DecapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
 {
@@ -127,7 +124,6 @@ where
 /// Generic test for KEM deterministic key derivation
 pub fn test_kem_deterministic_derivation<K: Kem>()
 where
-    K::Error: std::fmt::Debug,
 {
     // Create test seed of the correct length
     let mut seed = vec![0u8; K::SEED_LENGTH];
@@ -157,7 +153,6 @@ where
 /// Generic test for KEM encapsulation/decapsulation roundtrip
 pub fn test_kem_roundtrip<K: Kem, R: CryptoRng>(rng: &mut R)
 where
-    K::Error: std::fmt::Debug,
     for<'a> <K::Ciphertext as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
 {
     // Generate key pair
@@ -205,7 +200,6 @@ where
 /// Generic test for KEM deterministic encapsulation
 pub fn test_kem_deterministic_encaps<K: Kem, R: CryptoRng>(rng: &mut R)
 where
-    K::Error: std::fmt::Debug,
 {
     // Generate key pair
     let (ek, dk) = K::generate_key_pair(rng).expect("Key generation should succeed");
@@ -246,7 +240,6 @@ where
 /// Generic test for NominalGroup basic operations
 pub fn test_group_basic_operations<G: NominalGroup>()
 where
-    G::Error: std::fmt::Debug,
 {
     // Test generator
     let generator = G::generator();
@@ -292,7 +285,6 @@ where
 /// Generic test for NominalGroup serialization roundtrips
 pub fn test_group_serialization<G: NominalGroup>()
 where
-    G::Error: std::fmt::Debug,
     for<'a> <G::Scalar as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
     for<'a> <G::Element as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
 {
@@ -335,7 +327,6 @@ where
 /// Generic test for NominalGroup Diffie-Hellman properties
 pub fn test_group_diffie_hellman<G: NominalGroup>()
 where
-    G::Error: std::fmt::Debug,
 {
     let generator = G::generator();
 
@@ -376,7 +367,6 @@ where
 /// Run all KDF tests for a given implementation
 pub fn test_kdf_all<K: Kdf>()
 where
-    K::Error: std::fmt::Debug,
 {
     test_kdf_basic::<K>();
 }
@@ -384,7 +374,6 @@ where
 /// Run all PRG tests for a given implementation  
 pub fn test_prg_all<P: Prg>()
 where
-    P::Error: std::fmt::Debug,
 {
     test_prg_basic::<P>();
 }
@@ -392,7 +381,6 @@ where
 /// Run all KEM tests for a given implementation
 pub fn test_kem_all<K: Kem, R: CryptoRng>(rng: &mut R)
 where
-    K::Error: std::fmt::Debug,
     for<'a> <K::EncapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
     for<'a> <K::DecapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
     for<'a> <K::Ciphertext as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
@@ -406,7 +394,6 @@ where
 /// Run all NominalGroup tests for a given implementation
 pub fn test_group_all<G: NominalGroup>()
 where
-    G::Error: std::fmt::Debug,
     for<'a> <G::Scalar as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
     for<'a> <G::Element as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
 {

@@ -1,3 +1,5 @@
+use crate::error::KemError;
+
 /// Trait for types that can be converted to byte slices
 pub trait AsBytes {
     /// Convert to a byte slice
@@ -20,11 +22,8 @@ pub trait Kdf {
     /// The length in bytes of an output from this KDF
     const OUTPUT_LENGTH: usize;
 
-    /// Error type for KDF operations
-    type Error;
-
     /// Produce a byte string of length OUTPUT_LENGTH from an input byte string
-    fn kdf(input: &[u8]) -> Result<Vec<u8>, Self::Error>;
+    fn kdf(input: &[u8]) -> Result<Vec<u8>, KemError>;
 }
 
 /// Pseudorandom Generator (PRG) trait
@@ -37,11 +36,8 @@ pub trait Prg {
     /// The length in bytes of an output from this PRG (longer than INPUT_LENGTH)
     const OUTPUT_LENGTH: usize;
 
-    /// Error type for PRG operations
-    type Error;
-
     /// Produce a byte string of length OUTPUT_LENGTH from an input seed
-    fn prg(seed: &[u8]) -> Result<Vec<u8>, Self::Error>;
+    fn prg(seed: &[u8]) -> Result<Vec<u8>, KemError>;
 }
 
 /// Key Encapsulation Mechanism (KEM) trait
@@ -75,22 +71,19 @@ pub trait Kem {
     /// Shared secret type
     type SharedSecret: AsBytes + for<'a> TryFrom<&'a [u8]>;
 
-    /// Error type for KEM operations
-    type Error;
-
     /// Generate a random key pair
     ///
     /// Takes a cryptographically secure randomness source and returns (public_key, secret_key)
     fn generate_key_pair<R: rand::CryptoRng>(
         rng: &mut R,
-    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), Self::Error>;
+    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), KemError>;
 
     /// Derive a key pair from a seed
     ///
     /// Takes a seed of length SEED_LENGTH and deterministically generates a key pair
     fn derive_key_pair(
         seed: &[u8],
-    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), Self::Error>;
+    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), KemError>;
 
     /// Encapsulate a shared secret
     ///
@@ -98,7 +91,7 @@ pub trait Kem {
     fn encaps<R: rand::CryptoRng>(
         ek: &Self::EncapsulationKey,
         rng: &mut R,
-    ) -> Result<(Self::Ciphertext, Self::SharedSecret), Self::Error>;
+    ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError>;
 
     /// Decapsulate a shared secret
     ///
@@ -106,7 +99,7 @@ pub trait Kem {
     fn decaps(
         dk: &Self::DecapsulationKey,
         ct: &Self::Ciphertext,
-    ) -> Result<Self::SharedSecret, Self::Error>;
+    ) -> Result<Self::SharedSecret, KemError>;
 
     /// Deterministic encapsulation (for testing)
     ///
@@ -114,12 +107,12 @@ pub trait Kem {
     fn encaps_derand(
         ek: &Self::EncapsulationKey,
         randomness: &[u8],
-    ) -> Result<(Self::Ciphertext, Self::SharedSecret), Self::Error>;
+    ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError>;
 
     /// Derive encapsulation key from decapsulation key
     fn to_encapsulation_key(
         dk: &Self::DecapsulationKey,
-    ) -> Result<Self::EncapsulationKey, Self::Error>;
+    ) -> Result<Self::EncapsulationKey, KemError>;
 }
 
 /// Nominal Group trait
@@ -145,9 +138,6 @@ pub trait NominalGroup {
     /// Group element type
     type Element: AsBytes + for<'a> TryFrom<&'a [u8]>;
 
-    /// Error type
-    type Error;
-
     /// Distinguished basis element
     fn generator() -> Self::Element;
 
@@ -155,7 +145,7 @@ pub trait NominalGroup {
     fn exp(p: &Self::Element, x: &Self::Scalar) -> Self::Element;
 
     /// Produce a uniform pseudo-random scalar from a seed
-    fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, Self::Error>;
+    fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, KemError>;
 
     /// Extract a shared secret from a group element
     fn element_to_shared_secret(p: &Self::Element) -> Vec<u8>;

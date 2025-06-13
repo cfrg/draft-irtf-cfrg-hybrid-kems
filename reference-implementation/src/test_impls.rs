@@ -4,6 +4,7 @@
 //! without being completely trivial. They are suitable for testing hybrid
 //! KEM constructions but should not be used in production.
 
+use crate::error::KemError;
 use crate::traits::{AsBytes, Kdf, Kem, NominalGroup, Prg};
 use rand::CryptoRng;
 
@@ -14,9 +15,7 @@ impl Kdf for TestKdf {
     const INPUT_LENGTH: usize = 32;
     const OUTPUT_LENGTH: usize = 32;
 
-    type Error = ();
-
-    fn kdf(input: &[u8]) -> Result<Vec<u8>, Self::Error> {
+    fn kdf(input: &[u8]) -> Result<Vec<u8>, KemError> {
         let mut output = Vec::with_capacity(Self::OUTPUT_LENGTH);
         let xor_pattern = 0x5A; // Fixed XOR pattern
 
@@ -41,9 +40,7 @@ impl Prg for TestPrg {
     const INPUT_LENGTH: usize = 16;
     const OUTPUT_LENGTH: usize = 64;
 
-    type Error = ();
-
-    fn prg(seed: &[u8]) -> Result<Vec<u8>, Self::Error> {
+    fn prg(seed: &[u8]) -> Result<Vec<u8>, KemError> {
         // Convert seed to u64 for LCG
         let mut state = 0u64;
         for (i, &byte) in seed.iter().enumerate().take(8) {
@@ -84,7 +81,7 @@ impl AsBytes for TestEncapsulationKey {
 impl TryFrom<&[u8]> for TestEncapsulationKey {
     type Error = ();
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
         if bytes.len() != 32 {
             return Err(());
         }
@@ -107,7 +104,7 @@ impl AsBytes for TestDecapsulationKey {
 impl TryFrom<&[u8]> for TestDecapsulationKey {
     type Error = ();
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
         if bytes.len() != 16 {
             return Err(());
         }
@@ -130,7 +127,7 @@ impl AsBytes for TestCiphertext {
 impl TryFrom<&[u8]> for TestCiphertext {
     type Error = ();
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
         if bytes.len() != 48 {
             return Err(());
         }
@@ -153,7 +150,7 @@ impl AsBytes for TestSharedSecret {
 impl TryFrom<&[u8]> for TestSharedSecret {
     type Error = ();
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
         if bytes.len() != 32 {
             return Err(());
         }
@@ -174,11 +171,10 @@ impl Kem for TestKem {
     type DecapsulationKey = TestDecapsulationKey;
     type Ciphertext = TestCiphertext;
     type SharedSecret = TestSharedSecret;
-    type Error = ();
 
     fn generate_key_pair<R: CryptoRng>(
         rng: &mut R,
-    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), Self::Error> {
+    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), KemError> {
         let mut seed = [0u8; Self::SEED_LENGTH];
         rng.fill_bytes(&mut seed);
         Self::derive_key_pair(&seed)
@@ -186,9 +182,9 @@ impl Kem for TestKem {
 
     fn derive_key_pair(
         seed: &[u8],
-    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), Self::Error> {
+    ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), KemError> {
         if seed.len() != Self::SEED_LENGTH {
-            return Err(());
+            return Err(KemError::InvalidSeedLength);
         }
 
         // Simple key derivation: stretch seed for private key, derive public key
@@ -212,7 +208,7 @@ impl Kem for TestKem {
     fn encaps<R: CryptoRng>(
         ek: &Self::EncapsulationKey,
         rng: &mut R,
-    ) -> Result<(Self::Ciphertext, Self::SharedSecret), Self::Error> {
+    ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         let mut randomness = [0u8; 32];
         rng.fill_bytes(&mut randomness);
         Self::encaps_derand(ek, &randomness)
@@ -221,7 +217,7 @@ impl Kem for TestKem {
     fn encaps_derand(
         ek: &Self::EncapsulationKey,
         randomness: &[u8],
-    ) -> Result<(Self::Ciphertext, Self::SharedSecret), Self::Error> {
+    ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Simple encapsulation: combine public key with randomness
         let mut ct_bytes = [0u8; 48];
         let mut shared_secret = [0u8; 32];
@@ -259,7 +255,7 @@ impl Kem for TestKem {
     fn decaps(
         dk: &Self::DecapsulationKey,
         ct: &Self::Ciphertext,
-    ) -> Result<Self::SharedSecret, Self::Error> {
+    ) -> Result<Self::SharedSecret, KemError> {
         // Reconstruct public key from private key
         let ek = Self::to_encapsulation_key(dk)?;
 
@@ -284,7 +280,7 @@ impl Kem for TestKem {
 
     fn to_encapsulation_key(
         dk: &Self::DecapsulationKey,
-    ) -> Result<Self::EncapsulationKey, Self::Error> {
+    ) -> Result<Self::EncapsulationKey, KemError> {
         // Reconstruct public key from private key
         let mut ek_bytes = [0u8; 32];
         for i in 0..32 {
@@ -310,7 +306,7 @@ impl AsBytes for TestScalar {
 impl TryFrom<&[u8]> for TestScalar {
     type Error = ();
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
         if bytes.len() != 8 {
             return Err(());
         }
@@ -333,7 +329,7 @@ impl AsBytes for TestElement {
 impl TryFrom<&[u8]> for TestElement {
     type Error = ();
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
         if bytes.len() != 8 {
             return Err(());
         }
@@ -351,7 +347,6 @@ impl NominalGroup for TestGroup {
 
     type Scalar = TestScalar;
     type Element = TestElement;
-    type Error = ();
 
     fn generator() -> Self::Element {
         TestElement { bytes: 5u64.to_le_bytes() } // Simple generator
@@ -375,9 +370,9 @@ impl NominalGroup for TestGroup {
         TestElement { bytes: result.to_le_bytes() }
     }
 
-    fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, Self::Error> {
+    fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, KemError> {
         if seed.len() != Self::SEED_LENGTH {
-            return Err(());
+            return Err(KemError::InvalidSeedLength);
         }
 
         // Convert seed bytes to u64
