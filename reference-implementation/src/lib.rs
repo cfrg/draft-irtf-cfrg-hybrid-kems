@@ -45,4 +45,4 @@ mod hybrid_tests;
 
 // Re-export commonly used items
 pub use error::KemError;
-pub use traits::{HybridKemLabel, Kdf, Kem, NominalGroup, Prg};
+pub use traits::{EncapsDerand, HybridKemLabel, Kdf, Kem, NominalGroup, Prg};

@@ -101,6 +101,14 @@ pub trait Kem {
         ct: &Self::Ciphertext,
     ) -> Result<Self::SharedSecret, KemError>;
 
+    /// Derive encapsulation key from decapsulation key
+    fn to_encapsulation_key(
+        dk: &Self::DecapsulationKey,
+    ) -> Result<Self::EncapsulationKey, KemError>;
+}
+
+/// Trait for KEMs that support deterministic encapsulation
+pub trait EncapsDerand: Kem {
     /// Deterministic encapsulation (for testing)
     ///
     /// Takes a public encapsulation key and randomness, returns (ciphertext, shared_secret)
@@ -108,11 +116,6 @@ pub trait Kem {
         ek: &Self::EncapsulationKey,
         randomness: &[u8],
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError>;
-
-    /// Derive encapsulation key from decapsulation key
-    fn to_encapsulation_key(
-        dk: &Self::DecapsulationKey,
-    ) -> Result<Self::EncapsulationKey, KemError>;
 }
 
 /// Nominal Group trait

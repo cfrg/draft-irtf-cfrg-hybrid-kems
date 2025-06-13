@@ -3,13 +3,11 @@
 //! This module provides reusable test functions that can be used to verify
 //! any implementation of the KEM, KDF, PRG, and NominalGroup traits.
 
-use crate::traits::{AsBytes, Kdf, Kem, NominalGroup, Prg};
+use crate::traits::{AsBytes, EncapsDerand, Kdf, Kem, NominalGroup, Prg};
 use rand::CryptoRng;
 
 /// Generic test for KDF determinism and output length
-pub fn test_kdf_basic<K: Kdf>()
-where
-{
+pub fn test_kdf_basic<K: Kdf>() {
     // Create test input of the correct length
     let mut input = vec![0u8; K::INPUT_LENGTH];
     for (i, byte) in input.iter_mut().enumerate() {
@@ -37,9 +35,7 @@ where
 }
 
 /// Generic test for PRG determinism, output length, and expansion
-pub fn test_prg_basic<P: Prg>()
-where
-{
+pub fn test_prg_basic<P: Prg>() {
     // Create test seed of the correct length
     let mut seed = vec![0u8; P::INPUT_LENGTH];
     for (i, byte) in seed.iter_mut().enumerate() {
@@ -122,9 +118,7 @@ where
 }
 
 /// Generic test for KEM deterministic key derivation
-pub fn test_kem_deterministic_derivation<K: Kem>()
-where
-{
+pub fn test_kem_deterministic_derivation<K: Kem>() {
     // Create test seed of the correct length
     let mut seed = vec![0u8; K::SEED_LENGTH];
     for (i, byte) in seed.iter_mut().enumerate() {
@@ -198,9 +192,7 @@ where
 }
 
 /// Generic test for KEM deterministic encapsulation
-pub fn test_kem_deterministic_encaps<K: Kem, R: CryptoRng>(rng: &mut R)
-where
-{
+pub fn test_kem_deterministic_encaps<K: Kem + EncapsDerand, R: CryptoRng>(rng: &mut R) {
     // Generate key pair
     let (ek, dk) = K::generate_key_pair(rng).expect("Key generation should succeed");
 
@@ -238,9 +230,7 @@ where
 }
 
 /// Generic test for NominalGroup basic operations
-pub fn test_group_basic_operations<G: NominalGroup>()
-where
-{
+pub fn test_group_basic_operations<G: NominalGroup>() {
     // Test generator
     let generator = G::generator();
     let gen_bytes = generator.as_bytes();
@@ -325,9 +315,7 @@ where
 }
 
 /// Generic test for NominalGroup Diffie-Hellman properties
-pub fn test_group_diffie_hellman<G: NominalGroup>()
-where
-{
+pub fn test_group_diffie_hellman<G: NominalGroup>() {
     let generator = G::generator();
 
     // Generate two scalars
@@ -365,21 +353,17 @@ where
 }
 
 /// Run all KDF tests for a given implementation
-pub fn test_kdf_all<K: Kdf>()
-where
-{
+pub fn test_kdf_all<K: Kdf>() {
     test_kdf_basic::<K>();
 }
 
 /// Run all PRG tests for a given implementation  
-pub fn test_prg_all<P: Prg>()
-where
-{
+pub fn test_prg_all<P: Prg>() {
     test_prg_basic::<P>();
 }
 
 /// Run all KEM tests for a given implementation
-pub fn test_kem_all<K: Kem, R: CryptoRng>(rng: &mut R)
+pub fn test_kem_all<K: Kem + EncapsDerand, R: CryptoRng>(rng: &mut R)
 where
     for<'a> <K::EncapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
     for<'a> <K::DecapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,

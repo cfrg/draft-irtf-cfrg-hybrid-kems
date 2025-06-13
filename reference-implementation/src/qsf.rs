@@ -1,5 +1,5 @@
 use crate::error::KemError;
-use crate::traits::{AsBytes, HybridKemLabel, Kdf, Kem, NominalGroup, Prg};
+use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, NominalGroup, Prg};
 
 /// QSF Hybrid KEM implementation
 ///
@@ -164,15 +164,16 @@ where
         let ek_t_bytes = &ek.bytes[..GroupT::ELEMENT_LENGTH];
         let ek_pq_bytes = &ek.bytes[GroupT::ELEMENT_LENGTH..];
 
-        let ek_t = GroupT::Element::try_from(ek_t_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let ek_t =
+            GroupT::Element::try_from(ek_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
         let ek_pq = KemPq::EncapsulationKey::try_from(ek_pq_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
 
         // Generate ephemeral scalar for traditional component using secure randomness
         let mut ephemeral_seed = vec![0u8; GroupT::SEED_LENGTH];
         rng.fill_bytes(&mut ephemeral_seed);
-        let sk_e = GroupT::random_scalar(&ephemeral_seed).map_err(|_| KemError::TraditionalComponent)?;
+        let sk_e =
+            GroupT::random_scalar(&ephemeral_seed).map_err(|_| KemError::TraditionalComponent)?;
 
         // Traditional component: Diffie-Hellman
         let ct_t = GroupT::exp(&GroupT::generator(), &sk_e);
@@ -180,7 +181,8 @@ where
         let ss_t = GroupT::element_to_shared_secret(&shared_point);
 
         // Encapsulate with post-quantum KEM
-        let (ct_pq, ss_pq) = KemPq::encaps(&ek_pq, rng).map_err(|_| KemError::PostQuantumComponent)?;
+        let (ct_pq, ss_pq) =
+            KemPq::encaps(&ek_pq, rng).map_err(|_| KemError::PostQuantumComponent)?;
 
         // Create hybrid ciphertext
         let mut ct_bytes = Vec::new();
@@ -216,8 +218,8 @@ where
         let dk_t_bytes = &dk.bytes[..GroupT::SCALAR_LENGTH];
         let dk_pq_bytes = &dk.bytes[GroupT::SCALAR_LENGTH..];
 
-        let dk_t = GroupT::Scalar::try_from(dk_t_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let dk_t =
+            GroupT::Scalar::try_from(dk_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
         let dk_pq = KemPq::DecapsulationKey::try_from(dk_pq_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
 
@@ -225,10 +227,10 @@ where
         let ct_t_bytes = &ct.bytes[..GroupT::ELEMENT_LENGTH];
         let ct_pq_bytes = &ct.bytes[GroupT::ELEMENT_LENGTH..];
 
-        let ct_t = GroupT::Element::try_from(ct_t_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
-        let ct_pq = KemPq::Ciphertext::try_from(ct_pq_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let ct_t =
+            GroupT::Element::try_from(ct_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
+        let ct_pq =
+            KemPq::Ciphertext::try_from(ct_pq_bytes).map_err(|_| KemError::InvalidInputLength)?;
 
         // Traditional component: Diffie-Hellman
         let shared_point = GroupT::exp(&ct_t, &dk_t);
@@ -259,6 +261,40 @@ where
         Ok(ss_hybrid)
     }
 
+    fn to_encapsulation_key(
+        dk: &Self::DecapsulationKey,
+    ) -> Result<Self::EncapsulationKey, KemError> {
+        // Deserialize component decapsulation keys
+        let dk_t_bytes = &dk.bytes[..GroupT::SCALAR_LENGTH];
+        let dk_pq_bytes = &dk.bytes[GroupT::SCALAR_LENGTH..];
+
+        let dk_t =
+            GroupT::Scalar::try_from(dk_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
+        let dk_pq = KemPq::DecapsulationKey::try_from(dk_pq_bytes)
+            .map_err(|_| KemError::InvalidInputLength)?;
+
+        // Derive component encapsulation keys
+        let ek_t = GroupT::exp(&GroupT::generator(), &dk_t);
+        let ek_pq =
+            KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantumComponent)?;
+
+        // Concatenate serialized encapsulation keys
+        let mut ek_bytes = Vec::new();
+        ek_bytes.extend_from_slice(ek_t.as_bytes());
+        ek_bytes.extend_from_slice(ek_pq.as_bytes());
+
+        Ok(QsfEncapsulationKey { bytes: ek_bytes })
+    }
+}
+
+impl<GroupT, KemPq, KdfImpl, PrgImpl> EncapsDerand for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl>
+where
+    GroupT: NominalGroup,
+    KemPq: Kem + EncapsDerand,
+    KdfImpl: Kdf,
+    PrgImpl: Prg,
+    Self: HybridKemLabel,
+{
     fn encaps_derand(
         ek: &Self::EncapsulationKey,
         randomness: &[u8],
@@ -267,8 +303,8 @@ where
         let ek_t_bytes = &ek.bytes[..GroupT::ELEMENT_LENGTH];
         let ek_pq_bytes = &ek.bytes[GroupT::ELEMENT_LENGTH..];
 
-        let ek_t = GroupT::Element::try_from(ek_t_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let ek_t =
+            GroupT::Element::try_from(ek_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
         let ek_pq = KemPq::EncapsulationKey::try_from(ek_pq_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
 
@@ -301,40 +337,16 @@ where
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
+        // Note: Groups always support deterministic operations
         let mut kdf_input = Vec::new();
         kdf_input.extend_from_slice(ss_pq_bytes);
         kdf_input.extend_from_slice(&ss_t);
         kdf_input.extend_from_slice(ct_t_bytes);
         kdf_input.extend_from_slice(ek_t_bytes);
-        // Note: In a real implementation, the label would be provided via configuration
-        // kdf_input.extend_from_slice(&config.label);
+        kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
 
         Ok((ct_hybrid, ss_hybrid))
-    }
-
-    fn to_encapsulation_key(
-        dk: &Self::DecapsulationKey,
-    ) -> Result<Self::EncapsulationKey, KemError> {
-        // Deserialize component decapsulation keys
-        let dk_t_bytes = &dk.bytes[..GroupT::SCALAR_LENGTH];
-        let dk_pq_bytes = &dk.bytes[GroupT::SCALAR_LENGTH..];
-
-        let dk_t = GroupT::Scalar::try_from(dk_t_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
-        let dk_pq = KemPq::DecapsulationKey::try_from(dk_pq_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
-
-        // Derive component encapsulation keys
-        let ek_t = GroupT::exp(&GroupT::generator(), &dk_t);
-        let ek_pq = KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantumComponent)?;
-
-        // Concatenate serialized encapsulation keys
-        let mut ek_bytes = Vec::new();
-        ek_bytes.extend_from_slice(ek_t.as_bytes());
-        ek_bytes.extend_from_slice(ek_pq.as_bytes());
-
-        Ok(QsfEncapsulationKey { bytes: ek_bytes })
     }
 }

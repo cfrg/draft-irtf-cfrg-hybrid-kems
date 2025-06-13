@@ -11,7 +11,7 @@ mod tests {
     use crate::qsf::QsfHybridKem;
     use crate::test_impls::{TestGroup, TestKdf, TestKem, TestPrg};
     use crate::test_utils::test_kem_all;
-    use crate::traits::{AsBytes, HybridKemLabel, Kem, NominalGroup};
+    use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kem, NominalGroup};
     use rand::rng;
 
     // Type aliases for easier testing

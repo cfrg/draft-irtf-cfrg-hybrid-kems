@@ -5,7 +5,7 @@
 //! KEM constructions but should not be used in production.
 
 use crate::error::KemError;
-use crate::traits::{AsBytes, Kdf, Kem, NominalGroup, Prg};
+use crate::traits::{AsBytes, EncapsDerand, Kdf, Kem, NominalGroup, Prg};
 use rand::CryptoRng;
 
 /// Simple KDF that repeats input and XORs with a fixed pattern
@@ -211,36 +211,25 @@ impl Kem for TestKem {
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         let mut randomness = [0u8; 32];
         rng.fill_bytes(&mut randomness);
-        Self::encaps_derand(ek, &randomness)
-    }
 
-    fn encaps_derand(
-        ek: &Self::EncapsulationKey,
-        randomness: &[u8],
-    ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Simple encapsulation: combine public key with randomness
         let mut ct_bytes = [0u8; 48];
         let mut shared_secret = [0u8; 32];
 
         // First 32 bytes of ciphertext = randomness XOR public key
         for i in 0..32 {
-            let rand_byte = if i < randomness.len() {
-                randomness[i]
-            } else {
-                0
-            };
-            ct_bytes[i] = rand_byte ^ ek.bytes[i];
+            ct_bytes[i] = randomness[i] ^ ek.bytes[i];
         }
 
         // Last 16 bytes of ciphertext = public key subset transformed
         for i in 0..16 {
-            ct_bytes[32 + i] = ek.bytes[i].wrapping_add(randomness.get(i).copied().unwrap_or(0));
+            ct_bytes[32 + i] = ek.bytes[i].wrapping_add(randomness[i]);
         }
 
         // Shared secret = hash-like function of public key and randomness
         for i in 0..32 {
             let pk_byte = ek.bytes[i % 32];
-            let rand_byte = randomness.get(i % randomness.len()).copied().unwrap_or(0);
+            let rand_byte = randomness[i % randomness.len()];
             shared_secret[i] = pk_byte.wrapping_add(rand_byte).wrapping_mul(5) ^ 0xAA;
         }
 
@@ -287,6 +276,46 @@ impl Kem for TestKem {
             ek_bytes[i] = dk.bytes[i % 16].wrapping_mul(3).wrapping_add(7);
         }
         Ok(TestEncapsulationKey { bytes: ek_bytes })
+    }
+}
+
+impl EncapsDerand for TestKem {
+    fn encaps_derand(
+        ek: &Self::EncapsulationKey,
+        randomness: &[u8],
+    ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
+        // Simple encapsulation: combine public key with randomness
+        let mut ct_bytes = [0u8; 48];
+        let mut shared_secret = [0u8; 32];
+
+        // First 32 bytes of ciphertext = randomness XOR public key
+        for i in 0..32 {
+            let rand_byte = if i < randomness.len() {
+                randomness[i]
+            } else {
+                0
+            };
+            ct_bytes[i] = rand_byte ^ ek.bytes[i];
+        }
+
+        // Last 16 bytes of ciphertext = public key subset transformed
+        for i in 0..16 {
+            ct_bytes[32 + i] = ek.bytes[i].wrapping_add(randomness.get(i).copied().unwrap_or(0));
+        }
+
+        // Shared secret = hash-like function of public key and randomness
+        for i in 0..32 {
+            let pk_byte = ek.bytes[i % 32];
+            let rand_byte = randomness.get(i % randomness.len()).copied().unwrap_or(0);
+            shared_secret[i] = pk_byte.wrapping_add(rand_byte).wrapping_mul(5) ^ 0xAA;
+        }
+
+        Ok((
+            TestCiphertext { bytes: ct_bytes },
+            TestSharedSecret {
+                bytes: shared_secret,
+            },
+        ))
     }
 }
 
@@ -349,7 +378,9 @@ impl NominalGroup for TestGroup {
     type Element = TestElement;
 
     fn generator() -> Self::Element {
-        TestElement { bytes: 5u64.to_le_bytes() } // Simple generator
+        TestElement {
+            bytes: 5u64.to_le_bytes(),
+        } // Simple generator
     }
 
     fn exp(p: &Self::Element, x: &Self::Scalar) -> Self::Element {
@@ -367,7 +398,9 @@ impl NominalGroup for TestGroup {
             base = (base * base) % large_prime;
         }
 
-        TestElement { bytes: result.to_le_bytes() }
+        TestElement {
+            bytes: result.to_le_bytes(),
+        }
     }
 
     fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, KemError> {
@@ -387,7 +420,9 @@ impl NominalGroup for TestGroup {
         }
         value = value % 1000000007; // Large prime to keep scalars reasonable
 
-        Ok(TestScalar { bytes: value.to_le_bytes() })
+        Ok(TestScalar {
+            bytes: value.to_le_bytes(),
+        })
     }
 
     fn element_to_shared_secret(p: &Self::Element) -> Vec<u8> {
