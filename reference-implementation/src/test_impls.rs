@@ -298,13 +298,12 @@ impl Kem for TestKem {
 pub struct TestGroup;
 
 pub struct TestScalar {
-    pub value: u64,
+    pub bytes: [u8; 8],
 }
 
 impl AsBytes for TestScalar {
     fn as_bytes(&self) -> &[u8] {
-        // Return the value as bytes (little-endian)
-        unsafe { std::slice::from_raw_parts(&self.value as *const u64 as *const u8, 8) }
+        &self.bytes
     }
 }
 
@@ -315,21 +314,19 @@ impl TryFrom<&[u8]> for TestScalar {
         if bytes.len() != 8 {
             return Err(());
         }
-        let mut value_bytes = [0u8; 8];
-        value_bytes.copy_from_slice(bytes);
-        let value = u64::from_le_bytes(value_bytes);
-        Ok(TestScalar { value })
+        let mut arr = [0u8; 8];
+        arr.copy_from_slice(bytes);
+        Ok(TestScalar { bytes: arr })
     }
 }
 
 pub struct TestElement {
-    pub value: u64,
+    pub bytes: [u8; 8],
 }
 
 impl AsBytes for TestElement {
     fn as_bytes(&self) -> &[u8] {
-        // Return the value as bytes (little-endian)
-        unsafe { std::slice::from_raw_parts(&self.value as *const u64 as *const u8, 8) }
+        &self.bytes
     }
 }
 
@@ -340,10 +337,9 @@ impl TryFrom<&[u8]> for TestElement {
         if bytes.len() != 8 {
             return Err(());
         }
-        let mut value_bytes = [0u8; 8];
-        value_bytes.copy_from_slice(bytes);
-        let value = u64::from_le_bytes(value_bytes);
-        Ok(TestElement { value })
+        let mut arr = [0u8; 8];
+        arr.copy_from_slice(bytes);
+        Ok(TestElement { bytes: arr })
     }
 }
 
@@ -358,15 +354,15 @@ impl NominalGroup for TestGroup {
     type Error = ();
 
     fn generator() -> Self::Element {
-        TestElement { value: 5 } // Simple generator
+        TestElement { bytes: 5u64.to_le_bytes() } // Simple generator
     }
 
     fn exp(p: &Self::Element, x: &Self::Scalar) -> Self::Element {
         // Simple modular exponentiation: p^x mod large_prime
         let large_prime = 2147483647u64; // 2^31 - 1, a Mersenne prime
         let mut result = 1u64;
-        let mut base = p.value % large_prime;
-        let mut exp = x.value;
+        let mut base = u64::from_le_bytes(p.bytes) % large_prime;
+        let mut exp = u64::from_le_bytes(x.bytes);
 
         while exp > 0 {
             if exp % 2 == 1 {
@@ -376,7 +372,7 @@ impl NominalGroup for TestGroup {
             base = (base * base) % large_prime;
         }
 
-        TestElement { value: result }
+        TestElement { bytes: result.to_le_bytes() }
     }
 
     fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, Self::Error> {
@@ -396,13 +392,13 @@ impl NominalGroup for TestGroup {
         }
         value = value % 1000000007; // Large prime to keep scalars reasonable
 
-        Ok(TestScalar { value })
+        Ok(TestScalar { bytes: value.to_le_bytes() })
     }
 
     fn element_to_shared_secret(p: &Self::Element) -> Vec<u8> {
         // Convert element to 32-byte shared secret using simple expansion
         let mut shared_secret = Vec::with_capacity(Self::SHARED_SECRET_LENGTH);
-        let element_bytes = p.value.to_le_bytes();
+        let element_bytes = &p.bytes;
 
         // Repeat and transform element bytes to fill shared secret
         for i in 0..Self::SHARED_SECRET_LENGTH {
