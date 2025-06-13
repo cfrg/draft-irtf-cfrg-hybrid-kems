@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 13 December 2025                                          Cisco
-                                                            11 June 2025
+Expires: 15 December 2025                                          Cisco
+                                                            13 June 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 December 2025.
+   This Internet-Draft will expire on 15 December 2025.
 
 Copyright Notice
 
