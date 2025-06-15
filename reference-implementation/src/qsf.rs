@@ -190,19 +190,14 @@ where
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
         let ct_hybrid = QsfCiphertext { bytes: ct_bytes };
 
-        // Serialize components for KDF input
-        let ss_pq_bytes = ss_pq.as_bytes();
-        let ct_t_bytes = ct_t.as_bytes();
-        let ek_t_bytes = ek_t.as_bytes();
-
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
         // Note: ct_PQ and ek_PQ are omitted due to C2PRI property of PQ KEM
         let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq_bytes);
+        kdf_input.extend_from_slice(ss_pq.as_bytes());
         kdf_input.extend_from_slice(&ss_t);
-        kdf_input.extend_from_slice(ct_t_bytes);
-        kdf_input.extend_from_slice(ek_t_bytes);
+        kdf_input.extend_from_slice(ct_t.as_bytes());
+        kdf_input.extend_from_slice(ek_t.as_bytes());
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
@@ -242,18 +237,13 @@ where
         // Derive traditional encapsulation key
         let ek_t = GroupT::exp(&GroupT::generator(), &dk_t);
 
-        // Serialize components for KDF input
-        let ss_pq_bytes = ss_pq.as_bytes();
-        let ct_t_serialized = ct_t.as_bytes();
-        let ek_t_bytes = ek_t.as_bytes();
-
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
         let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq_bytes);
+        kdf_input.extend_from_slice(ss_pq.as_bytes());
         kdf_input.extend_from_slice(&ss_t);
-        kdf_input.extend_from_slice(ct_t_serialized);
-        kdf_input.extend_from_slice(ek_t_bytes);
+        kdf_input.extend_from_slice(ct_t.as_bytes());
+        kdf_input.extend_from_slice(ek_t.as_bytes());
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
@@ -330,19 +320,14 @@ where
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
         let ct_hybrid = QsfCiphertext { bytes: ct_bytes };
 
-        // Serialize components for KDF input
-        let ss_pq_bytes = ss_pq.as_bytes();
-        let ct_t_bytes = ct_t.as_bytes();
-        let ek_t_bytes = ek_t.as_bytes();
-
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
         // Note: Groups always support deterministic operations
         let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq_bytes);
+        kdf_input.extend_from_slice(ss_pq.as_bytes());
         kdf_input.extend_from_slice(&ss_t);
-        kdf_input.extend_from_slice(ct_t_bytes);
-        kdf_input.extend_from_slice(ek_t_bytes);
+        kdf_input.extend_from_slice(ct_t.as_bytes());
+        kdf_input.extend_from_slice(ek_t.as_bytes());
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;

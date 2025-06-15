@@ -180,23 +180,15 @@ where
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
         let ct_hybrid = HybridCiphertext { bytes: ct_bytes };
 
-        // Serialize components for KDF input
-        let ss_pq_bytes = ss_pq.as_bytes();
-        let ss_t_bytes = ss_t.as_bytes();
-        let ct_pq_bytes = ct_pq.as_bytes();
-        let ct_t_bytes = ct_t.as_bytes();
-        let ek_pq_bytes = ek_pq.as_bytes();
-        let ek_t_bytes = ek_t.as_bytes();
-
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
         let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq_bytes);
-        kdf_input.extend_from_slice(ss_t_bytes);
-        kdf_input.extend_from_slice(ct_pq_bytes);
-        kdf_input.extend_from_slice(ct_t_bytes);
-        kdf_input.extend_from_slice(ek_pq_bytes);
-        kdf_input.extend_from_slice(ek_t_bytes);
+        kdf_input.extend_from_slice(ss_pq.as_bytes());
+        kdf_input.extend_from_slice(ss_t.as_bytes());
+        kdf_input.extend_from_slice(ct_pq.as_bytes());
+        kdf_input.extend_from_slice(ct_t.as_bytes());
+        kdf_input.extend_from_slice(ek_pq.as_bytes());
+        kdf_input.extend_from_slice(ek_t.as_bytes());
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
@@ -237,23 +229,15 @@ where
         let ek_pq =
             KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantumComponent)?;
 
-        // Serialize components for KDF input
-        let ss_pq_bytes = ss_pq.as_bytes();
-        let ss_t_bytes = ss_t.as_bytes();
-        let ct_pq_serialized = ct_pq.as_bytes();
-        let ct_t_serialized = ct_t.as_bytes();
-        let ek_pq_bytes = ek_pq.as_bytes();
-        let ek_t_bytes = ek_t.as_bytes();
-
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
         let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq_bytes);
-        kdf_input.extend_from_slice(ss_t_bytes);
-        kdf_input.extend_from_slice(ct_pq_serialized);
-        kdf_input.extend_from_slice(ct_t_serialized);
-        kdf_input.extend_from_slice(ek_pq_bytes);
-        kdf_input.extend_from_slice(ek_t_bytes);
+        kdf_input.extend_from_slice(ss_pq.as_bytes());
+        kdf_input.extend_from_slice(ss_t.as_bytes());
+        kdf_input.extend_from_slice(ct_pq.as_bytes());
+        kdf_input.extend_from_slice(ct_t.as_bytes());
+        kdf_input.extend_from_slice(ek_pq.as_bytes());
+        kdf_input.extend_from_slice(ek_t.as_bytes());
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
@@ -327,23 +311,15 @@ where
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
         let ct_hybrid = HybridCiphertext { bytes: ct_bytes };
 
-        // Serialize components for KDF input
-        let ss_pq_bytes = ss_pq.as_bytes();
-        let ss_t_bytes = ss_t.as_bytes();
-        let ct_pq_bytes = ct_pq.as_bytes();
-        let ct_t_bytes = ct_t.as_bytes();
-        let ek_pq_bytes = ek_pq.as_bytes();
-        let ek_t_bytes = ek_t.as_bytes();
-
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
         let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq_bytes);
-        kdf_input.extend_from_slice(ss_t_bytes);
-        kdf_input.extend_from_slice(ct_pq_bytes);
-        kdf_input.extend_from_slice(ct_t_bytes);
-        kdf_input.extend_from_slice(ek_pq_bytes);
-        kdf_input.extend_from_slice(ek_t_bytes);
+        kdf_input.extend_from_slice(ss_pq.as_bytes());
+        kdf_input.extend_from_slice(ss_t.as_bytes());
+        kdf_input.extend_from_slice(ct_pq.as_bytes());
+        kdf_input.extend_from_slice(ct_t.as_bytes());
+        kdf_input.extend_from_slice(ek_pq.as_bytes());
+        kdf_input.extend_from_slice(ek_t.as_bytes());
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
