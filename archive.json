@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-12T01:11:17.650057+00:00",
+  "timestamp": "2025-06-15T01:19:32.496519+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -480,6 +480,22 @@
       "body": "Currently, we define `EncapsDerand` as an optional method on the KEM interface.  But we don't use it anywhere, and we don't define it for the hybrid KEMs.  We should either define this method for the hybrid KEMs when the constituents support it (and thus use it), or delete it.\n\nIf we want it just for purposes of test vectors, we could move it to an appendix.",
       "createdAt": "2025-05-29T23:07:52Z",
       "updatedAt": "2025-05-29T23:07:52Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 35,
+      "id": "I_kwDOMmhxws67anGj",
+      "title": "Group_T.ElementToSharedSecret - what does this mean?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/35",
+      "state": "OPEN",
+      "author": "pag-crypto",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The current draft does not specify this procedure, but suggests the possibility of doing x-truncation of an elliptic curve point. The details here seem important for security - for example, x-truncation actually does not bind the entire shared secret into the context - the sign bit is omitted, so there are two possible points even in the case of an honest Encaps.",
+      "createdAt": "2025-06-13T17:55:50Z",
+      "updatedAt": "2025-06-13T17:55:50Z",
       "closedAt": null,
       "comments": []
     }
@@ -4025,24 +4041,26 @@
       "id": "PR_kwDOMmhxws6Z6wsX",
       "title": "Light edits and comments",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/32",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-06-10T19:34:28Z",
-      "updatedAt": "2025-06-11T15:59:32Z",
+      "updatedAt": "2025-06-12T14:44:48Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "c43bc983d6a4cae8d0d499d8928c8931143cb163",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "light-edit",
       "headRefOid": "b82ec08aeff02fe73582d7bf938d26c0cb009d39",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-12T14:44:38Z",
+      "mergedAt": "2025-06-12T14:44:38Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "b97199aeb9977f9b525eaba9d7f46c080a9c27c3"
+      },
       "comments": [],
       "reviews": [
         {
@@ -4164,6 +4182,19 @@
               "updatedAt": "2025-06-11T15:59:32Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6uIwdV",
+          "commit": {
+            "abbreviatedOid": "b82ec08"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-12T14:44:32Z",
+          "updatedAt": "2025-06-12T14:44:32Z",
+          "comments": []
         }
       ]
     },
@@ -4179,13 +4210,13 @@
       "labels": [],
       "body": "This PR adds a reference implementation of the hybrid KEMs.  There are traits for the constituent parts, and then the hybrid KEMs are defined generically over types that implement the constituent parts.\r\n\r\nMy first experiment with Claude Code.  All of the code is Claude-written, I did not open any of the files in an editor.  I have not reviewed, will review as part of this PR.\r\n\r\nFull transcript:\r\n\r\n* Can you read files from the parent directory?\r\n* Make a new Cargo/Rust project in this directory.  it should be in a directory called reference-implementation, and the name of the module should be \r\n* Change directory into reference-implementation\r\n* Add a trait for the KEM interface described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Give the constants more descriptive names\r\n* Add traits for the KDF and PRG interfaces described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Rename kem.rs to something more appropriate\r\n* Now write an implementation of the GHP hybrid KEM.  The hybrid KEM should be generic over its constituents, using the traits to bound the generic \r\n* Please add real implementations for the placeholders.  You can assume that the keys, ciphertexts, and shared secrets serialize to fixed-length byte \r\n* Instead of to_bytes / from_bytes, I would use serialize and deserialize.  WHen you serialize, use slices instead of Vec.\r\n* Go back to traits.rs.  Don't use a mutable reference argument, return a reference.  And the serialize methods don't need to be fallible.\r\n* For the hybrid serialization, make the same assumption that the deserialization methods make, namely that the T and PQ serializations are \r\n* In order to make serialization and deserialization easier, change the hybrid keys and ciphertexts just to hold a byte string.\r\n* The generate_key_pair method on GHP needs to actually use random data.  You should take a randomness source as input and use it.  Update the KEM \r\n* Use the CryptoRng trait instead of Rng\r\n* Don't use Rng, just CryptoRng\r\n* Use the latest version\r\n* Don't use RngCore\r\n* Don't use Rng.  Just CryptoRng.\r\n* Thanks, great work.  Now take the GHP implementation, and use it to generate implementations of the PRE and QSF hybrid KEMs\r\n* Move the NominalGroup trait to traits.rs\r\n* Have all of the hybrid KEMs use the same error type.  Split it out into error.rs if you think that's appropriate.\r\n* Are there any placeholders left in the codebase?\r\n* Replace the placeholder in qsf.rs with real randomness\r\n* Instead of using thread_rng, encaps should take an rng argument\r\n* Don't update the trait, remove it from the qsf.rs file.\r\n* Convert this crate from a binary crate to a library crate\r\n* commit the current state to a new branch called vibe-code\r\n* Create test implementations of the traits in traits.rs.  These implementations should fulfill the API in the simplest way possible, without being \r\n* Factor out the test functions so that they can be reused with other implementations.  But keep the tests.\r\n* Now add tests for each of the hybrid KEMs.  You should be able to reuse the KEM tests you already created.\r\n* Commit the tests\r\n* /exit \r\n\r\n",
       "createdAt": "2025-06-11T22:54:14Z",
-      "updatedAt": "2025-06-11T23:02:54Z",
+      "updatedAt": "2025-06-13T14:08:48Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "6ae56af64bc8fa78a2d0565f29a3742603a854fd",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "vibe-code",
-      "headRefOid": "68e63ed08d6551f6bc726737ce956fb2be61232a",
+      "headRefOid": "e0e486c64dea96b9028553c0e6736dadc6cda3b3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -4199,6 +4230,121 @@
           "updatedAt": "2025-06-11T23:02:54Z"
         }
       ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6uLTW4",
+          "commit": {
+            "abbreviatedOid": "68e63ed"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Partial review; going to fix up the traits and try again.",
+          "createdAt": "2025-06-12T18:16:19Z",
+          "updatedAt": "2025-06-12T18:49:56Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "Should have newlines at the end of files.",
+              "createdAt": "2025-06-12T18:16:20Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "@dconnolly - Note that you are listed here, presumably based on the spec editor list.  LMK if you'd like to be removed.",
+              "createdAt": "2025-06-12T18:17:54Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "It would be good for this type to implement Error.",
+              "createdAt": "2025-06-12T18:19:21Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "The default type for KeyHashError should be `()`.",
+              "createdAt": "2025-06-12T18:19:57Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "This type is unused, and should be deleted.",
+              "createdAt": "2025-06-12T18:21:17Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "This should just be `default()`.",
+              "createdAt": "2025-06-12T18:29:22Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 153,
+              "body": "These `bytes` variables can just be inlined.",
+              "createdAt": "2025-06-12T18:33:14Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 160,
+              "body": "This is a major deficiency.  What we should do here is:\r\n* Define a trait `Label` that has an associated const `LABEL`\r\n* Make this trait implementation conditional on the hybrid KEM implementing the `Label` trait\r\n* Likewise for the PRE and QSF KEMs",
+              "createdAt": "2025-06-12T18:34:45Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 92,
+              "body": "This method should go in another trait that is dependent on this trait.",
+              "createdAt": "2025-06-12T18:41:13Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 95,
+              "body": "Instead of requiring all of these methods, we should just bound the EncapsulationKey / DecapsulationKey / Ciphertext types with `TryFrom<&[u8]> + AsRef<[u8]>`.",
+              "createdAt": "2025-06-12T18:43:28Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 119,
+              "body": "Instead of this method, we should just bound DecapsulationKey with `AsRef<Self::EncapsulationKey>`.",
+              "createdAt": "2025-06-12T18:45:21Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            },
+            {
+              "originalPosition": 161,
+              "body": "As with the KEM interface types, we should just make the Scalar and Element types serializable.",
+              "createdAt": "2025-06-12T18:49:33Z",
+              "updatedAt": "2025-06-12T18:49:56Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "id": "PR_kwDOMmhxws6aO4kQ",
+      "title": "Remove mention of SHA3 as a PRG",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/34",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It's fine and secure but it's a little confusing as an interface mismatch",
+      "createdAt": "2025-06-12T14:32:36Z",
+      "updatedAt": "2025-06-12T16:40:20Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "6ae56af64bc8fa78a2d0565f29a3742603a854fd",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "dconnolly-patch-1",
+      "headRefOid": "5f4296b86e19d67f997caadaf5737aa36809bb12",
+      "closedAt": "2025-06-12T16:40:20Z",
+      "mergedAt": "2025-06-12T16:40:20Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a"
+      },
+      "comments": [],
       "reviews": []
     }
   ]
