@@ -1,7 +1,17 @@
 //! Utility functions for byte string operations
 //!
 //! This module provides concat and split functions as specified in
-//! draft-irtf-cfrg-hybrid-kems.
+//! draft-irtf-cfrg-hybrid-kems, plus const utility functions.
+
+/// Const function to compute the minimum of two values
+pub const fn min(a: usize, b: usize) -> usize {
+    if a < b { a } else { b }
+}
+
+/// Const function to compute the maximum of two values  
+pub const fn max(a: usize, b: usize) -> usize {
+    if a > b { a } else { b }
+}
 
 /// Concatenation of byte strings
 ///
@@ -81,5 +91,19 @@ mod tests {
         
         assert_eq!(split1, x1);
         assert_eq!(split2, x2);
+    }
+
+    #[test]
+    fn test_const_min() {
+        assert_eq!(min(5, 10), 5);
+        assert_eq!(min(10, 5), 5);
+        assert_eq!(min(7, 7), 7);
+    }
+
+    #[test]
+    fn test_const_max() {
+        assert_eq!(max(5, 10), 10);
+        assert_eq!(max(10, 5), 10);
+        assert_eq!(max(7, 7), 7);
     }
 }

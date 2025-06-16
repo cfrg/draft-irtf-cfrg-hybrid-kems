@@ -1,6 +1,6 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, Prg};
-use crate::utils::{concat, split};
+use crate::utils::{concat, max, min, split};
 
 /// GHP Hybrid KEM implementation
 ///
@@ -83,13 +83,7 @@ where
     Self: HybridKemLabel,
 {
     // Hybrid constants derived from constituent KEMs
-    const SEED_LENGTH: usize = {
-        if KemT::SEED_LENGTH > KemPq::SEED_LENGTH {
-            KemT::SEED_LENGTH
-        } else {
-            KemPq::SEED_LENGTH
-        }
-    };
+    const SEED_LENGTH: usize = max(KemT::SEED_LENGTH, KemPq::SEED_LENGTH);
 
     const ENCAPSULATION_KEY_LENGTH: usize =
         KemT::ENCAPSULATION_KEY_LENGTH + KemPq::ENCAPSULATION_KEY_LENGTH;
@@ -97,13 +91,7 @@ where
         KemT::DECAPSULATION_KEY_LENGTH + KemPq::DECAPSULATION_KEY_LENGTH;
     const CIPHERTEXT_LENGTH: usize = KemT::CIPHERTEXT_LENGTH + KemPq::CIPHERTEXT_LENGTH;
 
-    const SHARED_SECRET_LENGTH: usize = {
-        if KemT::SHARED_SECRET_LENGTH < KemPq::SHARED_SECRET_LENGTH {
-            KemT::SHARED_SECRET_LENGTH
-        } else {
-            KemPq::SHARED_SECRET_LENGTH
-        }
-    };
+    const SHARED_SECRET_LENGTH: usize = min(KemT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
 
     type EncapsulationKey = HybridEncapsulationKey;
     type DecapsulationKey = HybridDecapsulationKey;

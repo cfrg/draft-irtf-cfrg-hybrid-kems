@@ -1,5 +1,6 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, NominalGroup, Prg};
+use crate::utils::{max, min};
 
 /// QSF Hybrid KEM implementation
 ///
@@ -82,26 +83,14 @@ where
     Self: HybridKemLabel,
 {
     // Hybrid constants derived from group and KEM
-    const SEED_LENGTH: usize = {
-        if GroupT::SEED_LENGTH > KemPq::SEED_LENGTH {
-            GroupT::SEED_LENGTH
-        } else {
-            KemPq::SEED_LENGTH
-        }
-    };
+    const SEED_LENGTH: usize = max(GroupT::SEED_LENGTH, KemPq::SEED_LENGTH);
 
     const ENCAPSULATION_KEY_LENGTH: usize =
         GroupT::ELEMENT_LENGTH + KemPq::ENCAPSULATION_KEY_LENGTH;
     const DECAPSULATION_KEY_LENGTH: usize = GroupT::SCALAR_LENGTH + KemPq::DECAPSULATION_KEY_LENGTH;
     const CIPHERTEXT_LENGTH: usize = GroupT::ELEMENT_LENGTH + KemPq::CIPHERTEXT_LENGTH;
 
-    const SHARED_SECRET_LENGTH: usize = {
-        if GroupT::SHARED_SECRET_LENGTH < KemPq::SHARED_SECRET_LENGTH {
-            GroupT::SHARED_SECRET_LENGTH
-        } else {
-            KemPq::SHARED_SECRET_LENGTH
-        }
-    };
+    const SHARED_SECRET_LENGTH: usize = min(GroupT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
 
     type EncapsulationKey = QsfEncapsulationKey;
     type DecapsulationKey = QsfDecapsulationKey;
