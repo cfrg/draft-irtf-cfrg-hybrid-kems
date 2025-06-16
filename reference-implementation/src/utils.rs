@@ -1,7 +1,9 @@
 //! Utility functions for byte string operations
 //!
 //! This module provides concat and split functions as specified in
-//! draft-irtf-cfrg-hybrid-kems, plus const utility functions.
+//! draft-irtf-cfrg-hybrid-kems, plus const utility functions and common hybrid types.
+
+use crate::traits::AsBytes;
 
 /// Const function to compute the minimum of two values
 pub const fn min(a: usize, b: usize) -> usize {
@@ -42,6 +44,90 @@ pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), &'static 
     }
     
     Ok((&x[..n1], &x[n1..]))
+}
+
+/// Hybrid encapsulation key as concatenated byte string
+pub struct HybridEncapsulationKey {
+    pub bytes: Vec<u8>,
+}
+
+impl AsBytes for HybridEncapsulationKey {
+    fn as_bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridEncapsulationKey {
+    type Error = ();
+
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridEncapsulationKey {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
+/// Hybrid decapsulation key as concatenated byte string
+pub struct HybridDecapsulationKey {
+    pub bytes: Vec<u8>,
+}
+
+impl AsBytes for HybridDecapsulationKey {
+    fn as_bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridDecapsulationKey {
+    type Error = ();
+
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridDecapsulationKey {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
+/// Hybrid ciphertext as concatenated byte string
+pub struct HybridCiphertext {
+    pub bytes: Vec<u8>,
+}
+
+impl AsBytes for HybridCiphertext {
+    fn as_bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridCiphertext {
+    type Error = ();
+
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridCiphertext {
+            bytes: bytes.to_vec(),
+        })
+    }
+}
+
+/// Hybrid shared secret as byte string
+pub struct HybridSharedSecret {
+    pub bytes: Vec<u8>,
+}
+
+impl AsBytes for HybridSharedSecret {
+    fn as_bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+impl TryFrom<&[u8]> for HybridSharedSecret {
+    type Error = ();
+
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        Ok(HybridSharedSecret {
+            bytes: bytes.to_vec(),
+        })
+    }
 }
 
 #[cfg(test)]

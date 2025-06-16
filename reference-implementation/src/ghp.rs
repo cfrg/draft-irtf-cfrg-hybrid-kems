@@ -1,6 +1,6 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, Prg};
-use crate::utils::{concat, max, min, split};
+use crate::utils::{concat, max, min, split, HybridCiphertext, HybridDecapsulationKey, HybridEncapsulationKey, HybridSharedSecret};
 
 /// GHP Hybrid KEM implementation
 ///
@@ -9,69 +9,6 @@ use crate::utils::{concat, max, min, split};
 #[derive(Default)]
 pub struct GhpHybridKem<KemT, KemPq, KdfImpl, PrgImpl> {
     _phantom: std::marker::PhantomData<(KemT, KemPq, KdfImpl, PrgImpl)>,
-}
-
-/// Hybrid encapsulation key as concatenated byte string
-pub struct HybridEncapsulationKey {
-    pub bytes: Vec<u8>,
-}
-
-impl AsBytes for HybridEncapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.bytes
-    }
-}
-
-impl TryFrom<&[u8]> for HybridEncapsulationKey {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridEncapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-}
-
-/// Hybrid decapsulation key as concatenated byte string
-pub struct HybridDecapsulationKey {
-    pub bytes: Vec<u8>,
-}
-
-impl AsBytes for HybridDecapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.bytes
-    }
-}
-
-impl TryFrom<&[u8]> for HybridDecapsulationKey {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridDecapsulationKey {
-            bytes: bytes.to_vec(),
-        })
-    }
-}
-
-/// Hybrid ciphertext as concatenated byte string
-pub struct HybridCiphertext {
-    pub bytes: Vec<u8>,
-}
-
-impl AsBytes for HybridCiphertext {
-    fn as_bytes(&self) -> &[u8] {
-        &self.bytes
-    }
-}
-
-impl TryFrom<&[u8]> for HybridCiphertext {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridCiphertext {
-            bytes: bytes.to_vec(),
-        })
-    }
 }
 
 impl<KemT, KemPq, KdfImpl, PrgImpl> Kem for GhpHybridKem<KemT, KemPq, KdfImpl, PrgImpl>
@@ -96,7 +33,7 @@ where
     type EncapsulationKey = HybridEncapsulationKey;
     type DecapsulationKey = HybridDecapsulationKey;
     type Ciphertext = HybridCiphertext;
-    type SharedSecret = Vec<u8>;
+    type SharedSecret = HybridSharedSecret;
 
     fn generate_key_pair<R: rand::CryptoRng>(
         rng: &mut R,
@@ -177,7 +114,8 @@ where
             Self::LABEL,
         ]);
 
-        let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -227,7 +165,8 @@ where
             Self::LABEL,
         ]);
 
-        let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
 
         Ok(ss_hybrid)
     }
@@ -306,7 +245,8 @@ where
             Self::LABEL,
         ]);
 
-        let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
 
         Ok((ct_hybrid, ss_hybrid))
     }

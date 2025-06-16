@@ -1,7 +1,6 @@
 use crate::error::KemError;
-use crate::ghp::{HybridCiphertext, HybridDecapsulationKey, HybridEncapsulationKey};
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, Prg};
-use crate::utils::{max, min, split};
+use crate::utils::{max, min, split, HybridCiphertext, HybridDecapsulationKey, HybridEncapsulationKey, HybridSharedSecret};
 
 /// PRE Hybrid KEM implementation
 ///
@@ -37,7 +36,7 @@ where
     type EncapsulationKey = HybridEncapsulationKey;
     type DecapsulationKey = HybridDecapsulationKey;
     type Ciphertext = HybridCiphertext;
-    type SharedSecret = Vec<u8>;
+    type SharedSecret = HybridSharedSecret;
 
     fn generate_key_pair<R: rand::CryptoRng>(
         rng: &mut R,
@@ -129,7 +128,8 @@ where
         kdf_input.extend_from_slice(&ekh);
         kdf_input.extend_from_slice(Self::LABEL);
 
-        let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -183,7 +183,8 @@ where
         kdf_input.extend_from_slice(&ekh);
         kdf_input.extend_from_slice(Self::LABEL);
 
-        let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
 
         Ok(ss_hybrid)
     }
@@ -271,7 +272,8 @@ where
         kdf_input.extend_from_slice(&ekh);
         kdf_input.extend_from_slice(Self::LABEL);
 
-        let ss_hybrid = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
+        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
 
         Ok((ct_hybrid, ss_hybrid))
     }
