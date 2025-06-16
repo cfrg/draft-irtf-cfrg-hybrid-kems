@@ -39,6 +39,7 @@ pub mod qsf;
 pub mod test_impls;
 pub mod test_utils;
 pub mod traits;
+pub mod utils;
 
 #[cfg(test)]
 mod hybrid_tests;

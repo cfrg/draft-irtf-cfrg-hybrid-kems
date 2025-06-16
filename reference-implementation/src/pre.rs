@@ -1,6 +1,7 @@
 use crate::error::KemError;
 use crate::ghp::{HybridCiphertext, HybridDecapsulationKey, HybridEncapsulationKey};
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, Prg};
+use crate::utils::{concat, split};
 
 /// PRE Hybrid KEM implementation
 ///
@@ -71,8 +72,11 @@ where
         let seed_full = PrgImpl::prg(seed).map_err(|_| KemError::Prg)?;
 
         // Split expanded seed into traditional and post-quantum portions
-        let seed_t = &seed_full[..KemT::SEED_LENGTH];
-        let seed_pq = &seed_full[KemT::SEED_LENGTH..KemT::SEED_LENGTH + KemPq::SEED_LENGTH];
+        if seed_full.len() < KemT::SEED_LENGTH + KemPq::SEED_LENGTH {
+            return Err(KemError::Prg);
+        }
+        let (seed_t, seed_pq) = split(KemT::SEED_LENGTH, KemPq::SEED_LENGTH, &seed_full[..KemT::SEED_LENGTH + KemPq::SEED_LENGTH])
+            .map_err(|_| KemError::Prg)?;
 
         // Generate key pairs for each component
         let (ek_t, dk_t) =
