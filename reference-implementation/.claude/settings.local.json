@@ -4,7 +4,11 @@
       "Bash(cargo test)",
       "Bash(rg:*)",
       "Bash(cargo check:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(cargo build:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:)",
+      "Bash(cargo test:*)"
     ],
     "deny": []
   }

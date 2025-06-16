@@ -1,6 +1,9 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, Prg};
-use crate::utils::{concat, max, min, split, HybridCiphertext, HybridDecapsulationKey, HybridEncapsulationKey, HybridSharedSecret};
+use crate::utils::{
+    concat, max, min, split, HybridCiphertext, HybridDecapsulationKey, HybridEncapsulationKey,
+    HybridSharedSecret,
+};
 
 /// GHP Hybrid KEM implementation
 ///
@@ -28,7 +31,8 @@ where
         KemT::DECAPSULATION_KEY_LENGTH + KemPq::DECAPSULATION_KEY_LENGTH;
     const CIPHERTEXT_LENGTH: usize = KemT::CIPHERTEXT_LENGTH + KemPq::CIPHERTEXT_LENGTH;
 
-    const SHARED_SECRET_LENGTH: usize = min(KemT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
+    const SHARED_SECRET_LENGTH: usize =
+        min(KemT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
 
     type EncapsulationKey = HybridEncapsulationKey;
     type DecapsulationKey = HybridDecapsulationKey;
@@ -59,8 +63,12 @@ where
         if seed_full.len() < KemT::SEED_LENGTH + KemPq::SEED_LENGTH {
             return Err(KemError::Prg);
         }
-        let (seed_t, seed_pq) = split(KemT::SEED_LENGTH, KemPq::SEED_LENGTH, &seed_full[..KemT::SEED_LENGTH + KemPq::SEED_LENGTH])
-            .map_err(|_| KemError::Prg)?;
+        let (seed_t, seed_pq) = split(
+            KemT::SEED_LENGTH,
+            KemPq::SEED_LENGTH,
+            &seed_full[..KemT::SEED_LENGTH + KemPq::SEED_LENGTH],
+        )
+        .map_err(|_| KemError::Prg)?;
 
         // Generate key pairs for each component
         let (ek_t, dk_t) =
@@ -72,8 +80,8 @@ where
         let ek_bytes = concat(&[ek_t.as_bytes(), ek_pq.as_bytes()]);
         let dk_bytes = concat(&[dk_t.as_bytes(), dk_pq.as_bytes()]);
 
-        let ek_hybrid = HybridEncapsulationKey { bytes: ek_bytes };
-        let dk_hybrid = HybridDecapsulationKey { bytes: dk_bytes };
+        let ek_hybrid = HybridEncapsulationKey::from(ek_bytes);
+        let dk_hybrid = HybridDecapsulationKey::from(dk_bytes);
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -83,8 +91,12 @@ where
         rng: &mut R,
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let (ek_t_bytes, ek_pq_bytes) = split(KemT::ENCAPSULATION_KEY_LENGTH, KemPq::ENCAPSULATION_KEY_LENGTH, &ek.bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let (ek_t_bytes, ek_pq_bytes) = split(
+            KemT::ENCAPSULATION_KEY_LENGTH,
+            KemPq::ENCAPSULATION_KEY_LENGTH,
+            &ek.0,
+        )
+        .map_err(|_| KemError::InvalidInputLength)?;
 
         let ek_t = KemT::EncapsulationKey::try_from(ek_t_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
@@ -100,7 +112,7 @@ where
 
         // Create hybrid ciphertext
         let ct_bytes = concat(&[ct_t.as_bytes(), ct_pq.as_bytes()]);
-        let ct_hybrid = HybridCiphertext { bytes: ct_bytes };
+        let ct_hybrid = HybridCiphertext::from(ct_bytes);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
@@ -115,7 +127,7 @@ where
         ]);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
-        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -125,8 +137,12 @@ where
         ct: &Self::Ciphertext,
     ) -> Result<Self::SharedSecret, KemError> {
         // Deserialize component decapsulation keys
-        let (dk_t_bytes, dk_pq_bytes) = split(KemT::DECAPSULATION_KEY_LENGTH, KemPq::DECAPSULATION_KEY_LENGTH, &dk.bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let (dk_t_bytes, dk_pq_bytes) = split(
+            KemT::DECAPSULATION_KEY_LENGTH,
+            KemPq::DECAPSULATION_KEY_LENGTH,
+            &dk.0,
+        )
+        .map_err(|_| KemError::InvalidInputLength)?;
 
         let dk_t = KemT::DecapsulationKey::try_from(dk_t_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
@@ -134,8 +150,9 @@ where
             .map_err(|_| KemError::InvalidInputLength)?;
 
         // Deserialize component ciphertexts
-        let (ct_t_bytes, ct_pq_bytes) = split(KemT::CIPHERTEXT_LENGTH, KemPq::CIPHERTEXT_LENGTH, &ct.bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let (ct_t_bytes, ct_pq_bytes) =
+            split(KemT::CIPHERTEXT_LENGTH, KemPq::CIPHERTEXT_LENGTH, &ct.0)
+                .map_err(|_| KemError::InvalidInputLength)?;
 
         let ct_t =
             KemT::Ciphertext::try_from(ct_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
@@ -166,7 +183,7 @@ where
         ]);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
-        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
 
         Ok(ss_hybrid)
     }
@@ -175,8 +192,12 @@ where
         dk: &Self::DecapsulationKey,
     ) -> Result<Self::EncapsulationKey, KemError> {
         // Deserialize component decapsulation keys
-        let (dk_t_bytes, dk_pq_bytes) = split(KemT::DECAPSULATION_KEY_LENGTH, KemPq::DECAPSULATION_KEY_LENGTH, &dk.bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let (dk_t_bytes, dk_pq_bytes) = split(
+            KemT::DECAPSULATION_KEY_LENGTH,
+            KemPq::DECAPSULATION_KEY_LENGTH,
+            &dk.0,
+        )
+        .map_err(|_| KemError::InvalidInputLength)?;
 
         let dk_t = KemT::DecapsulationKey::try_from(dk_t_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
@@ -191,7 +212,7 @@ where
         // Concatenate serialized encapsulation keys
         let ek_bytes = concat(&[ek_t.as_bytes(), ek_pq.as_bytes()]);
 
-        Ok(HybridEncapsulationKey { bytes: ek_bytes })
+        Ok(HybridEncapsulationKey::from(ek_bytes))
     }
 }
 
@@ -208,8 +229,12 @@ where
         randomness: &[u8],
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let (ek_t_bytes, ek_pq_bytes) = split(KemT::ENCAPSULATION_KEY_LENGTH, KemPq::ENCAPSULATION_KEY_LENGTH, &ek.bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let (ek_t_bytes, ek_pq_bytes) = split(
+            KemT::ENCAPSULATION_KEY_LENGTH,
+            KemPq::ENCAPSULATION_KEY_LENGTH,
+            &ek.0,
+        )
+        .map_err(|_| KemError::InvalidInputLength)?;
 
         let ek_t = KemT::EncapsulationKey::try_from(ek_t_bytes)
             .map_err(|_| KemError::InvalidInputLength)?;
@@ -231,7 +256,7 @@ where
 
         // Create hybrid ciphertext
         let ct_bytes = concat(&[ct_t.as_bytes(), ct_pq.as_bytes()]);
-        let ct_hybrid = HybridCiphertext { bytes: ct_bytes };
+        let ct_hybrid = HybridCiphertext::from(ct_bytes);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
@@ -246,7 +271,7 @@ where
         ]);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
-        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
 
         Ok((ct_hybrid, ss_hybrid))
     }

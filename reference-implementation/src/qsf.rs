@@ -12,13 +12,11 @@ pub struct QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl> {
 }
 
 /// QSF encapsulation key combining group element and post-quantum key
-pub struct QsfEncapsulationKey {
-    pub bytes: Vec<u8>,
-}
+pub struct QsfEncapsulationKey(pub Vec<u8>);
 
 impl AsBytes for QsfEncapsulationKey {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -26,20 +24,22 @@ impl TryFrom<&[u8]> for QsfEncapsulationKey {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(QsfEncapsulationKey {
-            bytes: bytes.to_vec(),
-        })
+        Ok(QsfEncapsulationKey(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for QsfEncapsulationKey {
+    fn from(bytes: Vec<u8>) -> Self {
+        QsfEncapsulationKey(bytes)
     }
 }
 
 /// QSF decapsulation key combining scalar and post-quantum key
-pub struct QsfDecapsulationKey {
-    pub bytes: Vec<u8>,
-}
+pub struct QsfDecapsulationKey(pub Vec<u8>);
 
 impl AsBytes for QsfDecapsulationKey {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -47,20 +47,22 @@ impl TryFrom<&[u8]> for QsfDecapsulationKey {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(QsfDecapsulationKey {
-            bytes: bytes.to_vec(),
-        })
+        Ok(QsfDecapsulationKey(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for QsfDecapsulationKey {
+    fn from(bytes: Vec<u8>) -> Self {
+        QsfDecapsulationKey(bytes)
     }
 }
 
 /// QSF ciphertext combining group element and post-quantum ciphertext
-pub struct QsfCiphertext {
-    pub bytes: Vec<u8>,
-}
+pub struct QsfCiphertext(pub Vec<u8>);
 
 impl AsBytes for QsfCiphertext {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -68,9 +70,13 @@ impl TryFrom<&[u8]> for QsfCiphertext {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(QsfCiphertext {
-            bytes: bytes.to_vec(),
-        })
+        Ok(QsfCiphertext(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for QsfCiphertext {
+    fn from(bytes: Vec<u8>) -> Self {
+        QsfCiphertext(bytes)
     }
 }
 
@@ -90,7 +96,8 @@ where
     const DECAPSULATION_KEY_LENGTH: usize = GroupT::SCALAR_LENGTH + KemPq::DECAPSULATION_KEY_LENGTH;
     const CIPHERTEXT_LENGTH: usize = GroupT::ELEMENT_LENGTH + KemPq::CIPHERTEXT_LENGTH;
 
-    const SHARED_SECRET_LENGTH: usize = min(GroupT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
+    const SHARED_SECRET_LENGTH: usize =
+        min(GroupT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
 
     type EncapsulationKey = QsfEncapsulationKey;
     type DecapsulationKey = QsfDecapsulationKey;
@@ -139,8 +146,8 @@ where
         dk_bytes.extend_from_slice(dk_t.as_bytes());
         dk_bytes.extend_from_slice(dk_pq.as_bytes());
 
-        let ek_hybrid = QsfEncapsulationKey { bytes: ek_bytes };
-        let dk_hybrid = QsfDecapsulationKey { bytes: dk_bytes };
+        let ek_hybrid = QsfEncapsulationKey::from(ek_bytes);
+        let dk_hybrid = QsfDecapsulationKey::from(dk_bytes);
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -150,8 +157,8 @@ where
         rng: &mut R,
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let ek_t_bytes = &ek.bytes[..GroupT::ELEMENT_LENGTH];
-        let ek_pq_bytes = &ek.bytes[GroupT::ELEMENT_LENGTH..];
+        let ek_t_bytes = &ek.0[..GroupT::ELEMENT_LENGTH];
+        let ek_pq_bytes = &ek.0[GroupT::ELEMENT_LENGTH..];
 
         let ek_t =
             GroupT::Element::try_from(ek_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
@@ -177,7 +184,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = QsfCiphertext { bytes: ct_bytes };
+        let ct_hybrid = QsfCiphertext::from(ct_bytes);
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
@@ -190,7 +197,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
-        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -200,8 +207,8 @@ where
         ct: &Self::Ciphertext,
     ) -> Result<Self::SharedSecret, KemError> {
         // Deserialize component decapsulation keys
-        let dk_t_bytes = &dk.bytes[..GroupT::SCALAR_LENGTH];
-        let dk_pq_bytes = &dk.bytes[GroupT::SCALAR_LENGTH..];
+        let dk_t_bytes = &dk.0[..GroupT::SCALAR_LENGTH];
+        let dk_pq_bytes = &dk.0[GroupT::SCALAR_LENGTH..];
 
         let dk_t =
             GroupT::Scalar::try_from(dk_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
@@ -209,8 +216,8 @@ where
             .map_err(|_| KemError::InvalidInputLength)?;
 
         // Deserialize component ciphertexts
-        let ct_t_bytes = &ct.bytes[..GroupT::ELEMENT_LENGTH];
-        let ct_pq_bytes = &ct.bytes[GroupT::ELEMENT_LENGTH..];
+        let ct_t_bytes = &ct.0[..GroupT::ELEMENT_LENGTH];
+        let ct_pq_bytes = &ct.0[GroupT::ELEMENT_LENGTH..];
 
         let ct_t =
             GroupT::Element::try_from(ct_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
@@ -237,7 +244,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
-        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
 
         Ok(ss_hybrid)
     }
@@ -246,8 +253,8 @@ where
         dk: &Self::DecapsulationKey,
     ) -> Result<Self::EncapsulationKey, KemError> {
         // Deserialize component decapsulation keys
-        let dk_t_bytes = &dk.bytes[..GroupT::SCALAR_LENGTH];
-        let dk_pq_bytes = &dk.bytes[GroupT::SCALAR_LENGTH..];
+        let dk_t_bytes = &dk.0[..GroupT::SCALAR_LENGTH];
+        let dk_pq_bytes = &dk.0[GroupT::SCALAR_LENGTH..];
 
         let dk_t =
             GroupT::Scalar::try_from(dk_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
@@ -264,7 +271,7 @@ where
         ek_bytes.extend_from_slice(ek_t.as_bytes());
         ek_bytes.extend_from_slice(ek_pq.as_bytes());
 
-        Ok(QsfEncapsulationKey { bytes: ek_bytes })
+        Ok(QsfEncapsulationKey::from(ek_bytes))
     }
 }
 
@@ -281,8 +288,8 @@ where
         randomness: &[u8],
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let ek_t_bytes = &ek.bytes[..GroupT::ELEMENT_LENGTH];
-        let ek_pq_bytes = &ek.bytes[GroupT::ELEMENT_LENGTH..];
+        let ek_t_bytes = &ek.0[..GroupT::ELEMENT_LENGTH];
+        let ek_pq_bytes = &ek.0[GroupT::ELEMENT_LENGTH..];
 
         let ek_t =
             GroupT::Element::try_from(ek_t_bytes).map_err(|_| KemError::InvalidInputLength)?;
@@ -309,7 +316,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = QsfCiphertext { bytes: ct_bytes };
+        let ct_hybrid = QsfCiphertext::from(ct_bytes);
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
@@ -322,7 +329,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input).map_err(|_| KemError::Kdf)?;
-        let ss_hybrid = HybridSharedSecret { bytes: ss_hybrid_bytes };
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
 
         Ok((ct_hybrid, ss_hybrid))
     }

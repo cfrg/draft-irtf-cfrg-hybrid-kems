@@ -7,12 +7,20 @@ use crate::traits::AsBytes;
 
 /// Const function to compute the minimum of two values
 pub const fn min(a: usize, b: usize) -> usize {
-    if a < b { a } else { b }
+    if a < b {
+        a
+    } else {
+        b
+    }
 }
 
 /// Const function to compute the maximum of two values  
 pub const fn max(a: usize, b: usize) -> usize {
-    if a > b { a } else { b }
+    if a > b {
+        a
+    } else {
+        b
+    }
 }
 
 /// Concatenation of byte strings
@@ -22,11 +30,11 @@ pub const fn max(a: usize, b: usize) -> usize {
 pub fn concat(slices: &[&[u8]]) -> Vec<u8> {
     let total_len = slices.iter().map(|s| s.len()).sum();
     let mut result = Vec::with_capacity(total_len);
-    
+
     for slice in slices {
         result.extend_from_slice(slice);
     }
-    
+
     result
 }
 
@@ -42,18 +50,16 @@ pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), &'static 
     if x.len() != n1 + n2 {
         return Err("Input length does not match N1 + N2");
     }
-    
+
     Ok((&x[..n1], &x[n1..]))
 }
 
 /// Hybrid encapsulation key as concatenated byte string
-pub struct HybridEncapsulationKey {
-    pub bytes: Vec<u8>,
-}
+pub struct HybridEncapsulationKey(pub Vec<u8>);
 
 impl AsBytes for HybridEncapsulationKey {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -61,20 +67,22 @@ impl TryFrom<&[u8]> for HybridEncapsulationKey {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridEncapsulationKey {
-            bytes: bytes.to_vec(),
-        })
+        Ok(HybridEncapsulationKey(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for HybridEncapsulationKey {
+    fn from(bytes: Vec<u8>) -> Self {
+        HybridEncapsulationKey(bytes)
     }
 }
 
 /// Hybrid decapsulation key as concatenated byte string
-pub struct HybridDecapsulationKey {
-    pub bytes: Vec<u8>,
-}
+pub struct HybridDecapsulationKey(pub Vec<u8>);
 
 impl AsBytes for HybridDecapsulationKey {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -82,20 +90,22 @@ impl TryFrom<&[u8]> for HybridDecapsulationKey {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridDecapsulationKey {
-            bytes: bytes.to_vec(),
-        })
+        Ok(HybridDecapsulationKey(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for HybridDecapsulationKey {
+    fn from(bytes: Vec<u8>) -> Self {
+        HybridDecapsulationKey(bytes)
     }
 }
 
 /// Hybrid ciphertext as concatenated byte string
-pub struct HybridCiphertext {
-    pub bytes: Vec<u8>,
-}
+pub struct HybridCiphertext(pub Vec<u8>);
 
 impl AsBytes for HybridCiphertext {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -103,20 +113,22 @@ impl TryFrom<&[u8]> for HybridCiphertext {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridCiphertext {
-            bytes: bytes.to_vec(),
-        })
+        Ok(HybridCiphertext(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for HybridCiphertext {
+    fn from(bytes: Vec<u8>) -> Self {
+        HybridCiphertext(bytes)
     }
 }
 
 /// Hybrid shared secret as byte string
-pub struct HybridSharedSecret {
-    pub bytes: Vec<u8>,
-}
+pub struct HybridSharedSecret(pub Vec<u8>);
 
 impl AsBytes for HybridSharedSecret {
     fn as_bytes(&self) -> &[u8] {
-        &self.bytes
+        &self.0
     }
 }
 
@@ -124,9 +136,13 @@ impl TryFrom<&[u8]> for HybridSharedSecret {
     type Error = ();
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Ok(HybridSharedSecret {
-            bytes: bytes.to_vec(),
-        })
+        Ok(HybridSharedSecret(bytes.to_vec()))
+    }
+}
+
+impl From<Vec<u8>> for HybridSharedSecret {
+    fn from(bytes: Vec<u8>) -> Self {
+        HybridSharedSecret(bytes)
     }
 }
 
@@ -171,10 +187,10 @@ mod tests {
     fn test_concat_split_roundtrip() {
         let x1 = &[0x01, 0x02];
         let x2 = &[0x03, 0x04, 0x05];
-        
+
         let concatenated = concat(&[x1, x2]);
         let (split1, split2) = split(x1.len(), x2.len(), &concatenated).unwrap();
-        
+
         assert_eq!(split1, x1);
         assert_eq!(split2, x2);
     }
