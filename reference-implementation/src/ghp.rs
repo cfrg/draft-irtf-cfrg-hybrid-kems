@@ -80,8 +80,8 @@ where
             KemPq::derive_key_pair(seed_pq).map_err(|_| KemError::PostQuantumComponent)?;
 
         // Create hybrid keys using new method
-        let ek_hybrid = HybridValue::new(ek_t.as_bytes(), ek_pq.as_bytes());
-        let dk_hybrid = HybridValue::new(dk_t.as_bytes(), dk_pq.as_bytes());
+        let ek_hybrid = HybridValue::new(&ek_t, &ek_pq);
+        let dk_hybrid = HybridValue::new(&dk_t, &dk_pq);
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -109,7 +109,7 @@ where
             KemPq::encaps(&ek_pq, rng).map_err(|_| KemError::PostQuantumComponent)?;
 
         // Create hybrid ciphertext
-        let ct_hybrid = HybridValue::new(ct_t.as_bytes(), ct_pq.as_bytes());
+        let ct_hybrid = HybridValue::new(&ct_t, &ct_pq);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
@@ -201,7 +201,7 @@ where
             KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantumComponent)?;
 
         // Create hybrid encapsulation key
-        let ek_hybrid = HybridValue::new(ek_t.as_bytes(), ek_pq.as_bytes());
+        let ek_hybrid = HybridValue::new(&ek_t, &ek_pq);
         Ok(ek_hybrid)
     }
 }
@@ -249,7 +249,7 @@ where
             KemPq::encaps_derand(&ek_pq, rand_pq).map_err(|_| KemError::PostQuantumComponent)?;
 
         // Create hybrid ciphertext
-        let ct_hybrid = HybridValue::new(ct_t.as_bytes(), ct_pq.as_bytes());
+        let ct_hybrid = HybridValue::new(&ct_t, &ct_pq);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)

@@ -58,11 +58,13 @@ pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), &'static 
 pub struct HybridValue(pub Vec<u8>);
 
 impl HybridValue {
-    /// Create a new hybrid value from two byte slices
-    pub fn new(first: &[u8], second: &[u8]) -> Self {
-        let mut bytes = Vec::with_capacity(first.len() + second.len());
-        bytes.extend_from_slice(first);
-        bytes.extend_from_slice(second);
+    /// Create a new hybrid value from two values that implement AsBytes
+    pub fn new(first: &impl AsBytes, second: &impl AsBytes) -> Self {
+        let first_bytes = first.as_bytes();
+        let second_bytes = second.as_bytes();
+        let mut bytes = Vec::with_capacity(first_bytes.len() + second_bytes.len());
+        bytes.extend_from_slice(first_bytes);
+        bytes.extend_from_slice(second_bytes);
         HybridValue(bytes)
     }
 
