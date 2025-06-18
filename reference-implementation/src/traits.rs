@@ -23,7 +23,7 @@ pub trait Kdf {
     const OUTPUT_LENGTH: usize;
 
     /// Produce a byte string of length OUTPUT_LENGTH from an input byte string
-    fn kdf(input: &[u8]) -> Result<Vec<u8>, KemError>;
+    fn kdf(input: &[u8]) -> Vec<u8>;
 }
 
 /// Pseudorandom Generator (PRG) trait
@@ -37,7 +37,7 @@ pub trait Prg {
     const OUTPUT_LENGTH: usize;
 
     /// Produce a byte string of length OUTPUT_LENGTH from an input seed
-    fn prg(seed: &[u8]) -> Result<Vec<u8>, KemError>;
+    fn prg(seed: &[u8]) -> Vec<u8>;
 }
 
 /// Key Encapsulation Mechanism (KEM) trait
@@ -60,16 +60,16 @@ pub trait Kem {
     const SHARED_SECRET_LENGTH: usize;
 
     /// Public encapsulation key type
-    type EncapsulationKey: AsBytes + for<'a> TryFrom<&'a [u8]>;
+    type EncapsulationKey: AsBytes + for<'a> From<&'a [u8]>;
 
     /// Secret decapsulation key type
-    type DecapsulationKey: AsBytes + for<'a> TryFrom<&'a [u8]>;
+    type DecapsulationKey: AsBytes + for<'a> From<&'a [u8]>;
 
     /// Ciphertext type
-    type Ciphertext: AsBytes + for<'a> TryFrom<&'a [u8]>;
+    type Ciphertext: AsBytes + for<'a> From<&'a [u8]>;
 
     /// Shared secret type
-    type SharedSecret: AsBytes + for<'a> TryFrom<&'a [u8]>;
+    type SharedSecret: AsBytes;
 
     /// Generate a random key pair
     ///
@@ -136,10 +136,10 @@ pub trait NominalGroup {
     const SHARED_SECRET_LENGTH: usize;
 
     /// Scalar type
-    type Scalar: AsBytes + for<'a> TryFrom<&'a [u8]>;
+    type Scalar: AsBytes + for<'a> From<&'a [u8]>;
 
     /// Group element type
-    type Element: AsBytes + for<'a> TryFrom<&'a [u8]>;
+    type Element: AsBytes + for<'a> From<&'a [u8]>;
 
     /// Distinguished basis element
     fn generator() -> Self::Element;

@@ -15,7 +15,7 @@ impl Kdf for TestKdf {
     const INPUT_LENGTH: usize = 32;
     const OUTPUT_LENGTH: usize = 32;
 
-    fn kdf(input: &[u8]) -> Result<Vec<u8>, KemError> {
+    fn kdf(input: &[u8]) -> Vec<u8> {
         let mut output = Vec::with_capacity(Self::OUTPUT_LENGTH);
         let xor_pattern = 0x5A; // Fixed XOR pattern
 
@@ -29,7 +29,7 @@ impl Kdf for TestKdf {
             output.push(input_byte ^ xor_pattern);
         }
 
-        Ok(output)
+        output
     }
 }
 
@@ -40,7 +40,7 @@ impl Prg for TestPrg {
     const INPUT_LENGTH: usize = 16;
     const OUTPUT_LENGTH: usize = 64;
 
-    fn prg(seed: &[u8]) -> Result<Vec<u8>, KemError> {
+    fn prg(seed: &[u8]) -> Vec<u8> {
         // Convert seed to u64 for LCG
         let mut state = 0u64;
         for (i, &byte) in seed.iter().enumerate().take(8) {
@@ -61,7 +61,7 @@ impl Prg for TestPrg {
             output.push((state >> 8) as u8);
         }
 
-        Ok(output)
+        output
     }
 }
 
@@ -78,16 +78,12 @@ impl AsBytes for TestEncapsulationKey {
     }
 }
 
-impl TryFrom<&[u8]> for TestEncapsulationKey {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
-        if bytes.len() != 32 {
-            return Err(());
-        }
+impl From<&[u8]> for TestEncapsulationKey {
+    fn from(bytes: &[u8]) -> Self {
+        assert_eq!(bytes.len(), 32, "TestEncapsulationKey requires 32 bytes");
         let mut key_bytes = [0u8; 32];
         key_bytes.copy_from_slice(bytes);
-        Ok(TestEncapsulationKey { bytes: key_bytes })
+        TestEncapsulationKey { bytes: key_bytes }
     }
 }
 
@@ -101,16 +97,12 @@ impl AsBytes for TestDecapsulationKey {
     }
 }
 
-impl TryFrom<&[u8]> for TestDecapsulationKey {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
-        if bytes.len() != 16 {
-            return Err(());
-        }
+impl From<&[u8]> for TestDecapsulationKey {
+    fn from(bytes: &[u8]) -> Self {
+        assert_eq!(bytes.len(), 16, "TestDecapsulationKey requires 16 bytes");
         let mut key_bytes = [0u8; 16];
         key_bytes.copy_from_slice(bytes);
-        Ok(TestDecapsulationKey { bytes: key_bytes })
+        TestDecapsulationKey { bytes: key_bytes }
     }
 }
 
@@ -124,16 +116,12 @@ impl AsBytes for TestCiphertext {
     }
 }
 
-impl TryFrom<&[u8]> for TestCiphertext {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
-        if bytes.len() != 48 {
-            return Err(());
-        }
+impl From<&[u8]> for TestCiphertext {
+    fn from(bytes: &[u8]) -> Self {
+        assert_eq!(bytes.len(), 48, "TestCiphertext requires 48 bytes");
         let mut ct_bytes = [0u8; 48];
         ct_bytes.copy_from_slice(bytes);
-        Ok(TestCiphertext { bytes: ct_bytes })
+        TestCiphertext { bytes: ct_bytes }
     }
 }
 
@@ -147,16 +135,12 @@ impl AsBytes for TestSharedSecret {
     }
 }
 
-impl TryFrom<&[u8]> for TestSharedSecret {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
-        if bytes.len() != 32 {
-            return Err(());
-        }
+impl From<&[u8]> for TestSharedSecret {
+    fn from(bytes: &[u8]) -> Self {
+        assert_eq!(bytes.len(), 32, "TestSharedSecret requires 32 bytes");
         let mut array = [0u8; 32];
         array.copy_from_slice(bytes);
-        Ok(TestSharedSecret { bytes: array })
+        TestSharedSecret { bytes: array }
     }
 }
 
@@ -332,16 +316,12 @@ impl AsBytes for TestScalar {
     }
 }
 
-impl TryFrom<&[u8]> for TestScalar {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
-        if bytes.len() != 8 {
-            return Err(());
-        }
+impl From<&[u8]> for TestScalar {
+    fn from(bytes: &[u8]) -> Self {
+        assert_eq!(bytes.len(), 8, "TestScalar requires 8 bytes");
         let mut arr = [0u8; 8];
         arr.copy_from_slice(bytes);
-        Ok(TestScalar { bytes: arr })
+        TestScalar { bytes: arr }
     }
 }
 
@@ -355,16 +335,12 @@ impl AsBytes for TestElement {
     }
 }
 
-impl TryFrom<&[u8]> for TestElement {
-    type Error = ();
-
-    fn try_from(bytes: &[u8]) -> Result<Self, ()> {
-        if bytes.len() != 8 {
-            return Err(());
-        }
+impl From<&[u8]> for TestElement {
+    fn from(bytes: &[u8]) -> Self {
+        assert_eq!(bytes.len(), 8, "TestElement requires 8 bytes");
         let mut arr = [0u8; 8];
         arr.copy_from_slice(bytes);
-        Ok(TestElement { bytes: arr })
+        TestElement { bytes: arr }
     }
 }
 

@@ -15,18 +15,18 @@ pub fn test_kdf_basic<K: Kdf>() {
     }
 
     // Test output length
-    let output = K::kdf(&input).expect("KDF should succeed with valid input");
+    let output = K::kdf(&input);
     assert_eq!(output.len(), K::OUTPUT_LENGTH, "KDF output length mismatch");
 
     // Test determinism
-    let output2 = K::kdf(&input).expect("KDF should be deterministic");
+    let output2 = K::kdf(&input);
     assert_eq!(output, output2, "KDF should be deterministic");
 
     // Test different inputs produce different outputs (if input length > 0)
     if K::INPUT_LENGTH > 0 {
         let mut input2 = input.clone();
         input2[0] = input2[0].wrapping_add(1);
-        let output3 = K::kdf(&input2).expect("KDF should work with different input");
+        let output3 = K::kdf(&input2);
         assert_ne!(
             output, output3,
             "Different inputs should produce different outputs"
@@ -43,7 +43,7 @@ pub fn test_prg_basic<P: Prg>() {
     }
 
     // Test output length and expansion
-    let output = P::prg(&seed).expect("PRG should succeed with valid seed");
+    let output = P::prg(&seed);
     assert_eq!(output.len(), P::OUTPUT_LENGTH, "PRG output length mismatch");
     assert!(
         P::OUTPUT_LENGTH > P::INPUT_LENGTH,
@@ -51,14 +51,14 @@ pub fn test_prg_basic<P: Prg>() {
     );
 
     // Test determinism
-    let output2 = P::prg(&seed).expect("PRG should be deterministic");
+    let output2 = P::prg(&seed);
     assert_eq!(output, output2, "PRG should be deterministic");
 
     // Test different seeds produce different outputs (if input length > 0)
     if P::INPUT_LENGTH > 0 {
         let mut seed2 = seed.clone();
         seed2[0] = seed2[0].wrapping_add(1);
-        let output3 = P::prg(&seed2).expect("PRG should work with different seed");
+        let output3 = P::prg(&seed2);
         assert_ne!(
             output, output3,
             "Different seeds should produce different outputs"
@@ -69,8 +69,8 @@ pub fn test_prg_basic<P: Prg>() {
 /// Generic test for KEM key generation and serialization
 pub fn test_kem_key_generation<K: Kem, R: CryptoRng>(rng: &mut R)
 where
-    for<'a> <K::EncapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
-    for<'a> <K::DecapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
+    K::EncapsulationKey: for<'a> From<&'a [u8]>,
+    K::DecapsulationKey: for<'a> From<&'a [u8]>,
 {
     // Test random key generation
     let (ek, dk) = K::generate_key_pair(rng).expect("Key generation should succeed");
@@ -91,10 +91,8 @@ where
     );
 
     // Test deserialization roundtrip
-    let ek2 = K::EncapsulationKey::try_from(ek_bytes)
-        .expect("Encapsulation key deserialization should succeed");
-    let dk2 = K::DecapsulationKey::try_from(dk_bytes)
-        .expect("Decapsulation key deserialization should succeed");
+    let ek2 = K::EncapsulationKey::from(ek_bytes);
+    let dk2 = K::DecapsulationKey::from(dk_bytes);
 
     let ek2_bytes = ek2.as_bytes();
     let dk2_bytes = dk2.as_bytes();
@@ -147,7 +145,7 @@ pub fn test_kem_deterministic_derivation<K: Kem>() {
 /// Generic test for KEM encapsulation/decapsulation roundtrip
 pub fn test_kem_roundtrip<K: Kem, R: CryptoRng>(rng: &mut R)
 where
-    for<'a> <K::Ciphertext as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
+    K::Ciphertext: for<'a> From<&'a [u8]>,
 {
     // Generate key pair
     let (ek, dk) = K::generate_key_pair(rng).expect("Key generation should succeed");
@@ -180,7 +178,7 @@ where
     );
 
     // Test ciphertext deserialization roundtrip
-    let ct2 = K::Ciphertext::try_from(ct_bytes).expect("Ciphertext deserialization should succeed");
+    let ct2 = K::Ciphertext::from(ct_bytes);
     let ss3 =
         K::decaps(&dk, &ct2).expect("Decapsulation with deserialized ciphertext should succeed");
     let ss3_bytes = ss3.as_bytes();
@@ -275,14 +273,14 @@ pub fn test_group_basic_operations<G: NominalGroup>() {
 /// Generic test for NominalGroup serialization roundtrips
 pub fn test_group_serialization<G: NominalGroup>()
 where
-    for<'a> <G::Scalar as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
-    for<'a> <G::Element as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
+    G::Scalar: for<'a> From<&'a [u8]>,
+    G::Element: for<'a> From<&'a [u8]>,
 {
     // Test scalar serialization roundtrip
     let seed = vec![42u8; G::SEED_LENGTH];
     let scalar1 = G::random_scalar(&seed).expect("Scalar generation should succeed");
     let scalar_bytes = scalar1.as_bytes();
-    let scalar2 = G::Scalar::try_from(scalar_bytes).expect("Scalar deserialization should succeed");
+    let scalar2 = G::Scalar::from(scalar_bytes);
     let scalar2_bytes = scalar2.as_bytes();
 
     assert_eq!(
@@ -293,7 +291,7 @@ where
     // Test element serialization roundtrip
     let generator = G::generator();
     let gen_bytes = generator.as_bytes();
-    let gen2 = G::Element::try_from(gen_bytes).expect("Element deserialization should succeed");
+    let gen2 = G::Element::from(gen_bytes);
     let gen2_bytes = gen2.as_bytes();
 
     assert_eq!(
@@ -305,7 +303,7 @@ where
     let element1 = G::exp(&generator, &scalar1);
     let elem_bytes = element1.as_bytes();
     let element2 =
-        G::Element::try_from(elem_bytes).expect("Element deserialization should succeed");
+        G::Element::from(elem_bytes);
     let elem2_bytes = element2.as_bytes();
 
     assert_eq!(
@@ -365,9 +363,9 @@ pub fn test_prg_all<P: Prg>() {
 /// Run all KEM tests for a given implementation
 pub fn test_kem_all<K: Kem + EncapsDerand, R: CryptoRng>(rng: &mut R)
 where
-    for<'a> <K::EncapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
-    for<'a> <K::DecapsulationKey as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
-    for<'a> <K::Ciphertext as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
+    K::EncapsulationKey: for<'a> From<&'a [u8]>,
+    K::DecapsulationKey: for<'a> From<&'a [u8]>,
+    K::Ciphertext: for<'a> From<&'a [u8]>,
 {
     test_kem_key_generation::<K, R>(rng);
     test_kem_deterministic_derivation::<K>();
@@ -378,8 +376,8 @@ where
 /// Run all NominalGroup tests for a given implementation
 pub fn test_group_all<G: NominalGroup>()
 where
-    for<'a> <G::Scalar as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
-    for<'a> <G::Element as TryFrom<&'a [u8]>>::Error: std::fmt::Debug,
+    G::Scalar: for<'a> From<&'a [u8]>,
+    G::Element: for<'a> From<&'a [u8]>,
 {
     test_group_basic_operations::<G>();
     test_group_serialization::<G>();
