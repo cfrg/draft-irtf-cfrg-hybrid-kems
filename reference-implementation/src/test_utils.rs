@@ -195,7 +195,7 @@ pub fn test_kem_deterministic_encaps<K: Kem + EncapsDerand, R: CryptoRng>(rng: &
     let (ek, dk) = K::generate_key_pair(rng).expect("Key generation should succeed");
 
     // Create deterministic randomness
-    let randomness = vec![42u8; 64]; // Should be enough for most KEMs
+    let randomness = vec![42u8; K::RANDOMNESS_LENGTH];
 
     // Test deterministic encapsulation
     let (ct1, ss1) =

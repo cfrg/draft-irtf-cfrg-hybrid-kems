@@ -109,6 +109,9 @@ pub trait Kem {
 
 /// Trait for KEMs that support deterministic encapsulation
 pub trait EncapsDerand: Kem {
+    /// The length in bytes of randomness required for deterministic encapsulation
+    const RANDOMNESS_LENGTH: usize;
+
     /// Deterministic encapsulation (for testing)
     ///
     /// Takes a public encapsulation key and randomness, returns (ciphertext, shared_secret)

@@ -9,15 +9,15 @@ mod tests {
     use crate::ghp::GhpHybridKem;
     use crate::pre::PreHybridKem;
     use crate::qsf::QsfHybridKem;
-    use crate::test_impls::{TestGroup, TestKdf, TestKem, TestPrg};
+    use crate::test_impls::{TestGroup, TestKdf, TestKem, TestPrgGhpPre, TestPrgQsf};
     use crate::test_utils::test_kem_all;
     use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kem, NominalGroup};
     use rand::rng;
 
     // Type aliases for easier testing
-    type GhpTestKem = GhpHybridKem<TestKem, TestKem, TestKdf, TestPrg>;
-    type PreTestKem = PreHybridKem<TestKem, TestKem, TestKdf, TestPrg, TestKdf>;
-    type QsfTestKem = QsfHybridKem<TestGroup, TestKem, TestKdf, TestPrg>;
+    type GhpTestKem = GhpHybridKem<TestKem, TestKem, TestKdf, TestPrgGhpPre>;
+    type PreTestKem = PreHybridKem<TestKem, TestKem, TestKdf, TestPrgGhpPre, TestKdf>;
+    type QsfTestKem = QsfHybridKem<TestGroup, TestKem, TestKdf, TestPrgQsf>;
 
     // HybridKemLabel implementations for test types
     impl HybridKemLabel for GhpTestKem {
@@ -219,7 +219,9 @@ mod tests {
         // Test that all hybrid KEMs behave deterministically with same inputs
 
         let seed = vec![42u8; 64]; // Large enough for any KEM
-        let randomness = vec![123u8; 64];
+        let ghp_randomness = vec![123u8; GhpTestKem::RANDOMNESS_LENGTH];
+        let pre_randomness = vec![123u8; PreTestKem::RANDOMNESS_LENGTH];
+        let qsf_randomness = vec![123u8; QsfTestKem::RANDOMNESS_LENGTH];
 
         // Derive keys deterministically
         let (ghp_ek, ghp_dk) =
@@ -230,14 +232,14 @@ mod tests {
             QsfTestKem::derive_key_pair(&seed[..QsfTestKem::SEED_LENGTH]).unwrap();
 
         // Test deterministic encapsulation
-        let (ghp_ct1, ghp_ss1) = GhpTestKem::encaps_derand(&ghp_ek, &randomness).unwrap();
-        let (ghp_ct2, ghp_ss2) = GhpTestKem::encaps_derand(&ghp_ek, &randomness).unwrap();
+        let (ghp_ct1, ghp_ss1) = GhpTestKem::encaps_derand(&ghp_ek, &ghp_randomness).unwrap();
+        let (ghp_ct2, ghp_ss2) = GhpTestKem::encaps_derand(&ghp_ek, &ghp_randomness).unwrap();
 
-        let (pre_ct1, pre_ss1) = PreTestKem::encaps_derand(&pre_ek, &randomness).unwrap();
-        let (pre_ct2, pre_ss2) = PreTestKem::encaps_derand(&pre_ek, &randomness).unwrap();
+        let (pre_ct1, pre_ss1) = PreTestKem::encaps_derand(&pre_ek, &pre_randomness).unwrap();
+        let (pre_ct2, pre_ss2) = PreTestKem::encaps_derand(&pre_ek, &pre_randomness).unwrap();
 
-        let (qsf_ct1, qsf_ss1) = QsfTestKem::encaps_derand(&qsf_ek, &randomness).unwrap();
-        let (qsf_ct2, qsf_ss2) = QsfTestKem::encaps_derand(&qsf_ek, &randomness).unwrap();
+        let (qsf_ct1, qsf_ss1) = QsfTestKem::encaps_derand(&qsf_ek, &qsf_randomness).unwrap();
+        let (qsf_ct2, qsf_ss2) = QsfTestKem::encaps_derand(&qsf_ek, &qsf_randomness).unwrap();
 
         // Each hybrid should be deterministic
         assert_eq!(

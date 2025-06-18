@@ -60,25 +60,15 @@ where
         let seed_full = PrgImpl::prg(seed);
 
         // Split expanded seed into traditional and post-quantum portions
-        if seed_full.len() < KemT::SEED_LENGTH + KemPq::SEED_LENGTH {
-            return Err(KemError::Prg);
-        }
-        let (seed_t, seed_pq) = split(
-            KemT::SEED_LENGTH,
-            KemPq::SEED_LENGTH,
-            &seed_full[..KemT::SEED_LENGTH + KemPq::SEED_LENGTH],
-        )
-        .map_err(|_| KemError::Prg)?;
+        let (seed_t, seed_pq) = split(KemT::SEED_LENGTH, KemPq::SEED_LENGTH, &seed_full)?;
 
         // Generate key pairs for each component
-        let (ek_t, dk_t) =
-            KemT::derive_key_pair(seed_t).map_err(|_| KemError::TraditionalComponent)?;
-        let (ek_pq, dk_pq) =
-            KemPq::derive_key_pair(seed_pq).map_err(|_| KemError::PostQuantumComponent)?;
+        let (ek_t, dk_t) = KemT::derive_key_pair(seed_t).map_err(|_| KemError::Traditional)?;
+        let (ek_pq, dk_pq) = KemPq::derive_key_pair(seed_pq).map_err(|_| KemError::PostQuantum)?;
 
         // Create hybrid keys
-        let ek_hybrid = HybridValue::new(&ek_t, &ek_pq);
-        let dk_hybrid = HybridValue::new(&dk_t, &dk_pq);
+        let ek_hybrid = Self::EncapsulationKey::new(&ek_t, &ek_pq);
+        let dk_hybrid = Self::DecapsulationKey::new(&dk_t, &dk_pq);
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -88,21 +78,22 @@ where
         rng: &mut R,
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let ek_t_bytes = &ek.0[..KemT::ENCAPSULATION_KEY_LENGTH];
-        let ek_pq_bytes = &ek.0[KemT::ENCAPSULATION_KEY_LENGTH..];
+        let (ek_t_bytes, ek_pq_bytes) = ek.split(
+            KemT::ENCAPSULATION_KEY_LENGTH,
+            KemPq::ENCAPSULATION_KEY_LENGTH,
+        )?;
 
         let ek_t = KemT::EncapsulationKey::from(ek_t_bytes);
         let ek_pq = KemPq::EncapsulationKey::from(ek_pq_bytes);
 
         // Encapsulate with traditional KEM
-        let (ct_t, ss_t) = KemT::encaps(&ek_t, rng).map_err(|_| KemError::TraditionalComponent)?;
+        let (ct_t, ss_t) = KemT::encaps(&ek_t, rng).map_err(|_| KemError::Traditional)?;
 
         // Encapsulate with post-quantum KEM
-        let (ct_pq, ss_pq) =
-            KemPq::encaps(&ek_pq, rng).map_err(|_| KemError::PostQuantumComponent)?;
+        let (ct_pq, ss_pq) = KemPq::encaps(&ek_pq, rng).map_err(|_| KemError::PostQuantum)?;
 
         // Create hybrid ciphertext
-        let ct_hybrid = HybridValue::new(&ct_t, &ct_pq);
+        let ct_hybrid = Self::Ciphertext::new(&ct_t, &ct_pq);
 
         // PRE optimization: Hash the encapsulation key once
         let mut ek_concat = Vec::new();
@@ -120,8 +111,7 @@ where
         kdf_input.extend_from_slice(&ekh);
         kdf_input.extend_from_slice(Self::LABEL);
 
-        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = ss_hybrid_bytes;
+        let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -131,29 +121,30 @@ where
         ct: &Self::Ciphertext,
     ) -> Result<Self::SharedSecret, KemError> {
         // Deserialize component decapsulation keys
-        let dk_t_bytes = &dk.0[..KemT::DECAPSULATION_KEY_LENGTH];
-        let dk_pq_bytes = &dk.0[KemT::DECAPSULATION_KEY_LENGTH..];
+        let (dk_t_bytes, dk_pq_bytes) = dk.split(
+            KemT::DECAPSULATION_KEY_LENGTH,
+            KemPq::DECAPSULATION_KEY_LENGTH,
+        )?;
 
         let dk_t = KemT::DecapsulationKey::from(dk_t_bytes);
         let dk_pq = KemPq::DecapsulationKey::from(dk_pq_bytes);
 
         // Deserialize component ciphertexts
-        let ct_t_bytes = &ct.0[..KemT::CIPHERTEXT_LENGTH];
-        let ct_pq_bytes = &ct.0[KemT::CIPHERTEXT_LENGTH..];
+        let (ct_t_bytes, ct_pq_bytes) =
+            ct.split(KemT::CIPHERTEXT_LENGTH, KemPq::CIPHERTEXT_LENGTH)?;
 
         let ct_t = KemT::Ciphertext::from(ct_t_bytes);
         let ct_pq = KemPq::Ciphertext::from(ct_pq_bytes);
 
         // Decapsulate with traditional KEM
-        let ss_t = KemT::decaps(&dk_t, &ct_t).map_err(|_| KemError::TraditionalComponent)?;
+        let ss_t = KemT::decaps(&dk_t, &ct_t).map_err(|_| KemError::Traditional)?;
 
         // Decapsulate with post-quantum KEM
-        let ss_pq = KemPq::decaps(&dk_pq, &ct_pq).map_err(|_| KemError::PostQuantumComponent)?;
+        let ss_pq = KemPq::decaps(&dk_pq, &ct_pq).map_err(|_| KemError::PostQuantum)?;
 
         // Derive encapsulation keys from decapsulation keys
-        let ek_t = KemT::to_encapsulation_key(&dk_t).map_err(|_| KemError::TraditionalComponent)?;
-        let ek_pq =
-            KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantumComponent)?;
+        let ek_t = KemT::to_encapsulation_key(&dk_t).map_err(|_| KemError::Traditional)?;
+        let ek_pq = KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantum)?;
 
         // PRE optimization: Hash the encapsulation key
         let mut ek_concat = Vec::new();
@@ -171,8 +162,7 @@ where
         kdf_input.extend_from_slice(&ekh);
         kdf_input.extend_from_slice(Self::LABEL);
 
-        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = ss_hybrid_bytes;
+        let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
         Ok(ss_hybrid)
     }
@@ -181,19 +171,20 @@ where
         dk: &Self::DecapsulationKey,
     ) -> Result<Self::EncapsulationKey, KemError> {
         // Deserialize component decapsulation keys
-        let dk_t_bytes = &dk.0[..KemT::DECAPSULATION_KEY_LENGTH];
-        let dk_pq_bytes = &dk.0[KemT::DECAPSULATION_KEY_LENGTH..];
+        let (dk_t_bytes, dk_pq_bytes) = dk.split(
+            KemT::DECAPSULATION_KEY_LENGTH,
+            KemPq::DECAPSULATION_KEY_LENGTH,
+        )?;
 
         let dk_t = KemT::DecapsulationKey::from(dk_t_bytes);
         let dk_pq = KemPq::DecapsulationKey::from(dk_pq_bytes);
 
         // Derive component encapsulation keys
-        let ek_t = KemT::to_encapsulation_key(&dk_t).map_err(|_| KemError::TraditionalComponent)?;
-        let ek_pq =
-            KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantumComponent)?;
+        let ek_t = KemT::to_encapsulation_key(&dk_t).map_err(|_| KemError::Traditional)?;
+        let ek_pq = KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantum)?;
 
         // Create hybrid encapsulation key
-        Ok(HybridValue::new(&ek_t, &ek_pq))
+        Ok(Self::EncapsulationKey::new(&ek_t, &ek_pq))
     }
 }
 
@@ -207,31 +198,37 @@ where
     KeyHashImpl: Kdf,
     Self: HybridKemLabel,
 {
+    const RANDOMNESS_LENGTH: usize = KemT::RANDOMNESS_LENGTH + KemPq::RANDOMNESS_LENGTH;
+
     fn encaps_derand(
         ek: &Self::EncapsulationKey,
         randomness: &[u8],
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let ek_t_bytes = &ek.0[..KemT::ENCAPSULATION_KEY_LENGTH];
-        let ek_pq_bytes = &ek.0[KemT::ENCAPSULATION_KEY_LENGTH..];
+        let (ek_t_bytes, ek_pq_bytes) = ek.split(
+            KemT::ENCAPSULATION_KEY_LENGTH,
+            KemPq::ENCAPSULATION_KEY_LENGTH,
+        )?;
 
         let ek_t = KemT::EncapsulationKey::from(ek_t_bytes);
         let ek_pq = KemPq::EncapsulationKey::from(ek_pq_bytes);
 
         // Split randomness for traditional and post-quantum components
-        let rand_t = &randomness[..randomness.len() / 2];
-        let rand_pq = &randomness[randomness.len() / 2..];
+        let (rand_t, rand_pq) = split(
+            KemT::RANDOMNESS_LENGTH,
+            KemPq::RANDOMNESS_LENGTH,
+            randomness,
+        )?;
 
         // Deterministic encapsulation with traditional KEM
-        let (ct_t, ss_t) =
-            KemT::encaps_derand(&ek_t, rand_t).map_err(|_| KemError::TraditionalComponent)?;
+        let (ct_t, ss_t) = KemT::encaps_derand(&ek_t, rand_t).map_err(|_| KemError::Traditional)?;
 
         // Deterministic encapsulation with post-quantum KEM
         let (ct_pq, ss_pq) =
-            KemPq::encaps_derand(&ek_pq, rand_pq).map_err(|_| KemError::PostQuantumComponent)?;
+            KemPq::encaps_derand(&ek_pq, rand_pq).map_err(|_| KemError::PostQuantum)?;
 
         // Create hybrid ciphertext
-        let ct_hybrid = HybridValue::new(&ct_t, &ct_pq);
+        let ct_hybrid = Self::Ciphertext::new(&ct_t, &ct_pq);
 
         // PRE optimization: Hash the encapsulation key
         let mut ek_concat = Vec::new();
@@ -249,8 +246,7 @@ where
         kdf_input.extend_from_slice(&ekh);
         kdf_input.extend_from_slice(Self::LABEL);
 
-        let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = ss_hybrid_bytes;
+        let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
         Ok((ct_hybrid, ss_hybrid))
     }

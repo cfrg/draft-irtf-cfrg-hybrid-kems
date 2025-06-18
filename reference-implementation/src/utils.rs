@@ -3,6 +3,7 @@
 //! This module provides concat and split functions as specified in
 //! draft-irtf-cfrg-hybrid-kems, plus const utility functions and common hybrid types.
 
+use crate::error::KemError;
 use crate::traits::AsBytes;
 
 /// Const function to compute the minimum of two values
@@ -46,9 +47,9 @@ pub fn concat(slices: &[&[u8]]) -> Vec<u8> {
 ///
 /// Returns an error if the input doesn't have length N1 + N2.
 /// This function operates in constant-time for given N1 and N2.
-pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), &'static str> {
+pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), KemError> {
     if x.len() != n1 + n2 {
-        return Err("Input length does not match N1 + N2");
+        return Err(KemError::InvalidInputLength);
     }
 
     Ok((&x[..n1], &x[n1..]))
@@ -69,13 +70,9 @@ impl HybridValue {
     }
 
     /// Split the hybrid value into two parts of specified lengths
-    pub fn split(
-        &self,
-        first_len: usize,
-        second_len: usize,
-    ) -> Result<(&[u8], &[u8]), &'static str> {
+    pub fn split(&self, first_len: usize, second_len: usize) -> Result<(&[u8], &[u8]), KemError> {
         if self.0.len() != first_len + second_len {
-            return Err("Total length does not match first_len + second_len");
+            return Err(KemError::InvalidInputLength);
         }
         Ok((&self.0[..first_len], &self.0[first_len..]))
     }

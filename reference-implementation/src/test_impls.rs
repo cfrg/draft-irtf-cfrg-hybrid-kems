@@ -65,6 +65,70 @@ impl Prg for TestPrg {
     }
 }
 
+/// PRG optimized for GHP/PRE test cases (TestKem + TestKem = 32 bytes needed)
+pub struct TestPrgGhpPre;
+
+impl Prg for TestPrgGhpPre {
+    const INPUT_LENGTH: usize = 16;
+    const OUTPUT_LENGTH: usize = 32; // TestKem::SEED_LENGTH + TestKem::SEED_LENGTH
+
+    fn prg(seed: &[u8]) -> Vec<u8> {
+        // Convert seed to u64 for LCG
+        let mut state = 0u64;
+        for (i, &byte) in seed.iter().enumerate().take(8) {
+            state |= (byte as u64) << (i * 8);
+        }
+        if state == 0 {
+            state = 1;
+        } // Ensure non-zero state
+
+        let mut output = Vec::with_capacity(Self::OUTPUT_LENGTH);
+
+        // Simple LCG: state = (a * state + c) mod 2^64
+        let a = 1103515245u64;
+        let c = 12345u64;
+
+        for _ in 0..Self::OUTPUT_LENGTH {
+            state = state.wrapping_mul(a).wrapping_add(c);
+            output.push((state >> 8) as u8);
+        }
+
+        output
+    }
+}
+
+/// PRG optimized for QSF test cases (TestGroup + TestKem = 24 bytes needed)
+pub struct TestPrgQsf;
+
+impl Prg for TestPrgQsf {
+    const INPUT_LENGTH: usize = 16;
+    const OUTPUT_LENGTH: usize = 24; // TestGroup::SEED_LENGTH + TestKem::SEED_LENGTH
+
+    fn prg(seed: &[u8]) -> Vec<u8> {
+        // Convert seed to u64 for LCG
+        let mut state = 0u64;
+        for (i, &byte) in seed.iter().enumerate().take(8) {
+            state |= (byte as u64) << (i * 8);
+        }
+        if state == 0 {
+            state = 1;
+        } // Ensure non-zero state
+
+        let mut output = Vec::with_capacity(Self::OUTPUT_LENGTH);
+
+        // Simple LCG: state = (a * state + c) mod 2^64
+        let a = 1103515245u64;
+        let c = 12345u64;
+
+        for _ in 0..Self::OUTPUT_LENGTH {
+            state = state.wrapping_mul(a).wrapping_add(c);
+            output.push((state >> 8) as u8);
+        }
+
+        output
+    }
+}
+
 /// Simple test KEM using basic arithmetic operations
 pub struct TestKem;
 
@@ -264,6 +328,8 @@ impl Kem for TestKem {
 }
 
 impl EncapsDerand for TestKem {
+    const RANDOMNESS_LENGTH: usize = 32;
+
     fn encaps_derand(
         ek: &Self::EncapsulationKey,
         randomness: &[u8],

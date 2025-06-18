@@ -6,16 +6,10 @@ use std::fmt;
 /// Simplified error type for all KEM and Group operations.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KemError {
-    /// Error from traditional component (KEM or nominal group)
-    TraditionalComponent,
-    /// Error from post-quantum KEM component
-    PostQuantumComponent,
-    /// Error from KDF component
-    Kdf,
-    /// Error from PRG component
-    Prg,
-    /// Error from KeyHash KDF (used in PRE scheme)
-    KeyHash,
+    /// Error from traditional (KEM or nominal group)
+    Traditional,
+    /// Error from post-quantum KEM
+    PostQuantum,
     /// Invalid seed length provided
     InvalidSeedLength,
     /// Invalid input length provided
@@ -27,11 +21,8 @@ pub enum KemError {
 impl fmt::Display for KemError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            KemError::TraditionalComponent => write!(f, "Traditional component error"),
-            KemError::PostQuantumComponent => write!(f, "Post-quantum component error"),
-            KemError::Kdf => write!(f, "KDF error"),
-            KemError::Prg => write!(f, "PRG error"),
-            KemError::KeyHash => write!(f, "KeyHash error"),
+            KemError::Traditional => write!(f, "Traditional error"),
+            KemError::PostQuantum => write!(f, "Post-quantum error"),
             KemError::InvalidSeedLength => write!(f, "Invalid seed length provided"),
             KemError::InvalidInputLength => write!(f, "Invalid input length provided"),
             KemError::CryptographicFailure => write!(f, "Cryptographic operation failure"),
