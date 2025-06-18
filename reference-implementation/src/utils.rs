@@ -57,12 +57,6 @@ pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), &'static 
 /// Hybrid encapsulation key as concatenated byte string
 pub struct HybridEncapsulationKey(pub Vec<u8>);
 
-impl AsBytes for HybridEncapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
 impl HybridEncapsulationKey {
     /// Create a new hybrid encapsulation key from two byte slices
     pub fn new(first: &[u8], second: &[u8]) -> Self {
@@ -85,6 +79,12 @@ impl HybridEncapsulationKey {
     }
 }
 
+impl AsBytes for HybridEncapsulationKey {
+    fn as_bytes(&self) -> &[u8] {
+        &self.0
+    }
+}
+
 impl<'a> From<&'a [u8]> for HybridEncapsulationKey {
     fn from(bytes: &'a [u8]) -> Self {
         HybridEncapsulationKey(bytes.to_vec())
@@ -93,12 +93,6 @@ impl<'a> From<&'a [u8]> for HybridEncapsulationKey {
 
 /// Hybrid decapsulation key as concatenated byte string
 pub struct HybridDecapsulationKey(pub Vec<u8>);
-
-impl AsBytes for HybridDecapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
 
 impl HybridDecapsulationKey {
     /// Create a new hybrid decapsulation key from two byte slices
@@ -122,6 +116,12 @@ impl HybridDecapsulationKey {
     }
 }
 
+impl AsBytes for HybridDecapsulationKey {
+    fn as_bytes(&self) -> &[u8] {
+        &self.0
+    }
+}
+
 impl<'a> From<&'a [u8]> for HybridDecapsulationKey {
     fn from(bytes: &'a [u8]) -> Self {
         HybridDecapsulationKey(bytes.to_vec())
@@ -130,12 +130,6 @@ impl<'a> From<&'a [u8]> for HybridDecapsulationKey {
 
 /// Hybrid ciphertext as concatenated byte string
 pub struct HybridCiphertext(pub Vec<u8>);
-
-impl AsBytes for HybridCiphertext {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
 
 impl HybridCiphertext {
     /// Create a new hybrid ciphertext from two byte slices
@@ -159,6 +153,12 @@ impl HybridCiphertext {
     }
 }
 
+impl AsBytes for HybridCiphertext {
+    fn as_bytes(&self) -> &[u8] {
+        &self.0
+    }
+}
+
 impl<'a> From<&'a [u8]> for HybridCiphertext {
     fn from(bytes: &'a [u8]) -> Self {
         HybridCiphertext(bytes.to_vec())
@@ -167,12 +167,6 @@ impl<'a> From<&'a [u8]> for HybridCiphertext {
 
 /// Hybrid shared secret as byte string
 pub struct HybridSharedSecret(pub Vec<u8>);
-
-impl AsBytes for HybridSharedSecret {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
 
 impl HybridSharedSecret {
     /// Create a new hybrid shared secret from two byte slices
@@ -193,6 +187,12 @@ impl HybridSharedSecret {
             return Err("Total length does not match first_len + second_len");
         }
         Ok((&self.0[..first_len], &self.0[first_len..]))
+    }
+}
+
+impl AsBytes for HybridSharedSecret {
+    fn as_bytes(&self) -> &[u8] {
+        &self.0
     }
 }
 
