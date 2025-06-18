@@ -63,7 +63,6 @@ impl AsBytes for HybridEncapsulationKey {
     }
 }
 
-
 impl HybridEncapsulationKey {
     /// Create a new hybrid encapsulation key from two byte slices
     pub fn new(first: &[u8], second: &[u8]) -> Self {
@@ -72,9 +71,13 @@ impl HybridEncapsulationKey {
         bytes.extend_from_slice(second);
         HybridEncapsulationKey(bytes)
     }
-    
+
     /// Split the hybrid key into two parts of specified lengths
-    pub fn split(&self, first_len: usize, second_len: usize) -> Result<(&[u8], &[u8]), &'static str> {
+    pub fn split(
+        &self,
+        first_len: usize,
+        second_len: usize,
+    ) -> Result<(&[u8], &[u8]), &'static str> {
         if self.0.len() != first_len + second_len {
             return Err("Total length does not match first_len + second_len");
         }
@@ -103,7 +106,6 @@ impl AsBytes for HybridDecapsulationKey {
     }
 }
 
-
 impl HybridDecapsulationKey {
     /// Create a new hybrid decapsulation key from two byte slices
     pub fn new(first: &[u8], second: &[u8]) -> Self {
@@ -112,9 +114,13 @@ impl HybridDecapsulationKey {
         bytes.extend_from_slice(second);
         HybridDecapsulationKey(bytes)
     }
-    
+
     /// Split the hybrid key into two parts of specified lengths
-    pub fn split(&self, first_len: usize, second_len: usize) -> Result<(&[u8], &[u8]), &'static str> {
+    pub fn split(
+        &self,
+        first_len: usize,
+        second_len: usize,
+    ) -> Result<(&[u8], &[u8]), &'static str> {
         if self.0.len() != first_len + second_len {
             return Err("Total length does not match first_len + second_len");
         }
@@ -143,7 +149,6 @@ impl AsBytes for HybridCiphertext {
     }
 }
 
-
 impl HybridCiphertext {
     /// Create a new hybrid ciphertext from two byte slices
     pub fn new(first: &[u8], second: &[u8]) -> Self {
@@ -152,9 +157,13 @@ impl HybridCiphertext {
         bytes.extend_from_slice(second);
         HybridCiphertext(bytes)
     }
-    
+
     /// Split the hybrid ciphertext into two parts of specified lengths
-    pub fn split(&self, first_len: usize, second_len: usize) -> Result<(&[u8], &[u8]), &'static str> {
+    pub fn split(
+        &self,
+        first_len: usize,
+        second_len: usize,
+    ) -> Result<(&[u8], &[u8]), &'static str> {
         if self.0.len() != first_len + second_len {
             return Err("Total length does not match first_len + second_len");
         }
@@ -183,7 +192,6 @@ impl AsBytes for HybridSharedSecret {
     }
 }
 
-
 impl HybridSharedSecret {
     /// Create a new hybrid shared secret from two byte slices
     pub fn new(first: &[u8], second: &[u8]) -> Self {
@@ -192,9 +200,13 @@ impl HybridSharedSecret {
         bytes.extend_from_slice(second);
         HybridSharedSecret(bytes)
     }
-    
+
     /// Split the hybrid shared secret into two parts of specified lengths
-    pub fn split(&self, first_len: usize, second_len: usize) -> Result<(&[u8], &[u8]), &'static str> {
+    pub fn split(
+        &self,
+        first_len: usize,
+        second_len: usize,
+    ) -> Result<(&[u8], &[u8]), &'static str> {
         if self.0.len() != first_len + second_len {
             return Err("Total length does not match first_len + second_len");
         }

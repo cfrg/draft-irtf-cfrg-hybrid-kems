@@ -234,8 +234,8 @@ impl Kem for TestKem {
 
         // Extract randomness from ciphertext
         let mut randomness = [0u8; 32];
-        for i in 0..32 {
-            randomness[i] = ct.bytes[i] ^ ek.bytes[i];
+        for (i, randomness_byte) in randomness.iter_mut().enumerate() {
+            *randomness_byte = ct.bytes[i] ^ ek.bytes[i];
         }
 
         // Recompute shared secret
@@ -256,8 +256,8 @@ impl Kem for TestKem {
     ) -> Result<Self::EncapsulationKey, KemError> {
         // Reconstruct public key from private key
         let mut ek_bytes = [0u8; 32];
-        for i in 0..32 {
-            ek_bytes[i] = dk.bytes[i % 16].wrapping_mul(3).wrapping_add(7);
+        for (i, ek_byte) in ek_bytes.iter_mut().enumerate() {
+            *ek_byte = dk.bytes[i % 16].wrapping_mul(3).wrapping_add(7);
         }
         Ok(TestEncapsulationKey { bytes: ek_bytes })
     }
@@ -288,10 +288,10 @@ impl EncapsDerand for TestKem {
         }
 
         // Shared secret = hash-like function of public key and randomness
-        for i in 0..32 {
+        for (i, shared_byte) in shared_secret.iter_mut().enumerate() {
             let pk_byte = ek.bytes[i % 32];
             let rand_byte = randomness.get(i % randomness.len()).copied().unwrap_or(0);
-            shared_secret[i] = pk_byte.wrapping_add(rand_byte).wrapping_mul(5) ^ 0xAA;
+            *shared_byte = pk_byte.wrapping_add(rand_byte).wrapping_mul(5) ^ 0xAA;
         }
 
         Ok((
@@ -394,7 +394,7 @@ impl NominalGroup for TestGroup {
         if value == 0 {
             value = 1;
         }
-        value = value % 1000000007; // Large prime to keep scalars reasonable
+        value %= 1000000007; // Large prime to keep scalars reasonable
 
         Ok(TestScalar {
             bytes: value.to_le_bytes(),

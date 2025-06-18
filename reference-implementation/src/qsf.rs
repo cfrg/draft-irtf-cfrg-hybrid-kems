@@ -20,7 +20,6 @@ impl AsBytes for QsfEncapsulationKey {
     }
 }
 
-
 impl From<Vec<u8>> for QsfEncapsulationKey {
     fn from(bytes: Vec<u8>) -> Self {
         QsfEncapsulationKey(bytes)
@@ -42,7 +41,6 @@ impl AsBytes for QsfDecapsulationKey {
     }
 }
 
-
 impl From<Vec<u8>> for QsfDecapsulationKey {
     fn from(bytes: Vec<u8>) -> Self {
         QsfDecapsulationKey(bytes)
@@ -63,7 +61,6 @@ impl AsBytes for QsfCiphertext {
         &self.0
     }
 }
-
 
 impl From<Vec<u8>> for QsfCiphertext {
     fn from(bytes: Vec<u8>) -> Self {

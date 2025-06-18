@@ -302,8 +302,7 @@ where
     // Test exponentiation result serialization
     let element1 = G::exp(&generator, &scalar1);
     let elem_bytes = element1.as_bytes();
-    let element2 =
-        G::Element::from(elem_bytes);
+    let element2 = G::Element::from(elem_bytes);
     let elem2_bytes = element2.as_bytes();
 
     assert_eq!(

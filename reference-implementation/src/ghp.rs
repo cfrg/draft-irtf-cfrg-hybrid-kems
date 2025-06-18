@@ -94,11 +94,12 @@ where
         rng: &mut R,
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let (ek_t_bytes, ek_pq_bytes) = ek.split(
-            KemT::ENCAPSULATION_KEY_LENGTH,
-            KemPq::ENCAPSULATION_KEY_LENGTH
-        )
-        .map_err(|_| KemError::InvalidInputLength)?;
+        let (ek_t_bytes, ek_pq_bytes) = ek
+            .split(
+                KemT::ENCAPSULATION_KEY_LENGTH,
+                KemPq::ENCAPSULATION_KEY_LENGTH,
+            )
+            .map_err(|_| KemError::InvalidInputLength)?;
 
         let ek_t = KemT::EncapsulationKey::from(ek_t_bytes);
         let ek_pq = KemPq::EncapsulationKey::from(ek_pq_bytes);
@@ -136,21 +137,20 @@ where
         ct: &Self::Ciphertext,
     ) -> Result<Self::SharedSecret, KemError> {
         // Deserialize component decapsulation keys
-        let (dk_t_bytes, dk_pq_bytes) = dk.split(
-            KemT::DECAPSULATION_KEY_LENGTH,
-            KemPq::DECAPSULATION_KEY_LENGTH
-        )
-        .map_err(|_| KemError::InvalidInputLength)?;
+        let (dk_t_bytes, dk_pq_bytes) = dk
+            .split(
+                KemT::DECAPSULATION_KEY_LENGTH,
+                KemPq::DECAPSULATION_KEY_LENGTH,
+            )
+            .map_err(|_| KemError::InvalidInputLength)?;
 
         let dk_t = KemT::DecapsulationKey::from(dk_t_bytes);
         let dk_pq = KemPq::DecapsulationKey::from(dk_pq_bytes);
 
         // Deserialize component ciphertexts
-        let (ct_t_bytes, ct_pq_bytes) = ct.split(
-            KemT::CIPHERTEXT_LENGTH,
-            KemPq::CIPHERTEXT_LENGTH
-        )
-        .map_err(|_| KemError::InvalidInputLength)?;
+        let (ct_t_bytes, ct_pq_bytes) = ct
+            .split(KemT::CIPHERTEXT_LENGTH, KemPq::CIPHERTEXT_LENGTH)
+            .map_err(|_| KemError::InvalidInputLength)?;
 
         let ct_t = KemT::Ciphertext::from(ct_t_bytes);
         let ct_pq = KemPq::Ciphertext::from(ct_pq_bytes);
@@ -188,11 +188,12 @@ where
         dk: &Self::DecapsulationKey,
     ) -> Result<Self::EncapsulationKey, KemError> {
         // Deserialize component decapsulation keys
-        let (dk_t_bytes, dk_pq_bytes) = dk.split(
-            KemT::DECAPSULATION_KEY_LENGTH,
-            KemPq::DECAPSULATION_KEY_LENGTH
-        )
-        .map_err(|_| KemError::InvalidInputLength)?;
+        let (dk_t_bytes, dk_pq_bytes) = dk
+            .split(
+                KemT::DECAPSULATION_KEY_LENGTH,
+                KemPq::DECAPSULATION_KEY_LENGTH,
+            )
+            .map_err(|_| KemError::InvalidInputLength)?;
 
         let dk_t = KemT::DecapsulationKey::from(dk_t_bytes);
         let dk_pq = KemPq::DecapsulationKey::from(dk_pq_bytes);
@@ -227,11 +228,12 @@ where
         randomness: &[u8],
     ) -> Result<(Self::Ciphertext, Self::SharedSecret), KemError> {
         // Deserialize component encapsulation keys
-        let (ek_t_bytes, ek_pq_bytes) = ek.split(
-            KemT::ENCAPSULATION_KEY_LENGTH,
-            KemPq::ENCAPSULATION_KEY_LENGTH
-        )
-        .map_err(|_| KemError::InvalidInputLength)?;
+        let (ek_t_bytes, ek_pq_bytes) = ek
+            .split(
+                KemT::ENCAPSULATION_KEY_LENGTH,
+                KemPq::ENCAPSULATION_KEY_LENGTH,
+            )
+            .map_err(|_| KemError::InvalidInputLength)?;
 
         let ek_t = KemT::EncapsulationKey::from(ek_t_bytes);
         let ek_pq = KemPq::EncapsulationKey::from(ek_pq_bytes);

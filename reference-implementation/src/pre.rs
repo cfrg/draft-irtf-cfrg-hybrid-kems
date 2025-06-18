@@ -198,10 +198,8 @@ where
         let dk_t_bytes = &dk.0[..KemT::DECAPSULATION_KEY_LENGTH];
         let dk_pq_bytes = &dk.0[KemT::DECAPSULATION_KEY_LENGTH..];
 
-        let dk_t = KemT::DecapsulationKey::try_from(dk_t_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
-        let dk_pq = KemPq::DecapsulationKey::try_from(dk_pq_bytes)
-            .map_err(|_| KemError::InvalidInputLength)?;
+        let dk_t = KemT::DecapsulationKey::from(dk_t_bytes);
+        let dk_pq = KemPq::DecapsulationKey::from(dk_pq_bytes);
 
         // Derive component encapsulation keys
         let ek_t = KemT::to_encapsulation_key(&dk_t).map_err(|_| KemError::TraditionalComponent)?;
