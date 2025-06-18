@@ -1,6 +1,6 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, Prg};
-use crate::utils::{max, min, split, HybridValue};
+use crate::utils::{concat, max, min, split, HybridValue};
 
 /// PRE Hybrid KEM implementation
 ///
@@ -96,20 +96,19 @@ where
         let ct_hybrid = Self::Ciphertext::new(&ct_t, &ct_pq);
 
         // PRE optimization: Hash the encapsulation key once
-        let mut ek_concat = Vec::new();
-        ek_concat.extend_from_slice(ek_t.as_bytes());
-        ek_concat.extend_from_slice(ek_pq.as_bytes());
+        let ek_concat = concat(&[ek_t.as_bytes(), ek_pq.as_bytes()]);
         let ekh = KeyHashImpl::kdf(&ek_concat);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label)
-        let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq.as_bytes());
-        kdf_input.extend_from_slice(ss_t.as_bytes());
-        kdf_input.extend_from_slice(ct_pq.as_bytes());
-        kdf_input.extend_from_slice(ct_t.as_bytes());
-        kdf_input.extend_from_slice(&ekh);
-        kdf_input.extend_from_slice(Self::LABEL);
+        let kdf_input = concat(&[
+            ss_pq.as_bytes(),
+            ss_t.as_bytes(),
+            ct_pq.as_bytes(),
+            ct_t.as_bytes(),
+            &ekh,
+            Self::LABEL,
+        ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
@@ -147,20 +146,19 @@ where
         let ek_pq = KemPq::to_encapsulation_key(&dk_pq).map_err(|_| KemError::PostQuantum)?;
 
         // PRE optimization: Hash the encapsulation key
-        let mut ek_concat = Vec::new();
-        ek_concat.extend_from_slice(ek_t.as_bytes());
-        ek_concat.extend_from_slice(ek_pq.as_bytes());
+        let ek_concat = concat(&[ek_t.as_bytes(), ek_pq.as_bytes()]);
         let ekh = KeyHashImpl::kdf(&ek_concat);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label)
-        let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq.as_bytes());
-        kdf_input.extend_from_slice(ss_t.as_bytes());
-        kdf_input.extend_from_slice(ct_pq.as_bytes());
-        kdf_input.extend_from_slice(ct_t.as_bytes());
-        kdf_input.extend_from_slice(&ekh);
-        kdf_input.extend_from_slice(Self::LABEL);
+        let kdf_input = concat(&[
+            ss_pq.as_bytes(),
+            ss_t.as_bytes(),
+            ct_pq.as_bytes(),
+            ct_t.as_bytes(),
+            &ekh,
+            Self::LABEL,
+        ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
@@ -231,20 +229,19 @@ where
         let ct_hybrid = Self::Ciphertext::new(&ct_t, &ct_pq);
 
         // PRE optimization: Hash the encapsulation key
-        let mut ek_concat = Vec::new();
-        ek_concat.extend_from_slice(ek_t.as_bytes());
-        ek_concat.extend_from_slice(ek_pq.as_bytes());
+        let ek_concat = concat(&[ek_t.as_bytes(), ek_pq.as_bytes()]);
         let ekh = KeyHashImpl::kdf(&ek_concat);
 
         // Compute hybrid shared secret using KDF
         // KDF input: concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label)
-        let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq.as_bytes());
-        kdf_input.extend_from_slice(ss_t.as_bytes());
-        kdf_input.extend_from_slice(ct_pq.as_bytes());
-        kdf_input.extend_from_slice(ct_t.as_bytes());
-        kdf_input.extend_from_slice(&ekh);
-        kdf_input.extend_from_slice(Self::LABEL);
+        let kdf_input = concat(&[
+            ss_pq.as_bytes(),
+            ss_t.as_bytes(),
+            ct_pq.as_bytes(),
+            ct_t.as_bytes(),
+            &ekh,
+            Self::LABEL,
+        ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
 

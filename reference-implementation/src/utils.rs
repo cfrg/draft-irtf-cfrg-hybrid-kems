@@ -61,11 +61,7 @@ pub struct HybridValue(pub Vec<u8>);
 impl HybridValue {
     /// Create a new hybrid value from two values that implement AsBytes
     pub fn new(first: &impl AsBytes, second: &impl AsBytes) -> Self {
-        let first_bytes = first.as_bytes();
-        let second_bytes = second.as_bytes();
-        let mut bytes = Vec::with_capacity(first_bytes.len() + second_bytes.len());
-        bytes.extend_from_slice(first_bytes);
-        bytes.extend_from_slice(second_bytes);
+        let bytes = concat(&[first.as_bytes(), second.as_bytes()]);
         HybridValue(bytes)
     }
 
