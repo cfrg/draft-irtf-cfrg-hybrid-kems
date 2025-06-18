@@ -232,7 +232,7 @@ impl Kem for TestKem {
         seed: &[u8],
     ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), KemError> {
         if seed.len() != Self::SEED_LENGTH {
-            return Err(KemError::InvalidSeedLength);
+            return Err(KemError::InvalidInputLength);
         }
 
         // Simple key derivation: stretch seed for private key, derive public key
@@ -447,7 +447,7 @@ impl NominalGroup for TestGroup {
 
     fn random_scalar(seed: &[u8]) -> Result<Self::Scalar, KemError> {
         if seed.len() != Self::SEED_LENGTH {
-            return Err(KemError::InvalidSeedLength);
+            return Err(KemError::InvalidInputLength);
         }
 
         // Convert seed bytes to u64

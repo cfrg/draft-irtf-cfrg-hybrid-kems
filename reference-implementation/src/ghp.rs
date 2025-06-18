@@ -50,7 +50,7 @@ where
         seed: &[u8],
     ) -> Result<(Self::EncapsulationKey, Self::DecapsulationKey), KemError> {
         if seed.len() != Self::SEED_LENGTH {
-            return Err(KemError::InvalidSeedLength);
+            return Err(KemError::InvalidInputLength);
         }
 
         // Expand seed using PRG

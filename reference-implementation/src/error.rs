@@ -10,12 +10,8 @@ pub enum KemError {
     Traditional,
     /// Error from post-quantum KEM
     PostQuantum,
-    /// Invalid seed length provided
-    InvalidSeedLength,
     /// Invalid input length provided
     InvalidInputLength,
-    /// General cryptographic operation failure
-    CryptographicFailure,
 }
 
 impl fmt::Display for KemError {
@@ -23,9 +19,7 @@ impl fmt::Display for KemError {
         match self {
             KemError::Traditional => write!(f, "Traditional error"),
             KemError::PostQuantum => write!(f, "Post-quantum error"),
-            KemError::InvalidSeedLength => write!(f, "Invalid seed length provided"),
             KemError::InvalidInputLength => write!(f, "Invalid input length provided"),
-            KemError::CryptographicFailure => write!(f, "Cryptographic operation failure"),
         }
     }
 }
