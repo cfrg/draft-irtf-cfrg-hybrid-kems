@@ -91,15 +91,6 @@ impl<'a> From<&'a [u8]> for HybridValue {
     }
 }
 
-/// Type alias for hybrid encapsulation key
-pub type HybridEncapsulationKey = HybridValue;
-
-/// Type alias for hybrid decapsulation key  
-pub type HybridDecapsulationKey = HybridValue;
-
-/// Type alias for hybrid ciphertext
-pub type HybridCiphertext = HybridValue;
-
 #[cfg(test)]
 mod tests {
     use super::*;

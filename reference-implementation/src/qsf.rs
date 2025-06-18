@@ -1,6 +1,6 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, NominalGroup, Prg};
-use crate::utils::{max, min};
+use crate::utils::{max, min, HybridValue};
 
 /// QSF Hybrid KEM implementation
 ///
@@ -9,51 +9,6 @@ use crate::utils::{max, min};
 #[derive(Default)]
 pub struct QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl> {
     _phantom: std::marker::PhantomData<(GroupT, KemPq, KdfImpl, PrgImpl)>,
-}
-
-/// QSF encapsulation key combining group element and post-quantum key
-pub struct QsfEncapsulationKey(pub Vec<u8>);
-
-impl AsBytes for QsfEncapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
-impl<'a> From<&'a [u8]> for QsfEncapsulationKey {
-    fn from(bytes: &'a [u8]) -> Self {
-        QsfEncapsulationKey(bytes.to_vec())
-    }
-}
-
-/// QSF decapsulation key combining scalar and post-quantum key
-pub struct QsfDecapsulationKey(pub Vec<u8>);
-
-impl AsBytes for QsfDecapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
-impl<'a> From<&'a [u8]> for QsfDecapsulationKey {
-    fn from(bytes: &'a [u8]) -> Self {
-        QsfDecapsulationKey(bytes.to_vec())
-    }
-}
-
-/// QSF ciphertext combining group element and post-quantum ciphertext
-pub struct QsfCiphertext(pub Vec<u8>);
-
-impl AsBytes for QsfCiphertext {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
-impl<'a> From<&'a [u8]> for QsfCiphertext {
-    fn from(bytes: &'a [u8]) -> Self {
-        QsfCiphertext(bytes.to_vec())
-    }
 }
 
 impl<GroupT, KemPq, KdfImpl, PrgImpl> Kem for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl>
@@ -75,9 +30,9 @@ where
     const SHARED_SECRET_LENGTH: usize =
         min(GroupT::SHARED_SECRET_LENGTH, KemPq::SHARED_SECRET_LENGTH);
 
-    type EncapsulationKey = QsfEncapsulationKey;
-    type DecapsulationKey = QsfDecapsulationKey;
-    type Ciphertext = QsfCiphertext;
+    type EncapsulationKey = HybridValue;
+    type DecapsulationKey = HybridValue;
+    type Ciphertext = HybridValue;
     type SharedSecret = Vec<u8>;
     // Error type is handled in trait implementations
 
@@ -122,8 +77,8 @@ where
         dk_bytes.extend_from_slice(dk_t.as_bytes());
         dk_bytes.extend_from_slice(dk_pq.as_bytes());
 
-        let ek_hybrid = QsfEncapsulationKey::from(ek_bytes.as_slice());
-        let dk_hybrid = QsfDecapsulationKey::from(dk_bytes.as_slice());
+        let ek_hybrid = HybridValue::from(ek_bytes.as_slice());
+        let dk_hybrid = HybridValue::from(dk_bytes.as_slice());
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -158,7 +113,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = QsfCiphertext::from(ct_bytes.as_slice());
+        let ct_hybrid = HybridValue::from(ct_bytes.as_slice());
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
@@ -239,7 +194,7 @@ where
         ek_bytes.extend_from_slice(ek_t.as_bytes());
         ek_bytes.extend_from_slice(ek_pq.as_bytes());
 
-        Ok(QsfEncapsulationKey::from(ek_bytes.as_slice()))
+        Ok(HybridValue::from(ek_bytes.as_slice()))
     }
 }
 
@@ -282,7 +237,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = QsfCiphertext::from(ct_bytes.as_slice());
+        let ct_hybrid = HybridValue::from(ct_bytes.as_slice());
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
