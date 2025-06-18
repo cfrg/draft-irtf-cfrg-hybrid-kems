@@ -1,6 +1,6 @@
 use crate::error::KemError;
 use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kdf, Kem, NominalGroup, Prg};
-use crate::utils::{max, min, HybridSharedSecret};
+use crate::utils::{max, min};
 
 /// QSF Hybrid KEM implementation
 ///
@@ -78,7 +78,7 @@ where
     type EncapsulationKey = QsfEncapsulationKey;
     type DecapsulationKey = QsfDecapsulationKey;
     type Ciphertext = QsfCiphertext;
-    type SharedSecret = HybridSharedSecret;
+    type SharedSecret = Vec<u8>;
     // Error type is handled in trait implementations
 
     fn generate_key_pair<R: rand::CryptoRng>(
@@ -171,7 +171,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
+        let ss_hybrid = ss_hybrid_bytes;
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -214,7 +214,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
+        let ss_hybrid = ss_hybrid_bytes;
 
         Ok(ss_hybrid)
     }
@@ -295,7 +295,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
+        let ss_hybrid = ss_hybrid_bytes;
 
         Ok((ct_hybrid, ss_hybrid))
     }

@@ -54,19 +54,19 @@ pub fn split(n1: usize, n2: usize, x: &[u8]) -> Result<(&[u8], &[u8]), &'static 
     Ok((&x[..n1], &x[n1..]))
 }
 
-/// Hybrid encapsulation key as concatenated byte string
-pub struct HybridEncapsulationKey(pub Vec<u8>);
+/// Consolidated hybrid value type for keys and ciphertexts
+pub struct HybridValue(pub Vec<u8>);
 
-impl HybridEncapsulationKey {
-    /// Create a new hybrid encapsulation key from two byte slices
+impl HybridValue {
+    /// Create a new hybrid value from two byte slices
     pub fn new(first: &[u8], second: &[u8]) -> Self {
         let mut bytes = Vec::with_capacity(first.len() + second.len());
         bytes.extend_from_slice(first);
         bytes.extend_from_slice(second);
-        HybridEncapsulationKey(bytes)
+        HybridValue(bytes)
     }
 
-    /// Split the hybrid key into two parts of specified lengths
+    /// Split the hybrid value into two parts of specified lengths
     pub fn split(
         &self,
         first_len: usize,
@@ -79,128 +79,26 @@ impl HybridEncapsulationKey {
     }
 }
 
-impl AsBytes for HybridEncapsulationKey {
+impl AsBytes for HybridValue {
     fn as_bytes(&self) -> &[u8] {
         &self.0
     }
 }
 
-impl<'a> From<&'a [u8]> for HybridEncapsulationKey {
+impl<'a> From<&'a [u8]> for HybridValue {
     fn from(bytes: &'a [u8]) -> Self {
-        HybridEncapsulationKey(bytes.to_vec())
+        HybridValue(bytes.to_vec())
     }
 }
 
-/// Hybrid decapsulation key as concatenated byte string
-pub struct HybridDecapsulationKey(pub Vec<u8>);
+/// Type alias for hybrid encapsulation key
+pub type HybridEncapsulationKey = HybridValue;
 
-impl HybridDecapsulationKey {
-    /// Create a new hybrid decapsulation key from two byte slices
-    pub fn new(first: &[u8], second: &[u8]) -> Self {
-        let mut bytes = Vec::with_capacity(first.len() + second.len());
-        bytes.extend_from_slice(first);
-        bytes.extend_from_slice(second);
-        HybridDecapsulationKey(bytes)
-    }
+/// Type alias for hybrid decapsulation key  
+pub type HybridDecapsulationKey = HybridValue;
 
-    /// Split the hybrid key into two parts of specified lengths
-    pub fn split(
-        &self,
-        first_len: usize,
-        second_len: usize,
-    ) -> Result<(&[u8], &[u8]), &'static str> {
-        if self.0.len() != first_len + second_len {
-            return Err("Total length does not match first_len + second_len");
-        }
-        Ok((&self.0[..first_len], &self.0[first_len..]))
-    }
-}
-
-impl AsBytes for HybridDecapsulationKey {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
-impl<'a> From<&'a [u8]> for HybridDecapsulationKey {
-    fn from(bytes: &'a [u8]) -> Self {
-        HybridDecapsulationKey(bytes.to_vec())
-    }
-}
-
-/// Hybrid ciphertext as concatenated byte string
-pub struct HybridCiphertext(pub Vec<u8>);
-
-impl HybridCiphertext {
-    /// Create a new hybrid ciphertext from two byte slices
-    pub fn new(first: &[u8], second: &[u8]) -> Self {
-        let mut bytes = Vec::with_capacity(first.len() + second.len());
-        bytes.extend_from_slice(first);
-        bytes.extend_from_slice(second);
-        HybridCiphertext(bytes)
-    }
-
-    /// Split the hybrid ciphertext into two parts of specified lengths
-    pub fn split(
-        &self,
-        first_len: usize,
-        second_len: usize,
-    ) -> Result<(&[u8], &[u8]), &'static str> {
-        if self.0.len() != first_len + second_len {
-            return Err("Total length does not match first_len + second_len");
-        }
-        Ok((&self.0[..first_len], &self.0[first_len..]))
-    }
-}
-
-impl AsBytes for HybridCiphertext {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
-impl<'a> From<&'a [u8]> for HybridCiphertext {
-    fn from(bytes: &'a [u8]) -> Self {
-        HybridCiphertext(bytes.to_vec())
-    }
-}
-
-/// Hybrid shared secret as byte string
-pub struct HybridSharedSecret(pub Vec<u8>);
-
-impl HybridSharedSecret {
-    /// Create a new hybrid shared secret from two byte slices
-    pub fn new(first: &[u8], second: &[u8]) -> Self {
-        let mut bytes = Vec::with_capacity(first.len() + second.len());
-        bytes.extend_from_slice(first);
-        bytes.extend_from_slice(second);
-        HybridSharedSecret(bytes)
-    }
-
-    /// Split the hybrid shared secret into two parts of specified lengths
-    pub fn split(
-        &self,
-        first_len: usize,
-        second_len: usize,
-    ) -> Result<(&[u8], &[u8]), &'static str> {
-        if self.0.len() != first_len + second_len {
-            return Err("Total length does not match first_len + second_len");
-        }
-        Ok((&self.0[..first_len], &self.0[first_len..]))
-    }
-}
-
-impl AsBytes for HybridSharedSecret {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
-impl<'a> From<&'a [u8]> for HybridSharedSecret {
-    fn from(bytes: &'a [u8]) -> Self {
-        HybridSharedSecret(bytes.to_vec())
-    }
-}
+/// Type alias for hybrid ciphertext
+pub type HybridCiphertext = HybridValue;
 
 #[cfg(test)]
 mod tests {
