@@ -88,8 +88,8 @@ where
         dk_bytes.extend_from_slice(dk_t.as_bytes());
         dk_bytes.extend_from_slice(dk_pq.as_bytes());
 
-        let ek_hybrid = HybridEncapsulationKey::from(ek_bytes);
-        let dk_hybrid = HybridDecapsulationKey::from(dk_bytes);
+        let ek_hybrid = HybridEncapsulationKey::from(ek_bytes.as_slice());
+        let dk_hybrid = HybridDecapsulationKey::from(dk_bytes.as_slice());
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -116,7 +116,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = HybridCiphertext::from(ct_bytes);
+        let ct_hybrid = HybridCiphertext::from(ct_bytes.as_slice());
 
         // PRE optimization: Hash the encapsulation key once
         let mut ek_concat = Vec::new();
@@ -135,7 +135,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -186,7 +186,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok(ss_hybrid)
     }
@@ -211,7 +211,7 @@ where
         ek_bytes.extend_from_slice(ek_t.as_bytes());
         ek_bytes.extend_from_slice(ek_pq.as_bytes());
 
-        Ok(HybridEncapsulationKey::from(ek_bytes))
+        Ok(HybridEncapsulationKey::from(ek_bytes.as_slice()))
     }
 }
 
@@ -252,7 +252,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = HybridCiphertext::from(ct_bytes);
+        let ct_hybrid = HybridCiphertext::from(ct_bytes.as_slice());
 
         // PRE optimization: Hash the encapsulation key
         let mut ek_concat = Vec::new();
@@ -271,7 +271,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok((ct_hybrid, ss_hybrid))
     }

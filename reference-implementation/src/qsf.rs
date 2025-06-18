@@ -20,12 +20,6 @@ impl AsBytes for QsfEncapsulationKey {
     }
 }
 
-impl From<Vec<u8>> for QsfEncapsulationKey {
-    fn from(bytes: Vec<u8>) -> Self {
-        QsfEncapsulationKey(bytes)
-    }
-}
-
 impl<'a> From<&'a [u8]> for QsfEncapsulationKey {
     fn from(bytes: &'a [u8]) -> Self {
         QsfEncapsulationKey(bytes.to_vec())
@@ -41,12 +35,6 @@ impl AsBytes for QsfDecapsulationKey {
     }
 }
 
-impl From<Vec<u8>> for QsfDecapsulationKey {
-    fn from(bytes: Vec<u8>) -> Self {
-        QsfDecapsulationKey(bytes)
-    }
-}
-
 impl<'a> From<&'a [u8]> for QsfDecapsulationKey {
     fn from(bytes: &'a [u8]) -> Self {
         QsfDecapsulationKey(bytes.to_vec())
@@ -59,12 +47,6 @@ pub struct QsfCiphertext(pub Vec<u8>);
 impl AsBytes for QsfCiphertext {
     fn as_bytes(&self) -> &[u8] {
         &self.0
-    }
-}
-
-impl From<Vec<u8>> for QsfCiphertext {
-    fn from(bytes: Vec<u8>) -> Self {
-        QsfCiphertext(bytes)
     }
 }
 
@@ -140,8 +122,8 @@ where
         dk_bytes.extend_from_slice(dk_t.as_bytes());
         dk_bytes.extend_from_slice(dk_pq.as_bytes());
 
-        let ek_hybrid = QsfEncapsulationKey::from(ek_bytes);
-        let dk_hybrid = QsfDecapsulationKey::from(dk_bytes);
+        let ek_hybrid = QsfEncapsulationKey::from(ek_bytes.as_slice());
+        let dk_hybrid = QsfDecapsulationKey::from(dk_bytes.as_slice());
 
         Ok((ek_hybrid, dk_hybrid))
     }
@@ -176,7 +158,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = QsfCiphertext::from(ct_bytes);
+        let ct_hybrid = QsfCiphertext::from(ct_bytes.as_slice());
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
@@ -189,7 +171,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -232,7 +214,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok(ss_hybrid)
     }
@@ -257,7 +239,7 @@ where
         ek_bytes.extend_from_slice(ek_t.as_bytes());
         ek_bytes.extend_from_slice(ek_pq.as_bytes());
 
-        Ok(QsfEncapsulationKey::from(ek_bytes))
+        Ok(QsfEncapsulationKey::from(ek_bytes.as_slice()))
     }
 }
 
@@ -300,7 +282,7 @@ where
         let mut ct_bytes = Vec::new();
         ct_bytes.extend_from_slice(ct_t.as_bytes());
         ct_bytes.extend_from_slice(ct_pq.as_bytes());
-        let ct_hybrid = QsfCiphertext::from(ct_bytes);
+        let ct_hybrid = QsfCiphertext::from(ct_bytes.as_slice());
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
@@ -313,7 +295,7 @@ where
         kdf_input.extend_from_slice(Self::LABEL);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok((ct_hybrid, ss_hybrid))
     }

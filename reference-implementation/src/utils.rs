@@ -85,12 +85,6 @@ impl HybridEncapsulationKey {
     }
 }
 
-impl From<Vec<u8>> for HybridEncapsulationKey {
-    fn from(bytes: Vec<u8>) -> Self {
-        HybridEncapsulationKey(bytes)
-    }
-}
-
 impl<'a> From<&'a [u8]> for HybridEncapsulationKey {
     fn from(bytes: &'a [u8]) -> Self {
         HybridEncapsulationKey(bytes.to_vec())
@@ -125,12 +119,6 @@ impl HybridDecapsulationKey {
             return Err("Total length does not match first_len + second_len");
         }
         Ok((&self.0[..first_len], &self.0[first_len..]))
-    }
-}
-
-impl From<Vec<u8>> for HybridDecapsulationKey {
-    fn from(bytes: Vec<u8>) -> Self {
-        HybridDecapsulationKey(bytes)
     }
 }
 
@@ -171,12 +159,6 @@ impl HybridCiphertext {
     }
 }
 
-impl From<Vec<u8>> for HybridCiphertext {
-    fn from(bytes: Vec<u8>) -> Self {
-        HybridCiphertext(bytes)
-    }
-}
-
 impl<'a> From<&'a [u8]> for HybridCiphertext {
     fn from(bytes: &'a [u8]) -> Self {
         HybridCiphertext(bytes.to_vec())
@@ -211,12 +193,6 @@ impl HybridSharedSecret {
             return Err("Total length does not match first_len + second_len");
         }
         Ok((&self.0[..first_len], &self.0[first_len..]))
-    }
-}
-
-impl From<Vec<u8>> for HybridSharedSecret {
-    fn from(bytes: Vec<u8>) -> Self {
-        HybridSharedSecret(bytes)
     }
 }
 

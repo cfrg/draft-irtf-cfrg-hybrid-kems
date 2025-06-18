@@ -127,7 +127,7 @@ where
         ]);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok((ct_hybrid, ss_hybrid))
     }
@@ -179,7 +179,7 @@ where
         ]);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok(ss_hybrid)
     }
@@ -267,7 +267,7 @@ where
         ]);
 
         let ss_hybrid_bytes = KdfImpl::kdf(&kdf_input);
-        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes);
+        let ss_hybrid = HybridSharedSecret::from(ss_hybrid_bytes.as_slice());
 
         Ok((ct_hybrid, ss_hybrid))
     }
