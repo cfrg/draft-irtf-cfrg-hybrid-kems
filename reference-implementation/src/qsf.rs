@@ -147,12 +147,13 @@ where
 
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
-        let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq.as_bytes());
-        kdf_input.extend_from_slice(&ss_t);
-        kdf_input.extend_from_slice(ct_t.as_bytes());
-        kdf_input.extend_from_slice(ek_t.as_bytes());
-        kdf_input.extend_from_slice(Self::LABEL);
+        let kdf_input = concat(&[
+            ss_pq.as_bytes(),
+            &ss_t,
+            ct_t.as_bytes(),
+            ek_t.as_bytes(),
+            Self::LABEL,
+        ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
@@ -220,12 +221,13 @@ where
         // Compute hybrid shared secret using KDF
         // QSF optimization: KDF input is concat(ss_PQ, ss_T, ct_T, ek_T, label)
         // Note: Groups always support deterministic operations
-        let mut kdf_input = Vec::new();
-        kdf_input.extend_from_slice(ss_pq.as_bytes());
-        kdf_input.extend_from_slice(&ss_t);
-        kdf_input.extend_from_slice(ct_t.as_bytes());
-        kdf_input.extend_from_slice(ek_t.as_bytes());
-        kdf_input.extend_from_slice(Self::LABEL);
+        let kdf_input = concat(&[
+            ss_pq.as_bytes(),
+            &ss_t,
+            ct_t.as_bytes(),
+            ek_t.as_bytes(),
+            Self::LABEL,
+        ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
 
