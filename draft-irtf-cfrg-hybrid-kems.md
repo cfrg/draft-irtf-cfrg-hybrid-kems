@@ -569,11 +569,6 @@ operations.
 The PRE KEM is identical to the GHP KEM except for the
 shared secret computation.  One additional KDF is required:
 
-<!-- [TODO] Determine the security requirements for the KeyHash function.  The
-only example we have right now is the use of SHA3-256 in the Chempat
-specification, which does not include a general security definition or any
-proofs of security from which we could back out a definition. -->
-
 * `KeyHash`: A KDF producing byte strings of length `GHP.Nss` (`KeyHash.Nout
   == GHP.Nss`)
 
@@ -734,13 +729,7 @@ The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed
 above.  Related to the ciphertext collision-freeness of the underlying PKE
 scheme of a FO-transform KEM. Also called ciphertext collision resistance.
 
-<!-- [TODO] Discuss other salient binding properties. -->
-
 ## Security Requirements for Constituent Components {#security-requirements}
-
-> TODO: We need to provide more thorough description, and verify that these
-> requirements align with the requirements of the security proofs in the
-> literature, especially {{GHP2018}} and {{XWING}}.
 
 ### Security Requirements for KEMs {#security-kems}
 
@@ -760,9 +749,6 @@ as nominal groups in {{ABH+21}} as well as showing the `X25519()` and
 `X448()` functions respectively pertain to the nominal group `exp(X, y)`
 function, specifically clamping secret keys when they are generated, instead
 of clamping secret keys together with exponentiation.
-
-<!-- [TODO] Add citations to proofs that the NIST curves can also be modeled as
-nominal groups -->
 
 ### Security Requirements for KDFs {#security-kdfs}
 
@@ -820,9 +806,6 @@ used in such a manner include SHAKE256.
 
 ## Security Properties of Hybrid KEMs
 
-<!-- [TODO] Define which properties are provided by the hybrid KEMs in this
-document, and citations to the papers with the corresponding proofs. -->
-
 All generic constructions in this document produce IND-CCA-secure KEMs
 when correctly instantiated concretely with cryptographic components that
 meet the respective security requirements. Any changes to the routines,
@@ -878,8 +861,6 @@ Considerations that were considered and not included in these designs:
 Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
 or binding {{GMP22}}, {{CDM23}}
 
-TODO: deniable KEM cite and Kemeleon paper cite
-
 ## More than Two Component KEMs
 
 Design team decided to restrict the space to only two components, a
@@ -890,7 +871,6 @@ traditional and a post-quantum KEM.
 Not analyzed as part of any security proofs in the literature, and a
 complicatation deemed unnecessary.
 
-<!-- [TODO] Define a registry of labels? -->
 
 --- back
 
