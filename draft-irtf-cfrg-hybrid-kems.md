@@ -300,22 +300,14 @@ cryptographic primitives:
 
 - Key Encapsulation Mechanisms ({{kems}})
 - Nominal Groups ({{groups}})
-- Key Derivation Functions ({{kdfs}})
 - Pseudorandom Generators ({{prgs}})
-
-<!-- [RLB] Why do we need PRGs and KDFs?  It seems like the proofs that we're
-trying to match don't make different assumptions about them (they're all ROs),
-and the API is clearly the same.  But if we can't come to agreement, I'm fine
-throwing this to the WG. -->
-
-<!-- [RLB] Nit: I would reverse the order of the PRG and KDF sections, to match
-the order in which they are used. -->
+- Key Derivation Functions ({{kdfs}})
 
 In the remainder of this section, we describe functional aspects of these
 mechanisms.  The security properties we require in order for the resulting
 hybrid KEM to be secure are discussed in {{security}}.
 
-## Key encapsulation mechanisms {#kems}
+## Key Encapsulation Mechanisms {#kems}
 
 ~~~ aasvg
      +-----------------+
@@ -406,17 +398,6 @@ all byte strings, with fixed lengths:
            pkAB ========================= pkBA
 ~~~
 
-<!-- [DC] Yes we need to be able to model the group as a nominal group to make the
-proofs work, but we have proofs for the NIST curves and the Montgomery curves,
-I wouldn't be surprised if a nice prime order group like Ristretto or DoubleOdd
-could also be shown to be a nominal group; thoughts on putting the 'nominal'
-requirements in the security bits at the bottom of the doc, and just leave this as
-'Groups'? -->
-
-<!-- [RLB] I'm fine keeping the "Nominal" for now, since it's what they're
-called in ABH+21.  It doesn't hurt to restate the criteria below, just like we
-do (should) with KDFs / PRGs / whatever. -->
-
 Nominal groups are an abstract model of elliptic curve groups, over which we
 instantiate Diffie-Hellman key agreement {{ABH+21}}.  A nominal group
 comprises a set `G` together with a distinguished basis element `g`, an
@@ -445,34 +426,7 @@ fixed lengths:
 The security requirements for groups used with the schemes in this document
 are laid out in {{security-groups}}.
 
-## Key Derivation Functions {#kdfs}
-
-A Key Derivation Function (KDF) is a function that a function that produces
-keying material based on an input secret and other information.
-
-While KDFs in the literature can typically consume and produce byte strings of
-arbitrary length, the KDFs used in this document have a simpler form, with a fixed
-output lengths:
-
-- `Nin` - The length in bytes of an input to this KDF.
-- `Nout` - The length in bytes of an output from this KDF.
-- `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
-  byte string.
-
-<!-- [RLB] We don't actually need to refer to `Nin` below, so we could safely
-drop it.  Or if we keep it, we should treat it as a maximum and specify that it
-is at least a certain size, `Nin >= Nseed` for PRG.  I would probably just drop
-it, though. -->
-
-The fixed sizes are for both security and simplicity.
-
-For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
-the salt and sizes to fit this form.
-
-The security requirements for KDFs used with the schemes in this document are
-laid out in {{security-kdfs}}.
-
-## `PRG` {#prgs}
+## Pseudorandom Generators {#prgs}
 
 A pseudorandom generator (PRG) is a deterministic function `G` whose outputs
 are longer than its inputs. When the input to `G` is chosen uniformly at
@@ -483,9 +437,7 @@ uniform distribution.
 The PRGs used in this document have a simpler form, with a fixed
 output lengths:
 
-- `Nin` - The length in bytes of an input to this PRG.
-- `Nout` - The length in bytes of an output from this PRG which is longer
-  than `Nin`.
+- `Nout` - The length in bytes of an output from this PRG.
 - `PRG(seed) -> output`: Produce a byte string of length `Nout` from an input
   byte string `seed`.
 
@@ -498,39 +450,51 @@ is passed to the component key generation algorithms.
 The security requirements for PRGs used with the schemes in this document are
 laid out in {{security-prgs}}.
 
+## Key Derivation Functions {#kdfs}
+
+A Key Derivation Function (KDF) is a function that a function that produces
+keying material based on an input secret and other information.
+
+While KDFs in the literature can typically consume and produce byte strings of
+arbitrary length, the KDFs used in this document have a simpler form, with a fixed
+output lengths:
+
+- `Nout` - The length in bytes of an output from this KDF.
+- `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
+  byte string.
+
+The fixed sizes are for both security and simplicity.
+
+For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
+the salt and sizes to fit this form.
+
+The security requirements for KDFs used with the schemes in this document are
+laid out in {{security-kdfs}}.
+
 # Hybrid KEM Schemes {#schemes}
 
 In this section, we define three generic schemes for building for hybrid
 KEMs:
 
-* `GHP` - A generic scheme that is suitable for use with any choice of
-  traditional and PQ KEMs, with minimal security assumptions on the
-  constituent KEMs
-* `PRE` - A performance optimization of `GHP` for the case where
-  encapsulation keys are large and frequently reused
-* `QSF` - An optimized generic scheme for the case where the
-  traditional component is a nominal group and the PQ component has strong
-  binding properties
+GHP:
+: A generic scheme that is suitable for use with any choice of traditional and
+  PQ KEMs, with minimal security assumptions on the constituent KEMs
 
-<!-- [RLB] Nit: I wouldn't surround these names in backticks -->
+PRE:
+: A performance optimization of GHP for the case where encapsulation keys are
+  large and frequently reused
 
-<!-- [RLB] Some notes on names:
-* Willing to consider QSF on the grounds that it's from the paper.
-* I don't love "PRE", just because it's not an acronym.  If we're going with
-  QSF, maybe we just call it "Chempat"?
-* Is there some name in the GHP paper for the construction we're using here?
-
-In other words, "We use names from the papers that describe these things" seems
-like a plausible theory, let's just work it through.
--->
+QSF:
+: An optimized generic scheme for the case where the traditional component is a
+  nominal group and the PQ component has strong binding properties
 
 These schemes share a common overall structure, differing mainly in how they
 compute the final shared secret and the security requirements of their
 components.
 
-## `GHP` {#ghp}
+## GHP {#ghp}
 
-The `GHP` hybrid KEM depends on the following constituent
+The GHP hybrid KEM depends on the following constituent
 components:
 
 * `KEM_T`: A traditional KEM
@@ -562,7 +526,7 @@ Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
 Nss = min(KEM_T.Nss, KEM_PQ.Nss)
 ~~~
 
-Given these constituent parts, the `GHP` hybrid KEM is defined as
+Given these constituent parts, the GHP hybrid KEM is defined as
 follows:
 
 ~~~
@@ -600,30 +564,29 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## `PRE`  {#pre}
+## PRE  {#pre}
 
-The `PRE` hybrid KEM is a performance optimization of the `GHP` KEM,
+The PRE hybrid KEM is a performance optimization of the GHP KEM,
 optimized for the case where encapsulation keys are large and frequently
 reused. In such cases, hashing the entire encapsulation key is expensive, and
-the same value is hashed repeatedly.  The `PRE` KEM thus computes an
+the same value is hashed repeatedly.  The PRE KEM thus computes an
 intermediate hash of the hybrid encapsulation key, so that the hash value can
 be computed once and used across many encapsulation or decapsulation
 operations.
 
-The `PRE` KEM is identical to the `GHP` KEM except for the
+The PRE KEM is identical to the GHP KEM except for the
 shared secret computation.  One additional KDF is required:
 
-<!-- [DC] We don't actually know the requirements of _this_ function, we don't
-have a proof or requirements laid out; the only example from Chempat is
-SHA3-256. -->
-
-<!-- [RLB] That seems like a fine thing to flag for the RG. -->
+<!-- [TODO] Determine the security requirements for the KeyHash function.  The
+only example we have right now is the use of SHA3-256 in the Chempat
+specification, which does not include a general security definition or any
+proofs of security from which we could back out a definition. -->
 
 * `KeyHash`: A KDF producing byte strings of length `GHP.Nss` (`KeyHash.Nout
   == GHP.Nss`)
 
-The `GenerateKeyPair` and `DeriveKeyPair` algorithms for `PRE` are
-identical to those of the `GHP` KEM.  The `Encaps` and `Decaps`
+The `GenerateKeyPair` and `DeriveKeyPair` algorithms for PRE are
+identical to those of the GHP KEM.  The `Encaps` and `Decaps`
 method use a modified shared secret computation:
 
 ~~~
@@ -652,9 +615,9 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## `QSF` {#qsf}
+## QSF {#qsf}
 
-The `QSF` hybrid KEM (`QSF` below) depends on the following constituent
+The QSF hybrid KEM (QSF below) depends on the following constituent
 components:
 
 * `Group_T`: A nominal group
@@ -687,7 +650,7 @@ Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
 Nss = min(Group_T.Nss, KEM_PQ.Nss)
 ~~~
 
-Given these constituent parts, we define the `QSF` hybrid KEM as follows:
+Given these constituent parts, we define the QSF hybrid KEM as follows:
 
 ~~~
 def GenerateKeyPair():
@@ -779,7 +742,7 @@ The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed
 above.  Related to the ciphertext collision-freeness of the underlying PKE
 scheme of a FO-transform KEM. Also called ciphertext collision resistance.
 
-<!-- TODO: Discuss other salient binding properties. -->
+<!-- [TODO] Discuss other salient binding properties. -->
 
 ## Security Requirements for Constituent Components {#security-requirements}
 
@@ -791,7 +754,7 @@ scheme of a FO-transform KEM. Also called ciphertext collision resistance.
 
 Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
 
-For instances of `QSF`, the component KEM MUST also be ciphertext second
+For instances of QSF, the component KEM MUST also be ciphertext second
 preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
 encapsulation key and ciphertext to be left out from the KDF input.
 
@@ -806,21 +769,21 @@ as nominal groups in {{ABH+21}} as well as showing the `X25519()` and
 function, specifically clamping secret keys when they are generated, instead
 of clamping secret keys together with exponentiation.
 
-<!-- The short Weierstrass NIST curves have also been shown to be modelable
-as nominal groups but I can't find the reference -->
+<!-- [TODO] Add citations to proofs that the NIST curves can also be modeled as
+nominal groups -->
 
 ### Security Requirements for KDFs {#security-kdfs}
 
 KDFs MUST be secure pseudorandom functions (PRFs) when keyed with the shared
 secret output from the post-quantum IND-CCA-secure KEM component algorithm in
-`QSF` {{XWING}} or any of the component IND-CCA-secure KEMs when used in
+QSF {{XWING}} or any of the component IND-CCA-secure KEMs when used in
 KitchenSink {{GHP2018}} or PreHash.
 
 KDFs must be secure instances of random oracles in the ROM and QROM
 {{GHP2018}} {{XWING}}. Proofs of indifferentiability from random oracles
 {{MRH03}} give good confidence here, as any function proven indifferentiable
 from a random oracle is resistant against collision, first, and second
-preimage attacks <!-- need a good cite here -->. An indifferentiability bound
+preimage attacks. An indifferentiability bound
 guarantees security against specific attacks. Although indifferentiability
 does not capture all properties of a random oracle {{RSS11}},
 indifferentiability still remains the best way to rule out structural
@@ -865,8 +828,8 @@ used in such a manner include SHAKE256.
 
 ## Security Properties of Hybrid KEMs
 
-<!-- TODO: Define which properties are provided by the hybrid KEMs in this -->
-<!-- document, and citations to the papers with the corresponding proofs. -->
+<!-- [TODO] Define which properties are provided by the hybrid KEMs in this
+document, and citations to the papers with the corresponding proofs. -->
 
 All generic constructions in this document produce IND-CCA-secure KEMs
 when correctly instantiated concretely with cryptographic components that
@@ -935,10 +898,7 @@ traditional and a post-quantum KEM.
 Not analyzed as part of any security proofs in the literature, and a
 complicatation deemed unnecessary.
 
-<!-- [RLB] It might help with domain separation if we made a registry of labels,
-basicaly just (label, reference), specification required.  Maybe (label, scheme,
-T, PQ, PRG, KDF, reference) if you want to put a summary there.  Though in the
-latter case I would not require uniqueness of the non-label values. -->
+<!-- [TODO] Define a registry of labels? -->
 
 --- back
 
