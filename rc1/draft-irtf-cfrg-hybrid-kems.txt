@@ -1,0 +1,992 @@
+
+
+
+
+Crypto Forum                                                 D. Connolly
+Internet-Draft                                                 SandboxAQ
+Intended status: Informational                                 R. Barnes
+Expires: 22 December 2025                                          Cisco
+                                                            20 June 2025
+
+
+                Hybrid PQ/T Key Encapsulation Mechanisms
+                   draft-irtf-cfrg-hybrid-kems-latest
+
+Abstract
+
+   Post-quantum (PQ) algorithms are designed to resist attack by a
+   quantum computer, in contrast to "traditional" algorithms.  However,
+   given the novelty of PQ algorithms, there is some concern that PQ
+   algorithms currently believed to be secure will be broken.  Hybrid
+   constructions that combine both PQ and traditional algorithms can
+   help moderate this risk while still providing security against
+   quantum attack.  In this document, we define schemes for constructing
+   hybrid Key Encapsulation Mechanisms (KEMs) based on combining a
+   traditional KEM and a PQ KEM.  Hybrid KEMs built using these schemess
+   provide strong security properties as long as the undelying
+   algorithms are secure.
+
+Discussion Venues
+
+   This note is to be removed before publishing as an RFC.
+
+   Discussion of this document takes place on the Crypto Forum Research
+   Group mailing list (cfrg@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/cfrg.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 22 December 2025.
+
+Copyright Notice
+
+   Copyright (c) 2025 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Requirements Notation
+   3.  Notation
+   4.  Cryptographic Dependencies
+     4.1.  Key Encapsulation Mechanisms
+     4.2.  Nominal Groups
+     4.3.  Pseudorandom Generators
+     4.4.  Key Derivation Functions
+   5.  Hybrid KEM Schemes
+     5.1.  GHP
+     5.2.  PRE
+     5.3.  QSF
+   6.  Security Considerations
+     6.1.  Security Properties
+       6.1.1.  IND-CCA Security
+       6.1.2.  Ciphertext Second Preimage Resistant (C2PRI) Security
+     6.2.  Binding Properties
+     6.3.  Security Requirements for Constituent Components
+       6.3.1.  Security Requirements for KEMs
+       6.3.2.  Security Requirements for Groups
+       6.3.3.  Security Requirements for KDFs
+       6.3.4.  Security Requirements for PRGs
+     6.4.  Security Properties of Hybrid KEMs
+     6.5.  Other Considerations
+       6.5.1.  Domain Separation
+       6.5.2.  Fixed-length
+   7.  Out of Scope
+     7.1.  More than Two Component KEMs
+     7.2.  Parameterized Output Length
+   8.  References
+     8.1.  Normative References
+     8.2.  Informative References
+   Appendix A.  Deterministic Encapsulation
+   Acknowledgments
+   Authors' Addresses
+
+1.  Introduction
+
+   Post-quantum (PQ) cryptographic algorithms are based on problems that
+   are conjectured to be resistant to attacks possible on a quantum
+   computer.  Key Encapsulation Mechanisms (KEMs), are a standardized
+   class of cryptographic scheme that can be used to build protocols in
+   lieu of traditional, quantum-vulnerable variants such as finite field
+   or elliptic curve Diffie-Hellman (DH) based protocols.
+
+   Given the novelty of PQ algorithms, however, there is some concern
+   that PQ algorithms currently believed to be secure will be broken.
+   Hybrid constructions that combine both PQ and traditional algorithms
+   can help moderate this risk while still providing security against
+   quantum attack.  If construted properly, a hybrid KEM will retain
+   certain security properties even if one of the two constituent KEMs
+   is compromised.  If the PQ KEM is broken, then the hybrid KEM should
+   continue to provide security against non-quantum attackers by virtue
+   of its traditional KEM component.  If the traditional KEM is broken
+   by a quantum computer, then the hybrid KEM should continue to resist
+   quantum attack by virtue of its PQ KEM component.
+
+   In addition to guarding against algorithm weaknesses, this property
+   also guards against flaws in implementations, such as timing attacks.
+   Hybrid KEMs can also facilitate faster deployment of PQ security by
+   allowing applications to incorporate PQ algorithms while still
+   meeting compliance requirements based on traditional algorithms.
+
+   In this document, we define generic schemes for constructing hybrid
+   KEMs from a traditional algorithm and a PQ KEM.  The aim of this
+   document is provide a small set of techniques to achieve specific
+   security properties given conforming component algorithms, which
+   should make these techniques suitable for a broad variety of use
+   cases.
+
+   The remainder of this document is structured as follows: first, in
+   Section 4 and Section 5, we define the abstractions on which the
+   schemes are built, and then the schemes themselves.  Then, in
+   Section 6, we lay out the security analyses that support these
+   schemes, including the security requirements for constituent
+   components and the security notions satisfied by hybrid KEMS
+   constructed according to the schemes in the document Section 6.3.
+   Finally, we discuss some "path not taken", related topics that might
+   be of interest to readers, but which are not treated in depth.
+
+2.  Requirements Notation
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Notation
+
+   This document is consistent with all terminology defined in
+   [I-D.ietf-pquip-pqt-hybrid-terminology].
+
+   The following terms are used throughout this document:
+
+   *  random(n): return a pseudorandom byte string of length n bytes
+      produced by a cryptographically-secure random number generator.
+
+   *  concat(x0, ..., xN): Concatenation of byte strings.  concat(0x01,
+      0x0203, 0x040506) = 0x010203040506.
+
+   *  split(N1, N2, x): Split a byte string x of length N1 + N2 into its
+      first N1 bytes and its last N2 bytes.  This function is the
+      inverse of concat(x1, x2) when x1 is N1 bytes long and x2 is N2
+      bytes long.  It is an error to call this function with a byte
+      string that does not have length N1 + N2.  Since this function
+      operates over secret data x, it MUST be constant-time for a given
+      N1 and N2.
+
+   When x is a byte string, we use the notation x[..i] and x[i..] to
+   denote the slice of bytes in x starting from the beginning of x and
+   leading up to index i, including the i-th byte, and the slice the
+   bytes in x starting from index i to the end of x, respectively.  For
+   example, if x = [0, 1, 2, 3, 4], then x[..2] = [0, 1] and x[2..] =
+   [2, 3, 4].
+
+4.  Cryptographic Dependencies
+
+   The generic hybrid PQ/T KEM schemes we define depend on the the
+   following cryptographic primitives:
+
+   *  Key Encapsulation Mechanisms (Section 4.1)
+
+   *  Nominal Groups (Section 4.2)
+
+   *  Pseudorandom Generators (Section 4.3)
+
+   *  Key Derivation Functions (Section 4.4)
+
+   In the remainder of this section, we describe functional aspects of
+   these mechanisms.  The security properties we require in order for
+   the resulting hybrid KEM to be secure are discussed in Section 6.
+
+4.1.  Key Encapsulation Mechanisms
+
+        +-----------------+
+        | GenerateKeyPair |
+        |       or        |
+        |  DeriveKeyPair  |
+        +--------+--------+
+                 |
+       +---------+----------+
+       |                    |
+       V                    V
+
+       ek                  dk
+
+       |                    |
+       |                    |
+       V                    V
+   +--------+    ct    +--------+
+   | Encaps |--------->| Decaps |
+   +--------+          +--------+
+       |                    |
+       |                    |
+       V                    V
+
+       ss        ==        ss
+
+   A Key Encapsulation Mechanism (KEMs) comprises the following
+   algorithms:
+
+   *  GenerateKeyPair() -> (ek, dk): A randomized algorithm that
+      generates a public encapsulation key ek and a secret decapsulation
+      key dk, each of which are byte strings.
+
+   *  DeriveKeyPair(seed) -> (ek, dk): A deterministic algorithm that
+      takes as input a seed seed and generates a public encapsulation
+      key ek and a secret decapsulation key dk, each of which are byte
+      strings.
+
+   *  Encaps(ek) -> (ct, ss): A probabilistic encapsulation algorithm,
+      which takes as input a public encapsulation key ek and outputs a
+      ciphertext ct and shared secret ss.
+
+   *  Decaps(dk, ct) -> ss: A decapsulation algorithm, which takes as
+      input a secret decapsulation key dk and ciphertext ct and outputs
+      a shared secret ss.
+
+   We assume that the values produced and consumed by the above
+   functions are all byte strings, with fixed lengths:
+
+   *  Nseed: The length in bytes of a key seed (input to DeriveKeyPair)
+
+   *  Nek: The length in bytes of a public encapsulation key
+
+   *  Ndk: The length in bytes of a secret decapsulation key
+
+   *  Nct: The length in bytes of a ciphertext produced by Encaps
+
+   *  Nss: The length in bytes of a shared secret produced by Encaps or
+      Decaps
+
+4.2.  Nominal Groups
+
+                               g
+                               |
+                +--------------+---------------+
+                |                              |
+                V                              V
+             +-----+                        +-----+
+          +->| Exp |                        | Exp |<-+
+          |  +-----+                        +-----+  |
+          |     |                              |     |
+          |     |                              |     |
+          |     V                              V     |
+          |    pkA                            pkB    |
+          |     |                              |     |
+    skA --+     +-------------.  .-------------+     +-- skB
+          |                    \/                    |
+          |                    /\                    |
+          |     +-------------'  '-------------+     |
+          |     |                              |     |
+          |     V                              V     |
+          |  +-----+                        +-----+  |
+          +->| Exp |                        | Exp |<-+
+             +-----+                        +-----+
+                |                              |
+                |                              |
+                V                              V
+              pkAB ========================= pkBA
+
+   Nominal groups are an abstract model of elliptic curve groups, over
+   which we instantiate Diffie-Hellman key agreement [ABH_21].  A
+   nominal group comprises a set G together with a distinguished basis
+   element g, an "exponentiation" map, and some auxiliary functions:
+
+   *  Exp(p, x) -> q: An algorithm that produces an element q of G from
+      an element p and an integer x.
+
+      -  The integers x are called "scalars" to distinguish them from
+         group elements.
+
+      -  Exp must respect multiplication in its scalar argument x, so
+         that Exp(Exp(p, x), y) = Exp(p, x * y).
+
+   *  RandomScalar(seed) -> k: Produce a uniform pseudo-random scalar
+      from the byte string seed.
+
+   *  ElementToSharedSecret(P) -> ss: Extract a shared secret from an
+      element of the group (e.g., by taking the X coordinate of an
+      ellpitic curve point).
+
+   We assume that scalars and group elements are represented by byte
+   strings with fixed lengths:
+
+   *  Nseed: The length in bytes of a seed (input to RandomScalar)
+
+   *  Nscalar: The length in bytes of a scalar
+
+   *  Nelem: The length in bytes of a serialized group element
+
+   *  Nss: The length in bytes of a shared secret produced by
+      ElementToSharedSecret
+
+   The security requirements for groups used with the schemes in this
+   document are laid out in Section 6.3.2.
+
+4.3.  Pseudorandom Generators
+
+   A pseudorandom generator (PRG) is a deterministic function G whose
+   outputs are longer than its inputs.  When the input to G is chosen
+   uniformly at random, it induces a certain distribution over the
+   possible output.  The output distribution is pseudorandom if it is
+   indistinguishable from the uniform distribution.
+
+   The PRGs used in this document have a simpler form, with a fixed
+   output lengths:
+
+   *  Nout - The length in bytes of an output from this PRG.
+
+   *  PRG(seed) -> output: Produce a byte string of length Nout from an
+      input byte string seed.
+
+   The fixed sizes are for both security and simplicity.
+
+   MUST provide the bit-security required to source input randomness for
+   PQ/T components from a seed that is expanded to a output length, of
+   which a subset is passed to the component key generation algorithms.
+
+   The security requirements for PRGs used with the schemes in this
+   document are laid out in Section 6.3.4.
+
+4.4.  Key Derivation Functions
+
+   A Key Derivation Function (KDF) is a function that a function that
+   produces keying material based on an input secret and other
+   information.
+
+   While KDFs in the literature can typically consume and produce byte
+   strings of arbitrary length, the KDFs used in this document have a
+   simpler form, with a fixed output lengths:
+
+   *  Nout - The length in bytes of an output from this KDF.
+
+   *  KDF(input) -> output: Produce a byte string of length Nout from an
+      input byte string.
+
+   The fixed sizes are for both security and simplicity.
+
+   For instances of the Extract()/Expand() KDF paradigm such as HKDF, we
+   fix the salt and sizes to fit this form.
+
+   The security requirements for KDFs used with the schemes in this
+   document are laid out in Section 6.3.3.
+
+5.  Hybrid KEM Schemes
+
+   In this section, we define three generic schemes for building for
+   hybrid KEMs:
+
+   GHP:  A generic scheme that is suitable for use with any choice of
+      traditional and PQ KEMs, with minimal security assumptions on the
+      constituent KEMs
+
+   PRE:  A performance optimization of GHP for the case where
+      encapsulation keys are large and frequently reused
+
+   QSF:  An optimized generic scheme for the case where the traditional
+      component is a nominal group and the PQ component has strong
+      binding properties
+
+   These schemes share a common overall structure, differing mainly in
+   how they compute the final shared secret and the security
+   requirements of their components.
+
+5.1.  GHP
+
+   The GHP hybrid KEM depends on the following constituent components:
+
+   *  KEM_T: A traditional KEM
+
+   *  KEM_PQ: A post-quantum KEM
+
+   *  PRG: A PRG producing byte strings of length KEM_T.Nseed +
+      KEM_PQ.Nseed (PRG.Nout == KEM_T.Nseed + KEM_PQ.Nseed)
+
+   *  KDF: A KDF producing byte strings of length GHP.Nss (KDF.Nout ==
+      GHP.Nss)
+
+   *  Label - A byte string used to label the specific combination of
+      the above constituents being used.
+
+   The KEMs, groups, KDFs, and PRGs MUST meet the security requirements
+   in Section 6.3.
+
+   The constants associated with the hybrid KEM are mostly derived from
+   the concatenation of keys and ciphertexts:
+
+   Nek = KEM_T.Nek + KEM_PQ.Nek
+   Ndk = KEM_T.Ndk + KEM_PQ.Ndk
+   Nct = KEM_T.Nct + KEM_PQ.Nct
+
+   The Nseed and Nss constants should reflect the overall security level
+   of the combined KEM, with the following recommended values:
+
+   Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
+   Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+
+   Given these constituent parts, the GHP hybrid KEM is defined as
+   follows:
+
+   def GenerateKeyPair():
+       seed = random(Nseed)
+       return DeriveKeyPair(seed)
+
+   def DeriveKeyPair(seed):
+       seed_full = PRG(seed)
+       (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+       (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+       (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+       ek_H = concat(ek_T, ek_PQ)
+       dk_H = concat(dk_T, dk_PQ)
+       return (ek_H, dk_H)
+
+   def Encaps(ek):
+       (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
+       (ss_T, ct_T) = KEM_T.Encap(pk_T)
+       (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+       ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+       ct_H = concat(ct_T, ct_PQ)
+       return (ss_H, ct_H)
+
+   def Decaps(dk, ct):
+       (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
+       ek_T = KEM_T.ToEncaps(dk_T)
+       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+       (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
+       ss_T = KEM_T.Decap(dk_T, ct_T)
+       ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+       ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+       return ss_H
+
+5.2.  PRE
+
+   The PRE hybrid KEM is a performance optimization of the GHP KEM,
+   optimized for the case where encapsulation keys are large and
+   frequently reused.  In such cases, hashing the entire encapsulation
+   key is expensive, and the same value is hashed repeatedly.  The PRE
+   KEM thus computes an intermediate hash of the hybrid encapsulation
+   key, so that the hash value can be computed once and used across many
+   encapsulation or decapsulation operations.
+
+   The PRE KEM is identical to the GHP KEM except for the shared secret
+   computation.  One additional KDF is required:
+
+   *  KeyHash: A KDF producing byte strings of length GHP.Nss
+      (KeyHash.Nout == GHP.Nss)
+
+   The GenerateKeyPair and DeriveKeyPair algorithms for PRE are
+   identical to those of the GHP KEM.  The Encaps and Decaps method use
+   a modified shared secret computation:
+
+   def Encaps(ek):
+       (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
+       (ss_T, ct_T) = KEM_T.Encap(pk_T)
+       (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+
+       ekh = KeyHash(concat(ek_T, ek_PQ))
+       ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+
+       ct_H = concat(ct_T, ct_PQ)
+       return (ss_H, ct_H)
+
+   def Decaps(dk, ct):
+       (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
+       ek_T = KEM_T.ToEncaps(dk_T)
+       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+       (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
+       ss_T = KEM_T.Decap(dk_T, ct_T)
+       ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+       ekh = KeyHash(concat(ek_T, ek_PQ))
+       ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
+       return ss_H
+
+5.3.  QSF
+
+   The QSF hybrid KEM (QSF below) depends on the following constituent
+   components:
+
+   *  Group_T: A nominal group
+
+   *  KEM_PQ: A post-quantum KEM
+
+   *  PRG: A PRG producing byte strings of length Group_T.Nseed +
+      KEM_PQ.Nseed (Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed)
+
+   *  KDF: A KDF producing byte strings of length QSF.Nss (KDF.Nout ==
+      KDF.Nss)
+
+   *  Label - A byte string used to label the specific combination of
+      the above constituents being used.
+
+   We presume that Group_T, KEM_PQ, and the KDFs meet the interfaces
+   described in Section 4 and MUST meet the security requirements
+   described in Section 6.3.
+
+   The constants associated with the hybrid KEM are mostly derived from
+   the concatenation of keys and ciphertexts:
+
+   Nek = Group_T.Nelem + KEM_PQ.Nek
+   Ndk = Group_T.Nscalar + KEM_PQ.Ndk
+   Nct = Group_T.Nelem + KEM_PQ.Nct
+
+   The Nseed and Nss constants should reflect the overall security level
+   of the combined KEM, with the following recommended values:
+
+   Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
+   Nss = min(Group_T.Nss, KEM_PQ.Nss)
+
+   Given these constituent parts, we define the QSF hybrid KEM as
+   follows:
+
+   def GenerateKeyPair():
+       seed = random(Nseed)
+       return DeriveKeyPair(seed)
+
+   def DeriveKeyPair(seed):
+       seed_full = PRG(seed)
+       (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
+
+       dk_T = Group_T.RandomScalar(seed_T))
+       ek_T = Group_T.Exp(Group_T.g, dk_T)
+       (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+
+       ek_H = concat(ek_T, ek_PQ)
+       dk_H = concat(dk_T, dk_PQ)
+       return (ek_H, dk_H)
+
+   def Encaps(ek):
+       (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
+
+       sk_E = Group_T.RandomScalar(random(GroupT.Nseed))
+       ct_T = Group_T.Exp(GroupT.g, sk_E)
+       ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
+       (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+
+       ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+       ct_H = concat(ct_T, ct_PQ)
+       return (ss_H, ct_H)
+
+   def Decaps(dk, ct):
+       (dk_T, dk_PQ) = split(Group_T.Ndk, KEM_PQ.Ndk, dk)
+       (ct_T, ct_PQ) = split(Group_T.Nct, KEM_PQ.Nct, ct)
+
+       ek_T = Group_T.ToEncaps(dk_T)
+       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+
+       ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+       ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+
+       ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+       return ss_H
+
+6.  Security Considerations
+
+   Hybrid KEM constructions aim to provide security by combining two or
+   more schemes so that security is preserved if all but one schemes are
+   replaced by an arbitrarily bad scheme.  Informally, these hybrid KEMs
+   are secure if the KDF is secure, and either the traditional component
+   is secure, or the post-quantum KEM is secure: this is the 'hybrid'
+   property.
+
+6.1.  Security Properties
+
+6.1.1.  IND-CCA Security
+
+   Also known as IND-CCA2 security for general public key encryption,
+   for KEMs that encapsulate a new random 'message' each time.
+
+   The notion of INDistinguishability against Chosen-Ciphertext Attacks
+   (IND-CCA) [RS92] is now widely accepted as the standard security
+   notion for asymmetric encryption schemes.  IND-CCA security requires
+   that no efficient adversary can recognize which of two messages is
+   encrypted in a given ciphertext, even if the two candidate messages
+   are chosen by the adversary himself.
+
+6.1.2.  Ciphertext Second Preimage Resistant (C2PRI) Security
+
+   Also known in the literature as ciphertext collision resistance
+   (CCR).
+
+   The notion where, even if a KEM has broken IND-CCA security (either
+   due to construction, implementation, or other), its internal
+   structure, based on the Fujisaki-Okamoto transform, guarantees that
+   it is impossible to find a second ciphertext that decapsulates to the
+   same shared secret K: this notion is known as ciphertext second
+   preimage resistance (C2SPI) for KEMs [XWING].  The same notion has
+   also been described as chosen ciphertext resistance elsewhere
+   [CDM23].
+
+6.2.  Binding Properties
+
+   It is often useful for a KEM to have certain "binding properties", by
+   which certain parameters determine certain others [CDM23].  These
+   properties are referred to with labels of the form X-BIND-P-Q.  For
+   example, LEAK-BIND-K-PK means that for a given shared secret (K),
+   there is a unique encapsulation key (PK) that could have produced it,
+   even if all of the secrets involved are given to the adversary after
+   the encapsulation operation is completed (LEAK).
+
+   The property LEAK-BIND-K,PK-CT is related to the C2PRI property
+   discussed above.  Related to the ciphertext collision-freeness of the
+   underlying PKE scheme of a FO-transform KEM.  Also called ciphertext
+   collision resistance.
+
+6.3.  Security Requirements for Constituent Components
+
+6.3.1.  Security Requirements for KEMs
+
+   Component KEMs MUST be IND-CCA-secure [GHP2018] [XWING].
+
+   For instances of QSF, the component KEM MUST also be ciphertext
+   second preimage resistant (C2PRI) [XWING]: this allows the component
+   KEM encapsulation key and ciphertext to be left out from the KDF
+   input.
+
+6.3.2.  Security Requirements for Groups
+
+   The groups MUST be modelable as nominal groups in which the strong
+   Diffie-Hellman problem holds [ABH_21] [XWING].
+
+   The Montgomery curves Curve25519 and Curve448 have been shown to be
+   modelable as nominal groups in [ABH_21] as well as showing the
+   X25519() and X448() functions respectively pertain to the nominal
+   group exp(X, y) function, specifically clamping secret keys when they
+   are generated, instead of clamping secret keys together with
+   exponentiation.
+
+6.3.3.  Security Requirements for KDFs
+
+   KDFs MUST be secure pseudorandom functions (PRFs) when keyed with the
+   shared secret output from the post-quantum IND-CCA-secure KEM
+   component algorithm in QSF [XWING] or any of the component IND-CCA-
+   secure KEMs when used in KitchenSink [GHP2018] or PreHash.
+
+   KDFs must be secure instances of random oracles in the ROM and QROM
+   [GHP2018] [XWING].  Proofs of indifferentiability from random oracles
+   [MRH03] give good confidence here, as any function proven
+   indifferentiable from a random oracle is resistant against collision,
+   first, and second preimage attacks.  An indifferentiability bound
+   guarantees security against specific attacks.  Although
+   indifferentiability does not capture all properties of a random
+   oracle [RSS11], indifferentiability still remains the best way to
+   rule out structural attacks.
+
+   Sponge-based constructions such as SHA-3 have been shown to be
+   indifferentiable against classical [BDP_08] as well as quantum
+   adversaries [ACM_25].
+
+   HKDF has been shown to be indifferentiable from a random oracle under
+   specific constraints [LBB20]:
+
+   *  that HMAC is indifferentiable from a random oracle, which for
+      HMAC-SHA-256 has been shown in [DRS_13], assuming the compression
+      function underlying SHA-256 is a random oracle, which it is
+      indifferentiably when used prefix-free.
+
+   *  the values of HKDF's IKM input do not collide with values of
+      info || 0x01.  This MUST be enforced by the concrete
+      instantiations that use HKDF as its KDF.
+
+   The choice of the KDF security level SHOULD be made based on the
+   security level provided by the constituent KEMs.  The KDF SHOULD at
+   least have the security level of the strongest constituent KEM.
+
+6.3.4.  Security Requirements for PRGs
+
+   The functions used to expand a key seed to multiple key seeds is
+   closer to a pseudorandom generator (PRG) in its security requirements
+   [AOB_24].  A secure PRG is an algorithm PRG : {0, 1}^n → {0, 1}^m,
+   such that no polynomial-time adversary can distinguish between PRG(r)
+   (for r $← {0, 1}^n) and a random z $← {0, 1}^m [Rosulek].  The
+   uniform string r ∈ {0, 1}^n is called the seed of the PRG.
+
+   A PRG is not to be confused with a random (or pseudorandom) _number_
+   generator (RNG): a PRG requires the seed randomness to be chosen
+   uniformly and extend it; an RNG takes sources of noisy data and
+   transforms them into uniform outputs.
+
+   A PRG is a particular mode of use of a random oracle [BDP_11].
+   Examples used in such a manner include SHAKE256.
+
+6.4.  Security Properties of Hybrid KEMs
+
+   All generic constructions in this document produce IND-CCA-secure
+   KEMs when correctly instantiated concretely with cryptographic
+   components that meet the respective security requirements.  Any
+   changes to the routines, including key generation/derivation, are not
+   guaranteed to produce secure results.
+
+6.5.  Other Considerations
+
+6.5.1.  Domain Separation
+
+   ASCII-encoded bytes provide oracle cloning [BDG2020] in the security
+   game via domain separation.  The IND-CCA security of hybrid KEMs
+   often relies on the KDF function KDF to behave as an independent
+   random oracle, which the inclusion of the label achieves via domain
+   separation [GHP2018].
+
+   By design, the calls to KDF in these schemes and usage anywhere else
+   in higher level protoocl use separate input domains unless
+   intentionally duplicating the 'label' per concrete instance with
+   fixed paramters.  This justifies modeling them as independent
+   functions even if instantiated by the same KDF.  This domain
+   separation is achieved by using prefix-free sets of label values.
+   Recall that a set is prefix-free if no element is a prefix of another
+   within the set.
+
+   Length diffentiation is sometimes used to achieve domain separation
+   but as a technique it is brittle and prone to misuse [BDG2020] in
+   practice so we favor the use of an explicit post-fix label.
+
+6.5.2.  Fixed-length
+
+   Variable-length secrets are generally dangerous.  In particular,
+   using key material of variable length and processing it using hash
+   functions may result in a timing side channel.  In broad terms, when
+   the secret is longer, the hash function may need to process more
+   blocks internally.  In some unfortunate circumstances, this has led
+   to timing attacks, e.g. the Lucky Thirteen [LUCKY13] and Raccoon
+   [RACCOON] attacks.
+
+   Furthermore, [AVIRAM] identified a risk of using variable-length
+   secrets when the hash function used in the key derivation function is
+   no longer collision-resistant.
+
+   If concatenation were to be used with values that are not fixed-
+   length, a length prefix or other unambiguous encoding would need to
+   be used to ensure that the composition of the two values is injective
+   and requires a mechanism different from that specified in this
+   document.
+
+   Therefore, this specification MUST only be used with algorithms which
+   have fixed-length shared secrets.
+
+7.  Out of Scope
+
+   Considerations that were considered and not included in these
+   designs:
+
+   Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
+   robustness or binding [GMP22], [CDM23]
+
+7.1.  More than Two Component KEMs
+
+   Design team decided to restrict the space to only two components, a
+   traditional and a post-quantum KEM.
+
+7.2.  Parameterized Output Length
+
+   Not analyzed as part of any security proofs in the literature, and a
+   complicatation deemed unnecessary.
+
+8.  References
+
+8.1.  Normative References
+
+   [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
+              output functions", National Institute of Standards and
+              Technology (U.S.), DOI 10.6028/nist.fips.202, 2015,
+              <https://doi.org/10.6028/nist.fips.202>.
+
+   [FIPS203]  "Module-lattice-based key-encapsulation mechanism
+              standard", National Institute of Standards and Technology
+              (U.S.), DOI 10.6028/nist.fips.203, August 2024,
+              <https://doi.org/10.6028/nist.fips.203>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+8.2.  Informative References
+
+   [ABH_21]   Joël Alwen, Bruno Blanchet, Eduard Hauck, Eike Kiltz,
+              Benjamin Lipp, and Doreen Riepel, "Analysing the HPKE
+              standard.", April 2021.
+
+   [ABR01]    Michel Abdalla, Mihir Bellare, and Phillip Rogaway, "The
+              Oracle Diffie-Hellman Assumptions and an Analysis of
+              DHIES", January 2001.
+
+   [ACM_25]   "The Sponge is Quantum Indifferentiable", 2025,
+              <https://eprint.iacr.org/2025/731.pdf>.
+
+   [ANSIX9.62]
+              ANS, "Public Key Cryptography for the Financial Services
+              Industry: the Elliptic Curve Digital Signature Algorithm
+              (ECDSA)", ANS X9.62-2005, November 2005.
+
+   [AOB_24]   "Formally verifying Kyber Episode V: Machine-checked IND-
+              CCA security and correctness of ML-KEM in EasyCrypt",
+              2024, <https://eprint.iacr.org/2024/843.pdf>.
+
+   [AVIRAM]   Nimrod Aviram, Benjamin Dowling, Ilan Komargodski, Kenny
+              Paterson, Eyal Ronen, and Eylon Yogev, "[TLS] Combining
+              Secrets in Hybrid Key Exchange in TLS 1.3", 1 September
+              2021, <https://mailarchive.ietf.org/arch/msg/tls/
+              F4SVeL2xbGPaPB2GW_GkBbD_a5M/>.
+
+   [BDG2020]  "Separate Your Domains: NIST PQC KEMs, Oracle Cloning and
+              Read-Only Indifferentiability", 2020,
+              <https://eprint.iacr.org/2020/241.pdf>.
+
+   [BDP_08]   "On the Indifferentiability of the Sponge Construction",
+              2008, <https://www.iacr.org/archive/
+              eurocrypt2008/49650180/49650180.pdf>.
+
+   [BDP_11]   "Cryptographic sponge functions", 2011,
+              <https://keccak.team/files/CSF-0.1.pdf>.
+
+   [CDM23]    Cremers, C., Dax, A., and N. Medinger, "Keeping Up with
+              the KEMs: Stronger Security Notions for KEMs and automated
+              analysis of KEM-based protocols", 2023,
+              <https://eprint.iacr.org/2023/1933.pdf>.
+
+   [DRS_13]   "To Hash or Not to Hash Again? (In)differentiability
+              Results for H^2 and HMAC", 2013,
+              <https://eprint.iacr.org/2013/382.pdf>.
+
+   [FIPS186]  "Digital Signature Standard (DSS)", National Institute of
+              Standards and Technology (U.S.),
+              DOI 10.6028/nist.fips.186-5, February 2023,
+              <https://doi.org/10.6028/nist.fips.186-5>.
+
+   [GHP2018]  "KEM Combiners", 2018,
+              <https://eprint.iacr.org/2018/024.pdf>.
+
+   [GMP22]    Grubbs, P., Maram, V., and K.G. Paterson, "Anonymous,
+              Robust Post-Quantum Public-Key Encryption", 2022,
+              <https://eprint.iacr.org/2021/708.pdf>.
+
+   [HKDF]     Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
+              Key Derivation Function (HKDF)", RFC 5869,
+              DOI 10.17487/RFC5869, May 2010,
+              <https://www.rfc-editor.org/rfc/rfc5869>.
+
+   [I-D.driscoll-pqt-hybrid-terminology]
+              D, F., "Terminology for Post-Quantum Traditional Hybrid
+              Schemes", Work in Progress, Internet-Draft, draft-
+              driscoll-pqt-hybrid-terminology-02, 7 March 2023,
+              <https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-
+              hybrid-terminology-02>.
+
+   [I-D.ietf-pquip-pqt-hybrid-terminology]
+              D, F., P, M., and B. Hale, "Terminology for Post-Quantum
+              Traditional Hybrid Schemes", Work in Progress, Internet-
+              Draft, draft-ietf-pquip-pqt-hybrid-terminology-06, 10
+              January 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-pquip-pqt-hybrid-terminology-06>.
+
+   [KSMW2024] Kraemer, J., Struck, P., and M. Weishaupl, "Binding
+              Security of Implicitly-Rejecting KEMs and Application to
+              BIKE and HQC", n.d., <https://eprint.iacr.org/2024/1233>.
+
+   [LBB20]    "A Mechanised Cryptographic Proof of the WireGuard Virtual
+              Private Network Protocol", 2019,
+              <https://ieeexplore.ieee.org/stamp/
+              stamp.jsp?tp=&arnumber=8806752>.
+
+   [LUCKY13]  Al Fardan, N. J. and K. G. Paterson, "Lucky Thirteen:
+              Breaking the TLS and DTLS record protocols", n.d.,
+              <https://ieeexplore.ieee.org/
+              iel7/6547086/6547088/06547131.pdf>.
+
+   [MRH03]    "Indifferentiability, Impossibility Results on Reductions,
+              and Applications to the Random Oracle Methodology", 2003,
+              <https://eprint.iacr.org/2003/161.pdf>.
+
+   [RACCOON]  Merget, R., Brinkmann, M., Aviram, N., Somorovsky, J.,
+              Mittmann, J., and J. Schwenk, "Raccoon Attack: Finding and
+              Exploiting Most-Significant-Bit-Oracles in TLS-DH(E)",
+              September 2020, <https://raccoon-attack.com/>.
+
+   [Rosulek]  "The Joy of Cryptography", 2021,
+              <https://joyofcryptography.com/pdf/book.pdf>.
+
+   [RS92]     "Non-Interactive Zero-Knowledge Proof of Knowledge and
+              Chosen Ciphertext Attack.", 1992,
+              <https://link.springer.com/
+              chapter/10.1007/3-540-46766-1_35>.
+
+   [RSS11]    "Careful with Composition: Limitations of
+              Indifferentiability and Universal Composability", 2011,
+              <https://eprint.iacr.org/2011/339.pdf>.
+
+   [SCHMIEG2024]
+              Schmieg, S., "Unbindable Kemmy Schmidt: ML-KEM is neither
+              MAL-BIND-K-CT nor MAL-BIND-K-PK", 2024,
+              <https://eprint.iacr.org/2024/523.pdf>.
+
+   [SEC1]     "Elliptic Curve Cryptography, Standards for Efficient
+              Cryptography Group, ver. 2", 2009,
+              <https://secg.org/sec1-v2.pdf>.
+
+   [XWING]    "X-Wing: The Hybrid KEM You’ve Been Looking For", 2024,
+              <https://eprint.iacr.org/2024/039.pdf>.
+
+Appendix A.  Deterministic Encapsulation
+
+   When verifying the behavior of a KEM implementation (e.g., by
+   generating or verifying test vectors), it is useful for the
+   implementation to expose a "derandomized" version of the Encaps
+   algorithm:
+
+   *  EncapsDerand(ek, randomness) -> (ct, shared_secret): A
+      deterministic encapsulation algorithm, which takes as input a
+      public encapsulation key ek and randomness randomness, and outputs
+      a ciphertext ct and shared secret shared_secret.
+
+   An implementation that exposes EncapsDerand must also define a
+   required amount of randomness:
+
+   *  Nrandom: The length in bytes of the randomness provided to
+      EncapsDerand
+
+   The corresponding change for a nominal group is to replace randomly-
+   generated inputs to RandomScalar with deterministic ones.  In other
+   words, for a nominal group, Nrandom = Nseed.
+
+   When a hybrid KEM is instantiated with constituents that support
+   derandomized encapsulation (either KEMs or groups), the hybrid KEM
+   can also support EncapsDerand, with Nrandom = T.Nrandom + PQ.Nrandom.
+   The structure of the hybrid KEM's EncapsDerand algorithm is the same
+   as its Encaps method, with the following differences:
+
+   *  The EncapsDerand algorithm also takes a randomness parameter,
+      which is a byte string of length Nrandom.
+
+   *  Invocations of Encaps or RandomScalar (with a random input) in the
+      constituent algorithms are replaced with calls ot EncapsDerand or
+      RandomScalar with a deterministic input.
+
+   *  The randomness used by the traditional constituent is the first
+      T.Nrandom bytes of the input randomness.
+
+   *  The randomness used by the PQ constituent is the final PQ.Nrandom
+      bytes of the input randomness.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+Authors' Addresses
+
+   Deirdre Connolly
+   SandboxAQ
+   Email: durumcrustulum@gmail.com
+
+
+   Richard Barnes
+   Cisco
+   Email: rlb@ipv.sx
