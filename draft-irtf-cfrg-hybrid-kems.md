@@ -350,14 +350,6 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
   shared secret `ss`.
 
-A KEM may also provide a deterministic version of `Encaps` (e.g., for
-purposes of testing):
-
-- `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
-   encapsulation algorithm, which takes as input a public encapsulation key
-   `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
-   secret `shared_secret`.
-
 We assume that the values produced and consumed by the above functions are
 all byte strings, with fixed lengths:
 
@@ -672,7 +664,7 @@ def DeriveKeyPair(seed):
 def Encaps(ek):
     (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
 
-    sk_E = Group_T.RandomScalar(random(GroupT.nseed))
+    sk_E = Group_T.RandomScalar(random(GroupT.Nseed))
     ct_T = Group_T.Exp(GroupT.g, sk_E)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
@@ -888,12 +880,12 @@ or binding {{GMP22}}, {{CDM23}}
 
 TODO: deniable KEM cite and Kemeleon paper cite
 
-## More than two component KEMs
+## More than Two Component KEMs
 
 Design team decided to restrict the space to only two components, a
 traditional and a post-quantum KEM.
 
-## Parameterized output length
+## Parameterized Output Length
 
 Not analyzed as part of any security proofs in the literature, and a
 complicatation deemed unnecessary.
@@ -901,6 +893,42 @@ complicatation deemed unnecessary.
 <!-- [TODO] Define a registry of labels? -->
 
 --- back
+
+# Deterministic Encapsulation
+
+When verifying the behavior of a KEM implementation (e.g., by generating or
+verifying test vectors), it is useful for the implementation to expose a
+"derandomized" version of the `Encaps` algorithm:
+
+- `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
+   encapsulation algorithm, which takes as input a public encapsulation key
+   `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
+   secret `shared_secret`.
+
+An implementation that exposes EncapsDerand must also define a required amount
+of randomness:
+
+- `Nrandom`: The length in bytes of the randomness provided to EncapsDerand
+
+The corresponding change for a nominal group is to replace randomly-generated
+inputs to RandomScalar with deterministic ones.  In other words, for a nominal
+group, `Nrandom = Nseed`.
+
+When a hybrid KEM is instantiated with constituents that support derandomized
+encapsulation (either KEMs or groups), the hybrid KEM can also support
+EncapsDerand, with `Nrandom = T.Nrandom + PQ.Nrandom`.  The structure of the
+hybrid KEM's EncapsDerand algorithm is the same as its `Encaps` method, with the
+following differences:
+
+* The EncapsDerand algorithm also takes a `randomness` parameter, which is a
+  byte string of length `Nrandom`.
+* Invocations of Encaps or RandomScalar (with a random input) in the constituent
+  algorithms are replaced with calls ot EncapsDerand or RandomScalar with a
+  deterministic input.
+* The randomness used by the traditional constituent is the first `T.Nrandom`
+  bytes of the input randomness.
+* The randomness used by the PQ constituent is the final `PQ.Nrandom` bytes of
+  the input randomness.
 
 # Acknowledgments
 {:numbered="false"}
