@@ -216,17 +216,17 @@ novelty of PQ algorithms, there is some concern that PQ algorithms currently
 believed to be secure will be broken.  Hybrid constructions that combine both
 PQ and traditional algorithms can help moderate this risk while still
 providing security against quantum attack. In this document, we define
-constructions for hybrid Key Encapsulation Mechanisms (KEMs) based on
-combining a traditional KEM and a PQ KEM. Hybrid KEMs using these
-constructions provide strong security properties as long as the undelying
+schemes for constructing hybrid Key Encapsulation Mechanisms (KEMs) based on
+combining a traditional KEM and a PQ KEM. Hybrid KEMs built using these
+schemess provide strong security properties as long as the undelying
 algorithms are secure.
 
 --- middle
 
 # Introduction {#intro}
 
-Post-quantum (PQ) cryptographic schemes offer new constructions based on
-problems conjectured as resistant to attacks possible on a quantum
+Post-quantum (PQ) cryptographic algorithms are based on
+problems that are conjectured to be resistant to attacks possible on a quantum
 computer. Key Encapsulation Mechanisms (KEMs), are a standardized class of
 cryptographic scheme that can be used to build protocols in lieu of
 traditional, quantum-vulnerable variants such as finite field or elliptic
@@ -259,7 +259,7 @@ The remainder of this document is structured as follows: first, in
 {{cryptographic-deps}} and {{schemes}}, we define the abstractions on which
 the schemes are built, and then the schemes themselves.  Then, in
 {{security}}, we lay out the security analyses that support these
-constructions, including the security requirements for constituent components
+schemes, including the security requirements for constituent components
 and the security notions satisfied by hybrid KEMS constructed according to
 the schemes in the document {{security-requirements}}.  Finally, we discuss
 some "path not taken", related topics that might be of interest to readers,
@@ -295,8 +295,8 @@ if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 
 # Cryptographic Dependencies {#cryptographic-deps}
 
-The generic hybrid PQ/T KEM constructions we define depend on the the
-following cryptographic primitives:
+The generic hybrid PQ/T KEM schemes we define depend on the the following
+cryptographic primitives:
 
 - Key Encapsulation Mechanisms ({{kems}})
 - Nominal Groups ({{groups}})
@@ -503,12 +503,12 @@ laid out in {{security-prgs}}.
 In this section, we define three generic schemes for building for hybrid
 KEMs:
 
-* `GHP` - A generic construction that is suitable for use with any choice of
+* `GHP` - A generic scheme that is suitable for use with any choice of
   traditional and PQ KEMs, with minimal security assumptions on the
   constituent KEMs
 * `PRE` - A performance optimization of `GHP` for the case where
   encapsulation keys are large and frequently reused
-* `QSF` - An optimized generic construction for the case where the
+* `QSF` - An optimized generic scheme for the case where the
   traditional component is a nominal group and the PQ component has strong
   binding properties
 
@@ -883,7 +883,7 @@ via domain separation. The IND-CCA security of hybrid KEMs often relies on
 the KDF function `KDF` to behave as an independent random oracle, which the
 inclusion of the `label` achieves via domain separation {{GHP2018}}.
 
-By design, the calls to `KDF` in these constructions and usage anywhere else
+By design, the calls to `KDF` in these schemes and usage anywhere else
 in higher level protoocl use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed paramters. This
 justifies modeling them as independent functions even if instantiated by the
