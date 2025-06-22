@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-19T01:12:20.508758+00:00",
+  "timestamp": "2025-06-22T01:18:46.671220+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -495,9 +495,79 @@
       "labels": [],
       "body": "The current draft does not specify this procedure, but suggests the possibility of doing x-truncation of an elliptic curve point. The details here seem important for security - for example, x-truncation actually does not bind the entire shared secret into the context - the sign bit is omitted, so there are two possible points even in the case of an honest Encaps.",
       "createdAt": "2025-06-13T17:55:50Z",
-      "updatedAt": "2025-06-13T17:55:50Z",
+      "updatedAt": "2025-06-20T15:41:47Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The intent here is to capture standard practices w.r.t. elliptic curves.  Despite the fact that there are two points on a curve with the same X coordinate, truncation to the X coordinate is the standard way to get a shared secret from an elliptic curve point.  [NIST SP 800-56A](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf) (Section 5.7.1.2) lays this out for the Weierstrass curves that NIST uses.  [RFC 7748](https://datatracker.ietf.org/doc/html/rfc7748#section-5) defines X25519 and X448 purely in terms of U coordinates, ignoring the V coordinate entirely.",
+          "createdAt": "2025-06-20T15:41:47Z",
+          "updatedAt": "2025-06-20T15:41:47Z"
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "id": "I_kwDOMmhxws68ku2x",
+      "title": "Determine the security requirements for PRE/KeyHash",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/36",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "The PRE scheme requires a KeyHash function for pre-hashing the encapsulation keys.  We should specify what security definitions this function needs to meet.\n\nThe only example we have right now is the use of SHA3-256 in the Chempat specification, which does not include a general security definition or any proofs of security from which we could back out a definition.",
+      "createdAt": "2025-06-20T15:45:47Z",
+      "updatedAt": "2025-06-20T15:45:59Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 37,
+      "id": "I_kwDOMmhxws68kvgh",
+      "title": "Add citations to proofs that NIST curves are nominal groups",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/37",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "TODO"
+      ],
+      "body": "",
+      "createdAt": "2025-06-20T15:46:53Z",
+      "updatedAt": "2025-06-20T15:46:53Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 38,
+      "id": "I_kwDOMmhxws68kxoa",
+      "title": "Define a registry of combination labels?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/38",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "The hybrid schemes include a \"label\" input that provides domain separation between specific instantiations.  It could help interoperability if there were a central list of these labels, with references to the instantiations they go with.  This could be a very simple IANA registry, just a \"label\" column and a \"reference\" column.  It might even be fine to make the registration policy First Come First Served.",
+      "createdAt": "2025-06-20T15:50:21Z",
+      "updatedAt": "2025-06-20T22:43:47Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "not sure about labels per se, also this sounds closer to an IANA registry for KEMs period, which i don't think cfrg has done for any primitive; also labels may be the same across different kdfs, inputs, lengths, and achieve oracle cloning, so",
+          "createdAt": "2025-06-20T22:43:47Z",
+          "updatedAt": "2025-06-20T22:43:47Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -4346,6 +4416,73 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 39,
+      "id": "PR_kwDOMmhxws6beEpT",
+      "title": "draft-04, Release candidate 1",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/39",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR represents my pre-flight review of the generic doc.  Only a few changes of note:\r\n\r\n* Changed \"construction\" to \"scheme\" basically everywhere, to avoid the idea that we are defining concrete constructions\r\n* Addressed and deleted comments\r\n* Moved the EncapsDerand interface to an appendix, since it is only used for test vectors\r\n* Moved the TODOs to issues and deleted the notes in the doc.",
+      "createdAt": "2025-06-20T20:15:01Z",
+      "updatedAt": "2025-06-20T22:47:31Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "rc1",
+      "headRefOid": "b4613b4fb61cf93d13a67dcde63fd5f1a43ccb49",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "_hello welcome to the bikeshed paint shop_\n\nI'm cool with replacing 'construction' everywhere, but I'm not sure about 'scheme', which tends to be used in literature for concrete designs etc. 'Framework' is used in the X-Wing paper about QSF and in other papers as in 'generic frameworks'...",
+          "createdAt": "2025-06-20T22:40:27Z",
+          "updatedAt": "2025-06-20T22:40:27Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6vrXr1",
+          "commit": {
+            "abbreviatedOid": "b4613b4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-20T22:36:59Z",
+          "updatedAt": "2025-06-20T22:47:31Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\nschemes provide strong security properties as long as the undelying\n```\n",
+              "createdAt": "2025-06-20T22:37:00Z",
+              "updatedAt": "2025-06-20T22:47:31Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "\ud83d\udc4d",
+              "createdAt": "2025-06-20T22:45:30Z",
+              "updatedAt": "2025-06-20T22:47:31Z"
+            },
+            {
+              "originalPosition": 381,
+              "body": "\ud83d\udc4d",
+              "createdAt": "2025-06-20T22:47:09Z",
+              "updatedAt": "2025-06-20T22:47:31Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
