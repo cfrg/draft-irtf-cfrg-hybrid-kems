@@ -216,9 +216,9 @@ novelty of PQ algorithms, there is some concern that PQ algorithms currently
 believed to be secure will be broken.  Hybrid constructions that combine both
 PQ and traditional algorithms can help moderate this risk while still
 providing security against quantum attack. In this document, we define
-schemes for constructing hybrid Key Encapsulation Mechanisms (KEMs) based on
+frameworks for constructing hybrid Key Encapsulation Mechanisms (KEMs) based on
 combining a traditional KEM and a PQ KEM. Hybrid KEMs built using these
-schemes provide strong security properties as long as the undelying
+frameworks provide strong security properties as long as the underlying
 algorithms are secure.
 
 --- middle
@@ -249,19 +249,19 @@ can also facilitate faster deployment of PQ security by allowing applications
 to incorporate PQ algorithms while still meeting compliance requirements
 based on traditional algorithms.
 
-In this document, we define generic schemes for constructing hybrid KEMs from
+In this document, we define generic frameworks for constructing hybrid KEMs from
 a traditional algorithm and a PQ KEM.  The aim of this document is provide a
 small set of techniques to achieve specific security properties given
 conforming component algorithms, which should make these techniques suitable
 for a broad variety of use cases.
 
 The remainder of this document is structured as follows: first, in
-{{cryptographic-deps}} and {{schemes}}, we define the abstractions on which
-the schemes are built, and then the schemes themselves.  Then, in
+{{cryptographic-deps}} and {{frameworks}}, we define the abstractions on which
+the frameworks are built, and then the frameworks themselves.  Then, in
 {{security}}, we lay out the security analyses that support these
-schemes, including the security requirements for constituent components
+frameworks, including the security requirements for constituent components
 and the security notions satisfied by hybrid KEMS constructed according to
-the schemes in the document {{security-requirements}}.  Finally, we discuss
+the frameworks in the document {{security-requirements}}.  Finally, we discuss
 some "path not taken", related topics that might be of interest to readers,
 but which are not treated in depth.
 
@@ -295,7 +295,7 @@ if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 
 # Cryptographic Dependencies {#cryptographic-deps}
 
-The generic hybrid PQ/T KEM schemes we define depend on the the following
+The generic hybrid PQ/T KEM frameworks we define depend on the the following
 cryptographic primitives:
 
 - Key Encapsulation Mechanisms ({{kems}})
@@ -415,7 +415,7 @@ fixed lengths:
 - `Nss`: The length in bytes of a shared secret produced by
   ElementToSharedSecret
 
-The security requirements for groups used with the schemes in this document
+The security requirements for groups used with the frameworks in this document
 are laid out in {{security-groups}}.
 
 ## Pseudorandom Generators {#prgs}
@@ -439,7 +439,7 @@ MUST provide the bit-security required to source input randomness for PQ/T
 components from a seed that is expanded to a output length, of which a subset
 is passed to the component key generation algorithms.
 
-The security requirements for PRGs used with the schemes in this document are
+The security requirements for PRGs used with the frameworks in this document are
 laid out in {{security-prgs}}.
 
 ## Key Derivation Functions {#kdfs}
@@ -460,16 +460,16 @@ The fixed sizes are for both security and simplicity.
 For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
 the salt and sizes to fit this form.
 
-The security requirements for KDFs used with the schemes in this document are
+The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
 
-# Hybrid KEM Schemes {#schemes}
+# Hybrid KEM Frameworks {#frameworks}
 
-In this section, we define three generic schemes for building for hybrid
+In this section, we define three generic frameworks for building for hybrid
 KEMs:
 
 GHP:
-: A generic scheme that is suitable for use with any choice of traditional and
+: A generic framwork that is suitable for use with any choice of traditional and
   PQ KEMs, with minimal security assumptions on the constituent KEMs
 
 PRE:
@@ -477,10 +477,10 @@ PRE:
   large and frequently reused
 
 QSF:
-: An optimized generic scheme for the case where the traditional component is a
+: An optimized generic framwork for the case where the traditional component is a
   nominal group and the PQ component has strong binding properties
 
-These schemes share a common overall structure, differing mainly in how they
+These framworks share a common overall structure, differing mainly in how they
 compute the final shared secret and the security requirements of their
 components.
 
@@ -821,8 +821,8 @@ via domain separation. The IND-CCA security of hybrid KEMs often relies on
 the KDF function `KDF` to behave as an independent random oracle, which the
 inclusion of the `label` achieves via domain separation {{GHP2018}}.
 
-By design, the calls to `KDF` in these schemes and usage anywhere else
-in higher level protoocl use separate input domains unless intentionally
+By design, the calls to `KDF` in these framworks and usage anywhere else
+in higher level protocol use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed paramters. This
 justifies modeling them as independent functions even if instantiated by the
 same KDF. This domain separation is achieved by using prefix-free sets of
