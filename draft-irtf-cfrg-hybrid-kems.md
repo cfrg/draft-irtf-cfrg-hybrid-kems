@@ -218,7 +218,7 @@ PQ and traditional algorithms can help moderate this risk while still
 providing security against quantum attack. In this document, we define
 schemes for constructing hybrid Key Encapsulation Mechanisms (KEMs) based on
 combining a traditional KEM and a PQ KEM. Hybrid KEMs built using these
-schemess provide strong security properties as long as the undelying
+schemes provide strong security properties as long as the undelying
 algorithms are secure.
 
 --- middle
