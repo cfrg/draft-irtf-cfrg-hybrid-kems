@@ -216,9 +216,9 @@ novelty of PQ algorithms, there is some concern that PQ algorithms currently
 believed to be secure will be broken.  Hybrid constructions that combine both
 PQ and traditional algorithms can help moderate this risk while still
 providing security against quantum attack. In this document, we define
-frameworks for constructing hybrid Key Encapsulation Mechanisms (KEMs) based on
-combining a traditional component algorithm and a PQ KEM. Hybrid KEMs built using these
-frameworks provide strong security properties as long as the underlying
+frameworks for constructing hybrid Key Encapsulation Mechanisms (KEMs) based
+on combining a traditional component algorithm and a PQ KEM. Hybrid KEMs built
+using these frameworks provide strong security properties as long as the underlying
 algorithms are secure.
 
 --- middle
