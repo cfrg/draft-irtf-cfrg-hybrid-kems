@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 24 December 2025                                          Cisco
-                                                            22 June 2025
+Expires: 25 December 2025                                          Cisco
+                                                            23 June 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -22,9 +22,9 @@ Abstract
    help moderate this risk while still providing security against
    quantum attack.  In this document, we define frameworks for
    constructing hybrid Key Encapsulation Mechanisms (KEMs) based on
-   combining a traditional KEM and a PQ KEM.  Hybrid KEMs built using
-   these frameworks provide strong security properties as long as the
-   underlying algorithms are secure.
+   combining a traditional component algorithm and a PQ KEM.  Hybrid
+   KEMs built using these frameworks provide strong security properties
+   as long as the underlying algorithms are secure.
 
 Discussion Venues
 
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 December 2025.
+   This Internet-Draft will expire on 25 December 2025.
 
 Copyright Notice
 
