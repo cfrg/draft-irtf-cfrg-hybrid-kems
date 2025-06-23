@@ -293,6 +293,14 @@ leading up to index `i`, including the `i`-th byte, and the slice the bytes
 in `x` starting from index `i` to the end of `x`, respectively. For example,
 if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 
+A set is denoted by listing values in braces: `{a,b,c}`.
+A vector of set elements of length `n` is denoted with exponentiation,
+such as for the `n`-bit value: {0,1}<sup>n</sup>.
+Drawing uniformly at random from an `n`-bit vector into a value `x`
+is denoted: x $← {0,1}<sup>n</sup>.
+A function `f` that maps from one domain to another is denoted
+using a right arrow to separate inputs from outputs: f : inputs → outputs.
+
 # Cryptographic Dependencies {#cryptographic-deps}
 
 The generic hybrid PQ/T KEM frameworks we define depend on the the following
@@ -789,12 +797,12 @@ at least have the security level of the strongest constituent KEM.
 
 ### Security Requirements for PRGs {#security-prgs}
 
-The functions used to expand a key seed to multiple key seeds is closer to a
-pseudorandom generator (PRG) in its security requirements {{AOB+24}}. A
-secure PRG is an algorithm PRG : {0, 1}^n → {0, 1}^m, such that no
-polynomial-time adversary can distinguish between PRG(r) (for r $← {0, 1}^n)
-and a random z $← {0, 1}^m {{Rosulek}}. The uniform string r ∈ {0, 1}^n is
-called the seed of the PRG.
+The functions used to expand a key seed to multiple key seeds
+is closer to a pseudorandom generator (PRG) in its security requirements {{AOB+24}}.
+A secure PRG is an algorithm PRG : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
+such that no polynomial-time adversary can distinguish between PRG(r)
+(for r $← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> {{Rosulek}}.
+The uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the PRG.
 
 A PRG is not to be confused with a random (or pseudorandom) _number_
 generator (RNG): a PRG requires the seed randomness to be chosen uniformly
