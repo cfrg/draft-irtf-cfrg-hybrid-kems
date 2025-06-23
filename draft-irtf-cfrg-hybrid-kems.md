@@ -717,15 +717,15 @@ himself.
 
 ### Ciphertext Second Preimage Resistant (C2PRI) Security {#c2pri}
 
-Also known in the literature as ciphertext collision resistance (CCR).
-
 The notion where, even if a KEM has broken IND-CCA security (either due to
 construction, implementation, or other), its internal structure, based on the
 Fujisaki-Okamoto transform, guarantees that it is impossible to find a second
 ciphertext that decapsulates to the same shared secret `K`: this notion is
 known as ciphertext second preimage resistance (C2SPI) for KEMs
-{{XWING}}. The same notion has also been described as chosen ciphertext
-resistance elsewhere {{CDM23}}.
+{{XWING}}.
+
+The same notion has also been described as chosen ciphertext
+resistance (CCR) {{CDM23}}.
 
 ## Binding Properties {#binding-properties}
 
