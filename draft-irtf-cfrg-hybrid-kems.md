@@ -215,11 +215,13 @@ computer, in contrast to "traditional" algorithms.  However, given the
 novelty of PQ algorithms, there is some concern that PQ algorithms currently
 believed to be secure will be broken.  Hybrid constructions that combine both
 PQ and traditional algorithms can help moderate this risk while still
-providing security against quantum attack. In this document, we define
+providing security against quantum attack.
+
+This document defines
 constructions for hybrid Key Encapsulation Mechanisms (KEMs) based on
 combining a traditional KEM and a PQ KEM. Hybrid KEMs using these
-constructions provide strong security properties as long as the undelying
-algorithms are secure.
+constructions provide strong security properties as long as either of the
+underlying algorithms are secure.
 
 --- middle
 
