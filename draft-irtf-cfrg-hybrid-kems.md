@@ -572,7 +572,7 @@ def GenerateKeyPair():
 
 def DeriveKeyPair(seed):
     seed_full = PRG(seed)
-    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
     ek_H = concat(ek_T, ek_PQ)
@@ -709,7 +709,7 @@ def DeriveKeyPair(seed):
 def Encaps(ek):
     (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
 
-    sk_E = Group_T.RandomScalar(random(GroupT.nseed))
+    sk_E = Group_T.RandomScalar(random(GroupT.Nseed))
     ct_T = Group_T.Exp(GroupT.g, sk_E)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
