@@ -480,7 +480,7 @@ QSF:
 : An optimized generic framwork for the case where the traditional component is a
   nominal group and the PQ component has strong binding properties
 
-These framworks share a common overall structure, differing mainly in how they
+These frameworks share a common overall structure, differing mainly in how they
 compute the final shared secret and the security requirements of their
 components.
 
