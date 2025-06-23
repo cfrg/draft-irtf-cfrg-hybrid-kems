@@ -539,7 +539,7 @@ def GenerateKeyPair():
 
 def DeriveKeyPair(seed):
     seed_full = PRG(seed)
-    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
     ek_H = concat(ek_T, ek_PQ)
