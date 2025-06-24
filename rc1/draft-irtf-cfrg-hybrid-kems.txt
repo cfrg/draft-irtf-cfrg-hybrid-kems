@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 25 December 2025                                          Cisco
-                                                            23 June 2025
+Expires: 26 December 2025                                          Cisco
+                                                            24 June 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 December 2025.
+   This Internet-Draft will expire on 26 December 2025.
 
 Copyright Notice
 
@@ -732,7 +732,7 @@ Table of Contents
    random oracle, which the inclusion of the label achieves via domain
    separation [GHP2018].
 
-   By design, the calls to KDF in these framworks and usage anywhere
+   By design, the calls to KDF in these frameworks and usage anywhere
    else in higher level protocol use separate input domains unless
    intentionally duplicating the 'label' per concrete instance with
    fixed paramters.  This justifies modeling them as independent
