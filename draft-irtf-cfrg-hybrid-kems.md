@@ -211,9 +211,10 @@ informative:
 --- abstract
 
 This document defines generic constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a traditional KEM and a post-quantum (PQ)
-KEM. Hybrid KEMs built using these constructions provide strong security
-properties as long as either of the underlying algorithms are secure.
+Mechanisms (KEMs) based on combining a traditional cryptographic component
+and a post-quantum (PQ) KEM. Hybrid KEMs built using these constructions
+provide strong security properties as long as either of the underlying
+algorithms are secure.
 
 --- middle
 
