@@ -821,7 +821,7 @@ via domain separation. The IND-CCA security of hybrid KEMs often relies on
 the KDF function `KDF` to behave as an independent random oracle, which the
 inclusion of the `label` achieves via domain separation {{GHP2018}}.
 
-By design, the calls to `KDF` in these framworks and usage anywhere else
+By design, the calls to `KDF` in these frameworks and usage anywhere else
 in higher level protocol use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed paramters. This
 justifies modeling them as independent functions even if instantiated by the
