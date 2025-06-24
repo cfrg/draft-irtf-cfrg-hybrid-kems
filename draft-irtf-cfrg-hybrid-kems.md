@@ -294,10 +294,13 @@ in `x` starting from index `i` to the end of `x`, respectively. For example,
 if `x = [0, 1, 2, 3, 4]`, then `x[..2] = [0, 1]` and `x[2..] = [2, 3, 4]`.
 
 A set is denoted by listing values in braces: `{a,b,c}`.
+
 A vector of set elements of length `n` is denoted with exponentiation,
 such as for the `n`-bit value: {0,1}<sup>n</sup>.
+
 Drawing uniformly at random from an `n`-bit vector into a value `x`
 is denoted: x $← {0,1}<sup>n</sup>.
+
 A function `f` that maps from one domain to another is denoted
 using a right arrow to separate inputs from outputs: f : inputs → outputs.
 
