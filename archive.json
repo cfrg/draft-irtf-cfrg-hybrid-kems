@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-22T01:18:46.671220+00:00",
+  "timestamp": "2025-06-24T01:12:34.117280+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -4429,13 +4429,13 @@
       "labels": [],
       "body": "This PR represents my pre-flight review of the generic doc.  Only a few changes of note:\r\n\r\n* Changed \"construction\" to \"scheme\" basically everywhere, to avoid the idea that we are defining concrete constructions\r\n* Addressed and deleted comments\r\n* Moved the EncapsDerand interface to an appendix, since it is only used for test vectors\r\n* Moved the TODOs to issues and deleted the notes in the doc.",
       "createdAt": "2025-06-20T20:15:01Z",
-      "updatedAt": "2025-06-20T22:47:31Z",
+      "updatedAt": "2025-06-23T01:05:09Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "rc1",
-      "headRefOid": "b4613b4fb61cf93d13a67dcde63fd5f1a43ccb49",
+      "headRefOid": "270c87e92f970b4b4fbe2d169bb500de6d9ec7fd",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -4447,6 +4447,13 @@
           "body": "_hello welcome to the bikeshed paint shop_\n\nI'm cool with replacing 'construction' everywhere, but I'm not sure about 'scheme', which tends to be used in literature for concrete designs etc. 'Framework' is used in the X-Wing paper about QSF and in other papers as in 'generic frameworks'...",
           "createdAt": "2025-06-20T22:40:27Z",
           "updatedAt": "2025-06-20T22:40:27Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I 100% do not care what word we use.  \ud83d\udeb2\ud83c\udfe0\ud83d\udd8c\ufe0f\r\n",
+          "createdAt": "2025-06-22T18:25:18Z",
+          "updatedAt": "2025-06-22T18:25:18Z"
         }
       ],
       "reviews": [
@@ -4481,8 +4488,200 @@
               "updatedAt": "2025-06-20T22:47:31Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6vvWdU",
+          "commit": {
+            "abbreviatedOid": "9440864"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T01:02:14Z",
+          "updatedAt": "2025-06-23T01:02:14Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "\ud83c\udf89\ud83d\udeb2",
+              "createdAt": "2025-06-23T01:02:14Z",
+              "updatedAt": "2025-06-23T01:02:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6vvWlg",
+          "commit": {
+            "abbreviatedOid": "9440864"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T01:03:05Z",
+          "updatedAt": "2025-06-23T01:03:05Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\ncombining a traditional component algorithm and a PQ KEM. Hybrid KEMs built using these\r\n```",
+              "createdAt": "2025-06-23T01:03:05Z",
+              "updatedAt": "2025-06-23T01:03:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6vvW2B",
+          "commit": {
+            "abbreviatedOid": "c558833"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T01:04:08Z",
+          "updatedAt": "2025-06-23T01:04:08Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nframeworks for constructing hybrid Key Encapsulation Mechanisms (KEMs) based\r\non combining a traditional component algorithm and a PQ KEM. Hybrid KEMs built\r\nusing these frameworks provide strong security properties as long as the underlying\r\n```",
+              "createdAt": "2025-06-23T01:04:08Z",
+              "updatedAt": "2025-06-23T01:04:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6vvW-Y",
+          "commit": {
+            "abbreviatedOid": "bf817d6"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T01:05:01Z",
+          "updatedAt": "2025-06-23T01:05:01Z",
+          "comments": [
+            {
+              "originalPosition": 231,
+              "body": "```suggestion\r\nThese frameworks share a common overall structure, differing mainly in how they\r\n```",
+              "createdAt": "2025-06-23T01:05:01Z",
+              "updatedAt": "2025-06-23T01:05:01Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 40,
+      "id": "PR_kwDOMmhxws6bmg6L",
+      "title": "A few editorial contributions",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/40",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft is in good shape otherwise.",
+      "createdAt": "2025-06-23T06:32:35Z",
+      "updatedAt": "2025-06-23T06:32:36Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
+      "headRepository": "martinthomson/hybrid-kems",
+      "headRefName": "notation-domain",
+      "headRefOid": "226e6173154bd4aad0d519e8fc1483954437e6b9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 41,
+      "id": "PR_kwDOMmhxws6bmp_E",
+      "title": "Remove duplicate CCR mention",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/41",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This pull request needs a Big Lebowski quote.",
+      "createdAt": "2025-06-23T06:49:20Z",
+      "updatedAt": "2025-06-23T07:48:39Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
+      "headRepository": "martinthomson/hybrid-kems",
+      "headRefName": "say-it-twice",
+      "headRefOid": "6b230801f46160df979219e34a6e4fc47009164c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> And was there anything of value in the pull request?\n\n> Oh, yeah. A tape deck, some [CCR] tapes, and there was a, uh, my briefcase",
+          "createdAt": "2025-06-23T07:48:39Z",
+          "updatedAt": "2025-06-23T07:48:39Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 42,
+      "id": "PR_kwDOMmhxws6bmt-w",
+      "title": "Correct some variable names",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/42",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I didn't check thoroughly, but these stood out.",
+      "createdAt": "2025-06-23T06:56:17Z",
+      "updatedAt": "2025-06-23T06:56:18Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
+      "headRepository": "martinthomson/hybrid-kems",
+      "headRefName": "ghp-seed_full",
+      "headRefOid": "595d63629d3e5a346fa9cbab8b39fb20554b935e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 43,
+      "id": "PR_kwDOMmhxws6bm0ez",
+      "title": "Some abstract editing",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/43",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This was originally just a typo fix for a missing 'r'.  But then you had a \"we\", that was unnecessary.\r\n\r\nI split this into two paragraphs, but I'm going to suggest that you delete the first one entirely.  Everything that is needed is in the second.",
+      "createdAt": "2025-06-23T07:08:42Z",
+      "updatedAt": "2025-06-23T07:08:42Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
+      "headRepository": "martinthomson/hybrid-kems",
+      "headRefName": "abstract-typo",
+      "headRefOid": "6e5b908e458542821380997b213a9d084ae8c097",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
