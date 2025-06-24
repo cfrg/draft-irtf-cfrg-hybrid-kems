@@ -1368,6 +1368,13 @@ denote the slice of bytes in <code>x</code> starting from the beginning of <code
 leading up to index <code>i</code>, including the <code>i</code>-th byte, and the slice the bytes
 in <code>x</code> starting from index <code>i</code> to the end of <code>x</code>, respectively. For example,
 if <code>x = [0, 1, 2, 3, 4]</code>, then <code>x[..2] = [0, 1]</code> and <code>x[2..] = [2, 3, 4]</code>.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">A set is denoted by listing values in braces: <code>{a,b,c}</code>.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">A vector of set elements of length <code>n</code> is denoted with exponentiation,
+such as for the <code>n</code>-bit value: {0,1}<sup>n</sup>.<a href="#section-3-6" class="pilcrow">¶</a></p>
+<p id="section-3-7">Drawing uniformly at random from an <code>n</code>-bit vector into a value <code>x</code>
+is denoted: x $← {0,1}<sup>n</sup>.<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">A function <code>f</code> that maps from one domain to another is denoted
+using a right arrow to separate inputs from outputs: f : inputs → outputs.<a href="#section-3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cryptographic-deps">
@@ -2079,12 +2086,12 @@ at least have the security level of the strongest constituent KEM.<a href="#sect
           <h4 id="name-security-requirements-for-p">
 <a href="#section-6.3.4" class="section-number selfRef">6.3.4. </a><a href="#name-security-requirements-for-p" class="section-name selfRef">Security Requirements for PRGs</a>
           </h4>
-<p id="section-6.3.4-1">The functions used to expand a key seed to multiple key seeds is closer to a
-pseudorandom generator (PRG) in its security requirements <span>[<a href="#AOB_24" class="cite xref">AOB_24</a>]</span>. A
-secure PRG is an algorithm PRG : {0, 1}^n → {0, 1}^m, such that no
-polynomial-time adversary can distinguish between PRG(r) (for r $← {0, 1}^n)
-and a random z $← {0, 1}^m <span>[<a href="#Rosulek" class="cite xref">Rosulek</a>]</span>. The uniform string r ∈ {0, 1}^n is
-called the seed of the PRG.<a href="#section-6.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.3.4-1">The functions used to expand a key seed to multiple key seeds
+is closer to a pseudorandom generator (PRG) in its security requirements <span>[<a href="#AOB_24" class="cite xref">AOB_24</a>]</span>.
+A secure PRG is an algorithm PRG : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
+such that no polynomial-time adversary can distinguish between PRG(r)
+(for r $← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> <span>[<a href="#Rosulek" class="cite xref">Rosulek</a>]</span>.
+The uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the PRG.<a href="#section-6.3.4-1" class="pilcrow">¶</a></p>
 <p id="section-6.3.4-2">A PRG is not to be confused with a random (or pseudorandom) <em>number</em>
 generator (RNG): a PRG requires the seed randomness to be chosen uniformly
 and extend it; an RNG takes sources of noisy data and transforms them into
