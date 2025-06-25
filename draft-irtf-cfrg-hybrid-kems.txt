@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 26 December 2025                                          Cisco
-                                                            24 June 2025
+Expires: 27 December 2025                                          Cisco
+                                                            25 June 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 December 2025.
+   This Internet-Draft will expire on 27 December 2025.
 
 Copyright Notice
 
@@ -656,12 +656,12 @@ Table of Contents
    The groups MUST be modelable as nominal groups in which the strong
    Diffie-Hellman problem holds [ABH_21] [XWING].
 
-   The Montgomery curves Curve25519 and Curve448 have been shown to be
-   modelable as nominal groups in [ABH_21] as well as showing the
-   X25519() and X448() functions respectively pertain to the nominal
-   group exp(X, y) function, specifically clamping secret keys when they
-   are generated, instead of clamping secret keys together with
-   exponentiation.
+   Prime-order groups such as P-256, P-384, and P-521 and the Montgomery
+   curves Curve25519 and Curve448 have been shown to be modelable as
+   nominal groups in [ABH_21], as well as showing the X25519() and
+   X448() functions respectively pertain to the nominal group exp(X, y)
+   function, specifically clamping secret keys when they are generated,
+   instead of clamping secret keys together with exponentiation.
 
 6.3.3.  Security Requirements for KDFs
 
