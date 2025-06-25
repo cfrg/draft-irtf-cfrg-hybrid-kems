@@ -750,11 +750,12 @@ encapsulation key and ciphertext to be left out from the KDF input.
 The groups MUST be modelable as nominal groups in which the strong
 Diffie-Hellman problem holds {{ABH+21}} {{XWING}}.
 
-The Montgomery curves Curve25519 and Curve448 have been shown to be modelable
-as nominal groups in {{ABH+21}} as well as showing the `X25519()` and
-`X448()` functions respectively pertain to the nominal group `exp(X, y)`
-function, specifically clamping secret keys when they are generated, instead
-of clamping secret keys together with exponentiation.
+Prime-order groups such as P-256, P-384, and P-521 and the Montgomery curves
+Curve25519 and Curve448 have been shown to be modelable as nominal groups in
+{{ABH+21}}, as well as showing the `X25519()` and `X448()` functions
+respectively pertain to the nominal group `exp(X, y)` function, specifically
+clamping secret keys when they are generated, instead of clamping secret keys
+together with exponentiation.
 
 ### Security Requirements for KDFs {#security-kdfs}
 
