@@ -1092,6 +1092,40 @@ different from that specified in this document.
 Therefore, this specification MUST only be used with algorithms which have
 fixed-length shared secrets.
 
+# In Scope
+
+## GHP
+
+The GHP framework works for generic IND-CCA component schemes. GHP also has
+an IND-CCA proof from {{GHP18}}. Including the public encapsulation keys as
+part of the KDF preimage fits in the 'additional data' parts of the split key
+PRF proof there, and binds to the encapsulation keys, which is a nice
+property for protocols integrating concrete instances. GHP also matches NIST
+SP 800-227 IPD, and gives good binding properties {{binding-properties}} is
+generally safe with no caveats on use for constructing concrete instances
+using a broad array of components.
+
+## QSF
+
+QSF works for most elliptic curve groups and C2PRI-secure quantum-resistant
+KEMs.  It is an optimization that leaves out large ciphertexts and
+encapsulation keys from the KDF preimage, saving extra hashing, if the PQ KEM
+meets requirements. More KEMs can be proven to be C2PRI-secure eventually for
+use with QSF.
+
+## PRE
+
+PRE offers many of the same benefits as GHP, while allowing an optimization
+to pre-hash static encapsulation keys, which if large, can be a performance
+improvement.
+
+# Out of Scope
+
+Considerations that were considered and not included in these designs:
+
+Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
+or binding {{GMP22}}, {{CDM23}}
+
 ## More than Two Component KEMs
 
 Design team decided to restrict the space to only two components, a
