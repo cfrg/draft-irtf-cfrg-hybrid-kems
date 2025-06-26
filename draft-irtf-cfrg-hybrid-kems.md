@@ -867,7 +867,7 @@ fixed-length shared secrets.
 ## GHP
 
 The GHP framework works for generic IND-CCA component schemes. GHP also has
-an IND-CCA proof from {{GHP18}}. Including the public encapsulation keys as
+an IND-CCA proof from {{GHP2018}}. Including the public encapsulation keys as
 part of the KDF preimage fits in the 'additional data' parts of the split key
 PRF proof there, and binds to the encapsulation keys, which is a nice
 property for protocols integrating concrete instances. GHP also matches NIST
