@@ -767,12 +767,16 @@ KitchenSink {{GHP2018}} or PreHash.
 KDFs must be secure instances of random oracles in the ROM and QROM
 {{GHP2018}} {{XWING}}. Proofs of indifferentiability from random oracles
 {{MRH03}} give good confidence here, as any function proven indifferentiable
-from a random oracle is resistant against collision, first, and second
-preimage attacks. An indifferentiability bound
-guarantees security against specific attacks. Although indifferentiability
-does not capture all properties of a random oracle {{RSS11}},
-indifferentiability still remains the best way to rule out structural
-attacks.
+from a random oracle is resistant against:
+
+- collision attacks
+- (first) preimage attacks
+- second preimage attacks
+
+An indifferentiability bound guarantees security against specific
+attacks. Although indifferentiability does not capture all properties of a
+random oracle {{RSS11}}, indifferentiability still remains the best way to
+rule out structural attacks.
 
 Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical {{BDP+08}} as well as quantum adversaries
@@ -916,6 +920,115 @@ following differences:
   bytes of the input randomness.
 * The randomness used by the PQ constituent is the final `PQ.Nrandom` bytes of
   the input randomness.
+
+# Proof Sketches for Binding Properties
+
+## QSF
+
+### MAL-BIND-K-CT
+
+*Claim.* QSF is MAL-BIND-K-CT if KEM_PQ is MAL-BIND-K-CT.
+
+*Proof sketch.* We prove the contraposition. Assume QSF is not MAL-BIND-K-CT.
+
+In case g=1, there are sk_0, sk_1, ct_0 ≠ ct_1 such that
+
+  Decaps(sk_0, ct_0) = Decaps(sk_1, ct_1).
+
+And thus:
+
+KDF(label ‖ k_0M ‖ k_0X ‖ ct_0X ‖ pk_0X) = KDF(label ‖ k_1M ‖ k_1X ‖ ct_1X ‖ pk_1X). [eq. 1]
+
+where k_ij, ct_ij, pk_ij are as they appear in Decaps(sk_i, ct_i).
+
+(Note that pk_iX is the encapsulation key that appears in sk_i, and might
+not equal PrivateToPublic(sk_iX).) <!-- todo: define/replace with requivalent -->
+
+As we assume no collisions against KDF, we must have
+
+k_0M = k_1M     k_0X = k_1X     ct_0X = ct_1X   pk_0X = pk_1X       [eq. 2]
+
+And so, as ct_0 ≠ ct_1, we must have ct_0M ≠ ct_1M.
+
+Thus we have an example that QSF is not MAL-BIND-K-CT
+with sk_0M, sk_1M, ct_0M, and ct_1M, quod non.
+
+In case g=2, there are r_0, pk_0, sk_1, ct_1 such that
+
+k, ct_0 := Encaps(pk_0, r_0)
+k = Decaps(sk_1, ct_1)
+ct_0 ≠ ct_1
+
+Again [eq. 1] holds, so [eq. 2], whence ct_0M ≠ ct_1M.
+Now r_0M, pk_0M, sk_1M, ct_1M is a counter-example
+against KEM_PQ's MAL-BIND-K-CT, which cannot be.
+
+For the final case g≠1,2, there are r_0, r_1, pk_0, pk_1 such that
+
+k_i, ct_i = Encaps(pk_i, r_i)
+k_0 = k_1
+ct_0 ≠ ct_1
+
+Again via [eq. 1] and [eq. 2] we see ct_0M ≠ ct_1M, and so
+r_0M, r_1M, pk_0M, pk_1M is a counterexample to QSF's MAL-BIND-K-CT.
+
+### MAL-BIND-K-PK
+
+*Claim.* QSF is MAL-BIND-K-PK if KEM_PQ is MAL-BIND-K-PK.
+
+*Proof sketch.* We prove the contraposition. Assume QSF is not MAL-BIND-K-PK.
+
+In case g=1, there are sk_0, sk_1, such that
+
+Decaps(sk_0, ct_0) = Decaps(sk_1, ct_1)
+PrivateToPublic(sk_0) ≠ PrivateToPublic(sk_1) <!-- todo: define/replace with requivalent -->
+
+And thus:
+
+KDF(label ‖ k_0M ‖ k_0X ‖ ct_0X ‖ pk_0X) = KDF(label ‖ k_1M ‖ k_1X ‖ ct_1X ‖ pk_1X) [eq. 3]
+
+where k_ij, ct_ij, pk_ij are as they appear in Decaps(sk_i, ct_i).
+
+Note that pk_iX is the encapsulation key that appears in sk_i, and might not
+equal PrivateToPublic(sk_iX). <!-- todo: define/replace with requivalent -->
+
+As we assume no collisions against KDF, we must have
+
+k_0M = k_1M     k_0X = k_1X     ct_0X = ct_1X   pk_0X = pk_1X       [eq. 4]
+
+Thus Group_T.Exp(ct_0X, sk_0X) = Group_T.Exp(ct_0X, sk_1X), whence sk_0X = sk_1X.
+
+Thus PrivateToPublic(sk_0X) = PrivateToPublic(sk_1X). <!-- todo: define/replace with requivalent -->
+
+Hence we must have PrivateToPublic(sk_0M) ≠ PrivateToPublic(sk_1M), <!-- todo: define/replace with requivalent -->
+which contradicts KEM_PQ's MAL-BIND-K-PK.
+
+In case g=2, there are r_0, pk_0, sk_1, ct_1 such that
+
+k, ct_0 := Encaps(pk_0, r_0)
+k = Decaps(sk_1, ct_1)
+pk_0 ≠ PrivateToPublic(sk_1)
+
+Again [eq. 3] holds, so [eq. 4], hence
+
+Group_T.Exp(pk_0X, r_0X) = Group_T.Exp(ct_1X, sk_1X)
+                    = Group_T.Exp(ct_0X, sk_1X)
+                    = Group_T.Exp(Group_T.Exp(r_0X, B), sk_1X)
+                    = Group_T.Exp(Group_T.Exp(sk_1X, B), r_0X)
+                    = Group_T.Exp(PrivateToPublic(sk_1X), r_0X) <!-- todo: define/replace with requivalent -->
+
+Thus pk_0X = PrivateToPublic(sk_1X). Hence we must have <!-- todo: define/replace with requivalent -->
+PrivateToPublic(sk_0M) ≠ PrivateToPublic(sk_1M), which
+contradicts KEM_PQ's MAL-BIND-K-PK.
+
+For the final case g≠1,2, there are r_0, r_1, sk_0, sk_1 such that
+
+k_i, ct_i = Encaps(pk_i, r_i)
+k_0 = k_1
+pk_0 ≠ pk_1
+
+Via [eq. 3] and [eq. 4] we see pk_0X = pk_1X. Thus we must have pk_0M ≠ pk_1M,
+which contradicts KEM_PQ's MAL-BIND-K-PK.
 
 # Acknowledgments
 {:numbered="false"}
