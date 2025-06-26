@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-24T01:12:34.117280+00:00",
+  "timestamp": "2025-06-26T01:12:14.327475+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -387,9 +387,24 @@
       ],
       "body": "We have three types of constituents that go into our hybrid schemes:\n\n1. KEMs\n2. Nominal groups\n3. Hash functions\n\nThe security requirements for the former two are pretty clear: A KEM needs to be IND-CCA, and if it is going to be used with QSF / HashTraditionalOnly, it needs to have some additional binding properties.  A nominal group needs to be secure in the sense of [ABH+20].\n\nFor the \"hash functions\", we should define a requirement that aligns well with the constructions in the literature, some combination of notions of XOF, KDF, and RO.",
       "createdAt": "2025-05-29T22:12:54Z",
-      "updatedAt": "2025-05-29T22:16:54Z",
+      "updatedAt": "2025-06-24T21:37:28Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The current draft has some language on this. Did you want me to review it or add something specific to it?",
+          "createdAt": "2025-06-24T18:32:45Z",
+          "updatedAt": "2025-06-24T18:32:45Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I would treat the current text as a baseline and feel free to review / revise / reorient as makes sense to tell the overall story.",
+          "createdAt": "2025-06-24T21:37:27Z",
+          "updatedAt": "2025-06-24T21:37:27Z"
+        }
+      ]
     },
     {
       "number": 26,
@@ -407,9 +422,31 @@
       ],
       "body": "Normal KEM security notions apply, particularly IND-CCA and X-BIND-P-Q.\n\nThe interesting thing will be how to discuss the \"hybrid\" security notion, i.e., the survival of at least IND-CCA when at least one KEM fails -- for some definition of \"fails\".",
       "createdAt": "2025-05-29T22:14:34Z",
-      "updatedAt": "2025-05-29T22:45:38Z",
+      "updatedAt": "2025-06-25T10:50:59Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do we want some kind of \"hybrid\" security notion for all the KEM security properties we care about? E.g., do we care about the X-BIND-P-Q security of the hybrid if the X-BIND-P-Q security of one of the components fails?",
+          "createdAt": "2025-06-24T17:46:17Z",
+          "updatedAt": "2025-06-24T17:46:17Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "My impression is that (a) binding properties are generally less important\r\nthan confidentiality properties (IND-CCA), but also (b) binding properties\r\ntend to hold up better than confidentiality properties.  So on the one\r\nhand, if this is a hard thing to show, I might not be sad to lose it.  But\r\non the other hand, I kind of expect we will get some binding properties\r\ntotally irrespective of the security properties of the constituents, e.g.,\r\nX-BIND-SS-Q just by virtue of hashing stuff.\r\n\r\nOn Tue, Jun 24, 2025 at 1:46\u202fPM Paul Grubbs ***@***.***>\r\nwrote:\r\n\r\n> *pag-crypto* left a comment (cfrg/draft-irtf-cfrg-hybrid-kems#26)\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/26#issuecomment-3001363390>\r\n>\r\n> Do we want some kind of \"hybrid\" security notion for all the KEM security\r\n> properties we care about? E.g., do we care about the X-BIND-P-Q security of\r\n> the hybrid if the X-BIND-P-Q security of one of the components fails?\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/26#issuecomment-3001363390>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/AAASOTJVCI7HA34TXDV43UT3FGFH5AVCNFSM6AAAAAB6GTH3UGVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZTAMBRGM3DGMZZGA>\r\n> .\r\n> You are receiving this because you authored the thread.Message ID:\r\n> ***@***.***>\r\n>\r\n",
+          "createdAt": "2025-06-24T21:30:01Z",
+          "updatedAt": "2025-06-24T21:30:01Z"
+        },
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have not seen even a somewhat realistic scenario where MAL-BIND-P-Q is relevant. But LEAK-BIND-K-PK certainly [has come up](https://iacr.org/submit/files/slides/2025/pkc/pkc2025/19/19_slides.pdf). Abstractions are a bit annoying here: assuming hashes are secure, a concrete hybrid of ML-KEM that hashes in the traditional public key is LEAK-BIND-K-PK, but you can not prove this if you take the components opaquely.",
+          "createdAt": "2025-06-25T10:50:59Z",
+          "updatedAt": "2025-06-25T10:50:59Z"
+        }
+      ]
     },
     {
       "number": 27,
@@ -427,9 +464,24 @@
       ],
       "body": "We should provide citations to proofs in the literature that the schemes we describe are secure given our requirements on the inputs.\n\n* HashEverything should map to one of the schemes in GHP20\n* PreHashKeys - not clear what the right citation is here?\n* HashTraditionalOnly maps to the QSF construction in BCD+24",
       "createdAt": "2025-05-29T22:16:33Z",
-      "updatedAt": "2025-05-29T22:16:55Z",
+      "updatedAt": "2025-06-24T18:11:31Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I just read over GHP again; none of their constructions actually match what we now call \"GHP\" in the draft. The issue is that their \"parallel KEM combiner\" construction doesn't hash the public keys, but our \"GHP\" does. Briefly skimming their Theorem 1 (page 10), though, it seems their result would go through basically unmodified if the public keys were added. (The relevant step is claim 3 in that proof. The observation is just that adding the public keys to their \"core\" function W would not change the way the split-key pseudorandomness reduction works except for the concrete Eval oracle inputs.)",
+          "createdAt": "2025-06-24T18:09:21Z",
+          "updatedAt": "2025-06-24T18:09:21Z"
+        },
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "For PRE, as I alluded to in a comment on a different issue - if the gesture I made above at an extension of the GHP analysis is satisfying, then the same analysis should also imply the CCA2 security of PRE as long as you add a step that \"gets rid of\" collisions in the key hash.",
+          "createdAt": "2025-06-24T18:11:31Z",
+          "updatedAt": "2025-06-24T18:11:31Z"
+        }
+      ]
     },
     {
       "number": 28,
@@ -463,24 +515,32 @@
       ],
       "body": "In the KEM interface, we currently require a DeriveKeyPair algorithm.  We could make this optional, in the same way that `EncapsDerand` is optional.\n\nOn the one hand, this algorithm is not typically included in descriptions of KEMs in the literature.  On the other hand, it is important for integration with things like HPKE and MLS, and most KEMs provide such an algorithm in practice (even if just by making the randomness used by GenerateKeyPair explicit).",
       "createdAt": "2025-05-29T23:05:53Z",
-      "updatedAt": "2025-05-29T23:05:53Z",
+      "updatedAt": "2025-06-25T11:10:01Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another application is FIDO2, where key pairs are derived determinisitcally. I see no downside to making this required.",
+          "createdAt": "2025-06-25T11:10:01Z",
+          "updatedAt": "2025-06-25T11:10:01Z"
+        }
+      ]
     },
     {
       "number": 30,
       "id": "I_kwDOMmhxws6438FT",
       "title": "EncapsDerand: Use it or lose it.",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/30",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Currently, we define `EncapsDerand` as an optional method on the KEM interface.  But we don't use it anywhere, and we don't define it for the hybrid KEMs.  We should either define this method for the hybrid KEMs when the constituents support it (and thus use it), or delete it.\n\nIf we want it just for purposes of test vectors, we could move it to an appendix.",
       "createdAt": "2025-05-29T23:07:52Z",
-      "updatedAt": "2025-05-29T23:07:52Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T17:14:40Z",
+      "closedAt": "2025-06-24T17:14:40Z",
       "comments": []
     },
     {
@@ -495,7 +555,7 @@
       "labels": [],
       "body": "The current draft does not specify this procedure, but suggests the possibility of doing x-truncation of an elliptic curve point. The details here seem important for security - for example, x-truncation actually does not bind the entire shared secret into the context - the sign bit is omitted, so there are two possible points even in the case of an honest Encaps.",
       "createdAt": "2025-06-13T17:55:50Z",
-      "updatedAt": "2025-06-20T15:41:47Z",
+      "updatedAt": "2025-06-25T10:57:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -504,6 +564,34 @@
           "body": "The intent here is to capture standard practices w.r.t. elliptic curves.  Despite the fact that there are two points on a curve with the same X coordinate, truncation to the X coordinate is the standard way to get a shared secret from an elliptic curve point.  [NIST SP 800-56A](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf) (Section 5.7.1.2) lays this out for the Weierstrass curves that NIST uses.  [RFC 7748](https://datatracker.ietf.org/doc/html/rfc7748#section-5) defines X25519 and X448 purely in terms of U coordinates, ignoring the V coordinate entirely.",
           "createdAt": "2025-06-20T15:41:47Z",
           "updatedAt": "2025-06-20T15:41:47Z"
+        },
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I see, thanks for explaining that. I have a slight suspicion that this could cause problems for beyond-CCA2 properties like binding, because for any DH shared secret the values aG and (-a)G are both valid KEM ciphertexts for a given public key. (It's possible I did the math wrong here, but some kind of negative-sign-swap has to be possible since information is lost in the truncation...) In short, the \"full\" context isn't really bound into the derived key if only the x-coordinate is hashed. ",
+          "createdAt": "2025-06-24T17:14:56Z",
+          "updatedAt": "2025-06-24T17:14:56Z"
+        },
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Actually, I'm thinking about this more and I'm not sure DH-KEM in general is even CCA2 secure if you get rid of the y-coordinate? In the CCA game the adversary, given its challenge DH-KEM ciphertext C, can just negate C and submit -C to the decaps oracle. If in decaps you ignore the y-coordinate, C and -C derive the same key and the adversary wins w.p. 1. Maybe I'm missing something and this attack doesn't work, though.",
+          "createdAt": "2025-06-24T18:20:03Z",
+          "updatedAt": "2025-06-24T18:20:03Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that the terminology here is a bit twitchy -- there's the obvious\r\n\"KEM\" induced by DH, and there's also DHKEM in the sense of HPKE / RFC9180.\r\n\r\nDHKEM in the sense of HPKE / RFC 9180 is IND-CCA, as I think is shown in\r\nABH+21.  (The -Y issue is addressed by hashing in the full public key (X,\r\nY).)\r\n\r\nDHKEM in the sense of the obvious \"KEM\" induced by DH -- I think this is\r\ngenerally known to be not IND-CCA.  That's why there's a separate nominal\r\ngroup treatment instead of just specifying the obvious KEM.\r\n\r\nOn Tue, Jun 24, 2025 at 2:20\u202fPM Paul Grubbs ***@***.***>\r\nwrote:\r\n\r\n> *pag-crypto* left a comment (cfrg/draft-irtf-cfrg-hybrid-kems#35)\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/35#issuecomment-3001459178>\r\n>\r\n> Actually, I'm thinking about this more and I'm not sure DH-KEM in general\r\n> is even CCA2 secure if you get rid of the y-coordinate? In the CCA game the\r\n> adversary, given its challenge DH-KEM ciphertext C, can just negate C and\r\n> submit -C to the decaps oracle. If in decaps you ignore the y-coordinate, C\r\n> and -C derive the same key and the adversary wins w.p. 1. Maybe I'm missing\r\n> something and this attack doesn't work, though.\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/35#issuecomment-3001459178>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/AAASOTJ4T5FUQ2YCSMP3CET3FGJGRAVCNFSM6AAAAAB7IXJUYSVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZTAMBRGQ2TSMJXHA>\r\n> .\r\n> You are receiving this because you commented.Message ID:\r\n> ***@***.***>\r\n>\r\n",
+          "createdAt": "2025-06-24T21:45:28Z",
+          "updatedAt": "2025-06-24T21:45:28Z"
+        },
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Actually, I'm thinking about this more and I'm not sure DH-KEM in general is even CCA2 secure if you get rid of the y-coordinate? In the CCA game the adversary, given its challenge DH-KEM ciphertext C, can just negate C and submit -C to the decaps oracle.\n\nYou'd need to get rid of the y-coordinate everywhere (so also the decaps oracle only takes x coordinate.)\n\n",
+          "createdAt": "2025-06-25T10:57:46Z",
+          "updatedAt": "2025-06-25T10:57:46Z"
         }
       ]
     },
@@ -521,16 +609,31 @@
       ],
       "body": "The PRE scheme requires a KeyHash function for pre-hashing the encapsulation keys.  We should specify what security definitions this function needs to meet.\n\nThe only example we have right now is the use of SHA3-256 in the Chempat specification, which does not include a general security definition or any proofs of security from which we could back out a definition.",
       "createdAt": "2025-06-20T15:45:47Z",
-      "updatedAt": "2025-06-20T15:45:59Z",
+      "updatedAt": "2025-06-24T21:26:17Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't really see why plain collision-resistance can't work here? As far as the analysis goes, as long as you \"get rid of\" KeyHash collisions using a CRH game hop, in the rest of the analysis you can treat the hash as being basically the same as the keys themselves. Put slightly differently I suspect you could take an analysis of pretty much any property for GHP and mechanically transform the analysis into one for PRE, by just adding one step that gets rid of collisions at the beginning. (Usual caveats apply, since I made up this claim on the spot just now.)",
+          "createdAt": "2025-06-24T17:42:55Z",
+          "updatedAt": "2025-06-24T17:42:55Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It seems plausible to me that collision-resistance is sufficient.  But we would want to either cite something to that effect or lay out the analysis in the document.",
+          "createdAt": "2025-06-24T21:26:17Z",
+          "updatedAt": "2025-06-24T21:26:17Z"
+        }
+      ]
     },
     {
       "number": 37,
       "id": "I_kwDOMmhxws68kvgh",
       "title": "Add citations to proofs that NIST curves are nominal groups",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/37",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -539,9 +642,24 @@
       ],
       "body": "",
       "createdAt": "2025-06-20T15:46:53Z",
-      "updatedAt": "2025-06-20T15:46:53Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-06-25T03:44:39Z",
+      "closedAt": "2025-06-25T03:44:39Z",
+      "comments": [
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The HPKE analysis paper discusses how to view NIST P-curves, Curve25519, and Curve448 as nominal groups: https://eprint.iacr.org/2020/1499.pdf \n\nis this what you mean? I'm not sure what a more precise \"proof\" would look like - the nominal groups notion seems more syntactic than like a hardness assumption or something like that.",
+          "createdAt": "2025-06-24T17:37:47Z",
+          "updatedAt": "2025-06-24T17:37:47Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yeah, I think that's probably the right citation.  We just need to cite it!\n\nTo your point about hardness: Seems like the right phrasing is probably something like \"A nominal group in which the [some Diffie-Hellman] problem is hard\", right?  Where the DH notion would be whatever the relevant hybrid KEM proofs rely on.",
+          "createdAt": "2025-06-24T21:22:54Z",
+          "updatedAt": "2025-06-24T21:24:46Z"
+        }
+      ]
     },
     {
       "number": 38,
@@ -568,6 +686,141 @@
           "updatedAt": "2025-06-20T22:43:47Z"
         }
       ]
+    },
+    {
+      "number": 44,
+      "id": "I_kwDOMmhxws69Gt1V",
+      "title": "Explicit vs. implicit rejection KEMs",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/44",
+      "state": "OPEN",
+      "author": "pag-crypto",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)",
+      "createdAt": "2025-06-24T16:51:38Z",
+      "updatedAt": "2025-06-25T10:22:26Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)\n\nThe QSF construction 'passes through' whatever its PQ KEM does; GHP seems underspecified; PRE would basically do whatever GHP does, but [GHP18](https://eprint.iacr.org/2018/024.pdf) doesn't even consider implicit/explicit rejection; I've seen sketches of constructions that basically say 'if any component returns \u23da, return \u23da'",
+          "createdAt": "2025-06-25T03:48:05Z",
+          "updatedAt": "2025-06-25T03:48:05Z"
+        },
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Most contact with reality makes an implicitly rejecting KEM explicitly rejecting: for instance, in TLS if both sides do not agree on the same shared secret, the AEAD will error out, and the failed connection is rather explicit. Thus, for security analysis we should assume KEMs are explicitly rejecting (but luckily that [doesn't seem to matter much](https://link.springer.com/chapter/10.1007/978-3-031-86602-9_12).) On the other hand, from an API usability perspective it's better to have an implicitly KEM, as it's one less corner case to deal with. ",
+          "createdAt": "2025-06-25T10:22:26Z",
+          "updatedAt": "2025-06-25T10:22:26Z"
+        }
+      ]
+    },
+    {
+      "number": 47,
+      "id": "I_kwDOMmhxws69Sro7",
+      "title": "Sketch proofs for leak-bind-k-[pk, ct] for generics in appendix",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/47",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "bwesterb",
+        "dconnolly",
+        "pag-crypto"
+      ],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-25T14:04:59Z",
+      "updatedAt": "2025-06-25T14:04:59Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 48,
+      "id": "I_kwDOMmhxws69S5qS",
+      "title": "Expand on generic framework choices in subsection ",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/48",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "GHP: works for generic IND-CCA components, IND-CCA proofs from GHP18, including PKs fits in 'additional data' parts of the split key PRF proof there, and binds to PKs which is nice for protocols, and whole thing matches pubs like NIST SP 800-227 IPD, and gives good binding properties / is generally safe / no caveats on use for broad array of components with current IND-CCA analysis etc\n\nQSF: works for most common elliptic curve groups and C2PRI pq KEMs, optimization that leaves out large ciphertexts and PKs from hashing if the PQ KEM meets requirements, more KEMs can be proven to have C2PRI \n\nPRE: same benefits as GHP while allowing an optimization to pre-hash static PKs, which if large can be a performance improvement",
+      "createdAt": "2025-06-25T14:18:55Z",
+      "updatedAt": "2025-06-25T14:18:55Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 49,
+      "id": "I_kwDOMmhxws69TQER",
+      "title": "sketch how PRE is still IND-CCA in appendix",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/49",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "pag-crypto"
+      ],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-25T14:45:25Z",
+      "updatedAt": "2025-06-25T14:45:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 52,
+      "id": "I_kwDOMmhxws69YbHJ",
+      "title": "Sketch BIND proofs for QSF",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/52",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-26T00:21:04Z",
+      "updatedAt": "2025-06-26T00:21:04Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 53,
+      "id": "I_kwDOMmhxws69YbJS",
+      "title": "Sketch GHP BIND proofs",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/53",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-26T00:21:13Z",
+      "updatedAt": "2025-06-26T00:21:13Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 54,
+      "id": "I_kwDOMmhxws69YbON",
+      "title": "Sketch PRE BIND proofs",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/54",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "pag-crypto"
+      ],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-26T00:21:29Z",
+      "updatedAt": "2025-06-26T00:21:29Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -4422,24 +4675,26 @@
       "id": "PR_kwDOMmhxws6beEpT",
       "title": "draft-04, Release candidate 1",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/39",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR represents my pre-flight review of the generic doc.  Only a few changes of note:\r\n\r\n* Changed \"construction\" to \"scheme\" basically everywhere, to avoid the idea that we are defining concrete constructions\r\n* Addressed and deleted comments\r\n* Moved the EncapsDerand interface to an appendix, since it is only used for test vectors\r\n* Moved the TODOs to issues and deleted the notes in the doc.",
       "createdAt": "2025-06-20T20:15:01Z",
-      "updatedAt": "2025-06-23T01:05:09Z",
+      "updatedAt": "2025-06-24T17:14:51Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "rc1",
-      "headRefOid": "270c87e92f970b4b4fbe2d169bb500de6d9ec7fd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "991bacfa7b81db84469f961347af16ec276e26a0",
+      "closedAt": "2025-06-24T17:14:38Z",
+      "mergedAt": "2025-06-24T17:14:38Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "64643b80c2b91d502e26e7527f47268c22898ff4"
+      },
       "comments": [
         {
           "author": "dconnolly",
@@ -4568,6 +4823,39 @@
               "updatedAt": "2025-06-23T01:05:01Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6wG0OB",
+          "commit": {
+            "abbreviatedOid": "270c87e"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T16:34:24Z",
+          "updatedAt": "2025-06-24T16:34:24Z",
+          "comments": [
+            {
+              "originalPosition": 380,
+              "body": "```suggestion\r\nBy design, the calls to `KDF` in these frameworks and usage anywhere else\r\n```",
+              "createdAt": "2025-06-24T16:34:24Z",
+              "updatedAt": "2025-06-24T16:34:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6wHNzE",
+          "commit": {
+            "abbreviatedOid": "991bacf"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T17:14:29Z",
+          "updatedAt": "2025-06-24T17:14:29Z",
+          "comments": []
         }
       ]
     },
@@ -4576,50 +4864,88 @@
       "id": "PR_kwDOMmhxws6bmg6L",
       "title": "A few editorial contributions",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/40",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The draft is in good shape otherwise.",
       "createdAt": "2025-06-23T06:32:35Z",
-      "updatedAt": "2025-06-23T06:32:36Z",
+      "updatedAt": "2025-06-24T17:19:14Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
       "headRepository": "martinthomson/hybrid-kems",
       "headRefName": "notation-domain",
-      "headRefOid": "226e6173154bd4aad0d519e8fc1483954437e6b9",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "8a70fa36bb5bf6293fea4b66db24e47fa7e23cfc",
+      "closedAt": "2025-06-24T17:19:13Z",
+      "mergedAt": "2025-06-24T17:19:13Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "b2b13d6afe972a9019217f68cdbb3163e3b8d9f3"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6wHQvs",
+          "commit": {
+            "abbreviatedOid": "226e617"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T17:18:20Z",
+          "updatedAt": "2025-06-24T17:18:21Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\nA set is denoted by listing values in braces: `{a,b,c}`.\r\n\r\nA vector of set elements of length `n` is denoted with exponentiation,\r\nsuch as for the `n`-bit value: {0,1}<sup>n</sup>.\r\n\r\nDrawing uniformly at random from an `n`-bit vector into a value `x`\r\nis denoted: x $\u2190 {0,1}<sup>n</sup>.\r\n\r\nA function `f` that maps from one domain to another is denoted\r\nusing a right arrow to separate inputs from outputs: f : inputs \u2192 outputs.\r\n```",
+              "createdAt": "2025-06-24T17:18:20Z",
+              "updatedAt": "2025-06-24T17:18:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6wHRLC",
+          "commit": {
+            "abbreviatedOid": "8a70fa3"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T17:19:04Z",
+          "updatedAt": "2025-06-24T17:19:04Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 41,
       "id": "PR_kwDOMmhxws6bmp_E",
       "title": "Remove duplicate CCR mention",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/41",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This pull request needs a Big Lebowski quote.",
       "createdAt": "2025-06-23T06:49:20Z",
-      "updatedAt": "2025-06-23T07:48:39Z",
+      "updatedAt": "2025-06-24T17:19:52Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
       "headRepository": "martinthomson/hybrid-kems",
       "headRefName": "say-it-twice",
       "headRefOid": "6b230801f46160df979219e34a6e4fc47009164c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-24T17:19:52Z",
+      "mergedAt": "2025-06-24T17:19:52Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "1771cce6e26a225c701a727917a43454a034ea29"
+      },
       "comments": [
         {
           "author": "dconnolly",
@@ -4629,27 +4955,180 @@
           "updatedAt": "2025-06-23T07:48:39Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6wHRlW",
+          "commit": {
+            "abbreviatedOid": "6b23080"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T17:19:42Z",
+          "updatedAt": "2025-06-24T17:19:42Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 42,
       "id": "PR_kwDOMmhxws6bmt-w",
       "title": "Correct some variable names",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/42",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "I didn't check thoroughly, but these stood out.",
       "createdAt": "2025-06-23T06:56:17Z",
-      "updatedAt": "2025-06-23T06:56:18Z",
+      "updatedAt": "2025-06-25T05:18:44Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
       "headRepository": "martinthomson/hybrid-kems",
       "headRefName": "ghp-seed_full",
       "headRefOid": "595d63629d3e5a346fa9cbab8b39fb20554b935e",
+      "closedAt": "2025-06-24T17:20:52Z",
+      "mergedAt": "2025-06-24T17:20:51Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "9102c7275d46a889aae881d3c4bb7cfcedb4017b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6wHSLP",
+          "commit": {
+            "abbreviatedOid": "595d636"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T17:20:45Z",
+          "updatedAt": "2025-06-24T17:20:45Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 43,
+      "id": "PR_kwDOMmhxws6bm0ez",
+      "title": "Some abstract editing",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/43",
+      "state": "CLOSED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This was originally just a typo fix for a missing 'r'.  But then you had a \"we\", that was unnecessary.\r\n\r\nI split this into two paragraphs, but I'm going to suggest that you delete the first one entirely.  Everything that is needed is in the second.",
+      "createdAt": "2025-06-23T07:08:42Z",
+      "updatedAt": "2025-06-24T22:32:42Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "9102c7275d46a889aae881d3c4bb7cfcedb4017b",
+      "headRepository": "martinthomson/hybrid-kems",
+      "headRefName": "abstract-typo",
+      "headRefOid": "05659e673c6b66e2b3d4464c74000068c34b6444",
+      "closedAt": "2025-06-24T22:32:42Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@bifurcation wdyt",
+          "createdAt": "2025-06-24T17:47:34Z",
+          "updatedAt": "2025-06-24T17:47:34Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm good either way.  Slight preference for removing the first paragraph, but also happy to keep it if people like context.",
+          "createdAt": "2025-06-24T21:31:26Z",
+          "updatedAt": "2025-06-24T21:31:26Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 45,
+      "id": "PR_kwDOMmhxws6b8mCN",
+      "title": "Abstract",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/45",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "there was a git booboo",
+      "createdAt": "2025-06-24T22:32:11Z",
+      "updatedAt": "2025-06-24T22:32:42Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "9102c7275d46a889aae881d3c4bb7cfcedb4017b",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "abstract",
+      "headRefOid": "7b270cc80ece59ccce06694733e4587374113526",
+      "closedAt": "2025-06-24T22:32:40Z",
+      "mergedAt": "2025-06-24T22:32:40Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "791528bf542ac7538b43bcd801a578f71c0731e8"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 46,
+      "id": "PR_kwDOMmhxws6b-UBe",
+      "title": "Cite how prime order groups like p256 etc are examples of nominal groups",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/46",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #37",
+      "createdAt": "2025-06-25T03:44:15Z",
+      "updatedAt": "2025-06-25T03:44:40Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "791528bf542ac7538b43bcd801a578f71c0731e8",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "nominal",
+      "headRefOid": "6baf8bf8a82dd67cd67acb5144fc030aa6dd7b4b",
+      "closedAt": "2025-06-25T03:44:38Z",
+      "mergedAt": "2025-06-25T03:44:38Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 50,
+      "id": "PR_kwDOMmhxws6cJCaQ",
+      "title": "A stab at 'why these generic frameworks' section",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/50",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #48",
+      "createdAt": "2025-06-26T00:00:08Z",
+      "updatedAt": "2025-06-26T00:01:26Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "expand-on-framework-choices",
+      "headRefOid": "818a71ebc1ee7bca4c6e28a2c83720f52abb13b8",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -4658,24 +5137,24 @@
       "reviews": []
     },
     {
-      "number": 43,
-      "id": "PR_kwDOMmhxws6bm0ez",
-      "title": "Some abstract editing",
-      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/43",
+      "number": 51,
+      "id": "PR_kwDOMmhxws6cJHRy",
+      "title": "Add appendix with QSF BIND proof sketches written  by Bas Westerbaan",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/51",
       "state": "OPEN",
-      "author": "martinthomson",
-      "authorAssociation": "NONE",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "This was originally just a typo fix for a missing 'r'.  But then you had a \"we\", that was unnecessary.\r\n\r\nI split this into two paragraphs, but I'm going to suggest that you delete the first one entirely.  Everything that is needed is in the second.",
-      "createdAt": "2025-06-23T07:08:42Z",
-      "updatedAt": "2025-06-23T07:08:42Z",
+      "body": "@bwesterb \r\n\r\nResolves https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/52",
+      "createdAt": "2025-06-26T00:20:25Z",
+      "updatedAt": "2025-06-26T00:22:14Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
-      "baseRefOid": "111a9143fcff1146d73b4c3c74c7cdcca170c77a",
-      "headRepository": "martinthomson/hybrid-kems",
-      "headRefName": "abstract-typo",
-      "headRefOid": "6e5b908e458542821380997b213a9d084ae8c097",
+      "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "sketch-of-qsf-bind-proofs",
+      "headRefOid": "97b93ab05bfe4211178e4a039018fb2917279ba3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
