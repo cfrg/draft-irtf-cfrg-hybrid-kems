@@ -696,46 +696,56 @@ Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
 an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
 `KDF` is secure, and either the traditional component is secure, or the post-quantum
-KEM is secure: this is the 'hybrid' property.
+KEM is secure: this is the 'hybrid' property. Next we describe this document's specific
+security goals for hybrid KEMs.
 
-## Security Properties {#security-properties}
+## Security Goals for Hybrid KEMs {#security-properties}
 
 ### IND-CCA Security {#ind-cca}
 
-Also known as IND-CCA2 security for general public key encryption, for KEMs
-that encapsulate a new random 'message' each time.
+The first goal we have for our hybrid KEM constructions is indistinguishability under
+adaptive chosen ciphertext attack, or IND-CCA2. This is most common security goal
+for KEMs and public-key encryption.
 
-The notion of INDistinguishability against Chosen-Ciphertext Attacks
-(IND-CCA) {{RS92}} is now widely accepted as the standard security notion for
-asymmetric encryption schemes. IND-CCA security requires that no efficient
-adversary can recognize which of two messages is encrypted in a given
-ciphertext, even if the two candidate messages are chosen by the adversary
-himself.
-
-### Ciphertext Second Preimage Resistant (C2PRI) Security {#c2pri}
-
-The notion where, even if a KEM has broken IND-CCA security (either due to
-construction, implementation, or other), its internal structure, based on the
-Fujisaki-Okamoto transform, guarantees that it is impossible to find a second
-ciphertext that decapsulates to the same shared secret `K`: this notion is
-known as ciphertext second preimage resistance (C2SPI) for KEMs
-{{XWING}}.
-
-The same notion has also been described as chosen ciphertext
-resistance (CCR) {{CDM23}}.
+For KEMs, IND-CCA2 requires that no efficient adversary, given a ciphertext obtained
+by running Encaps
+with an honestly-generated public key, can distinguish whether it is given the
+"real" secret output from encaps, or a random string unrelated to the Encaps call
+that created that ciphertext. (Readers should note that this definition is slightly
+different than the corresponding one for public-key encryption {{RS92}}.)
 
 ## Binding Properties {#binding-properties}
 
-It is often useful for a KEM to have certain "binding properties", by which
-certain parameters determine certain others {{CDM23}}.  These properties are
-referred to with labels of the form X-BIND-P-Q.  For example, LEAK-BIND-K-PK
+It is often useful for a KEM to have certain "binding" properties, by which
+certain parameters determine certain others. Recent work {{CDM23}} gave
+a useful framework of definitions for these binding properties. Binding for KEMs
+is related to other properties for KEMs and public-key encryption, such as
+robustness {{GMP22}} TODO robust encryption paper cite {{ABNM}}, and collision-freeness TODO cite mohassel.
+
+The framework given by {{CDM23}} refers to these properties with labels
+of the form X-BIND-P-Q.  The first element X is the attack model---HON, LEAK, or MAL.
+P,Q means that given the value P, it is hard to produce another Q that causes Decaps to succeed.
+For example, LEAK-BIND-K-PK
 means that for a given shared secret (K), there is a unique encapsulation key
 (PK) that could have produced it, even if all of the secrets involved are
 given to the adversary after the encapsulation operation is completed (LEAK).
 
-The property LEAK-BIND-K,PK-CT is related to the C2PRI property discussed
-above.  Related to the ciphertext collision-freeness of the underlying PKE
-scheme of a FO-transform KEM. Also called ciphertext collision resistance.
+We treat LEAK-BIND-K-PK and LEAK-BIND-K-CT to be target binding properties.
+The HON-BIND security model seems too weak for real applications---real
+attacks in the LEAK model are known {{LEAK-ATTACK}}. We are not aware
+of any common settings where the MAL-BIND security model is needed; thus,
+LEAK-BIND seems a sensible middle ground.
+
+Implementors SHOULD think carefully about whether MAL-BIND attacks are
+feasible for their systems or protocols.
+
+## Security Non-goals for Hybrid KEMs {#non-goals}
+
+Considerations that were considered and not included in these designs:
+
+Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
+or binding {{GMP22}}, {{CDM23}}
+
 
 ## Security Requirements for Constituent Components {#security-requirements}
 
@@ -746,6 +756,13 @@ Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
 For instances of QSF, the component KEM MUST also be ciphertext second
 preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
 encapsulation key and ciphertext to be left out from the KDF input.
+
+#### Ciphertext Second Preimage Resistant (C2PRI) Security {#c2pri}
+
+Roughly, C2PRI {{XWING}} says that an adversary given an honestly-generated key pair (sk, pk)
+and the result of an *honest* Encaps(pk) - call it k, c - cannot find a _distinct_
+c' such that Decaps(sk, c') = k. This notion has also been described as chosen-ciphertext
+resistance {{CDM23}}.
 
 ### Security Requirements for Groups {#security-groups}
 
@@ -761,20 +778,18 @@ together with exponentiation.
 
 ### Security Requirements for KDFs {#security-kdfs}
 
-KDFs MUST be secure pseudorandom functions (PRFs) when keyed with the shared
-secret output from the post-quantum IND-CCA-secure KEM component algorithm in
-QSF {{XWING}} or any of the component IND-CCA-secure KEMs when used in
-KitchenSink {{GHP2018}} or PreHash.
+The KDF MUST be indifferentiable from a random oracle {{MRH03}}, even to a quantum attacker {{QROM}}.
+This is a conservative choice
+given a review of the existing security analyses for our hybrid KEM constructions.
+(In short, most IND-CCA2 analyses require only that the KDF is some kind of pseudorandom function,
+but the SDH-based IND-CCA2 analysis of QSF in {{XWING}} relies on the KDF being a RO.)
 
-KDFs must be secure instances of random oracles in the ROM and QROM
-{{GHP2018}} {{XWING}}. Proofs of indifferentiability from random oracles
-{{MRH03}} give good confidence here, as any function proven indifferentiable
-from a random oracle is resistant against collision, first, and second
-preimage attacks. An indifferentiability bound
-guarantees security against specific attacks. Although indifferentiability
-does not capture all properties of a random oracle {{RSS11}},
-indifferentiability still remains the best way to rule out structural
-attacks.
+TODO: revisit this section once requirements for BIND properties are known.
+
+If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed as
+applying a (RO-based) pseudorandom function - keyed with the shared secrets output by the constituent KEMs -
+to the other inputs. Thus, analyses which require the KDF to be a PRF, such as the one
+given in GHP {{GHP2018}} or the standard-model analysis of QSF in {{XWING}}, apply. 
 
 Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical {{BDP+08}} as well as quantum adversaries
@@ -810,16 +825,45 @@ generator (RNG): a PRG requires the seed randomness to be chosen uniformly
 and extend it; an RNG takes sources of noisy data and transforms them into
 uniform outputs.
 
-A PRG is a particular mode of use of a random oracle {{BDP+11}}.  Examples
-used in such a manner include SHAKE256.
+PRGs are related to extendable output functions (XOFs) which can be
+built from random oracles. Examples include SHAKE256.
 
-## Security Properties of Hybrid KEMs
 
-All generic constructions in this document produce IND-CCA-secure KEMs
-when correctly instantiated concretely with cryptographic components that
-meet the respective security requirements. Any changes to the routines,
+### Security Properties of KeyHash {#security-keyhash}
+
+The PRE hybrid KEM uses a function KeyHash to generate a short digest of the encapsulation keys.
+For IND-CCA2 of PRE, this function must be collision-resistant.
+
+TODO: revisit after binding properties
+
+
+## Security Properties of Hybrid KEMs in this document
+
+### IND-CCA2 analyses
+
+The QSF construction has two complementary IND-CCA2 analyses. Both were given in {{XWING}}. We summarize them but elide some details.
+
+One analysis (Theorem 1) shows that if the KDF is modelled as a RO, IND-CCA2 holds if the PQ KEM is broken, as long as the SDH problem holds in the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2) shows that if the PQ-KEM is IND-CCA2 and the KDF is a PRF keyed on the PQ-KEM's shared secret, IND-CCA2 holds.
+
+As long as the aforementioned security requirements of the component parts are met, these analyses imply that this document's QSF construction satisfies IND-CCA2 security. 
+
+This document's exact GHP and PRE constructions do not have IND-CCA2 analyses. This is because the GHP paper gives a slightly different version of the hybrid: namely, they do not include the public keys in the KDF. However, we argue that their proof goes through with nearly trivial modifications if the public keys are included in the KDF. The relevant step is claim 3 of Theorem 1. This is the claim that reduces to the split-key pseudorandomness of the KDF. (GHP call the KDF a "core" function, and denote it as W.) We observe that adding the public keys to the inputs only changes the concrete contents of the reduction's queries to its oracle. Since the reduction chooses the public keys itself, it is easy to simply add them to the oracle inputs, and the remainder of their proof goes through unmodified.
+
+We also argue that this extension applies, again with nearly trivial modifications, to prove security of PRE. Observe that the only difference between GHP and PRE is prehashing of the encapsulation keys. As long as the hash function is collision resistant, any event that happens in the IND-CCA2 game of GHP happens only with negligible probability in the IND-CCA2 game of PRE.
+
+We reiterate that modulo some low-level technical details, our requirement that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF used in GHP and PRE meets the split-key pseudorandomness property used in GHP's analysis.
+
+To summarize, all three hybrid KEMs in this document are IND-CCA2 when instantiated
+with cryptographic components that
+meet the security requirements described above. Any changes to the routines,
 including key generation/derivation, are not guaranteed to produce
 secure results.
+
+###Binding analyses
+
+binding proofs for GHP, PRE, QSF TODO
+
+
 
 ## Other Considerations
 
@@ -863,12 +907,7 @@ different from that specified in this document.
 Therefore, this specification MUST only be used with algorithms which have
 fixed-length shared secrets.
 
-# Out of Scope
 
-Considerations that were considered and not included in these designs:
-
-Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
-or binding {{GMP22}}, {{CDM23}}
 
 ## More than Two Component KEMs
 
