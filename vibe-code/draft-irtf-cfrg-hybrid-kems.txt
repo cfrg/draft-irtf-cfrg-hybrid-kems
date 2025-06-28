@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 20 December 2025                                          Cisco
-                                                            18 June 2025
+Expires: 30 December 2025                                          Cisco
+                                                            28 June 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -14,17 +14,11 @@ Expires: 20 December 2025                                          Cisco
 
 Abstract
 
-   Post-quantum (PQ) algorithms are designed to resist attack by a
-   quantum computer, in contrast to "traditional" algorithms.  However,
-   given the novelty of PQ algorithms, there is some concern that PQ
-   algorithms currently believed to be secure will be broken.  Hybrid
-   constructions that combine both PQ and traditional algorithms can
-   help moderate this risk while still providing security against
-   quantum attack.  In this document, we define constructions for hybrid
-   Key Encapsulation Mechanisms (KEMs) based on combining a traditional
-   KEM and a PQ KEM.  Hybrid KEMs using these constructions provide
-   strong security properties as long as the undelying algorithms are
-   secure.
+   This document defines generic constructions for hybrid Key
+   Encapsulation Mechanisms (KEMs) based on combining a traditional
+   cryptographic component and a post-quantum (PQ) KEM.  Hybrid KEMs
+   built using these constructions provide strong security properties as
+   long as either of the underlying algorithms are secure.
 
 Discussion Venues
 
@@ -52,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 December 2025.
+   This Internet-Draft will expire on 30 December 2025.
 
 Copyright Notice
 
@@ -71,11 +65,11 @@ Table of Contents
    2.  Requirements Notation
    3.  Notation
    4.  Cryptographic Dependencies
-     4.1.  Key encapsulation mechanisms
+     4.1.  Key Encapsulation Mechanisms
      4.2.  Nominal Groups
-     4.3.  Key Derivation Functions
-     4.4.  PRG
-   5.  Hybrid KEM Schemes
+     4.3.  Pseudorandom Generators
+     4.4.  Key Derivation Functions
+   5.  Hybrid KEM Frameworks
      5.1.  GHP
      5.2.  PRE
      5.3.  QSF
@@ -94,18 +88,19 @@ Table of Contents
        6.5.1.  Domain Separation
        6.5.2.  Fixed-length
    7.  Out of Scope
-     7.1.  More than two component KEMs
-     7.2.  Parameterized output length
+     7.1.  More than Two Component KEMs
+     7.2.  Parameterized Output Length
    8.  References
      8.1.  Normative References
      8.2.  Informative References
+   Appendix A.  Deterministic Encapsulation
    Acknowledgments
    Authors' Addresses
 
 1.  Introduction
 
-   Post-quantum (PQ) cryptographic schemes offer new constructions based
-   on problems conjectured as resistant to attacks possible on a quantum
+   Post-quantum (PQ) cryptographic algorithms are based on problems that
+   are conjectured to be resistant to attacks possible on a quantum
    computer.  Key Encapsulation Mechanisms (KEMs), are a standardized
    class of cryptographic scheme that can be used to build protocols in
    lieu of traditional, quantum-vulnerable variants such as finite field
@@ -129,20 +124,20 @@ Table of Contents
    allowing applications to incorporate PQ algorithms while still
    meeting compliance requirements based on traditional algorithms.
 
-   In this document, we define generic schemes for constructing hybrid
-   KEMs from a traditional algorithm and a PQ KEM.  The aim of this
-   document is provide a small set of techniques to achieve specific
-   security properties given conforming component algorithms, which
-   should make these techniques suitable for a broad variety of use
-   cases.
+   In this document, we define generic frameworks for constructing
+   hybrid KEMs from a traditional algorithm and a PQ KEM.  The aim of
+   this document is provide a small set of techniques to achieve
+   specific security properties given conforming component algorithms,
+   which should make these techniques suitable for a broad variety of
+   use cases.
 
    The remainder of this document is structured as follows: first, in
    Section 4 and Section 5, we define the abstractions on which the
-   schemes are built, and then the schemes themselves.  Then, in
+   frameworks are built, and then the frameworks themselves.  Then, in
    Section 6, we lay out the security analyses that support these
-   constructions, including the security requirements for constituent
+   frameworks, including the security requirements for constituent
    components and the security notions satisfied by hybrid KEMS
-   constructed according to the schemes in the document Section 6.3.
+   constructed according to the frameworks in the document Section 6.3.
    Finally, we discuss some "path not taken", related topics that might
    be of interest to readers, but which are not treated in depth.
 
@@ -182,24 +177,35 @@ Table of Contents
    example, if x = [0, 1, 2, 3, 4], then x[..2] = [0, 1] and x[2..] =
    [2, 3, 4].
 
+   A set is denoted by listing values in braces: {a,b,c}.
+
+   A vector of set elements of length n is denoted with exponentiation,
+   such as for the n-bit value: {0,1}^n.
+
+   Drawing uniformly at random from an n-bit vector into a value x is
+   denoted: x $← {0,1}^n.
+
+   A function f that maps from one domain to another is denoted using a
+   right arrow to separate inputs from outputs: f : inputs → outputs.
+
 4.  Cryptographic Dependencies
 
-   The generic hybrid PQ/T KEM constructions we define depend on the the
+   The generic hybrid PQ/T KEM frameworks we define depend on the the
    following cryptographic primitives:
 
    *  Key Encapsulation Mechanisms (Section 4.1)
 
    *  Nominal Groups (Section 4.2)
 
-   *  Key Derivation Functions (Section 4.3)
+   *  Pseudorandom Generators (Section 4.3)
 
-   *  Pseudorandom Generators (Section 4.4)
+   *  Key Derivation Functions (Section 4.4)
 
    In the remainder of this section, we describe functional aspects of
    these mechanisms.  The security properties we require in order for
    the resulting hybrid KEM to be secure are discussed in Section 6.
 
-4.1.  Key encapsulation mechanisms
+4.1.  Key Encapsulation Mechanisms
 
         +-----------------+
         | GenerateKeyPair |
@@ -244,14 +250,6 @@ Table of Contents
    *  Decaps(dk, ct) -> ss: A decapsulation algorithm, which takes as
       input a secret decapsulation key dk and ciphertext ct and outputs
       a shared secret ss.
-
-   A KEM may also provide a deterministic version of Encaps (e.g., for
-   purposes of testing):
-
-   *  EncapsDerand(ek, randomness) -> (ct, shared_secret): A
-      deterministic encapsulation algorithm, which takes as input a
-      public encapsulation key ek and randomness randomness, and outputs
-      a ciphertext ct and shared secret shared_secret.
 
    We assume that the values produced and consumed by the above
    functions are all byte strings, with fixed lengths:
@@ -329,10 +327,35 @@ Table of Contents
    *  Nss: The length in bytes of a shared secret produced by
       ElementToSharedSecret
 
-   The security requirements for groups used with the schemes in this
+   The security requirements for groups used with the frameworks in this
    document are laid out in Section 6.3.2.
 
-4.3.  Key Derivation Functions
+4.3.  Pseudorandom Generators
+
+   A pseudorandom generator (PRG) is a deterministic function G whose
+   outputs are longer than its inputs.  When the input to G is chosen
+   uniformly at random, it induces a certain distribution over the
+   possible output.  The output distribution is pseudorandom if it is
+   indistinguishable from the uniform distribution.
+
+   The PRGs used in this document have a simpler form, with a fixed
+   output lengths:
+
+   *  Nout - The length in bytes of an output from this PRG.
+
+   *  PRG(seed) -> output: Produce a byte string of length Nout from an
+      input byte string seed.
+
+   The fixed sizes are for both security and simplicity.
+
+   MUST provide the bit-security required to source input randomness for
+   PQ/T components from a seed that is expanded to a output length, of
+   which a subset is passed to the component key generation algorithms.
+
+   The security requirements for PRGs used with the frameworks in this
+   document are laid out in Section 6.3.4.
+
+4.4.  Key Derivation Functions
 
    A Key Derivation Function (KDF) is a function that a function that
    produces keying material based on an input secret and other
@@ -341,8 +364,6 @@ Table of Contents
    While KDFs in the literature can typically consume and produce byte
    strings of arbitrary length, the KDFs used in this document have a
    simpler form, with a fixed output lengths:
-
-   *  Nin - The length in bytes of an input to this KDF.
 
    *  Nout - The length in bytes of an output from this KDF.
 
@@ -354,62 +375,32 @@ Table of Contents
    For instances of the Extract()/Expand() KDF paradigm such as HKDF, we
    fix the salt and sizes to fit this form.
 
-   The security requirements for KDFs used with the schemes in this
+   The security requirements for KDFs used with the frameworks in this
    document are laid out in Section 6.3.3.
 
-4.4.  PRG
+5.  Hybrid KEM Frameworks
 
-   A pseudorandom generator (PRG) is a deterministic function G whose
-   outputs are longer than its inputs.  When the input to G is chosen
-   uniformly at random, it induces a certain distribution over the
-   possible output.  The output distribution is pseudorandom if it is
-   indistinguishable from the uniform distribution.
-
-   The PRGs used in this document have a simpler form, with a fixed
-   output lengths:
-
-   *  Nin - The length in bytes of an input to this PRG.
-
-   *  Nout - The length in bytes of an output from this PRG which is
-      longer than Nin.
-
-   *  PRG(seed) -> output: Produce a byte string of length Nout from an
-      input byte string seed.
-
-   The fixed sizes are for both security and simplicity.
-
-   MUST provide the bit-security required to source input randomness for
-   PQ/T components from a seed that is expanded to a output length, of
-   which a subset is passed to the component key generation algorithms.
-
-   The security requirements for PRGs used with the schemes in this
-   document are laid out in Section 6.3.4.
-
-5.  Hybrid KEM Schemes
-
-   In this section, we define three generic schemes for building for
+   In this section, we define three generic frameworks for building for
    hybrid KEMs:
 
-   *  GHP - A generic construction that is suitable for use with any
-      choice of traditional and PQ KEMs, with minimal security
-      assumptions on the constituent KEMs
+   GHP:  A generic framwork that is suitable for use with any choice of
+      traditional and PQ KEMs, with minimal security assumptions on the
+      constituent KEMs
 
-   *  PRE - A performance optimization of GHP for the case where
+   PRE:  A performance optimization of GHP for the case where
       encapsulation keys are large and frequently reused
 
-   *  QSF - An optimized generic construction for the case where the
+   QSF:  An optimized generic framwork for the case where the
       traditional component is a nominal group and the PQ component has
       strong binding properties
 
-   In this section, we define several generic constructions for hybrid
-   KEMs.  These constructions share a common overall structure,
-   differing mainly in how they compute the final shared secret and the
-   security requirements of their components.
+   These frameworks share a common overall structure, differing mainly
+   in how they compute the final shared secret and the security
+   requirements of their components.
 
 5.1.  GHP
 
-   The GHP hybrid KEM (GHP below) depends on the following constituent
-   components:
+   The GHP hybrid KEM depends on the following constituent components:
 
    *  KEM_T: A traditional KEM
 
@@ -449,7 +440,7 @@ Table of Contents
 
    def DeriveKeyPair(seed):
        seed_full = PRG(seed)
-       (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed)
+       (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
        (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
        (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
        ek_H = concat(ek_T, ek_PQ)
@@ -577,7 +568,7 @@ Table of Contents
    def Encaps(ek):
        (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
 
-       sk_E = Group_T.RandomScalar(random(GroupT.nseed))
+       sk_E = Group_T.RandomScalar(random(GroupT.Nseed))
        ct_T = Group_T.Exp(GroupT.g, sk_E)
        ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
        (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
@@ -604,8 +595,8 @@ Table of Contents
    Hybrid KEM constructions aim to provide security by combining two or
    more schemes so that security is preserved if all but one schemes are
    replaced by an arbitrarily bad scheme.  Informally, these hybrid KEMs
-   are secure if the KDF is secure, and either the elliptic curve is
-   secure, or the post-quantum KEM is secure: this is the 'hybrid'
+   are secure if the KDF is secure, and either the traditional component
+   is secure, or the post-quantum KEM is secure: this is the 'hybrid'
    property.
 
 6.1.  Security Properties
@@ -624,17 +615,15 @@ Table of Contents
 
 6.1.2.  Ciphertext Second Preimage Resistant (C2PRI) Security
 
-   Also known in the literature as ciphertext collision resistance
-   (CCR).
-
    The notion where, even if a KEM has broken IND-CCA security (either
    due to construction, implementation, or other), its internal
    structure, based on the Fujisaki-Okamoto transform, guarantees that
    it is impossible to find a second ciphertext that decapsulates to the
    same shared secret K: this notion is known as ciphertext second
-   preimage resistance (C2SPI) for KEMs [XWING].  The same notion has
-   also been described as chosen ciphertext resistance elsewhere
-   [CDM23].
+   preimage resistance (C2SPI) for KEMs [XWING].
+
+   The same notion has also been described as chosen ciphertext
+   resistance (CCR) [CDM23].
 
 6.2.  Binding Properties
 
@@ -653,11 +642,6 @@ Table of Contents
 
 6.3.  Security Requirements for Constituent Components
 
-      TODO: We need to provide more thorough description, and verify
-      that these requirements align with the requirements of the
-      security proofs in the literature, especially [GHP2018] and
-      [XWING].
-
 6.3.1.  Security Requirements for KEMs
 
    Component KEMs MUST be IND-CCA-secure [GHP2018] [XWING].
@@ -672,12 +656,12 @@ Table of Contents
    The groups MUST be modelable as nominal groups in which the strong
    Diffie-Hellman problem holds [ABH_21] [XWING].
 
-   The Montgomery curves Curve25519 and Curve448 have been shown to be
-   modelable as nominal groups in [ABH_21] as well as showing the
-   X25519() and X448() functions respectively pertain to the nominal
-   group exp(X, y) function, specifically clamping secret keys when they
-   are generated, instead of clamping secret keys together with
-   exponentiation.
+   Prime-order groups such as P-256, P-384, and P-521 and the Montgomery
+   curves Curve25519 and Curve448 have been shown to be modelable as
+   nominal groups in [ABH_21], as well as showing the X25519() and
+   X448() functions respectively pertain to the nominal group exp(X, y)
+   function, specifically clamping secret keys when they are generated,
+   instead of clamping secret keys together with exponentiation.
 
 6.3.3.  Security Requirements for KDFs
 
@@ -690,7 +674,7 @@ Table of Contents
    [GHP2018] [XWING].  Proofs of indifferentiability from random oracles
    [MRH03] give good confidence here, as any function proven
    indifferentiable from a random oracle is resistant against collision,
-   first, and second preimage attacks . An indifferentiability bound
+   first, and second preimage attacks.  An indifferentiability bound
    guarantees security against specific attacks.  Although
    indifferentiability does not capture all properties of a random
    oracle [RSS11], indifferentiability still remains the best way to
@@ -731,7 +715,7 @@ Table of Contents
    transforms them into uniform outputs.
 
    A PRG is a particular mode of use of a random oracle [BDP_11].
-   Examples used in such a manner include SHA3 and SHAKE.
+   Examples used in such a manner include SHAKE256.
 
 6.4.  Security Properties of Hybrid KEMs
 
@@ -751,8 +735,8 @@ Table of Contents
    random oracle, which the inclusion of the label achieves via domain
    separation [GHP2018].
 
-   By design, the calls to KDF in these constructions and usage anywhere
-   else in higher level protoocl use separate input domains unless
+   By design, the calls to KDF in these frameworks and usage anywhere
+   else in higher level protocol use separate input domains unless
    intentionally duplicating the 'label' per concrete instance with
    fixed paramters.  This justifies modeling them as independent
    functions even if instantiated by the same KDF.  This domain
@@ -792,12 +776,15 @@ Table of Contents
    Considerations that were considered and not included in these
    designs:
 
-7.1.  More than two component KEMs
+   Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
+   robustness or binding [GMP22], [CDM23]
+
+7.1.  More than Two Component KEMs
 
    Design team decided to restrict the space to only two components, a
    traditional and a post-quantum KEM.
 
-7.2.  Parameterized output length
+7.2.  Parameterized Output Length
 
    Not analyzed as part of any security proofs in the literature, and a
    complicatation deemed unnecessary.
@@ -881,6 +868,10 @@ Table of Contents
    [GHP2018]  "KEM Combiners", 2018,
               <https://eprint.iacr.org/2018/024.pdf>.
 
+   [GMP22]    Grubbs, P., Maram, V., and K.G. Paterson, "Anonymous,
+              Robust Post-Quantum Public-Key Encryption", 2022,
+              <https://eprint.iacr.org/2021/708.pdf>.
+
    [HKDF]     Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
               Key Derivation Function (HKDF)", RFC 5869,
               DOI 10.17487/RFC5869, May 2010,
@@ -946,6 +937,47 @@ Table of Contents
 
    [XWING]    "X-Wing: The Hybrid KEM You’ve Been Looking For", 2024,
               <https://eprint.iacr.org/2024/039.pdf>.
+
+Appendix A.  Deterministic Encapsulation
+
+   When verifying the behavior of a KEM implementation (e.g., by
+   generating or verifying test vectors), it is useful for the
+   implementation to expose a "derandomized" version of the Encaps
+   algorithm:
+
+   *  EncapsDerand(ek, randomness) -> (ct, shared_secret): A
+      deterministic encapsulation algorithm, which takes as input a
+      public encapsulation key ek and randomness randomness, and outputs
+      a ciphertext ct and shared secret shared_secret.
+
+   An implementation that exposes EncapsDerand must also define a
+   required amount of randomness:
+
+   *  Nrandom: The length in bytes of the randomness provided to
+      EncapsDerand
+
+   The corresponding change for a nominal group is to replace randomly-
+   generated inputs to RandomScalar with deterministic ones.  In other
+   words, for a nominal group, Nrandom = Nseed.
+
+   When a hybrid KEM is instantiated with constituents that support
+   derandomized encapsulation (either KEMs or groups), the hybrid KEM
+   can also support EncapsDerand, with Nrandom = T.Nrandom + PQ.Nrandom.
+   The structure of the hybrid KEM's EncapsDerand algorithm is the same
+   as its Encaps method, with the following differences:
+
+   *  The EncapsDerand algorithm also takes a randomness parameter,
+      which is a byte string of length Nrandom.
+
+   *  Invocations of Encaps or RandomScalar (with a random input) in the
+      constituent algorithms are replaced with calls ot EncapsDerand or
+      RandomScalar with a deterministic input.
+
+   *  The randomness used by the traditional constituent is the first
+      T.Nrandom bytes of the input randomness.
+
+   *  The randomness used by the PQ constituent is the final PQ.Nrandom
+      bytes of the input randomness.
 
 Acknowledgments
 
