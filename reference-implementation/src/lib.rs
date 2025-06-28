@@ -14,10 +14,16 @@
 //! # Example Usage
 //!
 //! ```rust,ignore
-//! use hybrid_kem_ref::{traits::Kem, ghp::GhpHybridKem};
+//! use hybrid_kem_ref::{traits::{Kem, HybridKemLabel}, ghp::GhpHybridKem};
+//!
+//! // Define a label for your hybrid KEM
+//! struct MyLabel;
+//! impl HybridKemLabel for MyLabel {
+//!     const LABEL: &'static [u8] = b"MyHybridKem-v1";
+//! }
 //!
 //! // Create a hybrid KEM with your choice of components
-//! type MyHybridKem = GhpHybridKem<TraditionalKem, PostQuantumKem, Kdf, Prg>;
+//! type MyHybridKem = GhpHybridKem<TraditionalKem, PostQuantumKem, Kdf, Prg, MyLabel>;
 //!
 //! // Generate keys
 //! let mut rng = rand::thread_rng();

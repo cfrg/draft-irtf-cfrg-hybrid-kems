@@ -7,17 +7,17 @@ use crate::utils::{concat, max, min, split, HybridValue};
 /// Optimized construction for the case where the traditional component is a
 /// nominal group and the PQ component has strong binding properties.
 #[derive(Default)]
-pub struct QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl> {
-    _phantom: std::marker::PhantomData<(GroupT, KemPq, KdfImpl, PrgImpl)>,
+pub struct QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl, Label> {
+    _phantom: std::marker::PhantomData<(GroupT, KemPq, KdfImpl, PrgImpl, Label)>,
 }
 
-impl<GroupT, KemPq, KdfImpl, PrgImpl> Kem for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl>
+impl<GroupT, KemPq, KdfImpl, PrgImpl, Label> Kem for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl, Label>
 where
     GroupT: NominalGroup,
     KemPq: Kem,
     KdfImpl: Kdf,
     PrgImpl: Prg,
-    Self: HybridKemLabel,
+    Label: HybridKemLabel,
 {
     // Hybrid constants derived from group and KEM
     const SEED_LENGTH: usize = max(GroupT::SEED_LENGTH, KemPq::SEED_LENGTH);
@@ -109,7 +109,7 @@ where
             &ss_t,
             ct_t.as_bytes(),
             ek_t.as_bytes(),
-            Self::LABEL,
+            Label::LABEL,
         ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
@@ -152,7 +152,7 @@ where
             &ss_t,
             ct_t.as_bytes(),
             ek_t.as_bytes(),
-            Self::LABEL,
+            Label::LABEL,
         ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
@@ -179,13 +179,13 @@ where
     }
 }
 
-impl<GroupT, KemPq, KdfImpl, PrgImpl> EncapsDerand for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl>
+impl<GroupT, KemPq, KdfImpl, PrgImpl, Label> EncapsDerand for QsfHybridKem<GroupT, KemPq, KdfImpl, PrgImpl, Label>
 where
     GroupT: NominalGroup,
     KemPq: Kem + EncapsDerand,
     KdfImpl: Kdf,
     PrgImpl: Prg,
-    Self: HybridKemLabel,
+    Label: HybridKemLabel,
 {
     const RANDOMNESS_LENGTH: usize = GroupT::SEED_LENGTH + KemPq::RANDOMNESS_LENGTH;
 
@@ -226,7 +226,7 @@ where
             &ss_t,
             ct_t.as_bytes(),
             ek_t.as_bytes(),
-            Self::LABEL,
+            Label::LABEL,
         ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);

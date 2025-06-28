@@ -8,19 +8,19 @@ use crate::utils::{concat, max, min, split, HybridValue};
 /// and frequently reused. Uses an additional KeyHash KDF to pre-hash the hybrid
 /// encapsulation key.
 #[derive(Default)]
-pub struct PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl> {
-    _phantom: std::marker::PhantomData<(KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl)>,
+pub struct PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl, Label> {
+    _phantom: std::marker::PhantomData<(KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl, Label)>,
 }
 
-impl<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl> Kem
-    for PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl>
+impl<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl, Label> Kem
+    for PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl, Label>
 where
     KemT: Kem,
     KemPq: Kem,
     KdfImpl: Kdf,
     PrgImpl: Prg,
     KeyHashImpl: Kdf,
-    Self: HybridKemLabel,
+    Label: HybridKemLabel,
 {
     // Same constants as GHP
     const SEED_LENGTH: usize = max(KemT::SEED_LENGTH, KemPq::SEED_LENGTH);
@@ -107,7 +107,7 @@ where
             ct_pq.as_bytes(),
             ct_t.as_bytes(),
             &ekh,
-            Self::LABEL,
+            Label::LABEL,
         ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
@@ -157,7 +157,7 @@ where
             ct_pq.as_bytes(),
             ct_t.as_bytes(),
             &ekh,
-            Self::LABEL,
+            Label::LABEL,
         ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);
@@ -186,15 +186,15 @@ where
     }
 }
 
-impl<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl> EncapsDerand
-    for PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl>
+impl<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl, Label> EncapsDerand
+    for PreHybridKem<KemT, KemPq, KdfImpl, PrgImpl, KeyHashImpl, Label>
 where
     KemT: Kem + EncapsDerand,
     KemPq: Kem + EncapsDerand,
     KdfImpl: Kdf,
     PrgImpl: Prg,
     KeyHashImpl: Kdf,
-    Self: HybridKemLabel,
+    Label: HybridKemLabel,
 {
     const RANDOMNESS_LENGTH: usize = KemT::RANDOMNESS_LENGTH + KemPq::RANDOMNESS_LENGTH;
 
@@ -240,7 +240,7 @@ where
             ct_pq.as_bytes(),
             ct_t.as_bytes(),
             &ekh,
-            Self::LABEL,
+            Label::LABEL,
         ]);
 
         let ss_hybrid = KdfImpl::kdf(&kdf_input);

@@ -14,23 +14,26 @@ mod tests {
     use crate::traits::{AsBytes, EncapsDerand, HybridKemLabel, Kem, NominalGroup};
     use rand::rng;
 
-    // Type aliases for easier testing
-    type GhpTestKem = GhpHybridKem<TestKem, TestKem, TestKdf, TestPrgGhpPre>;
-    type PreTestKem = PreHybridKem<TestKem, TestKem, TestKdf, TestPrgGhpPre, TestKdf>;
-    type QsfTestKem = QsfHybridKem<TestGroup, TestKem, TestKdf, TestPrgQsf>;
-
-    // HybridKemLabel implementations for test types
-    impl HybridKemLabel for GhpTestKem {
+    // Label structs for test types
+    struct GhpTestLabel;
+    impl HybridKemLabel for GhpTestLabel {
         const LABEL: &'static [u8] = b"GHP-Test-Label";
     }
 
-    impl HybridKemLabel for PreTestKem {
+    struct PreTestLabel;
+    impl HybridKemLabel for PreTestLabel {
         const LABEL: &'static [u8] = b"PRE-Test-Label";
     }
 
-    impl HybridKemLabel for QsfTestKem {
+    struct QsfTestLabel;
+    impl HybridKemLabel for QsfTestLabel {
         const LABEL: &'static [u8] = b"QSF-Test-Label";
     }
+
+    // Type aliases for easier testing
+    type GhpTestKem = GhpHybridKem<TestKem, TestKem, TestKdf, TestPrgGhpPre, GhpTestLabel>;
+    type PreTestKem = PreHybridKem<TestKem, TestKem, TestKdf, TestPrgGhpPre, TestKdf, PreTestLabel>;
+    type QsfTestKem = QsfHybridKem<TestGroup, TestKem, TestKdf, TestPrgQsf, QsfTestLabel>;
 
     #[test]
     fn test_ghp_hybrid_kem() {
