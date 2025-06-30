@@ -829,7 +829,7 @@ built from random oracles. Examples include SHAKE256.
 
 ### Security Properties of PRE {#security-pre}
 
-The PRE hybrid KEM uses a function KeyHash to generate a short digest of the encapsulation keys.
+The PRE hybrid KEM framework uses a function KeyHash to generate a short digest of the encapsulation keys.
 For IND-CCA2 of PRE, this function must be collision-resistant.
 
 TODO: revisit after binding properties
