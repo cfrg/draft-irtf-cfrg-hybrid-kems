@@ -778,7 +778,7 @@ together with exponentiation.
 
 ### Security Requirements for KDFs {#security-kdfs}
 
-The KDF MUST be indifferentiable from a random oracle {{MRH03}}, even to a quantum attacker {{QROM}}.
+The KDF MUST be indifferentiable from a random oracle (RO) {{MRH03}}, even to a quantum attacker {{QROM}}.
 This is a conservative choice
 given a review of the existing security analyses for our hybrid KEM constructions.
 (In short, most IND-CCA2 analyses require only that the KDF is some kind of pseudorandom function,
