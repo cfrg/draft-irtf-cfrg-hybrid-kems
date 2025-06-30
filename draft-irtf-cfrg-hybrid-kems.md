@@ -851,11 +851,10 @@ We also argue that this extension applies, again with nearly trivial modificatio
 
 We reiterate that modulo some low-level technical details, our requirement that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF used in GHP and PRE meets the split-key pseudorandomness property used in GHP's analysis.
 
-To summarize, all three hybrid KEMs in this document are IND-CCA2 when instantiated
-with cryptographic components that
-meet the security requirements described above. Any changes to the routines,
-including key generation/derivation, are not guaranteed to produce
-secure results.
+Therefore all three hybrid KEMs in this document are IND-CCA2 when instantiated with
+cryptographic components that meet the security requirements described above. Any
+changes to the algorithms, including key generation/derivation, are not guaranteed
+to produce secure results.
 
 ###Binding analyses
 
