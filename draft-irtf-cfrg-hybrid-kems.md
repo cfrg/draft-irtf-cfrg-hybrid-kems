@@ -699,7 +699,7 @@ an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
 KEM is secure: this is the 'hybrid' property. Next we describe this document's specific
 security goals for hybrid KEMs.
 
-## Security Goals for Hybrid KEMs {#security-properties}
+## Cryptographic Security Goals for Hybrid KEMs {#security-properties}
 
 ### IND-CCA Security {#ind-cca}
 
