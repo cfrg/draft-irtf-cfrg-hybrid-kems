@@ -829,7 +829,7 @@ PRGs are related to extendable output functions (XOFs) which can be
 built from random oracles. Examples include SHAKE256.
 
 
-### Security Properties of KeyHash {#security-keyhash}
+### Security Properties of PRE {#security-pre}
 
 The PRE hybrid KEM uses a function KeyHash to generate a short digest of the encapsulation keys.
 For IND-CCA2 of PRE, this function must be collision-resistant.
