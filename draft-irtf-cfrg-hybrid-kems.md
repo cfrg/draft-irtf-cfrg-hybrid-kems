@@ -736,6 +736,13 @@ attacks in the LEAK model are known {{LEAK-ATTACK}}. We are not aware
 of any common settings where the MAL-BIND security model is needed; thus,
 LEAK-BIND seems a sensible middle ground.
 
+TODO why K-PK and K-CT
+
+Implementors should not interpret the paragraph above as absolving them
+of their responsibility to carefully think through whether MAL-BIND attacks
+apply in their settings. 
+
+
 ## Security Non-goals for Hybrid KEMs {#non-goals}
 
 Considerations that were considered and not included in these designs:
@@ -779,9 +786,9 @@ The KDF MUST be indifferentiable from a random oracle (RO) {{MRH03}}, even to a 
 This is a conservative choice
 given a review of the existing security analyses for our hybrid KEM constructions.
 (In short, most IND-CCA2 analyses require only that the KDF is some kind of pseudorandom function,
-but the SDH-based IND-CCA2 analysis of QSF in {{XWING}} relies on the KDF being a RO.)
+but the SDH-based IND-CCA2 analysis of QSF in {{XWING}} relies on the KDF being a RO. Proofs of our target binding properties for our hybrid KEMs require the KDF is a collision-resistant function.)
 
-TODO: revisit this section once requirements for BIND properties are known.
+
 
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed as
 applying a (RO-based) pseudorandom function - keyed with the shared secrets output by the constituent KEMs -
@@ -828,10 +835,10 @@ built from random oracles. Examples include SHAKE256.
 
 ### Security Properties of PRE {#security-pre}
 
-The PRE hybrid KEM framework uses a function KeyHash to generate a short digest of the encapsulation keys.
-For IND-CCA2 of PRE, this function must be collision-resistant.
 
-TODO: revisit after binding properties
+The PRE hybrid KEM framework uses a function KeyHash to generate a short digest of the encapsulation keys.
+This function must be collision-resistant.
+
 
 
 ## Security Properties of Hybrid KEMs Frameworks
@@ -846,7 +853,7 @@ As long as the aforementioned security requirements of the component parts are m
 
 This document's exact GHP and PRE constructions do not have IND-CCA2 analyses; the GHP paper gives a slightly different version, namely they do not include the public keys in the KDF. However, we argue that the proof goes through with trivial modifications if the public keys are included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces to the split-key pseudorandomness of the KDF. (GHP call the KDF a "core" function, and denote it as W.) We observe that adding the public keys to the inputs only changes the concrete contents of the reduction's queries to its oracle. Since the reduction chooses the public keys itself, they can be added to the oracle inputs, and the remainder of the proof goes through unmodified.
 
-We also argue that this extension applies, again with nearly trivial modifications, to prove security of PRE. Observe that the only difference between GHP and PRE is prehashing of the encapsulation keys. As long as the hash function is collision resistant, any event that happens in the IND-CCA2 game of GHP happens only with negligible probability in the IND-CCA2 game of PRE.
+We also argue that this extension applies, again with nearly trivial modifications, to prove security of PRE. Observe that the only difference between GHP and PRE is prehashing of the encapsulation keys. As long as the hash function is collision resistant, any event that happens in the IND-CCA2 game of GHP happens only with negligibly different probability in the IND-CCA2 game of PRE.
 
 We reiterate that modulo some low-level technical details, our requirement that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF used in GHP and PRE meets the split-key pseudorandomness property used in GHP's analysis.
 
@@ -857,9 +864,79 @@ to produce secure results.
 
 ###Binding analyses
 
-binding proofs for GHP, PRE, QSF TODO
+There are three hybrid KEM frameworks, and two target binding properties, so we
+need six total analyses. None of these results were known; thus the following 
+are new results by the editorial team. We include informal justifications here and defer
+rigorous proofs to a forthcoming paper.
+
+We note that these sketches implicitly ignore the 
+fact that in our hybrid KEMs, both key pairs are derived from a common random seed;
+we instead implicitly think of them as two runs of DeriveKeyPair with independent random seeds.
+We justify this simplification by noting that in the LEAK model - in which the adversary
+is given the key pairs resulting from an honest run of KeyGen - the pseudorandomness
+of the seed expansion implies the adversary's input distributions in the two cases
+are computationally indistinguishable.
 
 
+####GHP Binding
+
+#####LEAK-BIND-K-CT of GHP
+
+Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-CT.
+
+Justification: To win LEAK-BIND-K-CT, given knowledge of two honestly-generated GHP secret keys, the adversary must construct two distinct GHP ciphertexts that decapsulate to the same (non-bot) key. Since GHP includes the ciphertexts in the key derivation, the condition that the ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a collision in the KDF.
+
+####LEAK-BIND-K-PK of GHP
+
+Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-PK.
+
+Justification: As described above, in the LEAK-BIND-K-PK game, to win the adversary must construct two ciphertexts that decapsulate to the same non-bot key, for distinct GHP public keys. Again, since GHP includes the public keys in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must collide the KDF. 
+
+####PRE Binding
+
+#####LEAK-BIND-K-CT of PRE
+
+Claim: If KDF is collision-resistant, then PRE is LEAK-BIND-K-CT.
+
+Justification: PRE and GHP do not differ on how they incorporate the ciphertexts into key derivation, so the GHP proof above applies.
+
+#####LEAK-BIND-K-PK of PRE
+
+Claim: If KDF and KeyHash are collision-resistant, then PRE is LEAK-BIND-K-PK.
+
+Justification: The only relevant difference between PRE and GHP is key prehashing. This does indeed change the proof, since we can no longer argue the distinctness condition on the public keys _directly_ gives a collision in KDF - the keys are hashed, and only their hash is input into the KDF. However, as long as KeyHash is collision-resistant, the distinctness condition implies the public key hashes are distinct. Thus, for the adversary to win it must either collide KeyHash or KDF. 
+
+####QSF Binding
+
+The LEAK-BIND proofs for QSF are a bit more subtle than for GHP and PRE; the main reason for this is QSF's omission of the PQ KEM key and ciphertext from the KDF. We will show that QSF still has our target LEAK-BIND properties as long as the underlying PQ-KEM also has the corresponding LEAK-BIND property. We note that our preliminary results suggest a different proof strategy, which instead directly uses properties of the nominal group, may work here; we present the PQ-KEM route for concreteness. 
+
+#####LEAK-BIND-K-CT of QSF
+
+Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then QSF is LEAK-BIND-K-CT.
+
+Justification: To win the adversary must construct two distinct QSF ciphertexts that decapsulate to the same non-bot key.
+Call the QSF ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1, ct_PQ^1). Distinctness
+implies (ct_T^0, ct_PQ^0) != (ct_T^1, ct_PQ^1). Since ct_T is included in the KDF, if ct_T^0 != ct_T^1,
+a win must collide the KDF.
+
+Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1
+but ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0))
+is not equal to ss_PQ^1 (:= KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the KDF
+inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
+
+If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must output two distinct PQ KEM ciphertexts that decapsulate to the same key. The reduction does this by generating two nominal-group key pairs and running the QSF LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ KEM ciphertexts output by the adversary. The probability that the adversary wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a lower bound on the probability of the reduction winning the LEAK-BIND-K-CT game against the PQ KEM.
+
+We conclude by noting these cases are exhaustive. 
+
+#####LEAK-BIND-K-PK of QSF
+
+Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then QSF is LEAK-BIND-K-PK.
+
+Justification: Similar to the above, we proceed by a case analysis on the win condition of the LEAK-BIND-K-PK game.
+The condition is (ek_T^0, ek_PQ^0) != (ek_T^1, ek_PQ^1) and ss_H^0 = ss_H^1. Again, as above we argue that the
+only nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we can directly get a KDF collision from a winning output. In this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be the same or different. IF they are different, we again get a KDF collision from a win. If they are the same, in a similar way as above, we can build a reduction to the LEAK-BIND-K-PK of PQ KEM.
+
+Again, we conclude by noting that these cases are exhaustive. 
 
 ## Other Considerations
 
