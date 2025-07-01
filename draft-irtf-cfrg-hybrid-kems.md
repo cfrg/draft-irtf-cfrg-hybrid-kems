@@ -352,14 +352,20 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
 - `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
   a ciphertext `ct` and shared secret `ss`.
-- `Decaps(dk, ct) -> ss`: A decapsulation algorithm, which takes
-  as input a secret decapsulation key `dk` and ciphertext `ct` and outputs a
-  shared secret `ss`.
+- `Decaps(dk, ct) -> ss`: A deterministic decapsulation algorithm, which
+  takes as input a secret decapsulation key `dk` and ciphertext `ct` and
+  outputs a shared secret `ss`.
+
+We also make use of internal algorithms such as:
+
+- `expandDecapsulationKey(dk) -> (ek, dk)`: A deterministic algorithm that
+  takes as input a decapsulation key `dk` and generates keypair intermediate
+  values for computation.
 
 We assume that the values produced and consumed by the above functions are
 all byte strings, with fixed lengths:
 
-- `Nseed`: The length in bytes of a key seed (input to DeriveKeyPair)
+- `Nseed`: The length in bytes of a key seed
 - `Nek`: The length in bytes of a public encapsulation key
 - `Ndk`: The length in bytes of a secret decapsulation key
 - `Nct`: The length in bytes of a ciphertext produced by Encaps
@@ -528,18 +534,20 @@ Given these constituent parts, the GHP hybrid KEM is defined as
 follows:
 
 ~~~
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def DeriveKeyPair(seed):
+def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    ek_H = concat(ek_T, ek_PQ)
-    dk_H = concat(dk_T, dk_PQ)
-    return (ek_H, dk_H)
+    return (ek_T, ek_PQ, dk_T, dk_PQ)
+
+def DeriveKeyPair(seed):
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
+    return (concat(ek_T, ek_PQ), seed)
+
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
 
 def Encaps(ek):
     (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
@@ -550,9 +558,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-    ek_T = KEM_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
     (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
     ss_T = KEM_T.Decap(dk_T, ct_T)
@@ -595,9 +601,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-    ek_T = KEM_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
     (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
     ss_T = KEM_T.Decap(dk_T, ct_T)
@@ -646,11 +650,7 @@ Nss = min(Group_T.Nss, KEM_PQ.Nss)
 Given these constituent parts, we define the QSF hybrid KEM as follows:
 
 ~~~
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def DeriveKeyPair(seed):
+def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
@@ -658,9 +658,15 @@ def DeriveKeyPair(seed):
     ek_T = Group_T.Exp(Group_T.g, dk_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
 
-    ek_H = concat(ek_T, ek_PQ)
-    dk_H = concat(dk_T, dk_PQ)
-    return (ek_H, dk_H)
+    return (ek_T, ek_PQ, dk_T, dk_PQ)
+
+def DeriveKeyPair(seed):
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
+    return (concat(ek_T, ek_PQ), seed)
+
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
 
 def Encaps(ek):
     (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
@@ -675,11 +681,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(Group_T.Ndk, KEM_PQ.Ndk, dk)
-    (ct_T, ct_PQ) = split(Group_T.Nct, KEM_PQ.Nct, ct)
-
-    ek_T = Group_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
@@ -892,25 +894,25 @@ verifying test vectors), it is useful for the implementation to expose a
    `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
    secret `shared_secret`.
 
-An implementation that exposes EncapsDerand must also define a required amount
-of randomness:
+An implementation that exposes `EncapsDerand` must also define a required
+amount of randomness:
 
 - `Nrandom`: The length in bytes of the randomness provided to EncapsDerand
 
 The corresponding change for a nominal group is to replace randomly-generated
-inputs to RandomScalar with deterministic ones.  In other words, for a nominal
-group, `Nrandom = Nseed`.
+inputs to `RandomScalar` with deterministic ones.  In other words, for a
+nominal group, `Nrandom = Nseed`.
 
 When a hybrid KEM is instantiated with constituents that support derandomized
 encapsulation (either KEMs or groups), the hybrid KEM can also support
-EncapsDerand, with `Nrandom = T.Nrandom + PQ.Nrandom`.  The structure of the
-hybrid KEM's EncapsDerand algorithm is the same as its `Encaps` method, with the
-following differences:
+`EncapsDerand()`, with `Nrandom = T.Nrandom + PQ.Nrandom`.  The structure of
+the hybrid KEM's `EncapsDerand` algorithm is the same as its `Encaps` method,
+with the following differences:
 
-* The EncapsDerand algorithm also takes a `randomness` parameter, which is a
+* The `EncapsDerand` algorithm also takes a `randomness` parameter, which is a
   byte string of length `Nrandom`.
-* Invocations of Encaps or RandomScalar (with a random input) in the constituent
-  algorithms are replaced with calls ot EncapsDerand or RandomScalar with a
+* Invocations of `Encaps` or `RandomScalar` (with a random input) in the constituent
+  algorithms are replaced with calls to `EncapsDerand` or `RandomScalar` with a
   deterministic input.
 * The randomness used by the traditional constituent is the first `T.Nrandom`
   bytes of the input randomness.
