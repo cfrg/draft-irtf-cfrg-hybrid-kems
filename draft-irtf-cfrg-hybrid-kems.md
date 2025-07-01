@@ -736,9 +736,6 @@ attacks in the LEAK model are known {{LEAK-ATTACK}}. We are not aware
 of any common settings where the MAL-BIND security model is needed; thus,
 LEAK-BIND seems a sensible middle ground.
 
-Implementors SHOULD think carefully about whether MAL-BIND attacks are
-feasible for their systems or protocols.
-
 ## Security Non-goals for Hybrid KEMs {#non-goals}
 
 Considerations that were considered and not included in these designs:
