@@ -1048,11 +1048,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">hybrid-kems</td>
-<td class="right">June 2025</td>
+<td class="right">July 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly &amp; Barnes</td>
-<td class="center">Expires 27 December 2025</td>
+<td class="center">Expires 2 January 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1065,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-25" class="published">25 June 2025</time>
+<time datetime="2025-07-01" class="published">1 July 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-27">27 December 2025</time></dd>
+<dd class="expires"><time datetime="2026-01-02">2 January 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1123,7 +1123,7 @@ algorithms are secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 27 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 2 January 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1461,28 +1461,36 @@ algorithm, which takes as input a public encapsulation key <code>ek</code> and o
 a ciphertext <code>ct</code> and shared secret <code>ss</code>.<a href="#section-4.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-3.4">
-            <p id="section-4.1-3.4.1"><code>Decaps(dk, ct) -&gt; ss</code>: A decapsulation algorithm, which takes
-as input a secret decapsulation key <code>dk</code> and ciphertext <code>ct</code> and outputs a
-shared secret <code>ss</code>.<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-3.4.1"><code>Decaps(dk, ct) -&gt; ss</code>: A deterministic decapsulation algorithm, which
+takes as input a secret decapsulation key <code>dk</code> and ciphertext <code>ct</code> and
+outputs a shared secret <code>ss</code>.<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.1-4">We assume that the values produced and consumed by the above functions are
-all byte strings, with fixed lengths:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">We also make use of internal algorithms such as:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-5.1">
-            <p id="section-4.1-5.1.1"><code>Nseed</code>: The length in bytes of a key seed (input to DeriveKeyPair)<a href="#section-4.1-5.1.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-5.1.1"><code>expandDecapsulationKey(dk) -&gt; (ek, dk)</code>: A deterministic algorithm that
+takes as input a decapsulation key <code>dk</code> and generates keypair intermediate
+values for computation.<a href="#section-4.1-5.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-5.2">
-            <p id="section-4.1-5.2.1"><code>Nek</code>: The length in bytes of a public encapsulation key<a href="#section-4.1-5.2.1" class="pilcrow">¶</a></p>
+        </ul>
+<p id="section-4.1-6">We assume that the values produced and consumed by the above functions are
+all byte strings, with fixed lengths:<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1-7.1">
+            <p id="section-4.1-7.1.1"><code>Nseed</code>: The length in bytes of a key seed<a href="#section-4.1-7.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-5.3">
-            <p id="section-4.1-5.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-5.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-7.2">
+            <p id="section-4.1-7.2.1"><code>Nek</code>: The length in bytes of a public encapsulation key<a href="#section-4.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-5.4">
-            <p id="section-4.1-5.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by Encaps<a href="#section-4.1-5.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-7.3">
+            <p id="section-4.1-7.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-7.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-5.5">
-            <p id="section-4.1-5.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by Encaps or Decaps<a href="#section-4.1-5.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-7.4">
+            <p id="section-4.1-7.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by Encaps<a href="#section-4.1-7.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-7.5">
+            <p id="section-4.1-7.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by Encaps or Decaps<a href="#section-4.1-7.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1753,18 +1761,20 @@ Nss = min(KEM_T.Nss, KEM_PQ.Nss)
 follows:<a href="#section-5.1-8" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1-9">
 <pre>
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def DeriveKeyPair(seed):
+def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    ek_H = concat(ek_T, ek_PQ)
-    dk_H = concat(dk_T, dk_PQ)
-    return (ek_H, dk_H)
+    return (ek_T, ek_PQ, dk_T, dk_PQ)
+
+def DeriveKeyPair(seed):
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
+    return (concat(ek_T, ek_PQ), seed)
+
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
 
 def Encaps(ek):
     (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
@@ -1775,9 +1785,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-    ek_T = KEM_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
     (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
     ss_T = KEM_T.Decap(dk_T, ct_T)
@@ -1826,9 +1834,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-    ek_T = KEM_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
     (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
     ss_T = KEM_T.Decap(dk_T, ct_T)
@@ -1891,11 +1897,7 @@ Nss = min(Group_T.Nss, KEM_PQ.Nss)
 <p id="section-5.3-8">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.3-8" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.3-9">
 <pre>
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def DeriveKeyPair(seed):
+def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
@@ -1903,9 +1905,15 @@ def DeriveKeyPair(seed):
     ek_T = Group_T.Exp(Group_T.g, dk_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
 
-    ek_H = concat(ek_T, ek_PQ)
-    dk_H = concat(dk_T, dk_PQ)
-    return (ek_H, dk_H)
+    return (ek_T, ek_PQ, dk_T, dk_PQ)
+
+def DeriveKeyPair(seed):
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
+    return (concat(ek_T, ek_PQ), seed)
+
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
 
 def Encaps(ek):
     (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
@@ -1920,11 +1928,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (dk_T, dk_PQ) = split(Group_T.Ndk, KEM_PQ.Ndk, dk)
-    (ct_T, ct_PQ) = split(Group_T.Nct, KEM_PQ.Nct, ct)
-
-    ek_T = Group_T.ToEncaps(dk_T)
-    ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
@@ -2354,29 +2358,29 @@ verifying test vectors), it is useful for the implementation to expose a
  secret <code>shared_secret</code>.<a href="#appendix-A-2.1.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="appendix-A-3">An implementation that exposes EncapsDerand must also define a required amount
-of randomness:<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">An implementation that exposes <code>EncapsDerand</code> must also define a required
+amount of randomness:<a href="#appendix-A-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-A-4.1">
           <p id="appendix-A-4.1.1"><code>Nrandom</code>: The length in bytes of the randomness provided to EncapsDerand<a href="#appendix-A-4.1.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="appendix-A-5">The corresponding change for a nominal group is to replace randomly-generated
-inputs to RandomScalar with deterministic ones.  In other words, for a nominal
-group, <code>Nrandom = Nseed</code>.<a href="#appendix-A-5" class="pilcrow">¶</a></p>
+inputs to <code>RandomScalar</code> with deterministic ones.  In other words, for a
+nominal group, <code>Nrandom = Nseed</code>.<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 <p id="appendix-A-6">When a hybrid KEM is instantiated with constituents that support derandomized
 encapsulation (either KEMs or groups), the hybrid KEM can also support
-EncapsDerand, with <code>Nrandom = T.Nrandom + PQ.Nrandom</code>.  The structure of the
-hybrid KEM's EncapsDerand algorithm is the same as its <code>Encaps</code> method, with the
-following differences:<a href="#appendix-A-6" class="pilcrow">¶</a></p>
+<code>EncapsDerand()</code>, with <code>Nrandom = T.Nrandom + PQ.Nrandom</code>.  The structure of
+the hybrid KEM's <code>EncapsDerand</code> algorithm is the same as its <code>Encaps</code> method,
+with the following differences:<a href="#appendix-A-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-A-7.1">
-          <p id="appendix-A-7.1.1">The EncapsDerand algorithm also takes a <code>randomness</code> parameter, which is a
+          <p id="appendix-A-7.1.1">The <code>EncapsDerand</code> algorithm also takes a <code>randomness</code> parameter, which is a
 byte string of length <code>Nrandom</code>.<a href="#appendix-A-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.2">
-          <p id="appendix-A-7.2.1">Invocations of Encaps or RandomScalar (with a random input) in the constituent
-algorithms are replaced with calls ot EncapsDerand or RandomScalar with a
+          <p id="appendix-A-7.2.1">Invocations of <code>Encaps</code> or <code>RandomScalar</code> (with a random input) in the constituent
+algorithms are replaced with calls to <code>EncapsDerand</code> or <code>RandomScalar</code> with a
 deterministic input.<a href="#appendix-A-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.3">

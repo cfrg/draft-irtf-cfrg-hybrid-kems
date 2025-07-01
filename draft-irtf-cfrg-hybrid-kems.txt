@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 27 December 2025                                          Cisco
-                                                            25 June 2025
+Expires: 2 January 2026                                            Cisco
+                                                             1 July 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 December 2025.
+   This Internet-Draft will expire on 2 January 2026.
 
 Copyright Notice
 
@@ -247,14 +247,20 @@ Table of Contents
       which takes as input a public encapsulation key ek and outputs a
       ciphertext ct and shared secret ss.
 
-   *  Decaps(dk, ct) -> ss: A decapsulation algorithm, which takes as
-      input a secret decapsulation key dk and ciphertext ct and outputs
-      a shared secret ss.
+   *  Decaps(dk, ct) -> ss: A deterministic decapsulation algorithm,
+      which takes as input a secret decapsulation key dk and ciphertext
+      ct and outputs a shared secret ss.
+
+   We also make use of internal algorithms such as:
+
+   *  expandDecapsulationKey(dk) -> (ek, dk): A deterministic algorithm
+      that takes as input a decapsulation key dk and generates keypair
+      intermediate values for computation.
 
    We assume that the values produced and consumed by the above
    functions are all byte strings, with fixed lengths:
 
-   *  Nseed: The length in bytes of a key seed (input to DeriveKeyPair)
+   *  Nseed: The length in bytes of a key seed
 
    *  Nek: The length in bytes of a public encapsulation key
 
@@ -434,18 +440,20 @@ Table of Contents
    Given these constituent parts, the GHP hybrid KEM is defined as
    follows:
 
-   def GenerateKeyPair():
-       seed = random(Nseed)
-       return DeriveKeyPair(seed)
-
-   def DeriveKeyPair(seed):
+   def expandDecapsulationKey(seed):
        seed_full = PRG(seed)
        (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
        (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
        (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-       ek_H = concat(ek_T, ek_PQ)
-       dk_H = concat(dk_T, dk_PQ)
-       return (ek_H, dk_H)
+       return (ek_T, ek_PQ, dk_T, dk_PQ)
+
+   def DeriveKeyPair(seed):
+       (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
+       return (concat(ek_T, ek_PQ), seed)
+
+   def GenerateKeyPair():
+       seed = random(Nseed)
+       return DeriveKeyPair(seed)
 
    def Encaps(ek):
        (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
@@ -456,9 +464,7 @@ Table of Contents
        return (ss_H, ct_H)
 
    def Decaps(dk, ct):
-       (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-       ek_T = KEM_T.ToEncaps(dk_T)
-       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+       (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
        (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
        ss_T = KEM_T.Decap(dk_T, ct_T)
@@ -499,9 +505,7 @@ Table of Contents
        return (ss_H, ct_H)
 
    def Decaps(dk, ct):
-       (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-       ek_T = KEM_T.ToEncaps(dk_T)
-       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+       (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
        (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
        ss_T = KEM_T.Decap(dk_T, ct_T)
@@ -549,11 +553,7 @@ Table of Contents
    Given these constituent parts, we define the QSF hybrid KEM as
    follows:
 
-   def GenerateKeyPair():
-       seed = random(Nseed)
-       return DeriveKeyPair(seed)
-
-   def DeriveKeyPair(seed):
+   def expandDecapsulationKey(seed):
        seed_full = PRG(seed)
        (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
@@ -561,9 +561,15 @@ Table of Contents
        ek_T = Group_T.Exp(Group_T.g, dk_T)
        (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
 
-       ek_H = concat(ek_T, ek_PQ)
-       dk_H = concat(dk_T, dk_PQ)
-       return (ek_H, dk_H)
+       return (ek_T, ek_PQ, dk_T, dk_PQ)
+
+   def DeriveKeyPair(seed):
+       (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
+       return (concat(ek_T, ek_PQ), seed)
+
+   def GenerateKeyPair():
+       seed = random(Nseed)
+       return DeriveKeyPair(seed)
 
    def Encaps(ek):
        (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
@@ -578,11 +584,7 @@ Table of Contents
        return (ss_H, ct_H)
 
    def Decaps(dk, ct):
-       (dk_T, dk_PQ) = split(Group_T.Ndk, KEM_PQ.Ndk, dk)
-       (ct_T, ct_PQ) = split(Group_T.Nct, KEM_PQ.Nct, ct)
-
-       ek_T = Group_T.ToEncaps(dk_T)
-       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+       (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
 
        ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
        ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
@@ -962,15 +964,15 @@ Appendix A.  Deterministic Encapsulation
 
    When a hybrid KEM is instantiated with constituents that support
    derandomized encapsulation (either KEMs or groups), the hybrid KEM
-   can also support EncapsDerand, with Nrandom = T.Nrandom + PQ.Nrandom.
-   The structure of the hybrid KEM's EncapsDerand algorithm is the same
-   as its Encaps method, with the following differences:
+   can also support EncapsDerand(), with Nrandom = T.Nrandom +
+   PQ.Nrandom.  The structure of the hybrid KEM's EncapsDerand algorithm
+   is the same as its Encaps method, with the following differences:
 
    *  The EncapsDerand algorithm also takes a randomness parameter,
       which is a byte string of length Nrandom.
 
    *  Invocations of Encaps or RandomScalar (with a random input) in the
-      constituent algorithms are replaced with calls ot EncapsDerand or
+      constituent algorithms are replaced with calls to EncapsDerand or
       RandomScalar with a deterministic input.
 
    *  The randomness used by the traditional constituent is the first
