@@ -834,7 +834,7 @@ For IND-CCA2 of PRE, this function must be collision-resistant.
 TODO: revisit after binding properties
 
 
-## Security Properties of Hybrid KEMs in this document
+## Security Properties of Hybrid KEMs Frameworks
 
 ### IND-CCA2 analyses
 
