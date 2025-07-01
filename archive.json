@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-29T01:20:19.289505+00:00",
+  "timestamp": "2025-07-01T01:20:39.949510+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -859,6 +859,24 @@
       "body": "The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.) \n\nSince (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.",
       "createdAt": "2025-06-27T19:07:29Z",
       "updatedAt": "2025-06-27T19:07:29Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 58,
+      "id": "I_kwDOMmhxws6-GnVJ",
+      "title": "restore rederivation from seed via DeriveKeyPair(seed) inside Decaps()",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/58",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "dconnolly"
+      ],
+      "labels": [],
+      "body": "This got mangled in the major refactor",
+      "createdAt": "2025-06-30T18:04:24Z",
+      "updatedAt": "2025-06-30T18:04:24Z",
       "closedAt": null,
       "comments": []
     }
@@ -4573,7 +4591,7 @@
       "labels": [],
       "body": "This PR adds a reference implementation of the hybrid KEMs.  There are traits for the constituent parts, and then the hybrid KEMs are defined generically over types that implement the constituent parts.\r\n\r\nMy first experiment with Claude Code.  All of the code is Claude-written, I did not open any of the files in an editor.  I have not reviewed, will review as part of this PR.\r\n\r\nFull transcript:\r\n\r\n* Can you read files from the parent directory?\r\n* Make a new Cargo/Rust project in this directory.  it should be in a directory called reference-implementation, and the name of the module should be \r\n* Change directory into reference-implementation\r\n* Add a trait for the KEM interface described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Give the constants more descriptive names\r\n* Add traits for the KDF and PRG interfaces described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Rename kem.rs to something more appropriate\r\n* Now write an implementation of the GHP hybrid KEM.  The hybrid KEM should be generic over its constituents, using the traits to bound the generic \r\n* Please add real implementations for the placeholders.  You can assume that the keys, ciphertexts, and shared secrets serialize to fixed-length byte \r\n* Instead of to_bytes / from_bytes, I would use serialize and deserialize.  WHen you serialize, use slices instead of Vec.\r\n* Go back to traits.rs.  Don't use a mutable reference argument, return a reference.  And the serialize methods don't need to be fallible.\r\n* For the hybrid serialization, make the same assumption that the deserialization methods make, namely that the T and PQ serializations are \r\n* In order to make serialization and deserialization easier, change the hybrid keys and ciphertexts just to hold a byte string.\r\n* The generate_key_pair method on GHP needs to actually use random data.  You should take a randomness source as input and use it.  Update the KEM \r\n* Use the CryptoRng trait instead of Rng\r\n* Don't use Rng, just CryptoRng\r\n* Use the latest version\r\n* Don't use RngCore\r\n* Don't use Rng.  Just CryptoRng.\r\n* Thanks, great work.  Now take the GHP implementation, and use it to generate implementations of the PRE and QSF hybrid KEMs\r\n* Move the NominalGroup trait to traits.rs\r\n* Have all of the hybrid KEMs use the same error type.  Split it out into error.rs if you think that's appropriate.\r\n* Are there any placeholders left in the codebase?\r\n* Replace the placeholder in qsf.rs with real randomness\r\n* Instead of using thread_rng, encaps should take an rng argument\r\n* Don't update the trait, remove it from the qsf.rs file.\r\n* Convert this crate from a binary crate to a library crate\r\n* commit the current state to a new branch called vibe-code\r\n* Create test implementations of the traits in traits.rs.  These implementations should fulfill the API in the simplest way possible, without being \r\n* Factor out the test functions so that they can be reused with other implementations.  But keep the tests.\r\n* Now add tests for each of the hybrid KEMs.  You should be able to reuse the KEM tests you already created.\r\n* Commit the tests\r\n* /exit \r\n\r\n",
       "createdAt": "2025-06-11T22:54:14Z",
-      "updatedAt": "2025-06-28T15:20:27Z",
+      "updatedAt": "2025-06-30T07:47:47Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
@@ -4591,6 +4609,13 @@
           "body": "* Add a github actions workflow that runs \"cargo test\" on the reference implementation\r\n* Change the name of the workflow to \"Test reference implementation\".  Only run if something in the reference implementation has changed.\r\n* Commit and push the change\r\n* /exit",
           "createdAt": "2025-06-11T23:02:54Z",
           "updatedAt": "2025-06-11T23:02:54Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is this one defunct in favor of https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8 now? ",
+          "createdAt": "2025-06-30T07:47:47Z",
+          "updatedAt": "2025-06-30T07:47:47Z"
         }
       ],
       "reviews": [
@@ -5214,19 +5239,300 @@
       "labels": [],
       "body": "WRiteup is still work in progress, but i thought people would like to see what i'm working on, to give feedback. STill TODO is fleshing out proofs for leak-bind. ",
       "createdAt": "2025-06-27T20:13:49Z",
-      "updatedAt": "2025-06-27T20:13:50Z",
+      "updatedAt": "2025-06-30T12:56:22Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "sec-props",
-      "headRefOid": "694d5553ebc031ca00e2bfe7c443ab06da3c40c1",
+      "headRefOid": "192b6efab9e172566e3f5b9a01f51f28cdcb6dec",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6xCDGr",
+          "commit": {
+            "abbreviatedOid": "694d555"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T06:54:30Z",
+          "updatedAt": "2025-06-30T06:54:30Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\n## Cryptographic Security Goals for Hybrid KEMs {#security-properties}\r\n```",
+              "createdAt": "2025-06-30T06:54:30Z",
+              "updatedAt": "2025-06-30T06:54:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCFj5",
+          "commit": {
+            "abbreviatedOid": "09afb00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T06:58:44Z",
+          "updatedAt": "2025-06-30T06:58:44Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "For KEMs with uniform messages IND-CCA1 and IND-CCA2 are [equivalent](https://eprint.iacr.org/2007/036.pdf#section.C) anyway, most of the literature just calls it (~IND-CCA2) IND-CCA now including NIST ",
+              "createdAt": "2025-06-30T06:58:44Z",
+              "updatedAt": "2025-06-30T07:30:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCLwB",
+          "commit": {
+            "abbreviatedOid": "09afb00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:09:33Z",
+          "updatedAt": "2025-06-30T07:09:34Z",
+          "comments": [
+            {
+              "originalPosition": 73,
+              "body": "SHOULD is normative language and since we haven't targeted MAL-BIND and aren't giving our reader explicitly MAL-BIND options in this document (some of the concrete instances in the other document may be) we should probably take this out",
+              "createdAt": "2025-06-30T07:09:33Z",
+              "updatedAt": "2025-06-30T07:09:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCMlZ",
+          "commit": {
+            "abbreviatedOid": "09afb00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:10:55Z",
+          "updatedAt": "2025-06-30T07:10:55Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "todo: distinguish key binding from the things we call X-BIND-K-[CT/PK] above but haven't explained yet",
+              "createdAt": "2025-06-30T07:10:55Z",
+              "updatedAt": "2025-06-30T07:10:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCaYu",
+          "commit": {
+            "abbreviatedOid": "09afb00"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:32:51Z",
+          "updatedAt": "2025-06-30T07:32:52Z",
+          "comments": [
+            {
+              "originalPosition": 117,
+              "body": "```suggestion\r\nThe KDF MUST be indifferentiable from a random oracle (RO) {{MRH03}}, even to a quantum attacker {{QROM}}.\r\n```",
+              "createdAt": "2025-06-30T07:32:52Z",
+              "updatedAt": "2025-06-30T07:32:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCcCx",
+          "commit": {
+            "abbreviatedOid": "3fd6fe6"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:35:29Z",
+          "updatedAt": "2025-06-30T07:35:30Z",
+          "comments": [
+            {
+              "originalPosition": 142,
+              "body": "```suggestion\r\n### Security Properties of PRE {#security-pre}\r\n```",
+              "createdAt": "2025-06-30T07:35:30Z",
+              "updatedAt": "2025-06-30T07:35:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCc3G",
+          "commit": {
+            "abbreviatedOid": "fc8fc80"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:36:45Z",
+          "updatedAt": "2025-06-30T07:36:45Z",
+          "comments": [
+            {
+              "originalPosition": 146,
+              "body": "```suggestion\r\nThe PRE hybrid KEM framework uses a function KeyHash to generate a short digest of the encapsulation keys.\r\nFor IND-CCA2 of PRE, this function must be collision-resistant.\r\n```",
+              "createdAt": "2025-06-30T07:36:45Z",
+              "updatedAt": "2025-06-30T07:36:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCdJ7",
+          "commit": {
+            "abbreviatedOid": "fc8fc80"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:37:11Z",
+          "updatedAt": "2025-06-30T07:37:12Z",
+          "comments": [
+            {
+              "originalPosition": 154,
+              "body": "```suggestion\r\n## Security Properties of Hybrid KEMs Frameworks\r\n```",
+              "createdAt": "2025-06-30T07:37:11Z",
+              "updatedAt": "2025-06-30T07:37:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCddG",
+          "commit": {
+            "abbreviatedOid": "fc8fc80"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:37:40Z",
+          "updatedAt": "2025-06-30T07:37:40Z",
+          "comments": [
+            {
+              "originalPosition": 160,
+              "body": "todo: define broken",
+              "createdAt": "2025-06-30T07:37:40Z",
+              "updatedAt": "2025-06-30T07:37:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCgWY",
+          "commit": {
+            "abbreviatedOid": "fc8fc80"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:42:07Z",
+          "updatedAt": "2025-06-30T07:42:07Z",
+          "comments": [
+            {
+              "originalPosition": 164,
+              "body": "```suggestion\r\nThis document's exact GHP and PRE constructions do not have IND-CCA2 analyses; the GHP paper gives a slightly different version, namely they do not include the public keys in the KDF. However, we argue that the proof goes through with trivial modifications if the public keys are included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces to the split-key pseudorandomness of the KDF. (GHP call the KDF a \"core\" function, and denote it as W.) We observe that adding the public keys to the inputs only changes the concrete contents of the reduction's queries to its oracle. Since the reduction chooses the public keys itself, they can be added to the oracle inputs, and the remainder of the proof goes through unmodified.\r\n```",
+              "createdAt": "2025-06-30T07:42:07Z",
+              "updatedAt": "2025-06-30T07:42:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCiYX",
+          "commit": {
+            "abbreviatedOid": "8fa0ae0"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:45:16Z",
+          "updatedAt": "2025-06-30T07:45:16Z",
+          "comments": [
+            {
+              "originalPosition": 168,
+              "body": "```suggestion\r\nWe also argue that this extension applies again with trivial modifications to prove security of PRE. Observe that the only difference between GHP and PRE is prehashing of the encapsulation keys. As long as the hash function is collision-resistant, any event that happens in the IND-CCA2 game of GHP happens only with negligible probability in the IND-CCA2 game of PRE.\r\n\r\nWe reiterate that modulo some low-level technical details, our requirement that the KDF is indifferentiable from an RO implies that, in the random oracle model (ROM), the KDF used in GHP and PRE meets the split-key pseudorandomness property used in GHP's analysis.\r\n```",
+              "createdAt": "2025-06-30T07:45:16Z",
+              "updatedAt": "2025-06-30T07:45:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xCjIt",
+          "commit": {
+            "abbreviatedOid": "8fa0ae0"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T07:46:26Z",
+          "updatedAt": "2025-06-30T07:46:26Z",
+          "comments": [
+            {
+              "originalPosition": 174,
+              "body": "```suggestion\r\nTherefore all three hybrid KEMs in this document are IND-CCA2 when instantiated with\r\ncryptographic components that meet the security requirements described above. Any\r\nchanges to the algorithms, including key generation/derivation, are not guaranteed\r\nto produce secure results.\r\n```",
+              "createdAt": "2025-06-30T07:46:26Z",
+              "updatedAt": "2025-06-30T07:46:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xF58l",
+          "commit": {
+            "abbreviatedOid": "09afb00"
+          },
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T12:52:44Z",
+          "updatedAt": "2025-06-30T12:52:45Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Ah thanks for pointing this out - let's just use IND-CCA then",
+              "createdAt": "2025-06-30T12:52:44Z",
+              "updatedAt": "2025-06-30T12:52:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xF85F",
+          "commit": {
+            "abbreviatedOid": "8fa0ae0"
+          },
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-30T12:56:22Z",
+          "updatedAt": "2025-06-30T12:56:22Z",
+          "comments": [
+            {
+              "originalPosition": 168,
+              "body": "Oops I just realized this text is not correct - I didn't complete the thought. The statement about \"negligible probability\" is obviously false. It should say \"happens with only negligibly different probability\". ",
+              "createdAt": "2025-06-30T12:56:22Z",
+              "updatedAt": "2025-06-30T12:56:22Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
