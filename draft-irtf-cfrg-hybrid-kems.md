@@ -730,9 +730,9 @@ IND-CCA. This is most common security goal for KEMs and public-key
 encryption.
 
 For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
-obtained by running Encaps with an honestly-generated public key, can
+obtained by running `Encaps()` with an honestly-generated public key, can
 distinguish whether it is given the "real" secret output from `Encaps()`, or a
-random string unrelated to the Encaps call that created that
+random string unrelated to the `Encaps()` call that created that
 ciphertext. (Readers should note that this definition is slightly different
 than the corresponding one for public-key encryption {{RS92}}.)
 
@@ -758,14 +758,14 @@ attacks in the LEAK model are known {{BJKS24}} {{FG24}}. We are not aware
 of any common settings where the MAL-BIND security model is needed; thus,
 LEAK-BIND seems a sensible middle ground.
 
-The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allowing using
-a KEM shared secret such that finding a colliding value with the
+The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allow using
+a KEM shared secret such that the likelihood of finding a colliding value with the
 encapsulation key used in its computation or the ciphertext used in its
 computation is negligible. Such properties are attractive when integrating
 KEMs into protocols where once protocol designers would have used
 Diffie-Hellman, as they can use the smaller shared secret value alone as an
-input to a protocol key schedule for example without necessarily also needing
-to including the much larger ciphertext or the encapsulation key to be
+input to a protocol key schedule for example, without necessarily also needing
+to include the much larger ciphertext or the encapsulation key to be
 protected against key confusion attacks {{FG24}} or KEM re-encapsulation
 attacks {{BJKS24}}. Protocol designers may still need or want to include the
 ciphertext or encapsulation key into their protocol or key schedule for other
