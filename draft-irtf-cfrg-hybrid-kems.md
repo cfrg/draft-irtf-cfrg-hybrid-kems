@@ -103,6 +103,9 @@ informative:
     title: "Formal verification of the PQXDH Post-Quantum key agreement protocol for end-to-end secure messaging"
     date: 2024
     target: https://www.usenix.org/system/files/usenixsecurity24-bhargavan.pdf
+  CAMPBELL25:
+    date: 2025
+    target: https://mailarchive.ietf.org/arch/msg/cfrg/qp_YxofDEl5fN6W7Xyab-juwaCc/
   CDM23:
     title: "Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"
     target: https://eprint.iacr.org/2023/1933.pdf
