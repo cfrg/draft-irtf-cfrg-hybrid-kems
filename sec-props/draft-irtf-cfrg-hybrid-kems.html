@@ -1970,7 +1970,7 @@ IND-CCA. This is most common security goal for KEMs and public-key
 encryption.<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-2">For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
 obtained by running Encaps with an honestly-generated public key, can
-distinguish whether it is given the "real" secret output from encaps, or a
+distinguish whether it is given the "real" secret output from <code>Encaps()</code>, or a
 random string unrelated to the Encaps call that created that
 ciphertext. (Readers should note that this definition is slightly different
 than the corresponding one for public-key encryption <span>[<a href="#RS92" class="cite xref">RS92</a>]</span>.)<a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
