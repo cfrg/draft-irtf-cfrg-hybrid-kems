@@ -875,7 +875,7 @@ built from random oracles. Examples include SHAKE256.
 ### Security Properties of PRE {#security-pre}
 
 The PRE hybrid KEM framework uses a function `KeyHash` to generate a short
-digest of the encapsulation keys.  This function must be collision-resistant.
+digest of the encapsulation keys.  This function MUST be collision-resistant.
 
 ## Security Properties of Hybrid KEMs Frameworks
 
