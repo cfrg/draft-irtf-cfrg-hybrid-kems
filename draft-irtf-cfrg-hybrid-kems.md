@@ -987,10 +987,11 @@ work here; we present the PQ-KEM route for concreteness.
 Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
 QSF is LEAK-BIND-K-CT.
 
-Justification: To win the adversary must construct two distinct QSF ciphertexts that decapsulate to the same non-bot key.
-Call the QSF ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1, ct_PQ^1). Distinctness
-implies (ct_T^0, ct_PQ^0) != (ct_T^1, ct_PQ^1). Since ct_T is included in the KDF, if ct_T^0 != ct_T^1,
-a win must collide the KDF.
+Justification: To win the adversary must construct two distinct QSF
+ciphertexts that decapsulate to the same non-bot key.  Call the QSF
+ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1,
+ct_PQ^1). Distinctness implies (ct_T^0, ct_PQ^0) != (ct_T^1, ct_PQ^1). Since
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
@@ -1010,9 +1011,10 @@ game against the PQ KEM.
 
 We conclude by noting these cases are exhaustive.
 
-#####LEAK-BIND-K-PK of QSF
+##### LEAK-BIND-K-PK of QSF
 
-Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then QSF is LEAK-BIND-K-PK.
+Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+QSF is LEAK-BIND-K-PK.
 
 Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_T^0, ek_PQ^0) !=
@@ -1068,8 +1070,6 @@ different from that specified in this document.
 Therefore, this specification MUST only be used with algorithms which have
 fixed-length shared secrets.
 
-
-
 ## More than Two Component KEMs
 
 Design team decided to restrict the space to only two components, a
@@ -1079,7 +1079,6 @@ traditional and a post-quantum KEM.
 
 Not analyzed as part of any security proofs in the literature, and a
 complicatation deemed unnecessary.
-
 
 --- back
 
