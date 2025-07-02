@@ -2288,10 +2288,11 @@ work here; we present the PQ-KEM route for concreteness.<a href="#section-6.5.2.
               </h6>
 <p id="section-6.5.2.4.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
 QSF is LEAK-BIND-K-CT.<a href="#section-6.5.2.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.1-2">Justification: To win the adversary must construct two distinct QSF ciphertexts that decapsulate to the same non-bot key.
-Call the QSF ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1, ct_PQ^1). Distinctness
-implies (ct_T^0, ct_PQ^0) != (ct_T^1, ct_PQ^1). Since ct_T is included in the KDF, if ct_T^0 != ct_T^1,
-a win must collide the KDF.<a href="#section-6.5.2.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.4.1-2">Justification: To win the adversary must construct two distinct QSF
+ciphertexts that decapsulate to the same non-bot key.  Call the QSF
+ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1,
+ct_PQ^1). Distinctness implies (ct_T^0, ct_PQ^0) != (ct_T^1, ct_PQ^1). Since
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.5.2.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.5.2.4.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
@@ -2314,7 +2315,8 @@ game against the PQ KEM.<a href="#section-6.5.2.4.1-4" class="pilcrow">¶</a></p
               <h6 id="name-leak-bind-k-pk-of-qsf">
 <a href="#section-6.5.2.4.2" class="section-number selfRef">6.5.2.4.2. </a><a href="#name-leak-bind-k-pk-of-qsf" class="section-name selfRef">LEAK-BIND-K-PK of QSF</a>
               </h6>
-<p id="section-6.5.2.4.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then QSF is LEAK-BIND-K-PK.<a href="#section-6.5.2.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.4.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+QSF is LEAK-BIND-K-PK.<a href="#section-6.5.2.4.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.5.2.4.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_T^0, ek_PQ^0) !=
 (ek_T^1, ek_PQ^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
