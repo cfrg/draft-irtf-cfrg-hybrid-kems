@@ -796,7 +796,8 @@ encapsulation key and ciphertext to be left out from the KDF input.
 Roughly, C2PRI {{XWING}} says that an adversary given an honestly-generated
 key pair (sk, pk) and the result of an *honest* Encaps(pk) - call it k, c -
 cannot find a _distinct_ c' such that Decaps(sk, c') = k. A related notion has
-also been described as chosen-ciphertext resistance (CCR) {{CDM23}}. C2PRI targets preimage-resistance, whereas CCR targets collision-resistance {{CAMPBELL25}}.
+also been described as chosen-ciphertext resistance (CCR) {{CDM23}}. C2PRI targets
+preimage-resistance, whereas CCR targets collision-resistance {{CAMPBELL25}}.
 
 ### Security Requirements for Groups {#security-groups}
 
