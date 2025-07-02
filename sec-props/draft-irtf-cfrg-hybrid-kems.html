@@ -1969,9 +1969,9 @@ indistinguishability under adaptive chosen ciphertext attack, or
 IND-CCA. This is most common security goal for KEMs and public-key
 encryption.<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-2">For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
-obtained by running Encaps with an honestly-generated public key, can
+obtained by running <code>Encaps()</code> with an honestly-generated public key, can
 distinguish whether it is given the "real" secret output from <code>Encaps()</code>, or a
-random string unrelated to the Encaps call that created that
+random string unrelated to the <code>Encaps()</code> call that created that
 ciphertext. (Readers should note that this definition is slightly different
 than the corresponding one for public-key encryption <span>[<a href="#RS92" class="cite xref">RS92</a>]</span>.)<a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
 </section>
@@ -2000,14 +2000,14 @@ The HON-BIND security model seems too weak for real applications---real
 attacks in the LEAK model are known <span>[<a href="#BJKS24" class="cite xref">BJKS24</a>]</span> <span>[<a href="#FG24" class="cite xref">FG24</a>]</span>. We are not aware
 of any common settings where the MAL-BIND security model is needed; thus,
 LEAK-BIND seems a sensible middle ground.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.2-4">The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allowing using
-a KEM shared secret such that finding a colliding value with the
+<p id="section-6.2-4">The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allow using
+a KEM shared secret such that the likelihood of finding a colliding value with the
 encapsulation key used in its computation or the ciphertext used in its
 computation is negligible. Such properties are attractive when integrating
 KEMs into protocols where once protocol designers would have used
 Diffie-Hellman, as they can use the smaller shared secret value alone as an
-input to a protocol key schedule for example without necessarily also needing
-to including the much larger ciphertext or the encapsulation key to be
+input to a protocol key schedule for example, without necessarily also needing
+to include the much larger ciphertext or the encapsulation key to be
 protected against key confusion attacks <span>[<a href="#FG24" class="cite xref">FG24</a>]</span> or KEM re-encapsulation
 attacks <span>[<a href="#BJKS24" class="cite xref">BJKS24</a>]</span>. Protocol designers may still need or want to include the
 ciphertext or encapsulation key into their protocol or key schedule for other
@@ -2023,7 +2023,7 @@ apply in their settings.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
         <h3 id="name-security-non-goals-for-hybr">
 <a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-security-non-goals-for-hybr" class="section-name selfRef">Security Non-goals for Hybrid KEMs</a>
         </h3>
-<p id="section-6.3-1">Considerations that were considered and not included in these designs:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-1">Security properties that were considered and not included in these designs:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.3-2">Anonymity <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, Deniability, Obfuscation, other forms of key-robustness
 or binding <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span><a href="#section-6.3-2" class="pilcrow">¶</a></p>
 </section>
@@ -2049,8 +2049,9 @@ encapsulation key and ciphertext to be left out from the KDF input.<a href="#sec
             </h5>
 <p id="section-6.4.1.1-1">Roughly, C2PRI <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> says that an adversary given an honestly-generated
 key pair (sk, pk) and the result of an <em>honest</em> Encaps(pk) - call it k, c -
-cannot find a <em>distinct</em> c' such that Decaps(sk, c') = k. This notion has
-also been described as chosen-ciphertext resistance <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>.<a href="#section-6.4.1.1-1" class="pilcrow">¶</a></p>
+cannot find a <em>distinct</em> c' such that Decaps(sk, c') = k. A related notion has
+also been described as chosen-ciphertext resistance (CCR) <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>. C2PRI targets
+preimage-resistance, whereas CCR targets collision-resistance <span>[<a href="#CAMPBELL25" class="cite xref">CAMPBELL25</a>]</span>.<a href="#section-6.4.1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2076,12 +2077,13 @@ together with exponentiation.<a href="#section-6.4.2-2" class="pilcrow">¶</a></
 <a href="#section-6.4.3" class="section-number selfRef">6.4.3. </a><a href="#name-security-requirements-for-kd" class="section-name selfRef">Security Requirements for KDFs</a>
           </h4>
 <p id="section-6.4.3-1">The KDF <span class="bcp14">MUST</span> be indifferentiable from a random oracle (RO) <span>[<a href="#MRH03" class="cite xref">MRH03</a>]</span>, even to
-a quantum attacker <span>[<a href="#ZHANDRY19" class="cite xref">ZHANDRY19</a>]</span>.  This is a conservative choice given a review of
-the existing security analyses for our hybrid KEM constructions.  (In short,
-most IND-CCA analyses require only that the KDF is some kind of pseudorandom
-function, but the SDH-based IND-CCA analysis of QSF in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> relies on
-the KDF being a RO. Proofs of our target binding properties for our hybrid
-KEMs require the KDF is a collision-resistant function.)<a href="#section-6.4.3-1" class="pilcrow">¶</a></p>
+a quantum attacker <span>[<a href="#BDFL_10" class="cite xref">BDFL_10</a>]</span> <span>[<a href="#ZHANDRY19" class="cite xref">ZHANDRY19</a>]</span>.  This is a conservative choice
+given a review of the existing security analyses for our hybrid KEM
+constructions.  (In short, most IND-CCA analyses require only that the KDF is
+some kind of pseudorandom function, but the SDH-based IND-CCA analysis of QSF
+in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> relies on the KDF being a RO. Proofs of our target binding
+properties for our hybrid KEMs require the KDF is a collision-resistant
+function.)<a href="#section-6.4.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.3-2">If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
@@ -2469,6 +2471,10 @@ complicatation deemed unnecessary.<a href="#section-6.8-1" class="pilcrow">¶</a
         <dd>
 <span class="refAuthor">Nimrod Aviram</span>, <span class="refAuthor">Benjamin Dowling</span>, <span class="refAuthor">Ilan Komargodski</span>, <span class="refAuthor">Kenny Paterson</span>, <span class="refAuthor">Eyal Ronen</span>, and <span class="refAuthor">Eylon Yogev</span>, <span class="refTitle">"[TLS] Combining Secrets in Hybrid Key Exchange in TLS 1.3"</span>, <time datetime="2021-09-01" class="refDate">1 September 2021</time>, <span>&lt;<a href="https://mailarchive.ietf.org/arch/msg/tls/F4SVeL2xbGPaPB2GW_GkBbD_a5M/">https://mailarchive.ietf.org/arch/msg/tls/F4SVeL2xbGPaPB2GW_GkBbD_a5M/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="BDFL_10">[BDFL_10]</dt>
+        <dd>
+<span class="refTitle">"Random Oracles in a Quantum World"</span>, <time datetime="2010" class="refDate">2010</time>, <span>&lt;<a href="https://eprint.iacr.org/2010/428.pdf">https://eprint.iacr.org/2010/428.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="BDG2020">[BDG2020]</dt>
         <dd>
 <span class="refTitle">"Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"</span>, <time datetime="2020" class="refDate">2020</time>, <span>&lt;<a href="https://eprint.iacr.org/2020/241.pdf">https://eprint.iacr.org/2020/241.pdf</a>&gt;</span>. </dd>
@@ -2484,6 +2490,10 @@ complicatation deemed unnecessary.<a href="#section-6.8-1" class="pilcrow">¶</a
 <dt id="BJKS24">[BJKS24]</dt>
         <dd>
 <span class="refTitle">"Formal verification of the PQXDH Post-Quantum key agreement protocol for end-to-end secure messaging"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://www.usenix.org/system/files/usenixsecurity24-bhargavan.pdf">https://www.usenix.org/system/files/usenixsecurity24-bhargavan.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="CAMPBELL25">[CAMPBELL25]</dt>
+        <dd>
+<span class="refTitle">"Re: Binding and QSF-style hybrid KEMs"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://mailarchive.ietf.org/arch/msg/cfrg/qp_YxofDEl5fN6W7Xyab-juwaCc/">https://mailarchive.ietf.org/arch/msg/cfrg/qp_YxofDEl5fN6W7Xyab-juwaCc/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="CDM23">[CDM23]</dt>
         <dd>

@@ -612,10 +612,10 @@ Table of Contents
    encryption.
 
    For KEMs, IND-CCA requires that no efficient adversary, given a
-   ciphertext obtained by running Encaps with an honestly-generated
+   ciphertext obtained by running Encaps() with an honestly-generated
    public key, can distinguish whether it is given the "real" secret
-   output from Encaps(), or a random string unrelated to the Encaps call
-   that created that ciphertext.  (Readers should note that this
+   output from Encaps(), or a random string unrelated to the Encaps()
+   call that created that ciphertext.  (Readers should note that this
    definition is slightly different than the corresponding one for
    public-key encryption [RS92].)
 
@@ -644,14 +644,14 @@ Table of Contents
    security model is needed; thus, LEAK-BIND seems a sensible middle
    ground.
 
-   The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently
-   allowing using a KEM shared secret such that finding a colliding
-   value with the encapsulation key used in its computation or the
-   ciphertext used in its computation is negligible.  Such properties
-   are attractive when integrating KEMs into protocols where once
-   protocol designers would have used Diffie-Hellman, as they can use
-   the smaller shared secret value alone as an input to a protocol key
-   schedule for example without necessarily also needing to including
+   The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allow
+   using a KEM shared secret such that the likelihood of finding a
+   colliding value with the encapsulation key used in its computation or
+   the ciphertext used in its computation is negligible.  Such
+   properties are attractive when integrating KEMs into protocols where
+   once protocol designers would have used Diffie-Hellman, as they can
+   use the smaller shared secret value alone as an input to a protocol
+   key schedule for example, without necessarily also needing to include
    the much larger ciphertext or the encapsulation key to be protected
    against key confusion attacks [FG24] or KEM re-encapsulation attacks
    [BJKS24].  Protocol designers may still need or want to include the
@@ -665,7 +665,7 @@ Table of Contents
 
 6.3.  Security Non-goals for Hybrid KEMs
 
-   Considerations that were considered and not included in these
+   Security properties that were considered and not included in these
    designs:
 
    Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
@@ -687,8 +687,9 @@ Table of Contents
    Roughly, C2PRI [XWING] says that an adversary given an honestly-
    generated key pair (sk, pk) and the result of an _honest_ Encaps(pk)
    - call it k, c - cannot find a _distinct_ c' such that Decaps(sk, c')
-   = k.  This notion has also been described as chosen-ciphertext
-   resistance [CDM23].
+   = k.  A related notion has also been described as chosen-ciphertext
+   resistance (CCR) [CDM23].  C2PRI targets preimage-resistance, whereas
+   CCR targets collision-resistance [CAMPBELL25].
 
 6.4.2.  Security Requirements for Groups
 
@@ -705,13 +706,13 @@ Table of Contents
 6.4.3.  Security Requirements for KDFs
 
    The KDF MUST be indifferentiable from a random oracle (RO) [MRH03],
-   even to a quantum attacker [ZHANDRY19].  This is a conservative
-   choice given a review of the existing security analyses for our
-   hybrid KEM constructions.  (In short, most IND-CCA analyses require
-   only that the KDF is some kind of pseudorandom function, but the SDH-
-   based IND-CCA analysis of QSF in [XWING] relies on the KDF being a
-   RO.  Proofs of our target binding properties for our hybrid KEMs
-   require the KDF is a collision-resistant function.)
+   even to a quantum attacker [BDFL_10] [ZHANDRY19].  This is a
+   conservative choice given a review of the existing security analyses
+   for our hybrid KEM constructions.  (In short, most IND-CCA analyses
+   require only that the KDF is some kind of pseudorandom function, but
+   the SDH-based IND-CCA analysis of QSF in [XWING] relies on the KDF
+   being a RO.  Proofs of our target binding properties for our hybrid
+   KEMs require the KDF is a collision-resistant function.)
 
    If the KDF is a RO, the key derivation step in the hybrid KEMs can be
    viewed as applying a (RO-based) pseudorandom function - keyed with
@@ -1045,6 +1046,9 @@ Table of Contents
               2021, <https://mailarchive.ietf.org/arch/msg/tls/
               F4SVeL2xbGPaPB2GW_GkBbD_a5M/>.
 
+   [BDFL_10]  "Random Oracles in a Quantum World", 2010,
+              <https://eprint.iacr.org/2010/428.pdf>.
+
    [BDG2020]  "Separate Your Domains: NIST PQC KEMs, Oracle Cloning and
               Read-Only Indifferentiability", 2020,
               <https://eprint.iacr.org/2020/241.pdf>.
@@ -1060,6 +1064,11 @@ Table of Contents
               agreement protocol for end-to-end secure messaging", 2024,
               <https://www.usenix.org/system/files/
               usenixsecurity24-bhargavan.pdf>.
+
+   [CAMPBELL25]
+              "Re: Binding and QSF-style hybrid KEMs", 2025,
+              <https://mailarchive.ietf.org/arch/msg/cfrg/
+              qp_YxofDEl5fN6W7Xyab-juwaCc/>.
 
    [CDM23]    Cremers, C., Dax, A., and N. Medinger, "Keeping Up with
               the KEMs: Stronger Security Notions for KEMs and automated
