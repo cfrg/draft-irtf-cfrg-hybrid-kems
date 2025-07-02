@@ -761,7 +761,7 @@ Table of Contents
 6.4.5.  Security Properties of PRE
 
    The PRE hybrid KEM framework uses a function KeyHash to generate a
-   short digest of the encapsulation keys.  This function must be
+   short digest of the encapsulation keys.  This function MUST be
    collision-resistant.
 
 6.5.  Security Properties of Hybrid KEMs Frameworks
