@@ -728,7 +728,7 @@ encryption.
 
 For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
 obtained by running Encaps with an honestly-generated public key, can
-distinguish whether it is given the "real" secret output from encaps, or a
+distinguish whether it is given the "real" secret output from `Encaps()`, or a
 random string unrelated to the Encaps call that created that
 ciphertext. (Readers should note that this definition is slightly different
 than the corresponding one for public-key encryption {{RS92}}.)
