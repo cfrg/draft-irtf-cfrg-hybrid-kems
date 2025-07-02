@@ -778,7 +778,7 @@ apply in their settings.
 
 ## Security Non-goals for Hybrid KEMs {#non-goals}
 
-Considerations that were considered and not included in these designs:
+Security properties that were considered and not included in these designs:
 
 Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
 or binding {{GMP22}}, {{CDM23}}
