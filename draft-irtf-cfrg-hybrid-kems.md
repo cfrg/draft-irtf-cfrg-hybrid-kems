@@ -108,8 +108,9 @@ informative:
     date: 2024
     target: https://www.usenix.org/system/files/usenixsecurity24-bhargavan.pdf
   CAMPBELL25:
-    date: 2025
+    title: "Re: Binding and QSF-style hybrid KEMs"
     target: https://mailarchive.ietf.org/arch/msg/cfrg/qp_YxofDEl5fN6W7Xyab-juwaCc/
+    date: 2025
   CDM23:
     title: "Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"
     target: https://eprint.iacr.org/2023/1933.pdf
