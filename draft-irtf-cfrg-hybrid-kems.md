@@ -87,6 +87,10 @@ informative:
         ins: Eyal Ronen
       -
         ins: Eylon Yogev
+  BDFL+10:
+    title: "Random Oracles in a Quantum World"
+    date: 2010
+    target: https://eprint.iacr.org/2010/428.pdf
   BDG2020:
     title: "Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"
     target: https://eprint.iacr.org/2020/241.pdf
@@ -816,12 +820,13 @@ together with exponentiation.
 ### Security Requirements for KDFs {#security-kdfs}
 
 The KDF MUST be indifferentiable from a random oracle (RO) {{MRH03}}, even to
-a quantum attacker {{ZHANDRY19}}.  This is a conservative choice given a review of
-the existing security analyses for our hybrid KEM constructions.  (In short,
-most IND-CCA analyses require only that the KDF is some kind of pseudorandom
-function, but the SDH-based IND-CCA analysis of QSF in {{XWING}} relies on
-the KDF being a RO. Proofs of our target binding properties for our hybrid
-KEMs require the KDF is a collision-resistant function.)
+a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a conservative choice
+given a review of the existing security analyses for our hybrid KEM
+constructions.  (In short, most IND-CCA analyses require only that the KDF is
+some kind of pseudorandom function, but the SDH-based IND-CCA analysis of QSF
+in {{XWING}} relies on the KDF being a RO. Proofs of our target binding
+properties for our hybrid KEMs require the KDF is a collision-resistant
+function.)
 
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
