@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-01T01:20:39.949510+00:00",
+  "timestamp": "2025-07-03T01:12:53.790001+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -548,15 +548,15 @@
       "id": "I_kwDOMmhxws67anGj",
       "title": "Group_T.ElementToSharedSecret - what does this mean?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/35",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "pag-crypto",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The current draft does not specify this procedure, but suggests the possibility of doing x-truncation of an elliptic curve point. The details here seem important for security - for example, x-truncation actually does not bind the entire shared secret into the context - the sign bit is omitted, so there are two possible points even in the case of an honest Encaps.",
       "createdAt": "2025-06-13T17:55:50Z",
-      "updatedAt": "2025-06-25T10:57:47Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-01T18:38:54Z",
+      "closedAt": "2025-07-01T18:38:54Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -592,6 +592,13 @@
           "body": "> Actually, I'm thinking about this more and I'm not sure DH-KEM in general is even CCA2 secure if you get rid of the y-coordinate? In the CCA game the adversary, given its challenge DH-KEM ciphertext C, can just negate C and submit -C to the decaps oracle.\n\nYou'd need to get rid of the y-coordinate everywhere (so also the decaps oracle only takes x coordinate.)\n\n",
           "createdAt": "2025-06-25T10:57:46Z",
           "updatedAt": "2025-06-25T10:57:46Z"
+        },
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I see, yeah - hashing the public key and nominal group ciphertext fixes this. ",
+          "createdAt": "2025-07-01T18:38:40Z",
+          "updatedAt": "2025-07-01T18:38:40Z"
         }
       ]
     },
@@ -867,7 +874,7 @@
       "id": "I_kwDOMmhxws6-GnVJ",
       "title": "restore rederivation from seed via DeriveKeyPair(seed) inside Decaps()",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/58",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -876,7 +883,23 @@
       "labels": [],
       "body": "This got mangled in the major refactor",
       "createdAt": "2025-06-30T18:04:24Z",
-      "updatedAt": "2025-06-30T18:04:24Z",
+      "updatedAt": "2025-07-01T19:25:58Z",
+      "closedAt": "2025-07-01T19:25:58Z",
+      "comments": []
+    },
+    {
+      "number": 60,
+      "id": "I_kwDOMmhxws6-V9NE",
+      "title": "move impl of generic frameworks into the concrete repo as internals/private only",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/60",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-07-01T18:22:25Z",
+      "updatedAt": "2025-07-01T18:22:25Z",
       "closedAt": null,
       "comments": []
     }
@@ -4591,7 +4614,7 @@
       "labels": [],
       "body": "This PR adds a reference implementation of the hybrid KEMs.  There are traits for the constituent parts, and then the hybrid KEMs are defined generically over types that implement the constituent parts.\r\n\r\nMy first experiment with Claude Code.  All of the code is Claude-written, I did not open any of the files in an editor.  I have not reviewed, will review as part of this PR.\r\n\r\nFull transcript:\r\n\r\n* Can you read files from the parent directory?\r\n* Make a new Cargo/Rust project in this directory.  it should be in a directory called reference-implementation, and the name of the module should be \r\n* Change directory into reference-implementation\r\n* Add a trait for the KEM interface described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Give the constants more descriptive names\r\n* Add traits for the KDF and PRG interfaces described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Rename kem.rs to something more appropriate\r\n* Now write an implementation of the GHP hybrid KEM.  The hybrid KEM should be generic over its constituents, using the traits to bound the generic \r\n* Please add real implementations for the placeholders.  You can assume that the keys, ciphertexts, and shared secrets serialize to fixed-length byte \r\n* Instead of to_bytes / from_bytes, I would use serialize and deserialize.  WHen you serialize, use slices instead of Vec.\r\n* Go back to traits.rs.  Don't use a mutable reference argument, return a reference.  And the serialize methods don't need to be fallible.\r\n* For the hybrid serialization, make the same assumption that the deserialization methods make, namely that the T and PQ serializations are \r\n* In order to make serialization and deserialization easier, change the hybrid keys and ciphertexts just to hold a byte string.\r\n* The generate_key_pair method on GHP needs to actually use random data.  You should take a randomness source as input and use it.  Update the KEM \r\n* Use the CryptoRng trait instead of Rng\r\n* Don't use Rng, just CryptoRng\r\n* Use the latest version\r\n* Don't use RngCore\r\n* Don't use Rng.  Just CryptoRng.\r\n* Thanks, great work.  Now take the GHP implementation, and use it to generate implementations of the PRE and QSF hybrid KEMs\r\n* Move the NominalGroup trait to traits.rs\r\n* Have all of the hybrid KEMs use the same error type.  Split it out into error.rs if you think that's appropriate.\r\n* Are there any placeholders left in the codebase?\r\n* Replace the placeholder in qsf.rs with real randomness\r\n* Instead of using thread_rng, encaps should take an rng argument\r\n* Don't update the trait, remove it from the qsf.rs file.\r\n* Convert this crate from a binary crate to a library crate\r\n* commit the current state to a new branch called vibe-code\r\n* Create test implementations of the traits in traits.rs.  These implementations should fulfill the API in the simplest way possible, without being \r\n* Factor out the test functions so that they can be reused with other implementations.  But keep the tests.\r\n* Now add tests for each of the hybrid KEMs.  You should be able to reuse the KEM tests you already created.\r\n* Commit the tests\r\n* /exit \r\n\r\n",
       "createdAt": "2025-06-11T22:54:14Z",
-      "updatedAt": "2025-06-30T07:47:47Z",
+      "updatedAt": "2025-07-01T20:50:47Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
@@ -4616,6 +4639,20 @@
           "body": "Is this one defunct in favor of https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8 now? ",
           "createdAt": "2025-06-30T07:47:47Z",
           "updatedAt": "2025-06-30T07:47:47Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing in favor of https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8",
+          "createdAt": "2025-07-01T18:14:14Z",
+          "updatedAt": "2025-07-01T18:14:14Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I don't think we should have an implementation of generic hybrid KEM frameworks. This would be like having a reference implementation of Fiat-Shamir, or an FO transform\u2014 these are abstract recipes used to construct _concrete_ schemes. The code in this branch can be moved over into [cfrg/draft-irtf-cfrg-concrete-hybrid-kems#8](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8) as an internal abstraction if you wish, I do not think it belongs here as a software artifact, that is not a good idea IMO\u2014 the final concrete KEMs that use this stuff as an internal detail are the artifacts. As the framework implementations cannot do any cryptographic assertions that the components slotted in fulfill the security requirements of each framework, this should not be a composable artifact.\r\n\r\n@bwesterb since this is a cryptographic software / abstraction opinion, what do you think? Am I being too cautious?",
+          "createdAt": "2025-07-01T20:50:46Z",
+          "updatedAt": "2025-07-01T20:50:46Z"
         }
       ],
       "reviews": [
@@ -4704,6 +4741,19 @@
               "updatedAt": "2025-06-12T18:49:56Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xampO",
+          "commit": {
+            "abbreviatedOid": "487f991"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I don't think we should have an implementation of generic hybrid KEM frameworks. This would be like having a reference implementation of Fiat-Shamir, or an FO transform\u2014 these are abstract recipes used to construct _concrete_ schemes. The code in this branch can be moved over into https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8 as an internal abstraction if you wish, I do not think it belongs here as a software artifact, that is not a good idea IMO\u2014 the final concrete KEMs that use this stuff as an internal detail are the artifacts. As the framework implementations cannot do any cryptographic assertions that the components slotted in fulfill the security requirements of each framework, this should not be a composable artifact.",
+          "createdAt": "2025-07-01T18:17:34Z",
+          "updatedAt": "2025-07-01T18:21:05Z",
+          "comments": []
         }
       ]
     },
@@ -5239,13 +5289,13 @@
       "labels": [],
       "body": "WRiteup is still work in progress, but i thought people would like to see what i'm working on, to give feedback. STill TODO is fleshing out proofs for leak-bind. ",
       "createdAt": "2025-06-27T20:13:49Z",
-      "updatedAt": "2025-06-30T12:56:22Z",
+      "updatedAt": "2025-07-02T20:49:34Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "sec-props",
-      "headRefOid": "192b6efab9e172566e3f5b9a01f51f28cdcb6dec",
+      "headRefOid": "8f926fb577cdb07a1ddfb6dfdfbd303d5ed561d0",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -5531,6 +5581,402 @@
               "updatedAt": "2025-06-30T12:56:22Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xW_xf",
+          "commit": {
+            "abbreviatedOid": "09afb00"
+          },
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T14:03:25Z",
+          "updatedAt": "2025-07-01T14:03:25Z",
+          "comments": [
+            {
+              "originalPosition": 73,
+              "body": "I'm ok taking it out - i wasn't sure the capital \"SHOULD\" was appropriate anyway; i just wanted to make sure readers will see it.",
+              "createdAt": "2025-07-01T14:03:25Z",
+              "updatedAt": "2025-07-01T14:03:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xZZZA",
+          "commit": {
+            "abbreviatedOid": "192b6ef"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T16:54:20Z",
+          "updatedAt": "2025-07-01T16:54:20Z",
+          "comments": [
+            {
+              "originalPosition": 73,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-07-01T16:54:20Z",
+              "updatedAt": "2025-07-01T16:54:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xpuDL",
+          "commit": {
+            "abbreviatedOid": "eae6869"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:13:30Z",
+          "updatedAt": "2025-07-02T20:13:30Z",
+          "comments": [
+            {
+              "originalPosition": 208,
+              "body": "@bwesterb @pag-crypto I added this paragraph, wdyt",
+              "createdAt": "2025-07-02T20:13:30Z",
+              "updatedAt": "2025-07-02T20:13:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xpwT_",
+          "commit": {
+            "abbreviatedOid": "eae6869"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:16:28Z",
+          "updatedAt": "2025-07-02T20:16:28Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "@pag-crypto this is my cite for 'the KDF must be indiff. in the ROM and the QROM'",
+              "createdAt": "2025-07-02T20:16:28Z",
+              "updatedAt": "2025-07-02T20:16:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xpyk7",
+          "commit": {
+            "abbreviatedOid": "eae6869"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:19:50Z",
+          "updatedAt": "2025-07-02T20:19:50Z",
+          "comments": [
+            {
+              "originalPosition": 209,
+              "body": "@pag-crypto @br-hale @bwesterb I wrote this to motivate why BIND-K-CT and BIND-K-PK specifically, thoughts?",
+              "createdAt": "2025-07-02T20:19:50Z",
+              "updatedAt": "2025-07-02T20:19:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp0Ro",
+          "commit": {
+            "abbreviatedOid": "eae6869"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:23:08Z",
+          "updatedAt": "2025-07-02T20:23:08Z",
+          "comments": [
+            {
+              "originalPosition": 163,
+              "body": "```suggestion\ndistinguish whether it is given the \"real\" secret output from `Encaps()`, or a\n```",
+              "createdAt": "2025-07-02T20:23:08Z",
+              "updatedAt": "2025-07-02T20:23:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp096",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:24:32Z",
+          "updatedAt": "2025-07-02T20:24:33Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "```suggestion\nFor KEMs, IND-CCA requires that no efficient adversary, given a ciphertext\nobtained by running `Encaps()` with an honestly-generated public key, can\ndistinguish whether it is given the \"real\" secret output from `Encaps()`, or a\nrandom string unrelated to the `Encaps()` call that created that\nciphertext. (Readers should note that this definition is slightly different\nthan the corresponding one for public-key encryption {{RS92}}.)\n```",
+              "createdAt": "2025-07-02T20:24:32Z",
+              "updatedAt": "2025-07-02T20:24:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp1Oo",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:25:03Z",
+          "updatedAt": "2025-07-02T20:25:04Z",
+          "comments": [
+            {
+              "originalPosition": 196,
+              "body": "```suggestion\nThe LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allow using\n```",
+              "createdAt": "2025-07-02T20:25:04Z",
+              "updatedAt": "2025-07-02T20:25:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp10K",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:26:13Z",
+          "updatedAt": "2025-07-02T20:26:13Z",
+          "comments": [
+            {
+              "originalPosition": 199,
+              "body": "```suggestion\r\na KEM shared secret such that the likelihood of finding a colliding value with the\r\nencapsulation key used in its computation or the ciphertext used in its\r\ncomputation is negligible. Such properties are attractive when integrating\r\n```",
+              "createdAt": "2025-07-02T20:26:13Z",
+              "updatedAt": "2025-07-02T20:26:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp2Bb",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:26:37Z",
+          "updatedAt": "2025-07-02T20:26:37Z",
+          "comments": [
+            {
+              "originalPosition": 202,
+              "body": "```suggestion\r\ninput to a protocol key schedule for example, without necessarily also needing\r\n```",
+              "createdAt": "2025-07-02T20:26:37Z",
+              "updatedAt": "2025-07-02T20:26:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp2Ho",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:26:48Z",
+          "updatedAt": "2025-07-02T20:26:49Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "```suggestion\r\nto include the much larger ciphertext or the encapsulation key to be\r\n```",
+              "createdAt": "2025-07-02T20:26:48Z",
+              "updatedAt": "2025-07-02T20:26:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp2ey",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:27:31Z",
+          "updatedAt": "2025-07-02T20:27:32Z",
+          "comments": [
+            {
+              "originalPosition": 219,
+              "body": "```suggestion\r\nSecurity properties that were considered and not included in these designs:\r\n```",
+              "createdAt": "2025-07-02T20:27:31Z",
+              "updatedAt": "2025-07-02T20:27:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp1Ei",
+          "commit": {
+            "abbreviatedOid": "eae6869"
+          },
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:24:45Z",
+          "updatedAt": "2025-07-02T20:28:36Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "Yes, I think this is a good cite, though I'm not very familiar with work on the QROM. You can also cite the original QROM paper: https://eprint.iacr.org/2010/428.pdf",
+              "createdAt": "2025-07-02T20:24:45Z",
+              "updatedAt": "2025-07-02T20:28:36Z"
+            },
+            {
+              "originalPosition": 208,
+              "body": "I like this, though I think we should anticipate some pushback on this point. ",
+              "createdAt": "2025-07-02T20:28:27Z",
+              "updatedAt": "2025-07-02T20:28:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp5vc",
+          "commit": {
+            "abbreviatedOid": "5e441f4"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:33:35Z",
+          "updatedAt": "2025-07-02T20:33:35Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\n    target: https://www.usenix.org/system/files/usenixsecurity24-bhargavan.pdf\r\n  CAMPBELL25:\r\n    date: 2025\r\n    target: https://mailarchive.ietf.org/arch/msg/cfrg/qp_YxofDEl5fN6W7Xyab-juwaCc/\r\n```",
+              "createdAt": "2025-07-02T20:33:35Z",
+              "updatedAt": "2025-07-02T20:33:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp7nr",
+          "commit": {
+            "abbreviatedOid": "3ff8219"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:37:10Z",
+          "updatedAt": "2025-07-02T20:37:10Z",
+          "comments": [
+            {
+              "originalPosition": 238,
+              "body": "```suggestion\r\nRoughly, C2PRI {{XWING}} says that an adversary given an honestly-generated\r\nkey pair (sk, pk) and the result of an *honest* Encaps(pk) - call it k, c -\r\ncannot find a _distinct_ c' such that Decaps(sk, c') = k. A related notion has\r\nalso been described as chosen-ciphertext resistance (CCR) {{CDM23}}. C2PRI targets preimage-resistance, whereas CCR targets collision-resistance {{CAMPBELL25}}.\r\n```",
+              "createdAt": "2025-07-02T20:37:10Z",
+              "updatedAt": "2025-07-02T20:37:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xp77s",
+          "commit": {
+            "abbreviatedOid": "d937289"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:37:46Z",
+          "updatedAt": "2025-07-02T20:37:47Z",
+          "comments": [
+            {
+              "originalPosition": 238,
+              "body": "```suggestion\r\nRoughly, C2PRI {{XWING}} says that an adversary given an honestly-generated\r\nkey pair (sk, pk) and the result of an *honest* Encaps(pk) - call it k, c -\r\ncannot find a _distinct_ c' such that Decaps(sk, c') = k. A related notion has\r\nalso been described as chosen-ciphertext resistance (CCR) {{CDM23}}. C2PRI targets\r\npreimage-resistance, whereas CCR targets collision-resistance {{CAMPBELL25}}.\r\n```",
+              "createdAt": "2025-07-02T20:37:46Z",
+              "updatedAt": "2025-07-02T20:37:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6xqCVb",
+          "commit": {
+            "abbreviatedOid": "dd11148"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T20:49:30Z",
+          "updatedAt": "2025-07-02T20:49:30Z",
+          "comments": [
+            {
+              "originalPosition": 327,
+              "body": "```suggestion\r\ndigest of the encapsulation keys.  This function MUST be collision-resistant.\r\n```",
+              "createdAt": "2025-07-02T20:49:30Z",
+              "updatedAt": "2025-07-02T20:49:30Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 59,
+      "id": "PR_kwDOMmhxws6c9Lro",
+      "title": "Restore seeds including expandDecapsulationKey() as a private common algorithm",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/59",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #58 ",
+      "createdAt": "2025-07-01T18:12:55Z",
+      "updatedAt": "2025-07-01T19:25:59Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "restore-seeds",
+      "headRefOid": "156f15b255ca60dfb19ff39011459df015180637",
+      "closedAt": "2025-07-01T19:25:57Z",
+      "mergedAt": "2025-07-01T19:25:57Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "d858664bd83f4bd52ae74b06c729e319f162e774"
+      },
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@bwesterb ",
+          "createdAt": "2025-07-01T18:13:08Z",
+          "updatedAt": "2025-07-01T18:13:08Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6xbNHE",
+          "commit": {
+            "abbreviatedOid": "156f15b"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-01T19:22:37Z",
+          "updatedAt": "2025-07-01T19:22:37Z",
+          "comments": []
         }
       ]
     }
