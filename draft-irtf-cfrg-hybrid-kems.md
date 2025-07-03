@@ -788,6 +788,9 @@ Security properties that were considered and not included in these designs:
 Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
 or binding {{GMP22}}, {{CDM23}}
 
+<!-- todo: distinguish key binding from the things we call X-BIND-K-[CT/PK]
+above but haven't explained yet -->
+
 ## Security Requirements for Constituent Components {#security-requirements}
 
 ### Security Requirements for KEMs {#security-kems}
@@ -884,38 +887,40 @@ digest of the encapsulation keys.  This function MUST be collision-resistant.
 The QSF construction has two complementary IND-CCA analyses. Both were given
 in {{XWING}}. We summarize them but elide some details.
 
-One analysis (Theorem 1) shows that if the KDF is modelled as a RO, IND-CCA
-holds if the PQ KEM is broken, as long as the SDH problem holds in the
-nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2) shows
-that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on the PQ-KEM's
-shared secret, IND-CCA holds.
+One analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,
+IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
+the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)
+{{XWING}} shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
+the PQ-KEM's shared secret, IND-CCA holds.
 
 As long as the aforementioned security requirements of the component parts
 are met, these analyses imply that this document's QSF construction satisfies
 IND-CCA security.
 
-This document's exact GHP and PRE constructions do not have IND-CCA
-analyses; the GHP paper gives a slightly different version, namely they do
-not include the public keys in the KDF. However, we argue that the proof goes
-through with trivial modifications if the public keys are included in the
-KDF. The relevant step is claim 3 of Theorem 1, which reduces to the
-split-key pseudorandomness of the KDF. (GHP call the KDF a "core" function,
-and denote it as W.) We observe that adding the public keys to the inputs
-only changes the concrete contents of the reduction's queries to its
-oracle. Since the reduction chooses the public keys itself, they can be added
-to the oracle inputs, and the remainder of the proof goes through unmodified.
+This document's exact GHP and PRE constructions do not have IND-CCA analyses;
+the GHP paper gives a slightly different version, namely they do not include
+the public encapsulation keys in the KDF. However, we argue that the proof
+goes through with trivial modifications if the public encapsulation keys are
+included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces
+to the split-key pseudorandomness of the KDF. (GHP call the KDF a "core"
+function, and denote it as W.) We observe that adding the public
+encapsulation keys to the inputs only changes the concrete contents of the
+reduction's queries to its oracle. Since the reduction chooses the public
+encapsulation keys itself, they can be added to the oracle inputs, and the
+remainder of the proof goes through unmodified.
 
 We also argue that this extension applies, again with nearly trivial
 modifications, to prove security of PRE. Observe that the only difference
-between GHP and PRE is prehashing of the encapsulation keys. As long as the
-hash function is collision resistant, any event that happens in the IND-CCA
-game of GHP happens only with negligibly different probability in the IND-CCA
-game of PRE.
+between GHP and PRE is prehashing of the public encapsulation keys. As long
+as the hash function is collision-resistant, any event that happens in the
+IND-CCA game of GHP happens only with negligibly different probability in the
+IND-CCA game of PRE.
 
 We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
 used in GHP and PRE meets the split-key pseudorandomness property used in
-GHP's analysis.
+GHP's analysis. <!-- TODO: apparently there is no good citation for this
+foklore, maybe we can explicitly lay it out -->
 
 Therefore all three hybrid KEMs in this document are IND-CCA when
 instantiated with cryptographic components that meet the security
@@ -925,7 +930,7 @@ generation/derivation, are not guaranteed to produce secure results.
 ### Binding analyses
 
 There are three hybrid KEM frameworks, and two target binding properties, so
-we need six total analyses. None of these results were known; thus the
+we need six total analyses. None of these exact results were known; thus the
 following are new results by the editorial team. We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.
 
@@ -935,7 +940,14 @@ implicitly think of them as two runs of DeriveKeyPair with independent random
 seeds.  We justify this simplification by noting that in the LEAK model - in
 which the adversary is given the key pairs resulting from an honest run of
 KeyGen - the pseudorandomness of the seed expansion implies the adversary's
-input distributions in the two cases are computationally indistinguishable.
+input distributions in the two cases are computationally
+indistinguishable. The derivation of component scheme key pairs from the
+common random seed provides further protection against manipulation or
+corruption of keys such that it can contribute to stronger binding properties
+against a MAL adversary, as well as operational benefits in practice, but we
+do not prove that here. <!-- TODO: if we can prove MAL for some of these,
+should we do that here? OTherwise we should link to the QSF MAL-BIND proofs
+in the X-Wing eprint, if we ever get that updated... -->
 
 #### GHP Binding
 
