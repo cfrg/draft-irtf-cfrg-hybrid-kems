@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-03T01:12:53.790001+00:00",
+  "timestamp": "2025-07-06T01:19:17.069684+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -241,7 +241,7 @@
       ],
       "body": "- [ ] include not looking at 'layered' style hybrids\n- [ ] include not looking at split/dualPRF style",
       "createdAt": "2025-04-16T18:15:46Z",
-      "updatedAt": "2025-05-29T21:56:34Z",
+      "updatedAt": "2025-07-03T19:49:02Z",
       "closedAt": null,
       "comments": [
         {
@@ -250,6 +250,13 @@
           "body": "Duplicate / subset of #13 ?",
           "createdAt": "2025-05-29T21:52:38Z",
           "updatedAt": "2025-05-29T21:52:38Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Duplicate / subset of [#13](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/13) ?\n\nDefinitely subset\n\n\n\n",
+          "createdAt": "2025-07-03T19:49:02Z",
+          "updatedAt": "2025-07-03T19:49:02Z"
         }
       ]
     },
@@ -284,7 +291,7 @@
       "id": "I_kwDOMmhxws63zN4v",
       "title": "Names for the schemes",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/20",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -293,8 +300,8 @@
       ],
       "body": "GHP? ",
       "createdAt": "2025-05-22T14:51:19Z",
-      "updatedAt": "2025-05-29T21:55:13Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:42:30Z",
+      "closedAt": "2025-07-03T19:42:30Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -324,7 +331,7 @@
       "id": "I_kwDOMmhxws6401jO",
       "title": "Instantiation of KitchenSink / HashEverything with a nominal group instead of a KEM",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/23",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -333,8 +340,8 @@
       ],
       "body": "",
       "createdAt": "2025-05-29T16:31:47Z",
-      "updatedAt": "2025-05-29T22:08:32Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:42:54Z",
+      "closedAt": "2025-07-03T19:42:54Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -350,7 +357,7 @@
       "id": "I_kwDOMmhxws641cOD",
       "title": "Refactor security properties subsection of Security Considerations section",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/24",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -359,8 +366,8 @@
       ],
       "body": "We have some language on IND-CCA and C2PRI but need more on the rest:\n\n## Security Properties\n\n### INDistinguishability against Chosen-Ciphertext Attacks (IND-CCA)\n\n### Ciphertext Second Preimage Resistance (C2PR)\n\n### Binding Properties (X-BIND-P-Q)\n\n### Survival if One KEM Fails\n\n## Security of the Combiners\n\n### Everything {#everything-sec}\n\n### OnlyTraditional {#only-traditional-sec}\n\n### OnlySharedSecrets {#only-shared-secrets-sec}",
       "createdAt": "2025-05-29T17:36:01Z",
-      "updatedAt": "2025-06-11T17:39:37Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:43:01Z",
+      "closedAt": "2025-07-03T19:43:01Z",
       "comments": [
         {
           "author": "pag-crypto",
@@ -453,7 +460,7 @@
       "id": "I_kwDOMmhxws643rU2",
       "title": "Describe how the hybrid schemes meet the security goals",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/27",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -464,8 +471,8 @@
       ],
       "body": "We should provide citations to proofs in the literature that the schemes we describe are secure given our requirements on the inputs.\n\n* HashEverything should map to one of the schemes in GHP20\n* PreHashKeys - not clear what the right citation is here?\n* HashTraditionalOnly maps to the QSF construction in BCD+24",
       "createdAt": "2025-05-29T22:16:33Z",
-      "updatedAt": "2025-06-24T18:11:31Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:42:23Z",
+      "closedAt": "2025-07-03T19:42:23Z",
       "comments": [
         {
           "author": "pag-crypto",
@@ -506,7 +513,7 @@
       "id": "I_kwDOMmhxws6437i1",
       "title": "Should DeriveKeyPair be optional?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/29",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -515,8 +522,8 @@
       ],
       "body": "In the KEM interface, we currently require a DeriveKeyPair algorithm.  We could make this optional, in the same way that `EncapsDerand` is optional.\n\nOn the one hand, this algorithm is not typically included in descriptions of KEMs in the literature.  On the other hand, it is important for integration with things like HPKE and MLS, and most KEMs provide such an algorithm in practice (even if just by making the randomness used by GenerateKeyPair explicit).",
       "createdAt": "2025-05-29T23:05:53Z",
-      "updatedAt": "2025-06-25T11:10:01Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:43:48Z",
+      "closedAt": "2025-07-03T19:43:48Z",
       "comments": [
         {
           "author": "bwesterb",
@@ -524,6 +531,13 @@
           "body": "Another application is FIDO2, where key pairs are derived determinisitcally. I see no downside to making this required.",
           "createdAt": "2025-06-25T11:10:01Z",
           "updatedAt": "2025-06-25T11:10:01Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Currently written as required",
+          "createdAt": "2025-07-03T19:43:48Z",
+          "updatedAt": "2025-07-03T19:43:48Z"
         }
       ]
     },
@@ -607,7 +621,7 @@
       "id": "I_kwDOMmhxws68ku2x",
       "title": "Determine the security requirements for PRE/KeyHash",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/36",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -616,8 +630,8 @@
       ],
       "body": "The PRE scheme requires a KeyHash function for pre-hashing the encapsulation keys.  We should specify what security definitions this function needs to meet.\n\nThe only example we have right now is the use of SHA3-256 in the Chempat specification, which does not include a general security definition or any proofs of security from which we could back out a definition.",
       "createdAt": "2025-06-20T15:45:47Z",
-      "updatedAt": "2025-06-24T21:26:17Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:44:04Z",
+      "closedAt": "2025-07-03T19:44:04Z",
       "comments": [
         {
           "author": "pag-crypto",
@@ -673,7 +687,7 @@
       "id": "I_kwDOMmhxws68kxoa",
       "title": "Define a registry of combination labels?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/38",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -682,8 +696,8 @@
       ],
       "body": "The hybrid schemes include a \"label\" input that provides domain separation between specific instantiations.  It could help interoperability if there were a central list of these labels, with references to the instantiations they go with.  This could be a very simple IANA registry, just a \"label\" column and a \"reference\" column.  It might even be fine to make the registration policy First Come First Served.",
       "createdAt": "2025-06-20T15:50:21Z",
-      "updatedAt": "2025-06-20T22:43:47Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:44:22Z",
+      "closedAt": "2025-07-03T19:44:22Z",
       "comments": [
         {
           "author": "dconnolly",
@@ -691,6 +705,13 @@
           "body": "not sure about labels per se, also this sounds closer to an IANA registry for KEMs period, which i don't think cfrg has done for any primitive; also labels may be the same across different kdfs, inputs, lengths, and achieve oracle cloning, so",
           "createdAt": "2025-06-20T22:43:47Z",
           "updatedAt": "2025-06-20T22:43:47Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing for now, I think ",
+          "createdAt": "2025-07-03T19:44:22Z",
+          "updatedAt": "2025-07-03T19:44:22Z"
         }
       ]
     },
@@ -730,7 +751,7 @@
       "id": "I_kwDOMmhxws69Sro7",
       "title": "Sketch proofs for leak-bind-k-[pk, ct] for generics in appendix",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/47",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -741,8 +762,8 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-06-25T14:04:59Z",
-      "updatedAt": "2025-06-25T14:04:59Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:37:24Z",
+      "closedAt": "2025-07-03T19:37:24Z",
       "comments": []
     },
     {
@@ -753,11 +774,13 @@
       "state": "OPEN",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "dconnolly"
+      ],
       "labels": [],
       "body": "GHP: works for generic IND-CCA components, IND-CCA proofs from GHP18, including PKs fits in 'additional data' parts of the split key PRF proof there, and binds to PKs which is nice for protocols, and whole thing matches pubs like NIST SP 800-227 IPD, and gives good binding properties / is generally safe / no caveats on use for broad array of components with current IND-CCA analysis etc\n\nQSF: works for most common elliptic curve groups and C2PRI pq KEMs, optimization that leaves out large ciphertexts and PKs from hashing if the PQ KEM meets requirements, more KEMs can be proven to have C2PRI \n\nPRE: same benefits as GHP while allowing an optimization to pre-hash static PKs, which if large can be a performance improvement",
       "createdAt": "2025-06-25T14:18:55Z",
-      "updatedAt": "2025-06-25T14:18:55Z",
+      "updatedAt": "2025-07-03T19:48:11Z",
       "closedAt": null,
       "comments": []
     },
@@ -766,7 +789,7 @@
       "id": "I_kwDOMmhxws69TQER",
       "title": "sketch how PRE is still IND-CCA in appendix",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/49",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -775,8 +798,8 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-06-25T14:45:25Z",
-      "updatedAt": "2025-06-25T14:45:25Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:41:12Z",
+      "closedAt": "2025-07-03T19:41:12Z",
       "comments": []
     },
     {
@@ -784,15 +807,15 @@
       "id": "I_kwDOMmhxws69YbHJ",
       "title": "Sketch BIND proofs for QSF",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/52",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-06-26T00:21:04Z",
-      "updatedAt": "2025-06-26T00:21:04Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:40:45Z",
+      "closedAt": "2025-07-03T19:40:45Z",
       "comments": []
     },
     {
@@ -800,15 +823,15 @@
       "id": "I_kwDOMmhxws69YbJS",
       "title": "Sketch GHP BIND proofs",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/53",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-06-26T00:21:13Z",
-      "updatedAt": "2025-06-26T00:21:13Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:40:40Z",
+      "closedAt": "2025-07-03T19:40:40Z",
       "comments": []
     },
     {
@@ -816,7 +839,7 @@
       "id": "I_kwDOMmhxws69YbON",
       "title": "Sketch PRE BIND proofs",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/54",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -825,8 +848,8 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-06-26T00:21:29Z",
-      "updatedAt": "2025-06-26T00:21:29Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:40:32Z",
+      "closedAt": "2025-07-03T19:40:32Z",
       "comments": []
     },
     {
@@ -834,15 +857,15 @@
       "id": "I_kwDOMmhxws69wzkg",
       "title": "Ciphertext second-preimage resistance for hybrid KEMs",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/55",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "pag-crypto",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "In the current draft, ciphertext second pre-image resistance (C2PRI) is listed as a desired property of our hybrid KEMs. What is the justification for this? It is clear that QSF requires the PQ KEM to have ciphertext preimage resistance in order for the composition to be IND-CCA2, but does this mean C2PRI is necessarily a design goal for the whole composition? If so, what is the justification?",
       "createdAt": "2025-06-27T18:08:34Z",
-      "updatedAt": "2025-06-27T18:09:50Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-03T19:41:04Z",
+      "closedAt": "2025-07-03T19:41:04Z",
       "comments": [
         {
           "author": "pag-crypto",
@@ -861,13 +884,30 @@
       "state": "OPEN",
       "author": "pag-crypto",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "dconnolly"
+      ],
       "labels": [],
       "body": "The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.) \n\nSince (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.",
       "createdAt": "2025-06-27T19:07:29Z",
-      "updatedAt": "2025-06-27T19:07:29Z",
+      "updatedAt": "2025-07-03T19:48:04Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.)\n> \n> Since (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.\n\nI'm fine with this, especially if we explicitly say in the text 'indiff. implies PRF security' in a way",
+          "createdAt": "2025-07-03T19:46:36Z",
+          "updatedAt": "2025-07-03T19:46:36Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.)\n> > Since (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.\n> \n> I'm fine with this, especially if we explicitly say in the text 'indiff. implies PRF security' in a way\n\nI added a todo [here](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/blob/6183080e4c32287080e8de6b9ba16cac6bf547c3/draft-irtf-cfrg-hybrid-kems.md?plain=1#L922), we may be able to just do this arguing in the text using indiff. literature to make the argument, since there doesn't seem to be a nice tidy citation ",
+          "createdAt": "2025-07-03T19:48:00Z",
+          "updatedAt": "2025-07-03T19:48:00Z"
+        }
+      ]
     },
     {
       "number": 58,
@@ -5282,24 +5322,26 @@
       "id": "PR_kwDOMmhxws6ce8jC",
       "title": "DRAFT: started rewrite of security properties subsection. added some proof sketches",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/57",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "pag-crypto",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "WRiteup is still work in progress, but i thought people would like to see what i'm working on, to give feedback. STill TODO is fleshing out proofs for leak-bind. ",
+      "body": "WRiteup is still work in progress, but i thought people would like to see what i'm working on, to give feedback. STill TODO is fleshing out proofs for leak-bind. \r\n\r\nResolves #47",
       "createdAt": "2025-06-27T20:13:49Z",
-      "updatedAt": "2025-07-02T20:49:34Z",
+      "updatedAt": "2025-07-03T19:37:24Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "sec-props",
-      "headRefOid": "8f926fb577cdb07a1ddfb6dfdfbd303d5ed561d0",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "a23aadda8347ae7a4f2ba93174ca7fe6499ea84d",
+      "closedAt": "2025-07-03T19:37:23Z",
+      "mergedAt": "2025-07-03T19:37:23Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "6183080e4c32287080e8de6b9ba16cac6bf547c3"
+      },
       "comments": [],
       "reviews": [
         {
@@ -5927,6 +5969,19 @@
               "updatedAt": "2025-07-02T20:49:30Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6x4y85",
+          "commit": {
+            "abbreviatedOid": "a23aadd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-03T19:36:34Z",
+          "updatedAt": "2025-07-03T19:36:34Z",
+          "comments": []
         }
       ]
     },
