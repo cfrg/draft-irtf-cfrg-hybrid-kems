@@ -1094,10 +1094,10 @@ fixed-length shared secrets.
 
 # In Scope
 
-## GHP
+## GHP Framework
 
 The GHP framework works for generic IND-CCA component schemes. GHP also has
-an IND-CCA proof from {{GHP18}}. Including the public encapsulation keys as
+an IND-CCA proof from {{GHP2018}}. Including the public encapsulation keys as
 part of the KDF preimage fits in the 'additional data' parts of the split key
 PRF proof there, and binds to the encapsulation keys, which is a nice
 property for protocols integrating concrete instances. GHP also matches NIST
@@ -1105,7 +1105,7 @@ SP 800-227 IPD, and gives good binding properties {{binding-properties}} is
 generally safe with no caveats on use for constructing concrete instances
 using a broad array of components.
 
-## QSF
+## QSF Framework
 
 QSF works for most elliptic curve groups and C2PRI-secure quantum-resistant
 KEMs.  It is an optimization that leaves out large ciphertexts and
@@ -1113,7 +1113,7 @@ encapsulation keys from the KDF preimage, saving extra hashing, if the PQ KEM
 meets requirements. More KEMs can be proven to be C2PRI-secure eventually for
 use with QSF.
 
-## PRE
+## PRE Framework
 
 PRE offers many of the same benefits as GHP, while allowing an optimization
 to pre-hash static encapsulation keys, which if large, can be a performance
