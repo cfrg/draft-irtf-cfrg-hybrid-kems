@@ -5,8 +5,8 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 8 January 2026                                            Cisco
-                                                             7 July 2025
+Expires: 9 January 2026                                            Cisco
+                                                             8 July 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2026.
+   This Internet-Draft will expire on 9 January 2026.
 
 Copyright Notice
 
@@ -396,14 +396,14 @@ Table of Contents
    In this section, we define three generic frameworks for building for
    hybrid KEMs:
 
-   GHP:  A generic framwork that is suitable for use with any choice of
+   GHP:  A generic framework that is suitable for use with any choice of
       traditional and PQ KEMs, with minimal security assumptions on the
       constituent KEMs
 
    PRE:  A performance optimization of GHP for the case where
       encapsulation keys are large and frequently reused
 
-   QSF:  An optimized generic framwork for the case where the
+   QSF:  An optimized generic framework for the case where the
       traditional component is a nominal group and the PQ component has
       strong binding properties
 
@@ -564,7 +564,7 @@ Table of Contents
        seed_full = PRG(seed)
        (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
-       dk_T = Group_T.RandomScalar(seed_T))
+       dk_T = Group_T.RandomScalar(seed_T)
        ek_T = Group_T.Exp(Group_T.g, dk_T)
        (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
 
