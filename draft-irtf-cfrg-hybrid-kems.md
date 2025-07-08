@@ -146,6 +146,10 @@ informative:
     title: "KEM Combiners"
     target: https://eprint.iacr.org/2018/024.pdf
     date: 2018
+    author:
+     - name: Federico Giacon
+     - name: Felix Heuer
+     - name: Bertram Poettering
   GMP22:
     title: "Anonymous, Robust Post-Quantum Public-Key Encryption"
     target: https://eprint.iacr.org/2021/708.pdf
