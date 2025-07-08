@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-06T01:19:17.069684+00:00",
+  "timestamp": "2025-07-08T01:13:22.320884+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -771,7 +771,7 @@
       "id": "I_kwDOMmhxws69S5qS",
       "title": "Expand on generic framework choices in subsection ",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/48",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -780,8 +780,8 @@
       "labels": [],
       "body": "GHP: works for generic IND-CCA components, IND-CCA proofs from GHP18, including PKs fits in 'additional data' parts of the split key PRF proof there, and binds to PKs which is nice for protocols, and whole thing matches pubs like NIST SP 800-227 IPD, and gives good binding properties / is generally safe / no caveats on use for broad array of components with current IND-CCA analysis etc\n\nQSF: works for most common elliptic curve groups and C2PRI pq KEMs, optimization that leaves out large ciphertexts and PKs from hashing if the PQ KEM meets requirements, more KEMs can be proven to have C2PRI \n\nPRE: same benefits as GHP while allowing an optimization to pre-hash static PKs, which if large can be a performance improvement",
       "createdAt": "2025-06-25T14:18:55Z",
-      "updatedAt": "2025-07-03T19:48:11Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-07T23:23:41Z",
+      "closedAt": "2025-07-07T23:23:41Z",
       "comments": []
     },
     {
@@ -5270,24 +5270,26 @@
       "id": "PR_kwDOMmhxws6cJCaQ",
       "title": "A stab at 'why these generic frameworks' section",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/50",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Resolves #48",
       "createdAt": "2025-06-26T00:00:08Z",
-      "updatedAt": "2025-06-26T00:01:26Z",
+      "updatedAt": "2025-07-07T23:23:42Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
-      "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
+      "baseRefOid": "6183080e4c32287080e8de6b9ba16cac6bf547c3",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "expand-on-framework-choices",
-      "headRefOid": "818a71ebc1ee7bca4c6e28a2c83720f52abb13b8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "3582bb35ec74368ca1ccc1bd99677bf9bbbfc7cf",
+      "closedAt": "2025-07-07T23:23:40Z",
+      "mergedAt": "2025-07-07T23:23:40Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "cec4902d0f359034077ca2eadc89ec4295bd41b8"
+      },
       "comments": [],
       "reviews": []
     },
@@ -6034,6 +6036,34 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 61,
+      "id": "PR_kwDOMmhxws6d1vcL",
+      "title": "Names of sections on in-scope frameworks",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/61",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-07-07T23:30:10Z",
+      "updatedAt": "2025-07-07T23:30:50Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "cec4902d0f359034077ca2eadc89ec4295bd41b8",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "sections",
+      "headRefOid": "ffb72d9da3aab63410b4987ffae97527df13d717",
+      "closedAt": "2025-07-07T23:30:48Z",
+      "mergedAt": "2025-07-07T23:30:48Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "14201a23e2095accd453b0424c6f9d00181a66b9"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
