@@ -507,7 +507,7 @@ In this section, we define three generic frameworks for building for hybrid
 KEMs:
 
 GHP:
-: A generic framwork that is suitable for use with any choice of traditional and
+: A generic framework that is suitable for use with any choice of traditional and
   PQ KEMs, with minimal security assumptions on the constituent KEMs
 
 PRE:
@@ -515,7 +515,7 @@ PRE:
   large and frequently reused
 
 QSF:
-: An optimized generic framwork for the case where the traditional component is a
+: An optimized generic framework for the case where the traditional component is a
   nominal group and the PQ component has strong binding properties
 
 These frameworks share a common overall structure, differing mainly in how they
@@ -680,7 +680,7 @@ def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
     (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
 
-    dk_T = Group_T.RandomScalar(seed_T))
+    dk_T = Group_T.RandomScalar(seed_T)
     ek_T = Group_T.Exp(Group_T.g, dk_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
 
