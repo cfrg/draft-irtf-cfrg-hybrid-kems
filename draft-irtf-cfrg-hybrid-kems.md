@@ -491,7 +491,7 @@ laid out in {{security-prgs}}.
 
 ## Key Derivation Functions {#kdfs}
 
-A Key Derivation Function (KDF) is a function that a function that produces
+A Key Derivation Function (KDF) is a function that produces
 keying material based on an input secret and other information.
 
 While KDFs in the literature can typically consume and produce byte strings of
