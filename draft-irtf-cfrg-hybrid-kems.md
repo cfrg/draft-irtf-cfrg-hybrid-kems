@@ -257,7 +257,7 @@ Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help
 moderate this risk while still providing security against quantum attack.  If
-construted properly, a hybrid KEM will retain certain security properties
+constructed properly, a hybrid KEM will retain certain security properties
 even if one of the two constituent KEMs is compromised. If the PQ KEM is
 broken, then the hybrid KEM should continue to provide security against
 non-quantum attackers by virtue of its traditional KEM component. If the
@@ -442,7 +442,7 @@ comprises a set `G` together with a distinguished basis element `g`, an
 - `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
   byte string `seed`.
 - `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element of
-  the group (e.g., by taking the X coordinate of an ellpitic curve point).
+  the group (e.g., by taking the X coordinate of an elliptic curve point).
 
 We assume that scalars and group elements are represented by byte strings with
 fixed lengths:
@@ -1061,13 +1061,13 @@ inclusion of the `label` achieves via domain separation {{GHP2018}}.
 
 By design, the calls to `KDF` in these frameworks and usage anywhere else
 in higher level protocol use separate input domains unless intentionally
-duplicating the 'label' per concrete instance with fixed paramters. This
-justifies modeling them as independent functions even if instantiated by the
+duplicating the 'label' per concrete instance with fixed parameters. This
+justifies modelling them as independent functions even if instantiated by the
 same KDF. This domain separation is achieved by using prefix-free sets of
 `label` values. Recall that a set is prefix-free if no element is a prefix of
 another within the set.
 
-Length diffentiation is sometimes used to achieve domain separation but as a
+Length differentiation is sometimes used to achieve domain separation but as a
 technique it is brittle and prone to misuse {{BDG2020}} in practice so we
 favor the use of an explicit post-fix label.
 
@@ -1134,7 +1134,7 @@ traditional and a post-quantum KEM.
 ## Parameterized Output Length
 
 Not analyzed as part of any security proofs in the literature, and a
-complicatation deemed unnecessary.
+complication deemed unnecessary.
 
 --- back
 
