@@ -18,6 +18,11 @@ author:
     fullname: Richard Barnes
     organization: Cisco
     email: rlb@ipv.sx
+ -
+    fullname: Paul Grubbs
+    organization: University of Michigan
+    email: TODO
+    
 
 normative:
   FIPS202: DOI.10.6028/NIST.FIPS.202
