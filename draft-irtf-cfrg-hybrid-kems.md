@@ -539,12 +539,11 @@ components:
 The KEMs, groups, KDFs, and PRGs MUST meet the security requirements in
 {{security-requirements}}.
 
-The constants associated with the hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:
+The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:
 
 ~~~
 Nek = KEM_T.Nek + KEM_PQ.Nek
-Ndk = KEM_T.Ndk + KEM_PQ.Ndk
 Nct = KEM_T.Nct + KEM_PQ.Nct
 ~~~
 
@@ -556,8 +555,9 @@ Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
 Nss = min(KEM_T.Nss, KEM_PQ.Nss)
 ~~~
 
-Given these constituent parts, the GHP hybrid KEM is defined as
-follows:
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.
+
+Given these constituent parts, the GHP hybrid KEM is defined as follows:
 
 ~~~
 def expandDecapsulationKey(seed):
@@ -656,12 +656,11 @@ We presume that `Group_T`, `KEM_PQ`, and the KDFs meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
 described in {{security-requirements}}.
 
-The constants associated with the hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:
+The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:
 
 ~~~
 Nek = Group_T.Nelem + KEM_PQ.Nek
-Ndk = Group_T.Nscalar + KEM_PQ.Ndk
 Nct = Group_T.Nelem + KEM_PQ.Nct
 ~~~
 
@@ -672,6 +671,8 @@ the combined KEM, with the following recommended values:
 Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
 Nss = min(Group_T.Nss, KEM_PQ.Nss)
 ~~~
+
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.
 
 Given these constituent parts, we define the QSF hybrid KEM as follows:
 
