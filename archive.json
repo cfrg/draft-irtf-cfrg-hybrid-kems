@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-10T01:14:03.622404+00:00",
+  "timestamp": "2025-07-17T01:16:51.772496+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -724,10 +724,12 @@
       "author": "pag-crypto",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "discuss"
+      ],
       "body": "In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)",
       "createdAt": "2025-06-24T16:51:38Z",
-      "updatedAt": "2025-06-25T10:22:26Z",
+      "updatedAt": "2025-07-15T22:38:39Z",
       "closedAt": null,
       "comments": [
         {
@@ -887,10 +889,12 @@
       "assignees": [
         "dconnolly"
       ],
-      "labels": [],
+      "labels": [
+        "TODO"
+      ],
       "body": "The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.) \n\nSince (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.",
       "createdAt": "2025-06-27T19:07:29Z",
-      "updatedAt": "2025-07-03T19:48:04Z",
+      "updatedAt": "2025-07-15T22:41:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -935,11 +939,15 @@
       "state": "OPEN",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "bifurcation"
+      ],
+      "labels": [
+        "TODO"
+      ],
       "body": "",
       "createdAt": "2025-07-01T18:22:25Z",
-      "updatedAt": "2025-07-01T18:22:25Z",
+      "updatedAt": "2025-07-15T22:42:09Z",
       "closedAt": null,
       "comments": []
     },
@@ -952,12 +960,56 @@
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "discuss"
+      ],
       "body": "",
       "createdAt": "2025-07-08T16:16:28Z",
-      "updatedAt": "2025-07-08T16:16:28Z",
+      "updatedAt": "2025-07-15T22:42:27Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 66,
+      "id": "I_kwDOMmhxws7A7JKv",
+      "title": "add paul as author",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/66",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-07-16T17:15:49Z",
+      "updatedAt": "2025-07-16T21:55:32Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 67,
+      "id": "I_kwDOMmhxws7A9yln",
+      "title": "Always use (PQ, T) ordering",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/67",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "There are a few cases in the document where a PQ thing and a T thing are paired together, and we don't always use the same order, for example:\n\n* Hybrid ciphertexts and encapsulation keys: (T, PQ)\n* Shared secret inputs to the KDF: (PQ, T)\n\nFor consistency, it would be good to use the same ordering for all of these cases.  As far as I know, this ordering makes no difference cryptographically or in terms of compliance requirements.  (I believe there were some FIPS concerns which are now obsolete.)\n\nPersonally, I would probably go with the (PQ, T) ordering, because it matches the QSF paper and the GHP paper ([see Fig. 4](https://eprint.iacr.org/2018/024.pdf)) is agnostic.",
+      "createdAt": "2025-07-16T21:40:33Z",
+      "updatedAt": "2025-07-16T21:53:42Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "i think this is fine and shouldn't have any interop issues with X-Wing",
+          "createdAt": "2025-07-16T21:53:42Z",
+          "updatedAt": "2025-07-16T21:53:42Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -4663,21 +4715,21 @@
       "id": "PR_kwDOMmhxws6aHPHm",
       "title": "Add a reference implementation",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/33",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR adds a reference implementation of the hybrid KEMs.  There are traits for the constituent parts, and then the hybrid KEMs are defined generically over types that implement the constituent parts.\r\n\r\nMy first experiment with Claude Code.  All of the code is Claude-written, I did not open any of the files in an editor.  I have not reviewed, will review as part of this PR.\r\n\r\nFull transcript:\r\n\r\n* Can you read files from the parent directory?\r\n* Make a new Cargo/Rust project in this directory.  it should be in a directory called reference-implementation, and the name of the module should be \r\n* Change directory into reference-implementation\r\n* Add a trait for the KEM interface described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Give the constants more descriptive names\r\n* Add traits for the KDF and PRG interfaces described in ../draft-irtf-cfrg-hybrid-kems.md\r\n* Rename kem.rs to something more appropriate\r\n* Now write an implementation of the GHP hybrid KEM.  The hybrid KEM should be generic over its constituents, using the traits to bound the generic \r\n* Please add real implementations for the placeholders.  You can assume that the keys, ciphertexts, and shared secrets serialize to fixed-length byte \r\n* Instead of to_bytes / from_bytes, I would use serialize and deserialize.  WHen you serialize, use slices instead of Vec.\r\n* Go back to traits.rs.  Don't use a mutable reference argument, return a reference.  And the serialize methods don't need to be fallible.\r\n* For the hybrid serialization, make the same assumption that the deserialization methods make, namely that the T and PQ serializations are \r\n* In order to make serialization and deserialization easier, change the hybrid keys and ciphertexts just to hold a byte string.\r\n* The generate_key_pair method on GHP needs to actually use random data.  You should take a randomness source as input and use it.  Update the KEM \r\n* Use the CryptoRng trait instead of Rng\r\n* Don't use Rng, just CryptoRng\r\n* Use the latest version\r\n* Don't use RngCore\r\n* Don't use Rng.  Just CryptoRng.\r\n* Thanks, great work.  Now take the GHP implementation, and use it to generate implementations of the PRE and QSF hybrid KEMs\r\n* Move the NominalGroup trait to traits.rs\r\n* Have all of the hybrid KEMs use the same error type.  Split it out into error.rs if you think that's appropriate.\r\n* Are there any placeholders left in the codebase?\r\n* Replace the placeholder in qsf.rs with real randomness\r\n* Instead of using thread_rng, encaps should take an rng argument\r\n* Don't update the trait, remove it from the qsf.rs file.\r\n* Convert this crate from a binary crate to a library crate\r\n* commit the current state to a new branch called vibe-code\r\n* Create test implementations of the traits in traits.rs.  These implementations should fulfill the API in the simplest way possible, without being \r\n* Factor out the test functions so that they can be reused with other implementations.  But keep the tests.\r\n* Now add tests for each of the hybrid KEMs.  You should be able to reuse the KEM tests you already created.\r\n* Commit the tests\r\n* /exit \r\n\r\n",
       "createdAt": "2025-06-11T22:54:14Z",
-      "updatedAt": "2025-07-01T20:50:47Z",
+      "updatedAt": "2025-07-16T21:47:20Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "vibe-code",
       "headRefOid": "487f991671e27ad76d6b2b11b005e6be4f96a9ef",
-      "closedAt": null,
+      "closedAt": "2025-07-16T21:47:20Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -4709,6 +4761,13 @@
           "body": "> I don't think we should have an implementation of generic hybrid KEM frameworks. This would be like having a reference implementation of Fiat-Shamir, or an FO transform\u2014 these are abstract recipes used to construct _concrete_ schemes. The code in this branch can be moved over into [cfrg/draft-irtf-cfrg-concrete-hybrid-kems#8](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8) as an internal abstraction if you wish, I do not think it belongs here as a software artifact, that is not a good idea IMO\u2014 the final concrete KEMs that use this stuff as an internal detail are the artifacts. As the framework implementations cannot do any cryptographic assertions that the components slotted in fulfill the security requirements of each framework, this should not be a composable artifact.\r\n\r\n@bwesterb since this is a cryptographic software / abstraction opinion, what do you think? Am I being too cautious?",
           "createdAt": "2025-07-01T20:50:46Z",
           "updatedAt": "2025-07-01T20:50:46Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't have a strong opinion here.  On the one hand, the Rust type system is nice enough that it can capture these abstractions.  On the other hand, we're not going to do anything with it in this repo (like generate test vectors) and since the Rust doesn't check security properties, I can see understand some concern about people making inappropriate combos.\r\n\r\nI went ahead and moved this code over to the concrete hybrid KEMs PR, https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/8.",
+          "createdAt": "2025-07-16T21:47:20Z",
+          "updatedAt": "2025-07-16T21:47:20Z"
         }
       ],
       "reviews": [
@@ -6173,6 +6232,80 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 68,
+      "id": "PR_kwDOMmhxws6fRCID",
+      "title": "Align constant definitions with seed format for hybrid decapsulation key",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/68",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The pseudocode for the schemes uses the seed format for the hybrid decapsulation key, but the description of `Ndk` for the hybrid KEMs still says that is is the sum of the constituents.  It should instead say `Ndk = Nseed`.  This PR makes this change, and in general, rearranges the constant definitions to be a little nicer.",
+      "createdAt": "2025-07-16T21:44:52Z",
+      "updatedAt": "2025-07-16T21:55:00Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "ndk",
+      "headRefOid": "0746501964913963b93075946965a4a767f1fb6d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws60bJzK",
+          "commit": {
+            "abbreviatedOid": "0746501"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-16T21:55:00Z",
+          "updatedAt": "2025-07-16T21:55:00Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 69,
+      "id": "PR_kwDOMmhxws6fREFG",
+      "title": "Add Paul Grubbs as co-author",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/69",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Major omission from the latest draft.\r\n\r\n@pag-crypto - What email address would you like to put on this? \n\nResolves #66",
+      "createdAt": "2025-07-16T21:49:48Z",
+      "updatedAt": "2025-07-17T00:40:29Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "grubbs",
+      "headRefOid": "9f19e584055c9f57fdca0ee65be47215cb9abb0e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "paulgrubbs12@gmail.com",
+          "createdAt": "2025-07-17T00:40:29Z",
+          "updatedAt": "2025-07-17T00:40:29Z"
+        }
+      ],
       "reviews": []
     }
   ]
