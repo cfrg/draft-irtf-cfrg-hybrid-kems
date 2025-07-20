@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-17T01:16:51.772496+00:00",
+  "timestamp": "2025-07-20T01:23:25.492956+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -394,7 +394,7 @@
       ],
       "body": "We have three types of constituents that go into our hybrid schemes:\n\n1. KEMs\n2. Nominal groups\n3. Hash functions\n\nThe security requirements for the former two are pretty clear: A KEM needs to be IND-CCA, and if it is going to be used with QSF / HashTraditionalOnly, it needs to have some additional binding properties.  A nominal group needs to be secure in the sense of [ABH+20].\n\nFor the \"hash functions\", we should define a requirement that aligns well with the constructions in the literature, some combination of notions of XOF, KDF, and RO.",
       "createdAt": "2025-05-29T22:12:54Z",
-      "updatedAt": "2025-06-24T21:37:28Z",
+      "updatedAt": "2025-07-17T06:51:49Z",
       "closedAt": null,
       "comments": [
         {
@@ -410,6 +410,13 @@
           "body": "I would treat the current text as a baseline and feel free to review / revise / reorient as makes sense to tell the overall story.",
           "createdAt": "2025-06-24T21:37:27Z",
           "updatedAt": "2025-06-24T21:37:27Z"
+        },
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "On the QSF description text, I would strike out the \"the traditional component is a nominal group and\" part. While X-Wing paper only proves the nominal group case, the proof goes through with trivial modifications for any hashed traditional part (with whatever terms arise from traditional part replacing the nominal group terms in the advantage bound).\n",
+          "createdAt": "2025-07-17T06:51:49Z",
+          "updatedAt": "2025-07-17T06:51:49Z"
         }
       ]
     },
@@ -429,7 +436,7 @@
       ],
       "body": "Normal KEM security notions apply, particularly IND-CCA and X-BIND-P-Q.\n\nThe interesting thing will be how to discuss the \"hybrid\" security notion, i.e., the survival of at least IND-CCA when at least one KEM fails -- for some definition of \"fails\".",
       "createdAt": "2025-05-29T22:14:34Z",
-      "updatedAt": "2025-06-25T10:50:59Z",
+      "updatedAt": "2025-07-17T07:22:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -452,6 +459,13 @@
           "body": "I have not seen even a somewhat realistic scenario where MAL-BIND-P-Q is relevant. But LEAK-BIND-K-PK certainly [has come up](https://iacr.org/submit/files/slides/2025/pkc/pkc2025/19/19_slides.pdf). Abstractions are a bit annoying here: assuming hashes are secure, a concrete hybrid of ML-KEM that hashes in the traditional public key is LEAK-BIND-K-PK, but you can not prove this if you take the components opaquely.",
           "createdAt": "2025-06-25T10:50:59Z",
           "updatedAt": "2025-06-25T10:50:59Z"
+        },
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "Has there been even remotely realistic scenarios where LEAK-BIND-K-PK is needed, but MAL-BIND-K-CT is not enough? Because for some stuff (e.g., anything involving RSA, HQC or FrodoKEM), binding the key is much more annoying than binding the ciphertext. And the hybrid construction seems to be always MAL-BIND-K-CT if the hashes are strong enough (since either the component ciphertext is hashed, or component is C2PIR).\n\nThere may be some annoying edge cases, tho, e.g., ciphertexts that always decrypt the same way for any key (one infamous KEM had those?), but no honest initiator should ever produce those, so I think that should be enough to stop at least re-encapsulation attacks.",
+          "createdAt": "2025-07-17T07:14:30Z",
+          "updatedAt": "2025-07-17T07:22:58Z"
         }
       ]
     },
@@ -729,7 +743,7 @@
       ],
       "body": "In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)",
       "createdAt": "2025-06-24T16:51:38Z",
-      "updatedAt": "2025-07-15T22:38:39Z",
+      "updatedAt": "2025-07-17T07:31:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -745,6 +759,13 @@
           "body": "Most contact with reality makes an implicitly rejecting KEM explicitly rejecting: for instance, in TLS if both sides do not agree on the same shared secret, the AEAD will error out, and the failed connection is rather explicit. Thus, for security analysis we should assume KEMs are explicitly rejecting (but luckily that [doesn't seem to matter much](https://link.springer.com/chapter/10.1007/978-3-031-86602-9_12).) On the other hand, from an API usability perspective it's better to have an implicitly KEM, as it's one less corner case to deal with. ",
           "createdAt": "2025-06-25T10:22:26Z",
           "updatedAt": "2025-06-25T10:22:26Z"
+        },
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "It is not just the KEM that could fail, but the traditional part as well. E.g., X25519.\n\n(And explicit rejection is easier to test.)",
+          "createdAt": "2025-07-17T07:27:43Z",
+          "updatedAt": "2025-07-17T07:31:00Z"
         }
       ]
     },
@@ -999,7 +1020,7 @@
       ],
       "body": "There are a few cases in the document where a PQ thing and a T thing are paired together, and we don't always use the same order, for example:\n\n* Hybrid ciphertexts and encapsulation keys: (T, PQ)\n* Shared secret inputs to the KDF: (PQ, T)\n\nFor consistency, it would be good to use the same ordering for all of these cases.  As far as I know, this ordering makes no difference cryptographically or in terms of compliance requirements.  (I believe there were some FIPS concerns which are now obsolete.)\n\nPersonally, I would probably go with the (PQ, T) ordering, because it matches the QSF paper and the GHP paper ([see Fig. 4](https://eprint.iacr.org/2018/024.pdf)) is agnostic.",
       "createdAt": "2025-07-16T21:40:33Z",
-      "updatedAt": "2025-07-16T21:53:42Z",
+      "updatedAt": "2025-07-17T17:02:43Z",
       "closedAt": null,
       "comments": [
         {
@@ -1008,6 +1029,20 @@
           "body": "i think this is fine and shouldn't have any interop issues with X-Wing",
           "createdAt": "2025-07-16T21:53:42Z",
           "updatedAt": "2025-07-16T21:53:42Z"
+        },
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It is a compat issue. Discovered when checking test vectors.",
+          "createdAt": "2025-07-17T05:13:13Z",
+          "updatedAt": "2025-07-17T05:13:13Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It is a compat issue. Discovered when checking test vectors.\n\nFor the others besides X-Wing as specified in draft-connolly-cfrg-xwing-kem-06+ ? Drat",
+          "createdAt": "2025-07-17T17:02:43Z",
+          "updatedAt": "2025-07-17T17:02:43Z"
         }
       ]
     }
@@ -6246,7 +6281,7 @@
       "labels": [],
       "body": "The pseudocode for the schemes uses the seed format for the hybrid decapsulation key, but the description of `Ndk` for the hybrid KEMs still says that is is the sum of the constituents.  It should instead say `Ndk = Nseed`.  This PR makes this change, and in general, rearranges the constant definitions to be a little nicer.",
       "createdAt": "2025-07-16T21:44:52Z",
-      "updatedAt": "2025-07-16T21:55:00Z",
+      "updatedAt": "2025-07-17T05:43:15Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
@@ -6270,6 +6305,19 @@
           "body": "",
           "createdAt": "2025-07-16T21:55:00Z",
           "updatedAt": "2025-07-16T21:55:00Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws60ex-w",
+          "commit": {
+            "abbreviatedOid": "0746501"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-17T05:43:15Z",
+          "updatedAt": "2025-07-17T05:43:15Z",
           "comments": []
         }
       ]
