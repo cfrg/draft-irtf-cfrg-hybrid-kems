@@ -1142,8 +1142,8 @@ Table of Contents
               DOI 10.6028/nist.fips.186-5, February 2023,
               <https://doi.org/10.6028/nist.fips.186-5>.
 
-   [GHP2018]  "KEM Combiners", 2018,
-              <https://eprint.iacr.org/2018/024.pdf>.
+   [GHP2018]  Giacon, F., Heuer, F., and B. Poettering, "KEM Combiners",
+              2018, <https://eprint.iacr.org/2018/024.pdf>.
 
    [GMP22]    Grubbs, P., Maram, V., and K.G. Paterson, "Anonymous,
               Robust Post-Quantum Public-Key Encryption", 2022,
