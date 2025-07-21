@@ -21,7 +21,7 @@ author:
  -
     fullname: Paul Grubbs
     organization: University of Michigan
-    email: paulgrub@umich.edu
+    email: paulgrubbs12@gmail.com
 
 
 normative:
