@@ -1072,7 +1072,7 @@ inclusion of the `label` achieves via domain separation {{GHP2018}}.
 By design, the calls to `KDF` in these frameworks and usage anywhere else
 in higher level protocol use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed parameters. This
-justifies modelling them as independent functions even if instantiated by the
+justifies modeling them as independent functions even if instantiated by the
 same KDF. This domain separation is achieved by using prefix-free sets of
 `label` values. Recall that a set is prefix-free if no element is a prefix of
 another within the set.
