@@ -1770,12 +1770,11 @@ constituents being used.<a href="#section-5.1-2.5.1" class="pilcrow">¶</a></p>
         </ul>
 <p id="section-5.1-3">The KEMs, groups, KDFs, and PRGs <span class="bcp14">MUST</span> meet the security requirements in
 <a href="#security-requirements" class="auto internal xref">Section 6.4</a>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
-<p id="section-5.1-4">The constants associated with the hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:<a href="#section-5.1-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1-5">
 <pre>
 Nek = KEM_T.Nek + KEM_PQ.Nek
-Ndk = KEM_T.Ndk + KEM_PQ.Ndk
 Nct = KEM_T.Nct + KEM_PQ.Nct
 </pre><a href="#section-5.1-5" class="pilcrow">¶</a>
 </div>
@@ -1787,9 +1786,9 @@ Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
 Nss = min(KEM_T.Nss, KEM_PQ.Nss)
 </pre><a href="#section-5.1-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-8">Given these constituent parts, the GHP hybrid KEM is defined as
-follows:<a href="#section-5.1-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-9">
+<p id="section-5.1-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
+<p id="section-5.1-9">Given these constituent parts, the GHP hybrid KEM is defined as follows:<a href="#section-5.1-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-10">
 <pre>
 def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
@@ -1823,7 +1822,7 @@ def Decaps(dk, ct):
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
     return ss_H
-</pre><a href="#section-5.1-9" class="pilcrow">¶</a>
+</pre><a href="#section-5.1-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -1907,12 +1906,11 @@ constituents being used.<a href="#section-5.3-2.5.1" class="pilcrow">¶</a></p>
 <p id="section-5.3-3">We presume that <code>Group_T</code>, <code>KEM_PQ</code>, and the KDFs meet the interfaces
 described in <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <span class="bcp14">MUST</span> meet the security requirements
 described in <a href="#security-requirements" class="auto internal xref">Section 6.4</a>.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
-<p id="section-5.3-4">The constants associated with the hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.3-4">The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.3-5">
 <pre>
 Nek = Group_T.Nelem + KEM_PQ.Nek
-Ndk = Group_T.Nscalar + KEM_PQ.Ndk
 Nct = Group_T.Nelem + KEM_PQ.Nct
 </pre><a href="#section-5.3-5" class="pilcrow">¶</a>
 </div>
@@ -1924,8 +1922,9 @@ Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
 Nss = min(Group_T.Nss, KEM_PQ.Nss)
 </pre><a href="#section-5.3-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.3-8">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.3-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-9">
+<p id="section-5.3-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.3-8" class="pilcrow">¶</a></p>
+<p id="section-5.3-9">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.3-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-10">
 <pre>
 def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
@@ -1965,7 +1964,7 @@ def Decaps(dk, ct):
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
-</pre><a href="#section-5.3-9" class="pilcrow">¶</a>
+</pre><a href="#section-5.3-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
