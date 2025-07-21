@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 17 January 2026                                           Cisco
+Expires: 22 January 2026                                           Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                            16 July 2025
+                                                            21 July 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 January 2026.
+   This Internet-Draft will expire on 22 January 2026.
 
 Copyright Notice
 
@@ -1282,4 +1282,4 @@ Authors' Addresses
 
    Paul Grubbs
    University of Michigan
-   Email: paulgrub@umich.edu
+   Email: paulgrubbs12@gmail.com
