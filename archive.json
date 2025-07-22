@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-20T01:23:25.492956+00:00",
+  "timestamp": "2025-07-22T01:16:42.251491+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -995,15 +995,15 @@
       "id": "I_kwDOMmhxws7A7JKv",
       "title": "add paul as author",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/66",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-07-16T17:15:49Z",
-      "updatedAt": "2025-07-16T21:55:32Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-21T00:30:53Z",
+      "closedAt": "2025-07-21T00:30:53Z",
       "comments": []
     },
     {
@@ -1020,7 +1020,7 @@
       ],
       "body": "There are a few cases in the document where a PQ thing and a T thing are paired together, and we don't always use the same order, for example:\n\n* Hybrid ciphertexts and encapsulation keys: (T, PQ)\n* Shared secret inputs to the KDF: (PQ, T)\n\nFor consistency, it would be good to use the same ordering for all of these cases.  As far as I know, this ordering makes no difference cryptographically or in terms of compliance requirements.  (I believe there were some FIPS concerns which are now obsolete.)\n\nPersonally, I would probably go with the (PQ, T) ordering, because it matches the QSF paper and the GHP paper ([see Fig. 4](https://eprint.iacr.org/2018/024.pdf)) is agnostic.",
       "createdAt": "2025-07-16T21:40:33Z",
-      "updatedAt": "2025-07-17T17:02:43Z",
+      "updatedAt": "2025-07-21T15:43:10Z",
       "closedAt": null,
       "comments": [
         {
@@ -1043,6 +1043,13 @@
           "body": "> It is a compat issue. Discovered when checking test vectors.\n\nFor the others besides X-Wing as specified in draft-connolly-cfrg-xwing-kem-06+ ? Drat",
           "createdAt": "2025-07-17T17:02:43Z",
           "updatedAt": "2025-07-17T17:02:43Z"
+        },
+        {
+          "author": "ounsworth",
+          "authorAssociation": "NONE",
+          "body": "> Personally, I would probably go with the (PQ, T) ordering, because it matches the QSF paper and the GHP paper \n\n... and LAMPS Composites.",
+          "createdAt": "2025-07-21T15:43:10Z",
+          "updatedAt": "2025-07-21T15:43:10Z"
         }
       ]
     }
@@ -6222,76 +6229,130 @@
       "id": "PR_kwDOMmhxws6d3O0l",
       "title": "I was going to do more of this,",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/63",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "but there are too many.\r\n\r\nYou might consider removing the \".pdf\" extension from the URLs, so that people can hit the ePrint landing page instead.",
       "createdAt": "2025-07-08T04:20:00Z",
-      "updatedAt": "2025-07-08T04:20:01Z",
+      "updatedAt": "2025-07-21T00:32:03Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
       "headRepository": "martinthomson/hybrid-kems",
       "headRefName": "ghp-citation",
       "headRefOid": "43451fac5e35f95a7f22e3fc6f850466d7a31962",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-07-21T00:32:03Z",
+      "mergedAt": "2025-07-21T00:32:03Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "429398e84b7919cc5b29d7d7d22e66c64253d3a5"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws60-ZeF",
+          "commit": {
+            "abbreviatedOid": "43451fa"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-21T00:31:57Z",
+          "updatedAt": "2025-07-21T00:31:57Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 65,
       "id": "PR_kwDOMmhxws6eGr0N",
       "title": "fix typos",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/65",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "tomato42",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fix few typos in the document",
       "createdAt": "2025-07-09T11:09:45Z",
-      "updatedAt": "2025-07-09T11:13:28Z",
+      "updatedAt": "2025-07-21T00:33:25Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
       "headRepository": "tomato42/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "fix-typo",
-      "headRefOid": "f45a0d10596e27bb68b5845c48a623dbf690cc95",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "3512bf8f39b79a9d4a9082e3262ef699f00341bd",
+      "closedAt": "2025-07-21T00:33:25Z",
+      "mergedAt": "2025-07-21T00:33:25Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "c2864600b5cbc8a59eb59a1893efcfb5c2117793"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws60-ZqP",
+          "commit": {
+            "abbreviatedOid": "f45a0d1"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-21T00:32:51Z",
+          "updatedAt": "2025-07-21T00:32:51Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nduplicating the 'label' per concrete instance with fixed parameters. This\r\njustifies modeling them as independent functions even if instantiated by the\r\n```",
+              "createdAt": "2025-07-21T00:32:51Z",
+              "updatedAt": "2025-07-21T00:32:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws60-Zs_",
+          "commit": {
+            "abbreviatedOid": "3512bf8"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-21T00:33:13Z",
+          "updatedAt": "2025-07-21T00:33:13Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 68,
       "id": "PR_kwDOMmhxws6fRCID",
       "title": "Align constant definitions with seed format for hybrid decapsulation key",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/68",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The pseudocode for the schemes uses the seed format for the hybrid decapsulation key, but the description of `Ndk` for the hybrid KEMs still says that is is the sum of the constituents.  It should instead say `Ndk = Nseed`.  This PR makes this change, and in general, rearranges the constant definitions to be a little nicer.",
       "createdAt": "2025-07-16T21:44:52Z",
-      "updatedAt": "2025-07-17T05:43:15Z",
+      "updatedAt": "2025-07-21T00:31:29Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "ndk",
       "headRefOid": "0746501964913963b93075946965a4a767f1fb6d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-07-21T00:31:27Z",
+      "mergedAt": "2025-07-21T00:31:27Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "4bf5f7131ba5a4b50b1058681c704dcf9f8ba38d"
+      },
       "comments": [],
       "reviews": [
         {
@@ -6319,6 +6380,19 @@
           "createdAt": "2025-07-17T05:43:15Z",
           "updatedAt": "2025-07-17T05:43:15Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws60-Zak",
+          "commit": {
+            "abbreviatedOid": "0746501"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-21T00:31:23Z",
+          "updatedAt": "2025-07-21T00:31:23Z",
+          "comments": []
         }
       ]
     },
@@ -6327,24 +6401,26 @@
       "id": "PR_kwDOMmhxws6fREFG",
       "title": "Add Paul Grubbs as co-author",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/69",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Major omission from the latest draft.\r\n\r\n@pag-crypto - What email address would you like to put on this? \n\nResolves #66",
       "createdAt": "2025-07-16T21:49:48Z",
-      "updatedAt": "2025-07-17T00:40:29Z",
+      "updatedAt": "2025-07-21T00:30:53Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "dfd2c7d5d6ad253fccc642d0f30597178a176a39",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "grubbs",
-      "headRefOid": "9f19e584055c9f57fdca0ee65be47215cb9abb0e",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6a8a0829d9f0a54592e04a673d7b6cbb23c4093f",
+      "closedAt": "2025-07-21T00:30:52Z",
+      "mergedAt": "2025-07-21T00:30:52Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "f3c7a8623becf0ef4c79aa2bbebc9d540f394f43"
+      },
       "comments": [
         {
           "author": "pag-crypto",
@@ -6354,7 +6430,21 @@
           "updatedAt": "2025-07-17T00:40:29Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws60-ZU6",
+          "commit": {
+            "abbreviatedOid": "6a8a082"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-21T00:30:29Z",
+          "updatedAt": "2025-07-21T00:30:29Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
