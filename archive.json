@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-22T01:16:42.251491+00:00",
+  "timestamp": "2025-07-27T01:23:29.511226+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -915,7 +915,7 @@
       ],
       "body": "The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.) \n\nSince (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.",
       "createdAt": "2025-06-27T19:07:29Z",
-      "updatedAt": "2025-07-15T22:41:50Z",
+      "updatedAt": "2025-07-25T08:16:45Z",
       "closedAt": null,
       "comments": [
         {
@@ -931,6 +931,13 @@
           "body": "> > The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.)\n> > Since (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.\n> \n> I'm fine with this, especially if we explicitly say in the text 'indiff. implies PRF security' in a way\n\nI added a todo [here](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/blob/6183080e4c32287080e8de6b9ba16cac6bf547c3/draft-irtf-cfrg-hybrid-kems.md?plain=1#L922), we may be able to just do this arguing in the text using indiff. literature to make the argument, since there doesn't seem to be a nice tidy citation ",
           "createdAt": "2025-07-03T19:48:00Z",
           "updatedAt": "2025-07-03T19:48:00Z"
+        },
+        {
+          "author": "fluppe2",
+          "authorAssociation": "NONE",
+          "body": "@dconnolly Concerning the todo [here](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/blob/6183080e4c32287080e8de6b9ba16cac6bf547c3/draft-irtf-cfrg-hybrid-kems.md?plain=1#L922), i.e.\n\n> We reiterate that modulo some low-level technical details, our requirement\n> that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF\n> used in GHP and PRE meets the split-key pseudorandomness property used in\n> GHP's analysis.\n> TODO: apparently there is no good citation for this foklore, maybe we can explicitly lay it out\n\nI guess, Lemma 6 in combination with Example 3 in GHP18 (https://eprint.iacr.org/2018/024) is exactly what you are looking for.\n\nIn Lemma 6 they construct\n\n> a pseudorandom skPRF from any almost-uniform keymixing function in the random oracle model\n\nby `H(g(k1,...,kn), x) `, where `H` is modeled as a random oracle and `g` is $\\epsilon$-almost uniform. Example 3 qualifies `g(k1,...,kn) = k1 || ... || kn` as $\\epsilon$-almost uniform (with $\\epsilon = 1/ \\mathrm{len} (k_1 \\mathrm{||} \\ldots \\mathrm{||} k_n)$. ",
+          "createdAt": "2025-07-25T06:49:03Z",
+          "updatedAt": "2025-07-25T08:16:45Z"
         }
       ]
     },
