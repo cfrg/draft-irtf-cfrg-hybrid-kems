@@ -655,7 +655,7 @@ components:
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
 * `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
-  Group_T.Nseed` (`Expand.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
+  Group_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
 * `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
   == KDF.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
