@@ -7,17 +7,18 @@
 <title>Hybrid PQ/T Key Encapsulation Mechanisms</title>
 <meta content="Deirdre Connolly" name="author">
 <meta content="Richard Barnes" name="author">
+<meta content="Paul Grubbs" name="author">
 <meta content="
        This document defines generic constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a traditional cryptographic component
-and a post-quantum (PQ) KEM. Hybrid KEMs built using these constructions
-provide strong security properties as long as either of the underlying
-algorithms are secure. 
+Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a traditional
+cryptographic component. Hybrid KEMs built using these constructions provide
+strong security properties as long as either of the underlying algorithms are
+secure. 
     " name="description">
-<meta content="xml2rfc 3.29.0" name="generator">
+<meta content="xml2rfc 3.30.0" name="generator">
 <meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.29.0
+  xml2rfc 3.30.0
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -1048,11 +1049,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">hybrid-kems</td>
-<td class="right">July 2025</td>
+<td class="right">August 2025</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Connolly &amp; Barnes</td>
-<td class="center">Expires 8 January 2026</td>
+<td class="left">Connolly, et al.</td>
+<td class="center">Expires 9 February 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1066,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-07-07" class="published">7 July 2025</time>
+<time datetime="2025-08-08" class="published">8 August 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-01-08">8 January 2026</time></dd>
+<dd class="expires"><time datetime="2026-02-09">9 February 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1081,6 +1082,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <div class="author-name">R. Barnes</div>
 <div class="org">Cisco</div>
 </div>
+<div class="author">
+      <div class="author-name">P. Grubbs</div>
+<div class="org">University of Michigan</div>
+</div>
 </dd>
 </dl>
 </div>
@@ -1088,10 +1093,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document defines generic constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a traditional cryptographic component
-and a post-quantum (PQ) KEM. Hybrid KEMs built using these constructions
-provide strong security properties as long as either of the underlying
-algorithms are secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a traditional
+cryptographic component. Hybrid KEMs built using these constructions provide
+strong security properties as long as either of the underlying algorithms are
+secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1123,7 +1128,7 @@ algorithms are secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 January 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 February 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1314,7 +1319,7 @@ curve Diffie-Hellman (DH) based protocols.<a href="#section-1-1" class="pilcrow"
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help
 moderate this risk while still providing security against quantum attack.  If
-construted properly, a hybrid KEM will retain certain security properties
+constructed properly, a hybrid KEM will retain certain security properties
 even if one of the two constituent KEMs is compromised. If the PQ KEM is
 broken, then the hybrid KEM should continue to provide security against
 non-quantum attackers by virtue of its traditional KEM component. If the
@@ -1326,7 +1331,7 @@ can also facilitate faster deployment of PQ security by allowing applications
 to incorporate PQ algorithms while still meeting compliance requirements
 based on traditional algorithms.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">In this document, we define generic frameworks for constructing hybrid KEMs
-from a traditional algorithm and a PQ KEM.  The aim of this document is
+from a PQ KEM and a traditional algorithm.  The aim of this document is
 provide a small set of techniques to achieve specific security properties
 given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.<a href="#section-1-4" class="pilcrow">¶</a></p>
@@ -1625,7 +1630,7 @@ byte string <code>seed</code>.<a href="#section-4.2-3.2.1" class="pilcrow">¶</a
 </li>
           <li class="normal" id="section-4.2-3.3">
             <p id="section-4.2-3.3.1"><code>ElementToSharedSecret(P) -&gt; ss</code>: Extract a shared secret from an element of
-the group (e.g., by taking the X coordinate of an ellpitic curve point).<a href="#section-4.2-3.3.1" class="pilcrow">¶</a></p>
+the group (e.g., by taking the X coordinate of an elliptic curve point).<a href="#section-4.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-4.2-4">We assume that scalars and group elements are represented by byte strings with
@@ -1683,7 +1688,7 @@ laid out in <a href="#security-prgs" class="auto internal xref">Section 6.4.4</a
         <h3 id="name-key-derivation-functions">
 <a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-key-derivation-functions" class="section-name selfRef">Key Derivation Functions</a>
         </h3>
-<p id="section-4.4-1">A Key Derivation Function (KDF) is a function that a function that produces
+<p id="section-4.4-1">A Key Derivation Function (KDF) is a function that produces
 keying material based on an input secret and other information.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2">While KDFs in the literature can typically consume and produce byte strings of
 arbitrary length, the KDFs used in this document have a simpler form, with a fixed
@@ -1716,8 +1721,8 @@ KEMs:<a href="#section-5-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-5-2">
         <dt id="section-5-2.1">GHP:</dt>
         <dd style="margin-left: 1.5em" id="section-5-2.2">
-          <p id="section-5-2.2.1">A generic framwork that is suitable for use with any choice of traditional and
-PQ KEMs, with minimal security assumptions on the constituent KEMs<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+          <p id="section-5-2.2.1">A generic framework that is suitable for use with any choice of PQ and
+traditional KEMs, with minimal security assumptions on the constituent KEMs<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-5-2.3">PRE:</dt>
@@ -1728,8 +1733,8 @@ large and frequently reused<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
         <dd class="break"></dd>
 <dt id="section-5-2.5">QSF:</dt>
         <dd style="margin-left: 1.5em" id="section-5-2.6">
-          <p id="section-5-2.6.1">An optimized generic framwork for the case where the traditional component is a
-nominal group and the PQ component has strong binding properties<a href="#section-5-2.6.1" class="pilcrow">¶</a></p>
+          <p id="section-5-2.6.1">An optimized generic framework for the case where the PQ component has strong
+binding properties and the traditional component is a nominal group<a href="#section-5-2.6.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1745,14 +1750,14 @@ components.<a href="#section-5-3" class="pilcrow">¶</a></p>
 components:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-2.1">
-            <p id="section-5.1-2.1.1"><code>KEM_T</code>: A traditional KEM<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.1.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.2">
-            <p id="section-5.1-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.2.1"><code>KEM_T</code>: A traditional KEM<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.3">
-            <p id="section-5.1-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_T.Nseed + KEM_PQ.Nseed</code>
-(<code>PRG.Nout == KEM_T.Nseed + KEM_PQ.Nseed</code>)<a href="#section-5.1-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed + KEM_T.Nseed</code>
+(<code>PRG.Nout == KEM_PQ.Nseed + KEM_T.Nseed</code>)<a href="#section-5.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.4">
             <p id="section-5.1-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>GHP.Nss</code> (<code>KDF.Nout
@@ -1765,60 +1770,59 @@ constituents being used.<a href="#section-5.1-2.5.1" class="pilcrow">¶</a></p>
         </ul>
 <p id="section-5.1-3">The KEMs, groups, KDFs, and PRGs <span class="bcp14">MUST</span> meet the security requirements in
 <a href="#security-requirements" class="auto internal xref">Section 6.4</a>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
-<p id="section-5.1-4">The constants associated with the hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:<a href="#section-5.1-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1-5">
 <pre>
-Nek = KEM_T.Nek + KEM_PQ.Nek
-Ndk = KEM_T.Ndk + KEM_PQ.Ndk
-Nct = KEM_T.Nct + KEM_PQ.Nct
+Nek = KEM_PQ.Nek + KEM_T.Nek
+Nct = KEM_PQ.Nct + KEM_T.Nct
 </pre><a href="#section-5.1-5" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1-6">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of the
 combined KEM, with the following recommended values:<a href="#section-5.1-6" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1-7">
 <pre>
-Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
-Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+Nseed = max(KEM_PQ.Nseed, KEM_T.Nseed)
+Nss = min(KEM_PQ.Nss, KEM_T.Nss)
 </pre><a href="#section-5.1-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-8">Given these constituent parts, the GHP hybrid KEM is defined as
-follows:<a href="#section-5.1-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-9">
+<p id="section-5.1-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
+<p id="section-5.1-9">Given these constituent parts, the GHP hybrid KEM is defined as follows:<a href="#section-5.1-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-10">
 <pre>
 def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
-    (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    return (ek_T, ek_PQ, dk_T, dk_PQ)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
 
 def DeriveKeyPair(seed):
-    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
-    return (concat(ek_T, ek_PQ), seed)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+    return (concat(ek_PQ, ek_T), seed)
 
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
 
 def Encaps(ek):
-    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
-    (ss_T, ct_T) = KEM_T.Encap(pk_T)
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encap(ek_T)
     ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
-    ct_H = concat(ct_T, ct_PQ)
+    ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
 
-    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
     return ss_H
-</pre><a href="#section-5.1-9" class="pilcrow">¶</a>
+</pre><a href="#section-5.1-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -1848,24 +1852,24 @@ method use a modified shared secret computation:<a href="#section-5.2-4" class="
 <div class="alignLeft art-text artwork" id="section-5.2-5">
 <pre>
 def Encaps(ek):
-    (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
-    (ss_T, ct_T) = KEM_T.Encap(pk_T)
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encap(ek_T)
 
-    ekh = KeyHash(concat(ek_T, ek_PQ))
+    ekh = KeyHash(concat(ek_PQ, ek_T))
     ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
 
-    ct_H = concat(ct_T, ct_PQ)
+    ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
 
-    (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
 
-    ekh = KeyHash(concat(ek_T, ek_PQ))
+    ekh = KeyHash(concat(ek_PQ, ek_T))
     ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
     return ss_H
 </pre><a href="#section-5.2-5" class="pilcrow">¶</a>
@@ -1887,8 +1891,8 @@ components:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
             <p id="section-5.3-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.3-2.3">
-            <p id="section-5.3-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>Group_T.Nseed +
-KEM_PQ.Nseed</code> (<code>Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed</code>)<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-5.3-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed +
+Group_T.Nseed</code> (<code>Expand.Nout == KEM_PQ.Nseed + Group_T.Nseed</code>)<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.3-2.4">
             <p id="section-5.3-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>QSF.Nss</code> (<code>KDF.Nout
@@ -1899,68 +1903,69 @@ KEM_PQ.Nseed</code> (<code>Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed</code>)<a
 constituents being used.<a href="#section-5.3-2.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.3-3">We presume that <code>Group_T</code>, <code>KEM_PQ</code>, and the KDFs meet the interfaces
+<p id="section-5.3-3">We presume that <code>KEM_PQ</code>, <code>Group_T</code>, and the KDFs meet the interfaces
 described in <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <span class="bcp14">MUST</span> meet the security requirements
 described in <a href="#security-requirements" class="auto internal xref">Section 6.4</a>.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
-<p id="section-5.3-4">The constants associated with the hybrid KEM are mostly derived from the
-concatenation of keys and ciphertexts:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.3-4">The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.3-5">
 <pre>
-Nek = Group_T.Nelem + KEM_PQ.Nek
-Ndk = Group_T.Nscalar + KEM_PQ.Ndk
-Nct = Group_T.Nelem + KEM_PQ.Nct
+Nek = KEM_PQ.Nek + Group_T.Nelem
+Nct = KEM_PQ.Nct + Group_T.Nelem
 </pre><a href="#section-5.3-5" class="pilcrow">¶</a>
 </div>
 <p id="section-5.3-6">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of
 the combined KEM, with the following recommended values:<a href="#section-5.3-6" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.3-7">
 <pre>
-Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
-Nss = min(Group_T.Nss, KEM_PQ.Nss)
+Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
+Nss = min(KEM_PQ.Nss, Group_T.Nss)
 </pre><a href="#section-5.3-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.3-8">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.3-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-9">
+<p id="section-5.3-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.3-8" class="pilcrow">¶</a></p>
+<p id="section-5.3-9">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.3-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-10">
 <pre>
 def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
-    (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
 
-    dk_T = Group_T.RandomScalar(seed_T))
-    ek_T = Group_T.Exp(Group_T.g, dk_T)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    dk_T = Group_T.RandomScalar(seed_T)
+    ek_T = Group_T.Exp(Group_T.g, dk_T)
 
-    return (ek_T, ek_PQ, dk_T, dk_PQ)
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
 
 def DeriveKeyPair(seed):
-    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(seed)
-    return (concat(ek_T, ek_PQ), seed)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+    return (concat(ek_PQ, ek_T), seed)
 
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
 
 def Encaps(ek):
-    (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
 
-    sk_E = Group_T.RandomScalar(random(GroupT.Nseed))
-    ct_T = Group_T.Exp(GroupT.g, sk_E)
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
+    ct_T = Group_T.Exp(Group_T.g, sk_E)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
-    ct_H = concat(ct_T, ct_PQ)
+    ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (ek_T, ek_PQ, dk_T, dk_PQ) = expandDecapsulationKey(dk)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
 
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
-</pre><a href="#section-5.3-9" class="pilcrow">¶</a>
+</pre><a href="#section-5.3-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -2321,8 +2326,8 @@ work here; we present the PQ-KEM route for concreteness.<a href="#section-6.5.2.
 QSF is LEAK-BIND-K-CT.<a href="#section-6.5.2.4.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.5.2.4.1-2">Justification: To win the adversary must construct two distinct QSF
 ciphertexts that decapsulate to the same non-bot key.  Call the QSF
-ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1,
-ct_PQ^1). Distinctness implies (ct_T^0, ct_PQ^0) != (ct_T^1, ct_PQ^1). Since
+ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
+ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
 ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.5.2.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.5.2.4.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
@@ -2349,8 +2354,8 @@ game against the PQ KEM.<a href="#section-6.5.2.4.1-4" class="pilcrow">¶</a></p
 <p id="section-6.5.2.4.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
 QSF is LEAK-BIND-K-PK.<a href="#section-6.5.2.4.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.5.2.4.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
-condition of the LEAK-BIND-K-PK game.  The condition is (ek_T^0, ek_PQ^0) !=
-(ek_T^1, ek_PQ^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
+condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
+(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
 this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
@@ -2382,12 +2387,12 @@ the KDF function <code>KDF</code> to behave as an independent random oracle, whi
 inclusion of the <code>label</code> achieves via domain separation <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>.<a href="#section-6.6.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.6.1-2">By design, the calls to <code>KDF</code> in these frameworks and usage anywhere else
 in higher level protocol use separate input domains unless intentionally
-duplicating the 'label' per concrete instance with fixed paramters. This
+duplicating the 'label' per concrete instance with fixed parameters. This
 justifies modeling them as independent functions even if instantiated by the
 same KDF. This domain separation is achieved by using prefix-free sets of
 <code>label</code> values. Recall that a set is prefix-free if no element is a prefix of
 another within the set.<a href="#section-6.6.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.6.1-3">Length diffentiation is sometimes used to achieve domain separation but as a
+<p id="section-6.6.1-3">Length differentiation is sometimes used to achieve domain separation but as a
 technique it is brittle and prone to misuse <span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in practice so we
 favor the use of an explicit post-fix label.<a href="#section-6.6.1-3" class="pilcrow">¶</a></p>
 </section>
@@ -2476,7 +2481,7 @@ or binding <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, <span>[<
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-more-than-two-component-kem" class="section-name selfRef">More than Two Component KEMs</a>
         </h3>
 <p id="section-8.1-1">Design team decided to restrict the space to only two components, a
-traditional and a post-quantum KEM.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+post-quantum and a traditional KEM.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="parameterized-output-length">
@@ -2485,7 +2490,7 @@ traditional and a post-quantum KEM.<a href="#section-8.1-1" class="pilcrow">¶</
 <a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-parameterized-output-length" class="section-name selfRef">Parameterized Output Length</a>
         </h3>
 <p id="section-8.2-1">Not analyzed as part of any security proofs in the literature, and a
-complicatation deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2596,7 +2601,7 @@ complicatation deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a
 <dd class="break"></dd>
 <dt id="GHP2018">[GHP2018]</dt>
         <dd>
-<span class="refTitle">"KEM Combiners"</span>, <time datetime="2018" class="refDate">2018</time>, <span>&lt;<a href="https://eprint.iacr.org/2018/024.pdf">https://eprint.iacr.org/2018/024.pdf</a>&gt;</span>. </dd>
+<span class="refAuthor">Giacon, F.</span>, <span class="refAuthor">Heuer, F.</span>, and <span class="refAuthor">B. Poettering</span>, <span class="refTitle">"KEM Combiners"</span>, <time datetime="2018" class="refDate">2018</time>, <span>&lt;<a href="https://eprint.iacr.org/2018/024.pdf">https://eprint.iacr.org/2018/024.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="GMP22">[GMP22]</dt>
         <dd>
@@ -2699,7 +2704,7 @@ inputs to <code>RandomScalar</code> with deterministic ones.  In other words, fo
 nominal group, <code>Nrandom = Nseed</code>.<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 <p id="appendix-A-6">When a hybrid KEM is instantiated with constituents that support derandomized
 encapsulation (either KEMs or groups), the hybrid KEM can also support
-<code>EncapsDerand()</code>, with <code>Nrandom = T.Nrandom + PQ.Nrandom</code>.  The structure of
+<code>EncapsDerand()</code>, with <code>Nrandom = PQ.Nrandom + T.Nrandom</code>.  The structure of
 the hybrid KEM's <code>EncapsDerand</code> algorithm is the same as its <code>Encaps</code> method,
 with the following differences:<a href="#appendix-A-6" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -2713,12 +2718,12 @@ algorithms are replaced with calls to <code>EncapsDerand</code> or <code>RandomS
 deterministic input.<a href="#appendix-A-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.3">
-          <p id="appendix-A-7.3.1">The randomness used by the traditional constituent is the first <code>T.Nrandom</code>
-bytes of the input randomness.<a href="#appendix-A-7.3.1" class="pilcrow">¶</a></p>
+          <p id="appendix-A-7.3.1">The randomness used by the PQ constituent is the first <code>PQ.Nrandom</code> bytes of
+the input randomness.<a href="#appendix-A-7.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.4">
-          <p id="appendix-A-7.4.1">The randomness used by the PQ constituent is the final <code>PQ.Nrandom</code> bytes of
-the input randomness.<a href="#appendix-A-7.4.1" class="pilcrow">¶</a></p>
+          <p id="appendix-A-7.4.1">The randomness used by the traditional constituent is the final <code>T.Nrandom</code>
+bytes of the input randomness.<a href="#appendix-A-7.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -2750,6 +2755,14 @@ the input randomness.<a href="#appendix-A-7.4.1" class="pilcrow">¶</a></p>
 <div class="email">
 <span>Email:</span>
 <a href="mailto:rlb@ipv.sx" class="email">rlb@ipv.sx</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Paul Grubbs</span></div>
+<div dir="auto" class="left"><span class="org">University of Michigan</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:paulgrubbs12@gmail.com" class="email">paulgrubbs12@gmail.com</a>
 </div>
 </address>
 </section>

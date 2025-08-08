@@ -5,8 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 4 January 2026                                            Cisco
-                                                             3 July 2025
+Expires: 9 February 2026                                           Cisco
+                                                               P. Grubbs
+                                                  University of Michigan
+                                                           8 August 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -15,8 +17,8 @@ Expires: 4 January 2026                                            Cisco
 Abstract
 
    This document defines generic constructions for hybrid Key
-   Encapsulation Mechanisms (KEMs) based on combining a traditional
-   cryptographic component and a post-quantum (PQ) KEM.  Hybrid KEMs
+   Encapsulation Mechanisms (KEMs) based on combining a post-quantum
+   (PQ) KEM with a traditional cryptographic component.  Hybrid KEMs
    built using these constructions provide strong security properties as
    long as either of the underlying algorithms are secure.
 
@@ -46,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 January 2026.
+   This Internet-Draft will expire on 9 February 2026.
 
 Copyright Notice
 
@@ -90,11 +92,16 @@ Table of Contents
      6.6.  Other Considerations
        6.6.1.  Domain Separation
        6.6.2.  Fixed-length
-     6.7.  More than Two Component KEMs
-     6.8.  Parameterized Output Length
-   7.  References
-     7.1.  Normative References
-     7.2.  Informative References
+   7.  In Scope
+     7.1.  GHP Framework
+     7.2.  QSF Framework
+     7.3.  PRE Framework
+   8.  Out of Scope
+     8.1.  More than Two Component KEMs
+     8.2.  Parameterized Output Length
+   9.  References
+     9.1.  Normative References
+     9.2.  Informative References
    Appendix A.  Deterministic Encapsulation
    Acknowledgments
    Authors' Addresses
@@ -112,7 +119,7 @@ Table of Contents
    that PQ algorithms currently believed to be secure will be broken.
    Hybrid constructions that combine both PQ and traditional algorithms
    can help moderate this risk while still providing security against
-   quantum attack.  If construted properly, a hybrid KEM will retain
+   quantum attack.  If constructed properly, a hybrid KEM will retain
    certain security properties even if one of the two constituent KEMs
    is compromised.  If the PQ KEM is broken, then the hybrid KEM should
    continue to provide security against non-quantum attackers by virtue
@@ -127,7 +134,7 @@ Table of Contents
    meeting compliance requirements based on traditional algorithms.
 
    In this document, we define generic frameworks for constructing
-   hybrid KEMs from a traditional algorithm and a PQ KEM.  The aim of
+   hybrid KEMs from a PQ KEM and a traditional algorithm.  The aim of
    this document is provide a small set of techniques to achieve
    specific security properties given conforming component algorithms,
    which should make these techniques suitable for a broad variety of
@@ -249,14 +256,20 @@ Table of Contents
       which takes as input a public encapsulation key ek and outputs a
       ciphertext ct and shared secret ss.
 
-   *  Decaps(dk, ct) -> ss: A decapsulation algorithm, which takes as
-      input a secret decapsulation key dk and ciphertext ct and outputs
-      a shared secret ss.
+   *  Decaps(dk, ct) -> ss: A deterministic decapsulation algorithm,
+      which takes as input a secret decapsulation key dk and ciphertext
+      ct and outputs a shared secret ss.
+
+   We also make use of internal algorithms such as:
+
+   *  expandDecapsulationKey(dk) -> (ek, dk): A deterministic algorithm
+      that takes as input a decapsulation key dk and generates keypair
+      intermediate values for computation.
 
    We assume that the values produced and consumed by the above
    functions are all byte strings, with fixed lengths:
 
-   *  Nseed: The length in bytes of a key seed (input to DeriveKeyPair)
+   *  Nseed: The length in bytes of a key seed
 
    *  Nek: The length in bytes of a public encapsulation key
 
@@ -315,7 +328,7 @@ Table of Contents
 
    *  ElementToSharedSecret(P) -> ss: Extract a shared secret from an
       element of the group (e.g., by taking the X coordinate of an
-      ellpitic curve point).
+      elliptic curve point).
 
    We assume that scalars and group elements are represented by byte
    strings with fixed lengths:
@@ -359,9 +372,8 @@ Table of Contents
 
 4.4.  Key Derivation Functions
 
-   A Key Derivation Function (KDF) is a function that a function that
-   produces keying material based on an input secret and other
-   information.
+   A Key Derivation Function (KDF) is a function that produces keying
+   material based on an input secret and other information.
 
    While KDFs in the literature can typically consume and produce byte
    strings of arbitrary length, the KDFs used in this document have a
@@ -385,16 +397,16 @@ Table of Contents
    In this section, we define three generic frameworks for building for
    hybrid KEMs:
 
-   GHP:  A generic framwork that is suitable for use with any choice of
-      traditional and PQ KEMs, with minimal security assumptions on the
+   GHP:  A generic framework that is suitable for use with any choice of
+      PQ and traditional KEMs, with minimal security assumptions on the
       constituent KEMs
 
    PRE:  A performance optimization of GHP for the case where
       encapsulation keys are large and frequently reused
 
-   QSF:  An optimized generic framwork for the case where the
-      traditional component is a nominal group and the PQ component has
-      strong binding properties
+   QSF:  An optimized generic framework for the case where the PQ
+      component has strong binding properties and the traditional
+      component is a nominal group
 
    These frameworks share a common overall structure, differing mainly
    in how they compute the final shared secret and the security
@@ -404,12 +416,12 @@ Table of Contents
 
    The GHP hybrid KEM depends on the following constituent components:
 
-   *  KEM_T: A traditional KEM
-
    *  KEM_PQ: A post-quantum KEM
 
-   *  PRG: A PRG producing byte strings of length KEM_T.Nseed +
-      KEM_PQ.Nseed (PRG.Nout == KEM_T.Nseed + KEM_PQ.Nseed)
+   *  KEM_T: A traditional KEM
+
+   *  PRG: A PRG producing byte strings of length KEM_PQ.Nseed +
+      KEM_T.Nseed (PRG.Nout == KEM_PQ.Nseed + KEM_T.Nseed)
 
    *  KDF: A KDF producing byte strings of length GHP.Nss (KDF.Nout ==
       GHP.Nss)
@@ -420,51 +432,52 @@ Table of Contents
    The KEMs, groups, KDFs, and PRGs MUST meet the security requirements
    in Section 6.4.
 
-   The constants associated with the hybrid KEM are mostly derived from
-   the concatenation of keys and ciphertexts:
+   The constants for public values are derived from the concatenation of
+   encapsulation keys and ciphertexts:
 
-   Nek = KEM_T.Nek + KEM_PQ.Nek
-   Ndk = KEM_T.Ndk + KEM_PQ.Ndk
-   Nct = KEM_T.Nct + KEM_PQ.Nct
+   Nek = KEM_PQ.Nek + KEM_T.Nek
+   Nct = KEM_PQ.Nct + KEM_T.Nct
 
    The Nseed and Nss constants should reflect the overall security level
    of the combined KEM, with the following recommended values:
 
-   Nseed = max(KEM_T.Nseed, KEM_PQ.Nseed)
-   Nss = min(KEM_T.Nss, KEM_PQ.Nss)
+   Nseed = max(KEM_PQ.Nseed, KEM_T.Nseed)
+   Nss = min(KEM_PQ.Nss, KEM_T.Nss)
+
+   Since we use the seed as the decapsulation key, Ndk = Nseed.
 
    Given these constituent parts, the GHP hybrid KEM is defined as
    follows:
+
+   def expandDecapsulationKey(seed):
+       seed_full = PRG(seed)
+       (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
+       (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+       (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+       return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+   def DeriveKeyPair(seed):
+       (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+       return (concat(ek_PQ, ek_T), seed)
 
    def GenerateKeyPair():
        seed = random(Nseed)
        return DeriveKeyPair(seed)
 
-   def DeriveKeyPair(seed):
-       seed_full = PRG(seed)
-       (seed_T, seed_PQ) = split(KEM_T.Nseed, KEM_PQ.Nseed, seed_full)
-       (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
-       (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-       ek_H = concat(ek_T, ek_PQ)
-       dk_H = concat(dk_T, dk_PQ)
-       return (ek_H, dk_H)
-
    def Encaps(ek):
-       (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
-       (ss_T, ct_T) = KEM_T.Encap(pk_T)
-       (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+       (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
+       (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+       (ss_T, ct_T) = KEM_T.Encap(ek_T)
        ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
-       ct_H = concat(ct_T, ct_PQ)
+       ct_H = concat(ct_PQ, ct_T)
        return (ss_H, ct_H)
 
    def Decaps(dk, ct):
-       (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-       ek_T = KEM_T.ToEncaps(dk_T)
-       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+       (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
 
-       (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
-       ss_T = KEM_T.Decap(dk_T, ct_T)
+       (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
        ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+       ss_T = KEM_T.Decap(dk_T, ct_T)
 
        ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
        return ss_H
@@ -490,26 +503,24 @@ Table of Contents
    a modified shared secret computation:
 
    def Encaps(ek):
-       (ek_T, ek_PQ) = split(KEM_T.Nek, KEM_PQ.Nek, ek)
-       (ss_T, ct_T) = KEM_T.Encap(pk_T)
-       (ss_PQ, ct_PQ) = KEM_PQ.Encap(pk_PQ)
+       (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
+       (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+       (ss_T, ct_T) = KEM_T.Encap(ek_T)
 
-       ekh = KeyHash(concat(ek_T, ek_PQ))
+       ekh = KeyHash(concat(ek_PQ, ek_T))
        ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
 
-       ct_H = concat(ct_T, ct_PQ)
+       ct_H = concat(ct_PQ, ct_T)
        return (ss_H, ct_H)
 
    def Decaps(dk, ct):
-       (dk_T, dk_PQ) = split(KEM_T.Ndk, KEM_PQ.Ndk, dk)
-       ek_T = KEM_T.ToEncaps(dk_T)
-       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
+       (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
 
-       (ct_T, ct_PQ) = split(KEM_T.Nct, KEM_PQ.Nct, ct)
-       ss_T = KEM_T.Decap(dk_T, ct_T)
+       (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
        ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+       ss_T = KEM_T.Decap(dk_T, ct_T)
 
-       ekh = KeyHash(concat(ek_T, ek_PQ))
+       ekh = KeyHash(concat(ek_PQ, ek_T))
        ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
        return ss_H
 
@@ -522,8 +533,8 @@ Table of Contents
 
    *  KEM_PQ: A post-quantum KEM
 
-   *  PRG: A PRG producing byte strings of length Group_T.Nseed +
-      KEM_PQ.Nseed (Expand.Nout == Group_T.Nseed + KEM_PQ.Nseed)
+   *  PRG: A PRG producing byte strings of length KEM_PQ.Nseed +
+      Group_T.Nseed (Expand.Nout == KEM_PQ.Nseed + Group_T.Nseed)
 
    *  KDF: A KDF producing byte strings of length QSF.Nss (KDF.Nout ==
       KDF.Nss)
@@ -531,63 +542,63 @@ Table of Contents
    *  Label - A byte string used to label the specific combination of
       the above constituents being used.
 
-   We presume that Group_T, KEM_PQ, and the KDFs meet the interfaces
+   We presume that KEM_PQ, Group_T, and the KDFs meet the interfaces
    described in Section 4 and MUST meet the security requirements
    described in Section 6.4.
 
-   The constants associated with the hybrid KEM are mostly derived from
-   the concatenation of keys and ciphertexts:
+   The constants for public values are derived from the concatenation of
+   encapsulation keys and ciphertexts:
 
-   Nek = Group_T.Nelem + KEM_PQ.Nek
-   Ndk = Group_T.Nscalar + KEM_PQ.Ndk
-   Nct = Group_T.Nelem + KEM_PQ.Nct
+   Nek = KEM_PQ.Nek + Group_T.Nelem
+   Nct = KEM_PQ.Nct + Group_T.Nelem
 
    The Nseed and Nss constants should reflect the overall security level
    of the combined KEM, with the following recommended values:
 
-   Nseed = max(Group_T.Nseed, KEM_PQ.Nseed)
-   Nss = min(Group_T.Nss, KEM_PQ.Nss)
+   Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
+   Nss = min(KEM_PQ.Nss, Group_T.Nss)
+
+   Since we use the seed as the decapsulation key, Ndk = Nseed.
 
    Given these constituent parts, we define the QSF hybrid KEM as
    follows:
+
+   def expandDecapsulationKey(seed):
+       seed_full = PRG(seed)
+       (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
+
+       (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+       dk_T = Group_T.RandomScalar(seed_T)
+       ek_T = Group_T.Exp(Group_T.g, dk_T)
+
+       return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+   def DeriveKeyPair(seed):
+       (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+       return (concat(ek_PQ, ek_T), seed)
 
    def GenerateKeyPair():
        seed = random(Nseed)
        return DeriveKeyPair(seed)
 
-   def DeriveKeyPair(seed):
-       seed_full = PRG(seed)
-       (seed_T, seed_PQ) = split(Group_T.Nseed, KEM_PQ.Nseed, seed)
-
-       dk_T = Group_T.RandomScalar(seed_T))
-       ek_T = Group_T.Exp(Group_T.g, dk_T)
-       (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-
-       ek_H = concat(ek_T, ek_PQ)
-       dk_H = concat(dk_T, dk_PQ)
-       return (ek_H, dk_H)
-
    def Encaps(ek):
-       (ek_T, ek_PQ) = split(Group_T.Nek, KEM_PQ.Nek, ek)
+       (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
 
-       sk_E = Group_T.RandomScalar(random(GroupT.Nseed))
-       ct_T = Group_T.Exp(GroupT.g, sk_E)
-       ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
        (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+       sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
+       ct_T = Group_T.Exp(Group_T.g, sk_E)
+       ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
 
        ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
-       ct_H = concat(ct_T, ct_PQ)
+       ct_H = concat(ct_PQ, ct_T)
        return (ss_H, ct_H)
 
    def Decaps(dk, ct):
-       (dk_T, dk_PQ) = split(Group_T.Ndk, KEM_PQ.Ndk, dk)
-       (ct_T, ct_PQ) = split(Group_T.Nct, KEM_PQ.Nct, ct)
+       (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
 
-       ek_T = Group_T.ToEncaps(dk_T)
-       ek_PQ = KEM_PQ.ToEncaps(dk_PQ)
-
-       ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+       (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
        ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+       ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
 
        ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
        return ss_H
@@ -900,9 +911,9 @@ Table of Contents
 
    Justification: To win the adversary must construct two distinct QSF
    ciphertexts that decapsulate to the same non-bot key.  Call the QSF
-   ciphertexts output by the adversary (ct_T^0, ct_PQ^0) and (ct_T^1,
-   ct_PQ^1).  Distinctness implies (ct_T^0, ct_PQ^0) != (ct_T^1,
-   ct_PQ^1).  Since ct_T is included in the KDF, if ct_T^0 != ct_T^1, a
+   ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
+   ct_T^1).  Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1,
+   ct_T^1).  Since ct_T is included in the KDF, if ct_T^0 != ct_T^1, a
    win must collide the KDF.
 
    Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1
@@ -932,7 +943,7 @@ Table of Contents
 
    Justification: Similar to the above, we proceed by a case analysis on
    the win condition of the LEAK-BIND-K-PK game.  The condition is
-   (ek_T^0, ek_PQ^0) != (ek_T^1, ek_PQ^1) and ss_H^0 = ss_H^1.  Again,
+   (ek_PQ^0, ek_T^0) != (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1.  Again,
    as above we argue that the only nontrivial case is the one where
    ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we can
    directly get a KDF collision from a winning output.  In this case the
@@ -956,13 +967,13 @@ Table of Contents
    By design, the calls to KDF in these frameworks and usage anywhere
    else in higher level protocol use separate input domains unless
    intentionally duplicating the 'label' per concrete instance with
-   fixed paramters.  This justifies modeling them as independent
+   fixed parameters.  This justifies modeling them as independent
    functions even if instantiated by the same KDF.  This domain
    separation is achieved by using prefix-free sets of label values.
    Recall that a set is prefix-free if no element is a prefix of another
    within the set.
 
-   Length diffentiation is sometimes used to achieve domain separation
+   Length differentiation is sometimes used to achieve domain separation
    but as a technique it is brittle and prone to misuse [BDG2020] in
    practice so we favor the use of an explicit post-fix label.
 
@@ -989,19 +1000,55 @@ Table of Contents
    Therefore, this specification MUST only be used with algorithms which
    have fixed-length shared secrets.
 
-6.7.  More than Two Component KEMs
+7.  In Scope
+
+7.1.  GHP Framework
+
+   The GHP framework works for generic IND-CCA component schemes.  GHP
+   also has an IND-CCA proof from [GHP2018].  Including the public
+   encapsulation keys as part of the KDF preimage fits in the
+   'additional data' parts of the split key PRF proof there, and binds
+   to the encapsulation keys, which is a nice property for protocols
+   integrating concrete instances.  GHP also matches NIST SP 800-227
+   IPD, and gives good binding properties Section 6.2 is generally safe
+   with no caveats on use for constructing concrete instances using a
+   broad array of components.
+
+7.2.  QSF Framework
+
+   QSF works for most elliptic curve groups and C2PRI-secure quantum-
+   resistant KEMs.  It is an optimization that leaves out large
+   ciphertexts and encapsulation keys from the KDF preimage, saving
+   extra hashing, if the PQ KEM meets requirements.  More KEMs can be
+   proven to be C2PRI-secure eventually for use with QSF.
+
+7.3.  PRE Framework
+
+   PRE offers many of the same benefits as GHP, while allowing an
+   optimization to pre-hash static encapsulation keys, which if large,
+   can be a performance improvement.
+
+8.  Out of Scope
+
+   Considerations that were considered and not included in these
+   designs:
+
+   Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
+   robustness or binding [GMP22], [CDM23]
+
+8.1.  More than Two Component KEMs
 
    Design team decided to restrict the space to only two components, a
-   traditional and a post-quantum KEM.
+   post-quantum and a traditional KEM.
 
-6.8.  Parameterized Output Length
+8.2.  Parameterized Output Length
 
    Not analyzed as part of any security proofs in the literature, and a
-   complicatation deemed unnecessary.
+   complication deemed unnecessary.
 
-7.  References
+9.  References
 
-7.1.  Normative References
+9.1.  Normative References
 
    [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
               output functions", National Institute of Standards and
@@ -1022,7 +1069,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-7.2.  Informative References
+9.2.  Informative References
 
    [ABH_21]   Joël Alwen, Bruno Blanchet, Eduard Hauck, Eike Kiltz,
               Benjamin Lipp, and Doreen Riepel, "Analysing the HPKE
@@ -1095,8 +1142,8 @@ Table of Contents
               DOI 10.6028/nist.fips.186-5, February 2023,
               <https://doi.org/10.6028/nist.fips.186-5>.
 
-   [GHP2018]  "KEM Combiners", 2018,
-              <https://eprint.iacr.org/2018/024.pdf>.
+   [GHP2018]  Giacon, F., Heuer, F., and B. Poettering, "KEM Combiners",
+              2018, <https://eprint.iacr.org/2018/024.pdf>.
 
    [GMP22]    Grubbs, P., Maram, V., and K.G. Paterson, "Anonymous,
               Robust Post-Quantum Public-Key Encryption", 2022,
@@ -1202,22 +1249,22 @@ Appendix A.  Deterministic Encapsulation
 
    When a hybrid KEM is instantiated with constituents that support
    derandomized encapsulation (either KEMs or groups), the hybrid KEM
-   can also support EncapsDerand, with Nrandom = T.Nrandom + PQ.Nrandom.
-   The structure of the hybrid KEM's EncapsDerand algorithm is the same
-   as its Encaps method, with the following differences:
+   can also support EncapsDerand(), with Nrandom = PQ.Nrandom +
+   T.Nrandom.  The structure of the hybrid KEM's EncapsDerand algorithm
+   is the same as its Encaps method, with the following differences:
 
    *  The EncapsDerand algorithm also takes a randomness parameter,
       which is a byte string of length Nrandom.
 
    *  Invocations of Encaps or RandomScalar (with a random input) in the
-      constituent algorithms are replaced with calls ot EncapsDerand or
+      constituent algorithms are replaced with calls to EncapsDerand or
       RandomScalar with a deterministic input.
 
-   *  The randomness used by the traditional constituent is the first
-      T.Nrandom bytes of the input randomness.
-
-   *  The randomness used by the PQ constituent is the final PQ.Nrandom
+   *  The randomness used by the PQ constituent is the first PQ.Nrandom
       bytes of the input randomness.
+
+   *  The randomness used by the traditional constituent is the final
+      T.Nrandom bytes of the input randomness.
 
 Acknowledgments
 
@@ -1233,3 +1280,8 @@ Authors' Addresses
    Richard Barnes
    Cisco
    Email: rlb@ipv.sx
+
+
+   Paul Grubbs
+   University of Michigan
+   Email: paulgrubbs12@gmail.com
