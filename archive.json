@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-27T01:23:29.511226+00:00",
+  "timestamp": "2025-08-10T01:22:29.918800+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -964,7 +964,7 @@
       "id": "I_kwDOMmhxws6-V9NE",
       "title": "move impl of generic frameworks into the concrete repo as internals/private only",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/60",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -975,8 +975,8 @@
       ],
       "body": "",
       "createdAt": "2025-07-01T18:22:25Z",
-      "updatedAt": "2025-07-15T22:42:09Z",
-      "closedAt": null,
+      "updatedAt": "2025-08-08T00:58:05Z",
+      "closedAt": "2025-08-08T00:58:05Z",
       "comments": []
     },
     {
@@ -6452,6 +6452,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 70,
+      "id": "PR_kwDOMmhxws6irR9-",
+      "title": "Always use (PQ, T) order",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/70",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #67 ",
+      "createdAt": "2025-08-08T00:12:05Z",
+      "updatedAt": "2025-08-08T00:48:08Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "c2864600b5cbc8a59eb59a1893efcfb5c2117793",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "pqt",
+      "headRefOid": "2f4e3913f31591b8a7bb5930f3a87723349cd6a8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
