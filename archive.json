@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-10T01:22:29.918800+00:00",
+  "timestamp": "2025-08-12T01:11:35.265523+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -265,7 +265,7 @@
       "id": "I_kwDOMmhxws6016Gs",
       "title": "Rename to '-generic-hybrid-kems' to match '-concrete-hybrid-kems'",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/16",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -274,8 +274,8 @@
       ],
       "body": "",
       "createdAt": "2025-05-01T14:50:46Z",
-      "updatedAt": "2025-05-29T22:45:57Z",
-      "closedAt": null,
+      "updatedAt": "2025-08-11T20:47:56Z",
+      "closedAt": "2025-08-11T20:47:55Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -509,7 +509,7 @@
       "id": "I_kwDOMmhxws643s8r",
       "title": "Serialization of compound values",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/28",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -518,9 +518,17 @@
       ],
       "body": "The values that a hybrid KEM deals with are compound:\n\n* `dk_H = (dk_T, dk_PQ)`\n* `ek_H = (ek_T, ek_PQ)`\n* `ct_H = (ct_T, ct_PQ)`\n\nThe constituent values are fixed-length byte strings, which is needed because we want to feed them into hash functions without ambiguity and without length prefixes.\n\nThe current text specifies that the hybrid values are just the concatenation of the constituent values, and does `concat()` and `split()` as appropriate.  On the one hand, this is a simple construction (avoiding encoding ambiguities one sees, e.g., with ECDSA signatures), and means that the hybrid KEM meets the same KEM API as the constituents.  On the other hand, there's no real need to specify an encoding for these values, so we could punt on the question.",
       "createdAt": "2025-05-29T22:21:23Z",
-      "updatedAt": "2025-05-29T23:03:24Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-08-11T20:47:39Z",
+      "closedAt": "2025-08-11T20:47:39Z",
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing this based on feedback in the PQUIP meeting at IETF 123 that the right approach in general is for algorithms (including the hybrid algorithms specified here) to specify simple encodings for encapsulation keys / ciphertexts, as opposed to, say, delegating to the application to encode these tuples in JSON or something.",
+          "createdAt": "2025-08-11T20:47:39Z",
+          "updatedAt": "2025-08-11T20:47:39Z"
+        }
+      ]
     },
     {
       "number": 29,
@@ -743,7 +751,7 @@
       ],
       "body": "In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)",
       "createdAt": "2025-06-24T16:51:38Z",
-      "updatedAt": "2025-07-17T07:31:00Z",
+      "updatedAt": "2025-08-11T20:44:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -766,6 +774,13 @@
           "body": "It is not just the KEM that could fail, but the traditional part as well. E.g., X25519.\n\n(And explicit rejection is easier to test.)",
           "createdAt": "2025-07-17T07:27:43Z",
           "updatedAt": "2025-07-17T07:31:00Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree with @bwesterb that we should consider all KEMs here explicitly rejecting.\n\nThe Python-ish pseudocode we are using kind of obscures this, since Python exceptions can be raised anywhere.  So it would be good to be explicit.",
+          "createdAt": "2025-08-11T20:44:44Z",
+          "updatedAt": "2025-08-11T20:44:44Z"
         }
       ]
     },
