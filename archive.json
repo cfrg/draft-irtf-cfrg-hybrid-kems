@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-12T01:11:35.265523+00:00",
+  "timestamp": "2025-08-19T01:10:22.115647+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -6480,7 +6480,7 @@
       "labels": [],
       "body": "Fixes #67 ",
       "createdAt": "2025-08-08T00:12:05Z",
-      "updatedAt": "2025-08-08T00:48:08Z",
+      "updatedAt": "2025-08-18T14:21:50Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "c2864600b5cbc8a59eb59a1893efcfb5c2117793",
@@ -6492,7 +6492,28 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws66eq0i",
+          "commit": {
+            "abbreviatedOid": "2f4e391"
+          },
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-18T14:21:49Z",
+          "updatedAt": "2025-08-18T14:21:50Z",
+          "comments": [
+            {
+              "originalPosition": 238,
+              "body": "The new formulation is interoperable with X-Wing \ud83d\udc4d ",
+              "createdAt": "2025-08-18T14:21:50Z",
+              "updatedAt": "2025-08-18T14:21:50Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
