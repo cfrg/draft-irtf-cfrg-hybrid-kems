@@ -552,7 +552,7 @@ particular, when the framework is instantiated with a nominal group, the
 "ciphertext" component is an ephemeral group element, and the "encapsulation
 key" is the group element that functions as the recipient's public key.
 
-As discusssed in {{security-considerations}}, the choice of combiner in a given
+As discusssed in {{security-requirements}}, the choice of combiner in a given
 instantitation determines the assumptions under which the resulting hybrid KEM
 is secure.
 
