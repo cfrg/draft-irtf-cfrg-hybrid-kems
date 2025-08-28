@@ -402,7 +402,6 @@ all byte strings, with fixed lengths:
 
 - `Nseed`: The length in bytes of a key seed
 - `Nek`: The length in bytes of a public encapsulation key
-- `Ndk`: The length in bytes of a secret decapsulation key
 - `Nct`: The length in bytes of a ciphertext produced by Encaps
 - `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
 
@@ -600,8 +599,6 @@ Nseed = max(KEM_PQ.Nseed, KEM_T.Nseed)
 Nss = min(KEM_PQ.Nss, KEM_T.Nss)
 ~~~
 
-Since we use the seed as the decapsulation key, `Ndk = Nseed`.
-
 Given these constituent parts, the hybrid KEM is defined as follows:
 
 ~~~
@@ -674,8 +671,6 @@ Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
 Nss = min(KEM_PQ.Nss, Group_T.Nss)
 ~~~
 
-Since we use the seed as the decapsulation key, `Ndk = Nseed`.
-
 Given these constituent parts, we define the hybrid KEM as follows:
 
 ~~~
@@ -719,6 +714,37 @@ def Decaps(dk, ct):
     ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
+
+## Separate Key Generation
+
+The hybrid KEM framework described above prescribes a "shared seed" process for
+keypair generation, in which a shared seed is expanded into seeds for the
+individual constituent algorithms. This shared seed is used as the decapsulation
+key for the hybrid KEM and expanded into the two per-constituent decapsulation
+keys as necessary.
+
+In some deployment environments, it is not possible to instantiate this process.
+Some implementations of constituent algorithms do not support the
+`DeriveKeyPair` function, only `GenerateKeyPair`.  Likewise in the nominal group
+case, a (scalar, group element) pair will only be generated when the scalar is
+generated internal to the implementation.
+
+An implementation of a hybrid KEM in such environemnts MAY deviate from the
+above description in the following ways:
+
+* `DeriveKeyPair` is not implemented.
+* The decapsulation key returned by `GenerateKeyPair` and consumed by `Decaps`
+  is a tuple `(dk_PQ, dk_T)` of per-constituent decapsulation keys (or
+  pointers/handles to keys).
+
+These deviations have both interoperability and security impacts.
+
+From an interoperatbility point of view, the use of a second format for the
+hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
+incompatibilities in cases where a private key needs to be moved from one system
+to another.
+
+[[ TODO: Security impacts ]]
 
 # Security Considerations {#security}
 
