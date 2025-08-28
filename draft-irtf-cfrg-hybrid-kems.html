@@ -1187,10 +1187,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-ghp" class="internal xref">GHP</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-pre" class="internal xref">PRE</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-qsf" class="internal xref">QSF</a></p>
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-qsf" class="internal xref">QSF</a></p>
 </li>
             </ul>
 </li>
@@ -1226,9 +1223,6 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.4">
                     <p id="section-toc.1-1.6.2.4.2.4.1"><a href="#section-6.4.4" class="auto internal xref">6.4.4</a>.  <a href="#name-security-requirements-for-p" class="internal xref">Security Requirements for PRGs</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.5">
-                    <p id="section-toc.1-1.6.2.4.2.5.1"><a href="#section-6.4.5" class="auto internal xref">6.4.5</a>.  <a href="#name-security-properties-of-pre" class="internal xref">Security Properties of PRE</a></p>
-</li>
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
@@ -1263,9 +1257,6 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
                 <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-qsf-framework" class="internal xref">QSF Framework</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
-                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-pre-framework" class="internal xref">PRE Framework</a></p>
 </li>
             </ul>
 </li>
@@ -1725,16 +1716,10 @@ KEMs:<a href="#section-5-1" class="pilcrow">¶</a></p>
 traditional KEMs, with minimal security assumptions on the constituent KEMs<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-5-2.3">PRE:</dt>
+<dt id="section-5-2.3">QSF:</dt>
         <dd style="margin-left: 1.5em" id="section-5-2.4">
-          <p id="section-5-2.4.1">A performance optimization of GHP for the case where encapsulation keys are
-large and frequently reused<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-5-2.5">QSF:</dt>
-        <dd style="margin-left: 1.5em" id="section-5-2.6">
-          <p id="section-5-2.6.1">An optimized generic framework for the case where the PQ component has strong
-binding properties and the traditional component is a nominal group<a href="#section-5-2.6.1" class="pilcrow">¶</a></p>
+          <p id="section-5-2.4.1">An optimized generic framework for the case where the PQ component has strong
+binding properties and the traditional component is a nominal group<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1826,105 +1811,55 @@ def Decaps(dk, ct):
 </div>
 </section>
 </div>
-<div id="pre">
-<section id="section-5.2">
-        <h3 id="name-pre">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-pre" class="section-name selfRef">PRE</a>
-        </h3>
-<p id="section-5.2-1">The PRE hybrid KEM is a performance optimization of the GHP KEM,
-optimized for the case where encapsulation keys are large and frequently
-reused. In such cases, hashing the entire encapsulation key is expensive, and
-the same value is hashed repeatedly.  The PRE KEM thus computes an
-intermediate hash of the hybrid encapsulation key, so that the hash value can
-be computed once and used across many encapsulation or decapsulation
-operations.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<p id="section-5.2-2">The PRE KEM is identical to the GHP KEM except for the
-shared secret computation.  One additional KDF is required:<a href="#section-5.2-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.2-3.1">
-            <p id="section-5.2-3.1.1"><code>KeyHash</code>: A KDF producing byte strings of length <code>GHP.Nss</code> (<code>KeyHash.Nout
-== GHP.Nss</code>)<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-5.2-4">The <code>GenerateKeyPair</code> and <code>DeriveKeyPair</code> algorithms for PRE are
-identical to those of the GHP KEM.  The <code>Encaps</code> and <code>Decaps</code>
-method use a modified shared secret computation:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-5">
-<pre>
-def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    (ss_T, ct_T) = KEM_T.Encap(ek_T)
-
-    ekh = KeyHash(concat(ek_PQ, ek_T))
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
-
-    ct_H = concat(ct_PQ, ct_T)
-    return (ss_H, ct_H)
-
-def Decaps(dk, ct):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
-
-    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
-
-    ekh = KeyHash(concat(ek_PQ, ek_T))
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
-    return ss_H
-</pre><a href="#section-5.2-5" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
 <div id="qsf">
-<section id="section-5.3">
+<section id="section-5.2">
         <h3 id="name-qsf">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-qsf" class="section-name selfRef">QSF</a>
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-qsf" class="section-name selfRef">QSF</a>
         </h3>
-<p id="section-5.3-1">The QSF hybrid KEM (QSF below) depends on the following constituent
-components:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">The QSF hybrid KEM (QSF below) depends on the following constituent
+components:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.3-2.1">
-            <p id="section-5.3-2.1.1"><code>Group_T</code>: A nominal group<a href="#section-5.3-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.2-2.1">
+            <p id="section-5.2-2.1.1"><code>Group_T</code>: A nominal group<a href="#section-5.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.3-2.2">
-            <p id="section-5.3-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-5.2-2.2">
+            <p id="section-5.2-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.3-2.3">
-            <p id="section-5.3-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed +
-Group_T.Nseed</code> (<code>PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed</code>)<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-5.2-2.3">
+            <p id="section-5.2-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed +
+Group_T.Nseed</code> (<code>PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed</code>)<a href="#section-5.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.3-2.4">
-            <p id="section-5.3-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>QSF.Nss</code> (<code>KDF.Nout
-== KDF.Nss</code>)<a href="#section-5.3-2.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-5.2-2.4">
+            <p id="section-5.2-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>QSF.Nss</code> (<code>KDF.Nout
+== KDF.Nss</code>)<a href="#section-5.2-2.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.3-2.5">
-            <p id="section-5.3-2.5.1"><code>Label</code> - A byte string used to label the specific combination of the above
-constituents being used.<a href="#section-5.3-2.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-5.2-2.5">
+            <p id="section-5.2-2.5.1"><code>Label</code> - A byte string used to label the specific combination of the above
+constituents being used.<a href="#section-5.2-2.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.3-3">We presume that <code>KEM_PQ</code>, <code>Group_T</code>, and the KDFs meet the interfaces
+<p id="section-5.2-3">We presume that <code>KEM_PQ</code>, <code>Group_T</code>, and the KDFs meet the interfaces
 described in <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <span class="bcp14">MUST</span> meet the security requirements
-described in <a href="#security-requirements" class="auto internal xref">Section 6.4</a>.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
-<p id="section-5.3-4">The constants for public values are derived from the concatenation of
-encapsulation keys and ciphertexts:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-5">
+described in <a href="#security-requirements" class="auto internal xref">Section 6.4</a>.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-4">The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-5">
 <pre>
 Nek = KEM_PQ.Nek + Group_T.Nelem
 Nct = KEM_PQ.Nct + Group_T.Nelem
-</pre><a href="#section-5.3-5" class="pilcrow">¶</a>
+</pre><a href="#section-5.2-5" class="pilcrow">¶</a>
 </div>
-<p id="section-5.3-6">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of
-the combined KEM, with the following recommended values:<a href="#section-5.3-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-7">
+<p id="section-5.2-6">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of
+the combined KEM, with the following recommended values:<a href="#section-5.2-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-7">
 <pre>
 Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
 Nss = min(KEM_PQ.Nss, Group_T.Nss)
-</pre><a href="#section-5.3-7" class="pilcrow">¶</a>
+</pre><a href="#section-5.2-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.3-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.3-8" class="pilcrow">¶</a></p>
-<p id="section-5.3-9">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.3-9" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-10">
+<p id="section-5.2-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.2-8" class="pilcrow">¶</a></p>
+<p id="section-5.2-9">Given these constituent parts, we define the QSF hybrid KEM as follows:<a href="#section-5.2-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-10">
 <pre>
 def expandDecapsulationKey(seed):
     seed_full = PRG(seed)
@@ -1965,7 +1900,7 @@ def Decaps(dk, ct):
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
-</pre><a href="#section-5.3-10" class="pilcrow">¶</a>
+</pre><a href="#section-5.2-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -2159,15 +2094,6 @@ uniform outputs.<a href="#section-6.4.4-2" class="pilcrow">¶</a></p>
 built from random oracles. Examples include SHAKE256.<a href="#section-6.4.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security-pre">
-<section id="section-6.4.5">
-          <h4 id="name-security-properties-of-pre">
-<a href="#section-6.4.5" class="section-number selfRef">6.4.5. </a><a href="#name-security-properties-of-pre" class="section-name selfRef">Security Properties of PRE</a>
-          </h4>
-<p id="section-6.4.5-1">The PRE hybrid KEM framework uses a function <code>KeyHash</code> to generate a short
-digest of the encapsulation keys.  This function <span class="bcp14">MUST</span> be collision-resistant.<a href="#section-6.4.5-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 </section>
 </div>
 <div id="security-properties-of-hybrid-kems-frameworks">
@@ -2190,7 +2116,7 @@ the PQ-KEM's shared secret, IND-CCA holds.<a href="#section-6.5.1-2" class="pilc
 <p id="section-6.5.1-3">As long as the aforementioned security requirements of the component parts
 are met, these analyses imply that this document's QSF construction satisfies
 IND-CCA security.<a href="#section-6.5.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.5.1-4">This document's exact GHP and PRE constructions do not have IND-CCA analyses;
+<p id="section-6.5.1-4">This document's exact GHP construction does not have an IND-CCA analysis;
 the GHP paper gives a slightly different version, namely they do not include
 the public encapsulation keys in the KDF. However, we argue that the proof
 goes through with trivial modifications if the public encapsulation keys are
@@ -2201,20 +2127,14 @@ encapsulation keys to the inputs only changes the concrete contents of the
 reduction's queries to its oracle. Since the reduction chooses the public
 encapsulation keys itself, they can be added to the oracle inputs, and the
 remainder of the proof goes through unmodified.<a href="#section-6.5.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.5.1-5">We also argue that this extension applies, again with nearly trivial
-modifications, to prove security of PRE. Observe that the only difference
-between GHP and PRE is prehashing of the public encapsulation keys. As long
-as the hash function is collision-resistant, any event that happens in the
-IND-CCA game of GHP happens only with negligibly different probability in the
-IND-CCA game of PRE.<a href="#section-6.5.1-5" class="pilcrow">¶</a></p>
-<p id="section-6.5.1-6">We reiterate that modulo some low-level technical details, our requirement
+<p id="section-6.5.1-5">We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
-used in GHP and PRE meets the split-key pseudorandomness property used in
-GHP's analysis.<a href="#section-6.5.1-6" class="pilcrow">¶</a></p>
-<p id="section-6.5.1-7">Therefore all three hybrid KEMs in this document are IND-CCA when
+used in GHP meets the split-key pseudorandomness property used in
+GHP's analysis.<a href="#section-6.5.1-5" class="pilcrow">¶</a></p>
+<p id="section-6.5.1-6">Therefore all three hybrid KEMs in this document are IND-CCA when
 instantiated with cryptographic components that meet the security
 requirements described above. Any changes to the algorithms, including key
-generation/derivation, are not guaranteed to produce secure results.<a href="#section-6.5.1-7" class="pilcrow">¶</a></p>
+generation/derivation, are not guaranteed to produce secure results.<a href="#section-6.5.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="binding-analyses">
@@ -2272,69 +2192,36 @@ in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
 collide the KDF.<a href="#section-6.5.2.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="pre-binding">
-<section id="section-6.5.2.3">
-            <h5 id="name-pre-binding">
-<a href="#section-6.5.2.3" class="section-number selfRef">6.5.2.3. </a><a href="#name-pre-binding" class="section-name selfRef">PRE Binding</a>
-            </h5>
-<div id="leak-bind-k-ct-of-pre">
-<section id="section-6.5.2.3.1">
-              <h6 id="name-leak-bind-k-ct-of-pre">
-<a href="#section-6.5.2.3.1" class="section-number selfRef">6.5.2.3.1. </a><a href="#name-leak-bind-k-ct-of-pre" class="section-name selfRef">LEAK-BIND-K-CT of PRE</a>
-              </h6>
-<p id="section-6.5.2.3.1-1">Claim: If KDF is collision-resistant, then PRE is LEAK-BIND-K-CT.<a href="#section-6.5.2.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.3.1-2">Justification: PRE and GHP do not differ on how they incorporate the
-ciphertexts into key derivation, so the GHP proof above applies.<a href="#section-6.5.2.3.1-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="leak-bind-k-pk-of-pre">
-<section id="section-6.5.2.3.2">
-              <h6 id="name-leak-bind-k-pk-of-pre">
-<a href="#section-6.5.2.3.2" class="section-number selfRef">6.5.2.3.2. </a><a href="#name-leak-bind-k-pk-of-pre" class="section-name selfRef">LEAK-BIND-K-PK of PRE</a>
-              </h6>
-<p id="section-6.5.2.3.2-1">Claim: If KDF and KeyHash are collision-resistant, then PRE is
-LEAK-BIND-K-PK.<a href="#section-6.5.2.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.3.2-2">Justification: The only relevant difference between PRE and GHP is key
-prehashing. This does indeed change the proof, since we can no longer argue
-the distinctness condition on the public keys <em>directly</em> gives a collision in
-KDF - the keys are hashed, and only their hash is input into the
-KDF. However, as long as KeyHash is collision-resistant, the distinctness
-condition implies the public key hashes are distinct. Thus, for the adversary
-to win it must either collide KeyHash or KDF.<a href="#section-6.5.2.3.2-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
 <div id="qsf-binding">
-<section id="section-6.5.2.4">
+<section id="section-6.5.2.3">
             <h5 id="name-qsf-binding">
-<a href="#section-6.5.2.4" class="section-number selfRef">6.5.2.4. </a><a href="#name-qsf-binding" class="section-name selfRef">QSF Binding</a>
+<a href="#section-6.5.2.3" class="section-number selfRef">6.5.2.3. </a><a href="#name-qsf-binding" class="section-name selfRef">QSF Binding</a>
             </h5>
-<p id="section-6.5.2.4-1">The LEAK-BIND proofs for QSF are a bit more subtle than for GHP and PRE; the
+<p id="section-6.5.2.3-1">The LEAK-BIND proofs for QSF are a bit more subtle than for GHP; the
 main reason for this is QSF's omission of the PQ KEM key and ciphertext from
 the KDF. We will show that QSF still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
 property. We note that our preliminary results suggest a different proof
 strategy, which instead directly uses properties of the nominal group, may
-work here; we present the PQ-KEM route for concreteness.<a href="#section-6.5.2.4-1" class="pilcrow">¶</a></p>
+work here; we present the PQ-KEM route for concreteness.<a href="#section-6.5.2.3-1" class="pilcrow">¶</a></p>
 <div id="leak-bind-k-ct-of-qsf">
-<section id="section-6.5.2.4.1">
+<section id="section-6.5.2.3.1">
               <h6 id="name-leak-bind-k-ct-of-qsf">
-<a href="#section-6.5.2.4.1" class="section-number selfRef">6.5.2.4.1. </a><a href="#name-leak-bind-k-ct-of-qsf" class="section-name selfRef">LEAK-BIND-K-CT of QSF</a>
+<a href="#section-6.5.2.3.1" class="section-number selfRef">6.5.2.3.1. </a><a href="#name-leak-bind-k-ct-of-qsf" class="section-name selfRef">LEAK-BIND-K-CT of QSF</a>
               </h6>
-<p id="section-6.5.2.4.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
-QSF is LEAK-BIND-K-CT.<a href="#section-6.5.2.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.1-2">Justification: To win the adversary must construct two distinct QSF
+<p id="section-6.5.2.3.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
+QSF is LEAK-BIND-K-CT.<a href="#section-6.5.2.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.3.1-2">Justification: To win the adversary must construct two distinct QSF
 ciphertexts that decapsulate to the same non-bot key.  Call the QSF
 ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
 ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
-ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.5.2.4.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.5.2.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.3.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
 KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
-KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.5.2.4.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
+KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.5.2.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.3.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
 output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
 reduction does this by generating two nominal-group key pairs and running the
@@ -2342,18 +2229,18 @@ QSF LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
 lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
-game against the PQ KEM.<a href="#section-6.5.2.4.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.5.2.4.1-5" class="pilcrow">¶</a></p>
+game against the PQ KEM.<a href="#section-6.5.2.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.3.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.5.2.3.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="leak-bind-k-pk-of-qsf">
-<section id="section-6.5.2.4.2">
+<section id="section-6.5.2.3.2">
               <h6 id="name-leak-bind-k-pk-of-qsf">
-<a href="#section-6.5.2.4.2" class="section-number selfRef">6.5.2.4.2. </a><a href="#name-leak-bind-k-pk-of-qsf" class="section-name selfRef">LEAK-BIND-K-PK of QSF</a>
+<a href="#section-6.5.2.3.2" class="section-number selfRef">6.5.2.3.2. </a><a href="#name-leak-bind-k-pk-of-qsf" class="section-name selfRef">LEAK-BIND-K-PK of QSF</a>
               </h6>
-<p id="section-6.5.2.4.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
-QSF is LEAK-BIND-K-PK.<a href="#section-6.5.2.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
+<p id="section-6.5.2.3.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+QSF is LEAK-BIND-K-PK.<a href="#section-6.5.2.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.3.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
@@ -2361,8 +2248,8 @@ the other case we can directly get a KDF collision from a winning output. In
 this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
-reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.5.2.4.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.5.2.4.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.5.2.4.2-3" class="pilcrow">¶</a></p>
+reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.5.2.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.5.2.3.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.5.2.3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2453,16 +2340,6 @@ KEMs.  It is an optimization that leaves out large ciphertexts and
 encapsulation keys from the KDF preimage, saving extra hashing, if the PQ KEM
 meets requirements. More KEMs can be proven to be C2PRI-secure eventually for
 use with QSF.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="pre-framework">
-<section id="section-7.3">
-        <h3 id="name-pre-framework">
-<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-pre-framework" class="section-name selfRef">PRE Framework</a>
-        </h3>
-<p id="section-7.3-1">PRE offers many of the same benefits as GHP, while allowing an optimization
-to pre-hash static encapsulation keys, which if large, can be a performance
-improvement.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

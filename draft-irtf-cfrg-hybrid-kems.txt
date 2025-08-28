@@ -73,8 +73,7 @@ Table of Contents
      4.4.  Key Derivation Functions
    5.  Hybrid KEM Frameworks
      5.1.  GHP
-     5.2.  PRE
-     5.3.  QSF
+     5.2.  QSF
    6.  Security Considerations
      6.1.  Cryptographic Security Goals for Hybrid KEMs
        6.1.1.  IND-CCA Security
@@ -85,7 +84,6 @@ Table of Contents
        6.4.2.  Security Requirements for Groups
        6.4.3.  Security Requirements for KDFs
        6.4.4.  Security Requirements for PRGs
-       6.4.5.  Security Properties of PRE
      6.5.  Security Properties of Hybrid KEMs Frameworks
        6.5.1.  IND-CCA analyses
        6.5.2.  Binding analyses
@@ -95,7 +93,6 @@ Table of Contents
    7.  In Scope
      7.1.  GHP Framework
      7.2.  QSF Framework
-     7.3.  PRE Framework
    8.  Out of Scope
      8.1.  More than Two Component KEMs
      8.2.  Parameterized Output Length
@@ -401,9 +398,6 @@ Table of Contents
       PQ and traditional KEMs, with minimal security assumptions on the
       constituent KEMs
 
-   PRE:  A performance optimization of GHP for the case where
-      encapsulation keys are large and frequently reused
-
    QSF:  An optimized generic framework for the case where the PQ
       component has strong binding properties and the traditional
       component is a nominal group
@@ -482,49 +476,7 @@ Table of Contents
        ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
        return ss_H
 
-5.2.  PRE
-
-   The PRE hybrid KEM is a performance optimization of the GHP KEM,
-   optimized for the case where encapsulation keys are large and
-   frequently reused.  In such cases, hashing the entire encapsulation
-   key is expensive, and the same value is hashed repeatedly.  The PRE
-   KEM thus computes an intermediate hash of the hybrid encapsulation
-   key, so that the hash value can be computed once and used across many
-   encapsulation or decapsulation operations.
-
-   The PRE KEM is identical to the GHP KEM except for the shared secret
-   computation.  One additional KDF is required:
-
-   *  KeyHash: A KDF producing byte strings of length GHP.Nss
-      (KeyHash.Nout == GHP.Nss)
-
-   The GenerateKeyPair and DeriveKeyPair algorithms for PRE are
-   identical to those of the GHP KEM.  The Encaps and Decaps method use
-   a modified shared secret computation:
-
-   def Encaps(ek):
-       (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
-       (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-       (ss_T, ct_T) = KEM_T.Encap(ek_T)
-
-       ekh = KeyHash(concat(ek_PQ, ek_T))
-       ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
-
-       ct_H = concat(ct_PQ, ct_T)
-       return (ss_H, ct_H)
-
-   def Decaps(dk, ct):
-       (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
-
-       (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
-       ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-       ss_T = KEM_T.Decap(dk_T, ct_T)
-
-       ekh = KeyHash(concat(ek_PQ, ek_T))
-       ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ekh, label))
-       return ss_H
-
-5.3.  QSF
+5.2.  QSF
 
    The QSF hybrid KEM (QSF below) depends on the following constituent
    components:
@@ -769,12 +721,6 @@ Table of Contents
    PRGs are related to extendable output functions (XOFs) which can be
    built from random oracles.  Examples include SHAKE256.
 
-6.4.5.  Security Properties of PRE
-
-   The PRE hybrid KEM framework uses a function KeyHash to generate a
-   short digest of the encapsulation keys.  This function MUST be
-   collision-resistant.
-
 6.5.  Security Properties of Hybrid KEMs Frameworks
 
 6.5.1.  IND-CCA analyses
@@ -792,8 +738,8 @@ Table of Contents
    parts are met, these analyses imply that this document's QSF
    construction satisfies IND-CCA security.
 
-   This document's exact GHP and PRE constructions do not have IND-CCA
-   analyses; the GHP paper gives a slightly different version, namely
+   This document's exact GHP construction does not have an IND-CCA
+   analysis; the GHP paper gives a slightly different version, namely
    they do not include the public encapsulation keys in the KDF.
    However, we argue that the proof goes through with trivial
    modifications if the public encapsulation keys are included in the
@@ -806,18 +752,10 @@ Table of Contents
    the oracle inputs, and the remainder of the proof goes through
    unmodified.
 
-   We also argue that this extension applies, again with nearly trivial
-   modifications, to prove security of PRE.  Observe that the only
-   difference between GHP and PRE is prehashing of the public
-   encapsulation keys.  As long as the hash function is collision-
-   resistant, any event that happens in the IND-CCA game of GHP happens
-   only with negligibly different probability in the IND-CCA game of
-   PRE.
-
    We reiterate that modulo some low-level technical details, our
    requirement that the KDF is indifferentiable from an RO implies that,
-   in the ROM, the KDF used in GHP and PRE meets the split-key
-   pseudorandomness property used in GHP's analysis.
+   in the ROM, the KDF used in GHP meets the split-key pseudorandomness
+   property used in GHP's analysis.
 
    Therefore all three hybrid KEMs in this document are IND-CCA when
    instantiated with cryptographic components that meet the security
@@ -870,33 +808,10 @@ Table of Contents
    includes the public keys in the KDF, the distinctness condition
    implies a LEAK-BIND-K-PK win must collide the KDF.
 
-6.5.2.3.  PRE Binding
+6.5.2.3.  QSF Binding
 
-6.5.2.3.1.  LEAK-BIND-K-CT of PRE
-
-   Claim: If KDF is collision-resistant, then PRE is LEAK-BIND-K-CT.
-
-   Justification: PRE and GHP do not differ on how they incorporate the
-   ciphertexts into key derivation, so the GHP proof above applies.
-
-6.5.2.3.2.  LEAK-BIND-K-PK of PRE
-
-   Claim: If KDF and KeyHash are collision-resistant, then PRE is LEAK-
-   BIND-K-PK.
-
-   Justification: The only relevant difference between PRE and GHP is
-   key prehashing.  This does indeed change the proof, since we can no
-   longer argue the distinctness condition on the public keys _directly_
-   gives a collision in KDF - the keys are hashed, and only their hash
-   is input into the KDF.  However, as long as KeyHash is collision-
-   resistant, the distinctness condition implies the public key hashes
-   are distinct.  Thus, for the adversary to win it must either collide
-   KeyHash or KDF.
-
-6.5.2.4.  QSF Binding
-
-   The LEAK-BIND proofs for QSF are a bit more subtle than for GHP and
-   PRE; the main reason for this is QSF's omission of the PQ KEM key and
+   The LEAK-BIND proofs for QSF are a bit more subtle than for GHP; the
+   main reason for this is QSF's omission of the PQ KEM key and
    ciphertext from the KDF.  We will show that QSF still has our target
    LEAK-BIND properties as long as the underlying PQ-KEM also has the
    corresponding LEAK-BIND property.  We note that our preliminary
@@ -904,7 +819,7 @@ Table of Contents
    uses properties of the nominal group, may work here; we present the
    PQ-KEM route for concreteness.
 
-6.5.2.4.1.  LEAK-BIND-K-CT of QSF
+6.5.2.3.1.  LEAK-BIND-K-CT of QSF
 
    Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-
    K-CT, then QSF is LEAK-BIND-K-CT.
@@ -936,7 +851,7 @@ Table of Contents
 
    We conclude by noting these cases are exhaustive.
 
-6.5.2.4.2.  LEAK-BIND-K-PK of QSF
+6.5.2.3.2.  LEAK-BIND-K-PK of QSF
 
    Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-
    K-PK, then QSF is LEAK-BIND-K-PK.
@@ -1021,12 +936,6 @@ Table of Contents
    ciphertexts and encapsulation keys from the KDF preimage, saving
    extra hashing, if the PQ KEM meets requirements.  More KEMs can be
    proven to be C2PRI-secure eventually for use with QSF.
-
-7.3.  PRE Framework
-
-   PRE offers many of the same benefits as GHP, while allowing an
-   optimization to pre-hash static encapsulation keys, which if large,
-   can be a performance improvement.
 
 8.  Out of Scope
 
