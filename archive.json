@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-19T01:10:22.115647+00:00",
+  "timestamp": "2025-08-31T01:10:52.788303+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1033,7 +1033,7 @@
       "id": "I_kwDOMmhxws7A9yln",
       "title": "Always use (PQ, T) ordering",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/67",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -1042,8 +1042,8 @@
       ],
       "body": "There are a few cases in the document where a PQ thing and a T thing are paired together, and we don't always use the same order, for example:\n\n* Hybrid ciphertexts and encapsulation keys: (T, PQ)\n* Shared secret inputs to the KDF: (PQ, T)\n\nFor consistency, it would be good to use the same ordering for all of these cases.  As far as I know, this ordering makes no difference cryptographically or in terms of compliance requirements.  (I believe there were some FIPS concerns which are now obsolete.)\n\nPersonally, I would probably go with the (PQ, T) ordering, because it matches the QSF paper and the GHP paper ([see Fig. 4](https://eprint.iacr.org/2018/024.pdf)) is agnostic.",
       "createdAt": "2025-07-16T21:40:33Z",
-      "updatedAt": "2025-07-21T15:43:10Z",
-      "closedAt": null,
+      "updatedAt": "2025-08-28T15:23:11Z",
+      "closedAt": "2025-08-28T15:23:11Z",
       "comments": [
         {
           "author": "dconnolly",
@@ -1072,6 +1072,30 @@
           "body": "> Personally, I would probably go with the (PQ, T) ordering, because it matches the QSF paper and the GHP paper \n\n... and LAMPS Composites.",
           "createdAt": "2025-07-21T15:43:10Z",
           "updatedAt": "2025-07-21T15:43:10Z"
+        }
+      ]
+    },
+    {
+      "number": 74,
+      "id": "I_kwDOMmhxws7IxU0T",
+      "title": "HKDF as a KDF is under-specified",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/74",
+      "state": "OPEN",
+      "author": "bluegate010",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "KEM constructions specified in this document leverage their KDF with a single input and single output parameter (i.e. `ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))`). HKDF takes salt, IKM, info, and L. The spec does not specify how to populate each of these fields.\n\nAn [earlier version](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-01#name-kitchensink-hkdf-sha-256-ml) fully specified how HKDF should be used (salt = \"\", IKM = \"hybrid_prk\" || preimage, info = I2OSP(32, 2) || \"shared_secret\", L = 32).",
+      "createdAt": "2025-08-29T22:36:07Z",
+      "updatedAt": "2025-08-29T23:53:28Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bluegate010",
+          "authorAssociation": "NONE",
+          "body": "Update: none of the parameterizations in [draft-irtf-cfrg-concrete-hybrid-kems](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems) use HKDF (with the current exception of QSF-MLKEM1024-P384-SHA3256-SHAKE256, but that's a bug, the KDF parameter should read SHA3-256.\n\nSo draft-irtf-cfrg-hybrid-kems could simply omit references to HKDF.",
+          "createdAt": "2025-08-29T23:53:28Z",
+          "updatedAt": "2025-08-29T23:53:28Z"
         }
       ]
     }
@@ -6473,24 +6497,26 @@
       "id": "PR_kwDOMmhxws6irR9-",
       "title": "Always use (PQ, T) order",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/70",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #67 ",
       "createdAt": "2025-08-08T00:12:05Z",
-      "updatedAt": "2025-08-18T14:21:50Z",
+      "updatedAt": "2025-08-28T15:23:11Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "c2864600b5cbc8a59eb59a1893efcfb5c2117793",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "pqt",
       "headRefOid": "2f4e3913f31591b8a7bb5930f3a87723349cd6a8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-08-28T15:23:09Z",
+      "mergedAt": "2025-08-28T15:23:09Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "1267d644b60904bdfe7f32b268883cadf3e2ddac"
+      },
       "comments": [],
       "reviews": [
         {
@@ -6510,6 +6536,174 @@
               "body": "The new formulation is interoperable with X-Wing \ud83d\udc4d ",
               "createdAt": "2025-08-18T14:21:50Z",
               "updatedAt": "2025-08-18T14:21:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws68rB8q",
+          "commit": {
+            "abbreviatedOid": "2f4e391"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-28T15:23:02Z",
+          "updatedAt": "2025-08-28T15:23:02Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 71,
+      "id": "PR_kwDOMmhxws6l3Ry1",
+      "title": "Remove PRE",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/71",
+      "state": "MERGED",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Feedback at the CFRG meeting at IETF 123 was that it was important to folks to have a single target, and folks did not care about the optimization that pre-hashing provides.",
+      "createdAt": "2025-08-28T19:12:48Z",
+      "updatedAt": "2025-08-28T19:54:03Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "1267d644b60904bdfe7f32b268883cadf3e2ddac",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "no-pre",
+      "headRefOid": "84adafc60d914e44a58303f4101fa4256411a958",
+      "closedAt": "2025-08-28T19:54:01Z",
+      "mergedAt": "2025-08-28T19:54:01Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws68ueCj",
+          "commit": {
+            "abbreviatedOid": "84adafc"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-28T19:53:30Z",
+          "updatedAt": "2025-08-28T19:53:30Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws68ueRm",
+          "commit": {
+            "abbreviatedOid": "84adafc"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-28T19:53:48Z",
+          "updatedAt": "2025-08-28T19:53:48Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 72,
+      "id": "PR_kwDOMmhxws6l3yfG",
+      "title": "Uniform API",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/72",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It has become clear in CFRG discussions that the limitation of GHP to only KEM+KEM and QSF to only KEM+Group is insufficient.  Folks want to instantiate QSF with RSA (see, e.g., [LAMPS](https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-07.html)), and folks being conservative about C2PRI want to instantiate GHP with ECDH groups in the T component.\r\n\r\nWe thus end up with four combinations to consider:\r\n1. PQ(IND-CCA + C2PRI) + T(Group) = QSF\r\n2. PQ(IND-CCA + C2PRI) + T(KEM)\r\n3. PQ(IND-CCA only) + T(Group)\r\n4. PQ(IND-CCA only) + T(KEM) = GHP\r\n\r\nThis PR attempts to present these options in a unified framework, with two binary choices: KEM vs. group, and C2PRI or not.  This PR does not make the corresponding changes to the Security Considerations, which will need to be updated to match if we adopt this approach.\r\n\r\nThe framework here could be simpler if we defined a DH-based thing that satisfied the KEM interface.  This would be problematic, however, because the resulting \"KEM\" would not be IND-CCA.  Given this fact, and the fact that defining such a \"KEM\" would take up about the same amount of space as the repetition we currently have, I think the current approach of keeping these separate is the right one.",
+      "createdAt": "2025-08-28T20:12:10Z",
+      "updatedAt": "2025-08-28T20:14:51Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "uniform-api",
+      "headRefOid": "1e70a840dd8ed2c84d7f70576072f4336b6a692e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 73,
+      "id": "PR_kwDOMmhxws6l4FIU",
+      "title": "Add a section on separate key generation",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/73",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It is apparently very important to the LAMPS community to be able to deploy hybrid KEMs without the \"shared seed\" key generation that is the preferred approach here.  (In other words, to make a hybrid KEM without your HSM having to be aware of it.)  This PR adds a section that discusses this option.  The idea being: You [OUGHT TO](https://rfcs.online/rfcs/rfc6919.html#section-4) do shared seed, but if you can't, here's how you adapt and the trade-offs.\r\n\r\n@dconnolly - I would appreciate suggested text for the security aspects.\r\n\r\nDepends on #72.  Read [this commit](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/73/commits/25efa466175c1069c9f8b91fc4db404ec42bb235) for the more focused version.",
+      "createdAt": "2025-08-28T20:50:00Z",
+      "updatedAt": "2025-08-29T04:29:47Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "keygen",
+      "headRefOid": "25efa466175c1069c9f8b91fc4db404ec42bb235",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "ounsworth",
+          "authorAssociation": "NONE",
+          "body": "I object to this characterization of the problem:\r\n\r\n> (In other words, to make a hybrid KEM without your HSM having to be aware of it.) \r\n\r\nThe problem is that NIST has been very clear that the seed MUST be direct output of a FIPS-approved and FIPS-certified DRBG. As soon as you do a shared seed and run it through a KDF to get the ML-KEM half of the seed, then that is no longer direct output of a FIPS-approved DRBG, and therefore whatever you do after that is, by definition, not ML-KEM as defined in FIPS 203 and you will not be able to get it certified. A hybrid with a shared seed in not allowed by NIST, full stop. So yes, I would say that having crypto that's compliant with FIPS 203 and capable of being FIPS certified is \"very important to the LAMPS community\". It's also going to be very important to any other community that needs to have crypto running in FIPS mode.\r\n\r\nI believe there is a similar argument on the Traditional side: doing an ECDH key derivation from a seed will not be FIPS-certifiable either because I don't think you'll find that algorithm described in any FIPS or SP document, or test vectors for it on the CAVP website / github repo.\r\n\r\nThis is not new, I gave a PQUIP presentation about it at IETF 121 (Dublin). See Topic #2 (starting on slide 15).\r\nhttps://datatracker.ietf.org/meeting/121/materials/slides-121-pquip-fips-issues-with-deploying-ml-kem-and-ml-dsa-04.pdf",
+          "createdAt": "2025-08-29T04:12:34Z",
+          "updatedAt": "2025-08-29T04:29:47Z"
+        },
+        {
+          "author": "ounsworth",
+          "authorAssociation": "NONE",
+          "body": "I think this PR is going in the right direction. I added a few comments.",
+          "createdAt": "2025-08-29T04:21:16Z",
+          "updatedAt": "2025-08-29T04:21:16Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws68ySOe",
+          "commit": {
+            "abbreviatedOid": "25efa46"
+          },
+          "author": "ounsworth",
+          "authorAssociation": "NONE",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2025-08-29T04:15:46Z",
+          "updatedAt": "2025-08-29T04:21:25Z",
+          "comments": [
+            {
+              "originalPosition": 194,
+              "body": "You could mention, for example, if your deployment environment requires compliance with NIST; specifically FIPS 203, SP 800-56, and/or SP 800-227.",
+              "createdAt": "2025-08-29T04:15:46Z",
+              "updatedAt": "2025-08-29T04:21:25Z"
+            },
+            {
+              "originalPosition": 215,
+              "body": "I assume this will talk about binding properties?\r\nI am curious to see what you say here, because personally I don't believe that MAL-BIND has all that much practical value.\r\n\r\n\"Alice walks into a bar and gets a private key from Mallory...\"\r\n\r\n... but I'll try to keep an open mind about how this security notion fits into the bigger picture.",
+              "createdAt": "2025-08-29T04:18:24Z",
+              "updatedAt": "2025-08-29T04:21:25Z"
+            },
+            {
+              "originalPosition": 208,
+              "body": "Probably needs a paragraph about FIPS compliance and how FIPS 203 requires the seed to be direct output of a DRBG, so it will be impossible to do a shared seed keygen in a crypto library that is required to run in FIPS mode.",
+              "createdAt": "2025-08-29T04:19:46Z",
+              "updatedAt": "2025-08-29T04:21:25Z"
             }
           ]
         }
