@@ -513,8 +513,7 @@ laid out in {{security-kdfs}}.
 
 # Hybrid KEM Frameworks {#frameworks}
 
-In this section, we define two generic frameworks for building for hybrid
-KEMs:
+In this section, we define two generic frameworks for building hybrid KEMs:
 
 GHP:
 : A generic framework that is suitable for use with any choice of PQ and
