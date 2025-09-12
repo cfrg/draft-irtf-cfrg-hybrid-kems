@@ -504,8 +504,8 @@ output lengths:
 
 The fixed sizes are for both security and simplicity.
 
-For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
-the salt and sizes to fit this form.
+Any KDF that utilizes `HKDF` {{HKDF}} must fully specify HKDF's salt, IKM, info,
+and L arguments.
 
 The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
