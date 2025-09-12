@@ -469,22 +469,23 @@ are laid out in {{security-groups}}.
 
 A pseudorandom generator (PRG) is a deterministic function `G` whose outputs
 are longer than its inputs. When the input to `G` is chosen uniformly at
-random, it induces a certain distribution over the possible output. The
+random, this induces a certain distribution over the possible output. The
 output distribution is pseudorandom if it is indistinguishable from the
 uniform distribution.
 
-The PRGs used in this document have a simpler form, with a fixed
+The PRGs used in this document have a simpler form, with fixed
 output lengths:
 
-- `Nout` - The length in bytes of an output from this PRG.
+- `Nout`: The length in bytes of an output from this PRG.
 - `PRG(seed) -> output`: Produce a byte string of length `Nout` from an input
   byte string `seed`.
 
 The fixed sizes are for both security and simplicity.
 
-MUST provide the bit-security required to source input randomness for PQ/T
-components from a seed that is expanded to a output length, of which a subset
-is passed to the component key generation algorithms.
+PRGs used with the frameworks in this document MUST provide the bit-security
+required to source input randomness for PQ/T components from a seed that is
+expanded to a output length, of which a subset is passed to the component key
+generation algorithms.
 
 The security requirements for PRGs used with the frameworks in this document are
 laid out in {{security-prgs}}.
@@ -495,10 +496,10 @@ A Key Derivation Function (KDF) is a function that produces
 keying material based on an input secret and other information.
 
 While KDFs in the literature can typically consume and produce byte strings of
-arbitrary length, the KDFs used in this document have a simpler form, with a fixed
+arbitrary length, the KDFs used in this document have a simpler form, with fixed
 output lengths:
 
-- `Nout` - The length in bytes of an output from this KDF.
+- `Nout`: The length in bytes of an output from this KDF.
 - `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
   byte string.
 
@@ -512,8 +513,7 @@ laid out in {{security-kdfs}}.
 
 # Hybrid KEM Frameworks {#frameworks}
 
-In this section, we define three generic frameworks for building for hybrid
-KEMs:
+In this section, we define two generic frameworks for building hybrid KEMs:
 
 GHP:
 : A generic framework that is suitable for use with any choice of PQ and
@@ -684,7 +684,7 @@ def Decaps(dk, ct):
 Hybrid KEM constructions aim to provide security by combining two or more
 schemes so that security is preserved if all but one schemes are replaced by
 an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
-`KDF` is secure, and either the traditional component is secure, or the
+`KDF` is secure, and either the traditional component is secure or the
 post-quantum KEM is secure: this is the 'hybrid' property. Next we describe
 this document's specific security goals for hybrid KEMs.
 
@@ -873,15 +873,15 @@ used in GHP meets the split-key pseudorandomness property used in
 GHP's analysis. <!-- TODO: apparently there is no good citation for this
 foklore, maybe we can explicitly lay it out -->
 
-Therefore all three hybrid KEMs in this document are IND-CCA when
+Therefore both hybrid KEMs in this document are IND-CCA when
 instantiated with cryptographic components that meet the security
 requirements described above. Any changes to the algorithms, including key
 generation/derivation, are not guaranteed to produce secure results.
 
 ### Binding analyses
 
-There are three hybrid KEM frameworks, and two target binding properties, so
-we need six total analyses. None of these exact results were known; thus the
+There are two hybrid KEM frameworks, and two target binding properties, so
+we need four total analyses. None of these exact results were known; thus the
 following are new results by the editorial team. We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.
 
@@ -929,7 +929,7 @@ The LEAK-BIND proofs for QSF are a bit more subtle than for GHP; the
 main reason for this is QSF's omission of the PQ KEM key and ciphertext from
 the KDF. We will show that QSF still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
-property. We note that our preliminary results suggest a different proof
+property. We note that our preliminary results suggest that a different proof
 strategy, which instead directly uses properties of the nominal group, may
 work here; we present the PQ-KEM route for concreteness.
 
@@ -1030,7 +1030,7 @@ an IND-CCA proof from {{GHP2018}}. Including the public encapsulation keys as
 part of the KDF preimage fits in the 'additional data' parts of the split key
 PRF proof there, and binds to the encapsulation keys, which is a nice
 property for protocols integrating concrete instances. GHP also matches NIST
-SP 800-227 IPD, and gives good binding properties {{binding-properties}} is
+SP 800-227 IPD, and gives good binding properties. {{binding-properties}} is
 generally safe with no caveats on use for constructing concrete instances
 using a broad array of components.
 
