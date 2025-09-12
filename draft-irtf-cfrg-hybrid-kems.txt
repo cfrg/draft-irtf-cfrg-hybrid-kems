@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 1 March 2026                                              Cisco
+Expires: 16 March 2026                                             Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                          28 August 2025
+                                                       12 September 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 March 2026.
+   This Internet-Draft will expire on 16 March 2026.
 
 Copyright Notice
 
@@ -383,8 +383,8 @@ Table of Contents
 
    The fixed sizes are for both security and simplicity.
 
-   For instances of the Extract()/Expand() KDF paradigm such as HKDF, we
-   fix the salt and sizes to fit this form.
+   Any KDF that utilizes HKDF [HKDF] must fully specify HKDF's salt,
+   IKM, info, and L arguments.
 
    The security requirements for KDFs used with the frameworks in this
    document are laid out in Section 6.4.3.
