@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-02T01:07:32.228877+00:00",
+  "timestamp": "2025-09-14T01:09:16.131701+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1080,19 +1080,19 @@
       "id": "I_kwDOMmhxws7IxU0T",
       "title": "HKDF as a KDF is under-specified",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/74",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bluegate010",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "KEM constructions specified in this document leverage their KDF with a single input and single output parameter (i.e. `ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))`). HKDF takes salt, IKM, info, and L. The spec does not specify how to populate each of these fields.\n\nAn [earlier version](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-01#name-kitchensink-hkdf-sha-256-ml) fully specified how HKDF should be used (salt = \"\", IKM = \"hybrid_prk\" || preimage, info = I2OSP(32, 2) || \"shared_secret\", L = 32).",
       "createdAt": "2025-08-29T22:36:07Z",
-      "updatedAt": "2025-08-31T01:47:42Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-12T16:49:19Z",
+      "closedAt": "2025-09-12T16:49:19Z",
       "comments": [
         {
           "author": "bluegate010",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Update: none of the parameterizations in [draft-irtf-cfrg-concrete-hybrid-kems](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems) use HKDF (with the current exception of QSF-MLKEM1024-P384-SHA3256-SHAKE256, but that's a bug, the KDF parameter should read SHA3-256).\n\nSo draft-irtf-cfrg-hybrid-kems could simply omit references to HKDF.",
           "createdAt": "2025-08-29T23:53:28Z",
           "updatedAt": "2025-08-31T01:47:42Z"
@@ -6647,7 +6647,7 @@
       "labels": [],
       "body": "It is apparently very important to the LAMPS community to be able to deploy hybrid KEMs without the \"shared seed\" key generation that is the preferred approach here.  (In other words, to make a hybrid KEM without your HSM having to be aware of it.)  This PR adds a section that discusses this option.  The idea being: You [OUGHT TO](https://rfcs.online/rfcs/rfc6919.html#section-4) do shared seed, but if you can't, here's how you adapt and the trade-offs.\r\n\r\n@dconnolly - I would appreciate suggested text for the security aspects.\r\n\r\nDepends on #72.  Read [this commit](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/73/commits/25efa466175c1069c9f8b91fc4db404ec42bb235) for the more focused version.",
       "createdAt": "2025-08-28T20:50:00Z",
-      "updatedAt": "2025-08-31T22:21:14Z",
+      "updatedAt": "2025-09-12T16:45:47Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
@@ -6733,6 +6733,46 @@
               "updatedAt": "2025-08-31T22:05:43Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6_y4_E",
+          "commit": {
+            "abbreviatedOid": "25efa46"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-12T16:44:27Z",
+          "updatedAt": "2025-09-12T16:44:28Z",
+          "comments": [
+            {
+              "originalPosition": 208,
+              "body": "I'm not going to opine on FIPS requirements.",
+              "createdAt": "2025-09-12T16:44:28Z",
+              "updatedAt": "2025-09-12T16:44:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws6_y54b",
+          "commit": {
+            "abbreviatedOid": "25efa46"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-12T16:45:40Z",
+          "updatedAt": "2025-09-12T16:45:47Z",
+          "comments": [
+            {
+              "originalPosition": 215,
+              "body": "I think there's pretty broad agreement that LEAK matters.  The point @ounsworth is making is (a) the function of shared-seed keygen is to upgrade from LEAK to MAL, and (b) does MAL matter?",
+              "createdAt": "2025-09-12T16:45:40Z",
+              "updatedAt": "2025-09-12T16:45:47Z"
+            }
+          ]
         }
       ]
     },
@@ -6741,24 +6781,26 @@
       "id": "PR_kwDOMmhxws6mJRPl",
       "title": "Miscellaneous fixes",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/75",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bluegate010",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "- s/it induces/this induces/, as there's no definitive object of the sentence.\r\n- s/a fixed output lengths/fixed output lengths/\r\n- Consistent use of colons vs dashes.\r\n- s/^MUST provide the bit-security required/^PRGs used with the frameworks in this document MUST provide the bit-security required/\r\n- Clean up dangling references to a third hybrid KEM after PRE's removal in https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/71\r\n- In Security Considerations, remove a comma in order to clarify logical operator precedence.\r\n- Insert (what I believe to be) a missing period.",
       "createdAt": "2025-08-31T07:07:46Z",
-      "updatedAt": "2025-08-31T15:47:07Z",
+      "updatedAt": "2025-09-12T16:49:08Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
       "headRepository": "bluegate010/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "patch-2",
       "headRefOid": "bcda1711fea882a926980f14484283620dd277b8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-09-12T16:49:08Z",
+      "mergedAt": "2025-09-12T16:49:08Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "b143401ed26565bb54960f6663ce267e193485a7"
+      },
       "comments": [],
       "reviews": [
         {
@@ -6773,6 +6815,19 @@
           "createdAt": "2025-08-31T10:36:03Z",
           "updatedAt": "2025-08-31T10:36:03Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws6_y2Xp",
+          "commit": {
+            "abbreviatedOid": "bcda171"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-09-12T16:41:08Z",
+          "updatedAt": "2025-09-12T16:41:08Z",
+          "comments": []
         }
       ]
     },
@@ -6781,34 +6836,57 @@
       "id": "PR_kwDOMmhxws6mJUDL",
       "title": "Clarify HKDF parameterization requirements.",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/76",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bluegate010",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "KEM instantiations that use HKDF as their KDF are on the hook for fully specifying all inputs.\r\n\r\nAddresses https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/74",
       "createdAt": "2025-08-31T07:23:13Z",
-      "updatedAt": "2025-08-31T07:24:45Z",
+      "updatedAt": "2025-09-12T16:48:56Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
       "headRepository": "bluegate010/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "hkdf-fix",
       "headRefOid": "ae7679622d9731d1ddc10b8fb4a723573078686b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-09-12T16:48:56Z",
+      "mergedAt": "2025-09-12T16:48:56Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "f000557672ab04465b629f2ce1be8d06b4f51a0e"
+      },
       "comments": [
         {
           "author": "bluegate010",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "As it stands, none of the KEM instantiations in draft-irtf-cfrg-concrete-hybrid-kems actually use HKDF as their KDF. I'm assuming that the editors would elect to leave guidance on HKDF in this framework document just in case, but an alternative tack would be to just scrub all mention of HKDF from this document.",
           "createdAt": "2025-08-31T07:24:45Z",
           "updatedAt": "2025-08-31T07:24:45Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yeah, I think we should leave the door open to HKDF.",
+          "createdAt": "2025-09-12T16:42:51Z",
+          "updatedAt": "2025-09-12T16:42:51Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws6_y3Rm",
+          "commit": {
+            "abbreviatedOid": "ae76796"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-09-12T16:42:24Z",
+          "updatedAt": "2025-09-12T16:42:24Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
