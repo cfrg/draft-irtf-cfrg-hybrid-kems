@@ -744,7 +744,15 @@ hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
 incompatibilities in cases where a private key needs to be moved from one system
 to another.
 
-[[ TODO: Security impacts ]]
+The security impact of this deviation is to reduce binding properties from
+MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
+address a variety of attack scenarios, including LEAK scenarios in which an
+attacker has passive access to the decapsulation key and MAL scenarios in which
+an attacker can cause the victim to use a crafted decapsulation key.  The above
+hybrid KEM framework assures binding properties in the face of a LEAK attacker,
+irrespective of how key generation is done.  The additional provided by the
+default "shared seed" key generation upgrades this to protection against a MAL
+attacker.
 
 # Security Considerations {#security}
 
