@@ -736,7 +736,8 @@ ciphertext. (Readers should note that this definition is slightly different
 than the corresponding definitions for public-key encryption {{BHK09}}.)
 
 Whether a given KEM provides IND-CCA depends on whether the attacker is assumed
-to have access to quantum computing capabilities or not.  Post-quantum KEMs are
+to have access to quantum computing capabilities or not (assuming the scheme 
+is without bugs and the implementation is correct).  Post-quantum KEMs are
 intended to provide IND-CCA security against such an attacker.  Traditional KEMs
 are not.
 
