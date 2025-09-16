@@ -806,14 +806,14 @@ as robustness {{GMP22}} {{ABN10}}, and collision-freeness {{MOHASSEL10}}.
 The framework given by {{CDM23}} refers to these properties with labels of the
 form X-BIND-P-Q.  The first element X is the model for how the attacker can
 access the decapsulation key: HON for the case where the attacker never
-accesses the decapsulation key, LEAK for the case where the attacker can see the
-decapsulation key, or MAL for the case where the attacker can choose the
-decapsulation key used by the victim.  P,Q means that given the value P, it is
-hard to produce another Q that causes Decaps to succeed.  For example,
-LEAK-BIND-K-PK means that for a given shared secret (K), there is a unique
-encapsulation key (PK) that could have produced it, even if all of the secrets
-involved are given to the adversary after the encapsulation operation is
-completed (LEAK).
+accesses the decapsulation key, LEAK for the case where the attacker has
+access to the honestly-generated decapsulation key, or MAL for the case
+where the attacker can choose or manipulate the keys used by the victim. 
+P,Q means that given the value P, it is hard to produce another Q that
+causes Decaps to succeed. For example, LEAK-BIND-K-PK means that for a
+given shared secret (K), there is a unique encapsulation key (PK) that
+could have produced it, even if all of the secrets involved are given to
+the adversary after the encapsulation operation is completed (LEAK).
 
 There is quite a bit of diversity in the binding properties provided by KEMs.
 Table 5 of {{CDM23}} shows the binding properties of a few KEMs.  For example:
