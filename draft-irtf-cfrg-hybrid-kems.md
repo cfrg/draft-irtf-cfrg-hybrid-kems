@@ -207,6 +207,10 @@ Disallowed?"
     -
       ins: K. G. Paterson
   HKDF: RFC5869
+  ISO18033-2:
+    title: "Information technology -- Security techniques -- Encryption algorithms -- Part 2: Asymmetric ciphers"
+    date: 2006
+    target: "https://www.iso.org/standard/37971.html"
   MOHASSEL10:
     title: "A closer look at anonymity and robustness in encryption schemes."
     date: 2010
@@ -313,7 +317,7 @@ which the frameworks are built, and then the frameworks themselves.  Then, in
 {{security}}, we lay out the security analyses that support these frameworks,
 including the security requirements for constituent components and the
 security notions satisfied by hybrid KEMS constructed according to the
-frameworks in the document {{security-requirements}}.  Finally, we discuss
+frameworks in the document {{hybrid-ind-cca}}.  Finally, we discuss
 some "path not taken", related topics that might be of interest to readers,
 but which are not treated in depth.
 
@@ -484,8 +488,8 @@ fixed lengths:
 - `Nss`: The length in bytes of a shared secret produced by
   ElementToSharedSecret
 
-The security requirements for groups used with the frameworks in this document
-are laid out in {{security-groups}}.
+Groups used with the hybrid KEM framework in this document should be secure with
+respect to the strong Diffie-Hellman problem (see {{sdh}}).
 
 ## Pseudorandom Generators {#prgs}
 
@@ -563,8 +567,8 @@ components:
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
 
-The KEMs, groups, KDFs, and PRGs MUST meet the security requirements in
-{{security-requirements}}.
+The KEMs, groups, KDFs, and PRGs MUST meet the security requirements listed in
+{{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
@@ -637,7 +641,7 @@ components:
 
 We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{security-requirements}}.
+described in {{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
@@ -741,11 +745,11 @@ have this property.  This is especially true of PQ KEMs, which were developed
 after the security definitions for KEMs were better established.
 
 For traditional algorithms, things are less clear.  The DHKEM construction in
-{{RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but "raw"
+{{?RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but "raw"
 ephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the
-ciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure {{ISO18033-2]}},
+ciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure {{ISO18033-2}},
 and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM, but
-"classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{RFC8017}}) is not
+"classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}}) is not
 even IND-CCA secure as a public-key encryption algorithm.
 
 ### Ciphertext Second-Preimage Resistence (C2PRI)
@@ -772,7 +776,7 @@ Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to have this
 property in {{XWING}}, and {{CHH+25}} proves C2PRI for several other algorithms,
 including FrodoKEM, HQC, Classic McEliece, and sntrup.
 
-### Strong Diffie-Hellman Problem (SDH)
+### Strong Diffie-Hellman Problem (SDH) {#sdh}
 
 The standard Diffie-Hellman problem is whether an attacker can compute `g^xy`
 given access to `g^x` and `g^y`.  The strong Diffie-Hellman problem additionally
@@ -878,7 +882,7 @@ algorithms.  In this section we discuss the intended security properties for
 hybrid KEMs and the requirements that the component algorithms must meet in
 order for those properties to hold.
 
-### IND-CCA Security
+### IND-CCA Security {#hybrid-ind-cca}
 
 The idea of a hybrid KEM is that it should maintain its security if only one of
 the two component KEMs is secure.  For a PQ/T hybrid KEM, this means that the
@@ -898,7 +902,7 @@ security, under different assumptions about the component algorithms:
     * `KDF` is indifferentiable from a random oracle
     * `KEM_PQ` is IND-CCA against a quantum attacker
 
-### Binding Properties
+### Binding Properties {#hybrid-binding}
 
 The most salient binding properties for a hybrid KEM to be used in Internet
 protocols are LEAK-BIND-K-PK and LEAK-BIND-K-CT.
