@@ -760,7 +760,7 @@ honestly generated ciphertext, it is difficult for an attacker to generate a
 different ciphertext that decapsulates to the same shared secret.  In other
 words, if an honest party computes `(ss, ct) = Encaps(ek)`, then it is
 infeasible for an attacker to find another ciphertext `ct'` such that
-`Decaps(dk, ct) == ss` (where `dk` is the decapsulation keye corresponding to
+`Decaps(dk, ct) == ss` (where `dk` is the decapsulation key corresponding to
 the encapsulation key `ek`).
 
 A related notion in the literature is chosen-ciphertext resistance (CCR)
