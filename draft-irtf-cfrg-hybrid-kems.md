@@ -736,7 +736,7 @@ ciphertext. (Readers should note that this definition is slightly different
 than the corresponding definitions for public-key encryption {{BHK09}}.)
 
 Whether a given KEM provides IND-CCA depends on whether the attacker is assumed
-to have access to quantum computing capabilities or not (assuming the scheme 
+to have access to quantum computing capabilities or not (assuming the scheme
 is without bugs and the implementation is correct).  Post-quantum KEMs are
 intended to provide IND-CCA security against such an attacker.  Traditional KEMs
 are not.
@@ -808,7 +808,7 @@ form X-BIND-P-Q.  The first element X is the model for how the attacker can
 access the decapsulation key: HON for the case where the attacker never
 accesses the decapsulation key, LEAK for the case where the attacker has
 access to the honestly-generated decapsulation key, or MAL for the case
-where the attacker can choose or manipulate the keys used by the victim. 
+where the attacker can choose or manipulate the keys used by the victim.
 P,Q means that given the value P, it is hard to produce another Q that
 causes Decaps to succeed. For example, LEAK-BIND-K-PK means that for a
 given shared secret (K), there is a unique encapsulation key (PK) that
