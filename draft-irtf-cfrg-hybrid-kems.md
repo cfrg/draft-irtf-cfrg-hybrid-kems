@@ -896,12 +896,12 @@ More precisely, the hybrid KEM should meet two different notions of IND-CCA
 security, under different assumptions about the component algorithms:
 
 * IND-CCA against a classical attacker all of the following are true:
-    * `KDF` is indifferentiable from a random oracle
+    * `KDF` is indifferentiable from a random oracle <!-- todo: GHP, QSH only need PRF security here... -->
     * If using `Group_T`: The strong Diffie-Hellman problem is hard in `Group_T`
     * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
     * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->
 * IND-CCA against a quantum attacker if all of the following are true:
-    * `KDF` is indifferentiable from a random oracle
+    * `KDF` is indifferentiable from a random oracle <!-- todo: the PQ proofs rely on PRF not RO... -->
     * `KEM_PQ` is IND-CCA against a quantum attacker
 
 ### Binding Properties {#hybrid-binding}
