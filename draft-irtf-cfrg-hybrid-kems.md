@@ -823,6 +823,7 @@ all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
 
+<!-- todo: HQB doesn't need a secure RO, only secure PRF -->
 The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
 (RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a
 conservative choice given a review of the existing security analyses for our
