@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-14T01:09:16.131701+00:00",
+  "timestamp": "2025-09-16T01:03:49.370435+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1096,6 +1096,39 @@
           "body": "Update: none of the parameterizations in [draft-irtf-cfrg-concrete-hybrid-kems](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems) use HKDF (with the current exception of QSF-MLKEM1024-P384-SHA3256-SHAKE256, but that's a bug, the KDF parameter should read SHA3-256).\n\nSo draft-irtf-cfrg-hybrid-kems could simply omit references to HKDF.",
           "createdAt": "2025-08-29T23:53:28Z",
           "updatedAt": "2025-08-31T01:47:42Z"
+        }
+      ]
+    },
+    {
+      "number": 77,
+      "id": "I_kwDOMmhxws7L01up",
+      "title": "Should external keygen be considered a different algorithm?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/77",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "In #73, we allow for two different styles of key generation: the default \"shared seed\" approach, and an \"external keygen\" approach that basically just invokes whatever keygen the component algorithms provide.  In the shared seed approach, the decapsulation key is `seed`; in the \"external keygen\" approach, the decapsulation key is `(dk_PQ, dk_T)`.\n\nConsider two implementations of a hybrid KEM that differ **only in terms of keygen** -- they use the same component algorithms, same constants, etc.  Should these implementations be considered to be different things?\n\nIn the scope of this document, this question primarily comes down to labels -- should these two cases have different domain separation labels?\n\nIn favor of different:\n* The two keygen processes result in different security properties.  MAL-BIND vs. LEAK-BIND\n* Since the decapsulation key formats are different, so it's not clear what private key format an implementation of the algorithm should accept\n\nIn favor of same:\n* The two \"algorithms\" are identical when it comes to the part that matters for interop, i.e., the encapsulation logic.\n* Which key generation the decapsulator uses is invisible to the encapsulator.  Any claim about is an unenforceable promise.  The encapsulator shouldn't have to care.",
+      "createdAt": "2025-09-15T21:46:50Z",
+      "updatedAt": "2025-09-15T23:16:50Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Personally, my preference would be for \"same\", because MAL-BIND doesn't seem that important in practice, and because I don't think it's useful to promise something in the label that the decapsulator might be lying about.\n\nI also think that implementations that actually achieve MAL-BIND will be rare, because the moment you cache intermediate keys, you lose MAL-BIND with respect to a local attacker.  And caching will be very tempting for implementors.",
+          "createdAt": "2025-09-15T21:50:31Z",
+          "updatedAt": "2025-09-15T21:50:31Z"
+        },
+        {
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "body": "_Strong_ preference for same. My current use case for the hybrids is post-quantum age keys. It would be ridiculous for a key split half in hardware (P-256) and half in software (ML-KEM-768) not to interoperate with a key wholly in software. I would almost certainly disregard the \"external keygen\" label, and use the default one everywhere. But then we'd be obviously signing ourselves up for endless interoperability issues and MUST violation debates when others disagree and feel backed up by the RFC.\n\nI can't make sense of expressing in the label properties of the keygen. Should we have different labels for ECDH keys generated with rejection sampling and wide reduction? With a FIPS 140 DRBG or not?\n\nIn my career I don't think I have cared once about a malicious private key (further than \"can it crash the system\").",
+          "createdAt": "2025-09-15T23:16:50Z",
+          "updatedAt": "2025-09-15T23:16:50Z"
         }
       ]
     }
@@ -6647,13 +6680,13 @@
       "labels": [],
       "body": "It is apparently very important to the LAMPS community to be able to deploy hybrid KEMs without the \"shared seed\" key generation that is the preferred approach here.  (In other words, to make a hybrid KEM without your HSM having to be aware of it.)  This PR adds a section that discusses this option.  The idea being: You [OUGHT TO](https://rfcs.online/rfcs/rfc6919.html#section-4) do shared seed, but if you can't, here's how you adapt and the trade-offs.\r\n\r\n@dconnolly - I would appreciate suggested text for the security aspects.\r\n\r\nDepends on #72.  Read [this commit](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/73/commits/25efa466175c1069c9f8b91fc4db404ec42bb235) for the more focused version.",
       "createdAt": "2025-08-28T20:50:00Z",
-      "updatedAt": "2025-09-12T16:45:47Z",
+      "updatedAt": "2025-09-15T21:03:59Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "keygen",
-      "headRefOid": "25efa466175c1069c9f8b91fc4db404ec42bb235",
+      "headRefOid": "fca53b6746f72c5b5143c7ac48d26ec6739e63fc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
