@@ -539,19 +539,37 @@ laid out in {{security-kdfs}}.
 
 # Hybrid KEM Frameworks {#frameworks}
 
-In this section, we define two generic frameworks for building hybrid KEMs:
+In this section, we define a family of four generic frameworks for building
+hybrid KEMs:
+
 
 GHP:
-: A generic framework that is suitable for use with any choice of PQ and
+: A generic framework that is suitable for use with any choice of IND-CCA PQ and
   traditional KEMs, with minimal security assumptions on the constituent KEMs
 
 QSF:
-: An optimized generic framework for the case where the PQ component has strong
-  binding properties and the traditional component is a nominal group
+: An optimized generic framework for the case where the PQ component is also
+  C2PRI-secure and the traditional component is a nominal group
+
+QSH:
+: A generic framework where the PQ component is IND-CCA and C2PRI-secure and
+  the traditional component is an IND-CCA KEM
+
+HQB:
+: An optimized generic framework where the PQ component is IND-CCA and the
+  traditional component is a nominal group, without relying on C2PRI
+
 
 These frameworks share a common overall structure, differing mainly in how they
 compute the final shared secret and the security requirements of their
 components.
+
+
+<!-- todo: the keygen between frameworks that use groups and those that use
+all KEMs are identical, esp. because they are all using seed-based; write
+down group-based keygen algorithms and kem-based keygen algorithms and invoke
+those from each of the four frameworks -->
+
 
 ## GHP {#ghp}
 
@@ -702,6 +720,161 @@ def Decaps(dk, ct):
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
 
     ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+~~~
+
+## HQB {#hqb}
+
+The HQB generic hybrid KEM framework depends on the following constituent
+components:
+
+* `Group_T`: A nominal group
+* `KEM_PQ`: A post-quantum KEM
+* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
+  Group_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
+* `KDF`: A KDF producing byte strings of length `HQB.Nss` (`KDF.Nout
+  == KDF.Nss`)
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used.
+
+We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
+described in {{cryptographic-deps}} and MUST meet the security requirements
+described in {{security-requirements}}.
+
+The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:
+
+~~~
+Nek = KEM_PQ.Nek + Group_T.Nelem
+Nct = KEM_PQ.Nct + Group_T.Nelem
+~~~
+
+The `Nseed` and `Nss` constants should reflect the overall security level of
+the combined KEM, with the following recommended values:
+
+~~~
+Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
+Nss = min(KEM_PQ.Nss, Group_T.Nss)
+~~~
+
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.
+
+Given these constituent parts, we define the HQB generic hybrid KEM framework as follows:
+
+~~~
+def expandDecapsulationKey(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
+
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    dk_T = Group_T.RandomScalar(seed_T)
+    ek_T = Group_T.Exp(Group_T.g, dk_T)
+
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
+    ct_T = Group_T.Exp(Group_T.g, sk_E)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
+
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
+
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label))
+    return ss_H
+~~~
+
+## QSH {#qsh}
+
+The QSH hybrid KEM generic framework depends on the following constituent
+components:
+
+* `KEM_PQ`: A post-quantum KEM
+* `KEM_T`: A traditional KEM
+* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed + KEM_T.Nseed`
+  (`PRG.Nout == KEM_PQ.Nseed + KEM_T.Nseed`)
+* `KDF`: A KDF producing byte strings of length `GHP.Nss` (`KDF.Nout
+  == GHP.Nss`)
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used.
+
+The KEMs, groups, KDFs, and PRGs MUST meet the security requirements in
+{{security-requirements}}.
+
+The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:
+
+~~~
+Nek = KEM_PQ.Nek + KEM_T.Nek
+Nct = KEM_PQ.Nct + KEM_T.Nct
+~~~
+
+The `Nseed` and `Nss` constants should reflect the overall security level of
+the combined KEM, with the following recommended values:
+
+~~~
+Nseed = max(KEM_PQ.Nseed, KEM_T.Nseed)
+Nss = min(KEM_PQ.Nss, KEM_T.Nss)
+~~~
+
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.
+
+Given these constituent parts, the QSH hybrid KEM is defined as follows:
+
+~~~
+def expandDecapsulationKey(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
+
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encap(ek_T)
+    ct_H = concat(ct_PQ, ct_T)
+
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
+
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
+
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
     return ss_H
 ~~~
 
@@ -1142,6 +1315,23 @@ KEMs.  It is an optimization that leaves out large ciphertexts and
 encapsulation keys from the KDF preimage, saving extra hashing, if the PQ KEM
 meets requirements. More KEMs can be proven to be C2PRI-secure eventually for
 use with QSF.
+
+## HQB Framework
+
+HQB works for most elliptic curve groups and IND-CCA-secure quantum-resistant
+KEMs. It does not require the quantum-resistant KEM to also provide C2PRI
+security if the IND-CCA security fails in the pre-quantum setting. The
+IND-CCA security of the scheme remains as long as the SDH security of the
+group and the security of the KDF as a random oracle remain intact.
+
+## QSH Framework
+
+The QSH framework works for generic IND-CCA traditional KEMs and C2PRI-secure
+quantum-resistant KEMs even if their IND-CCA security falters in the
+pre-quantum setting. The IND-CCA security of the scheme remains as long as
+the IND-CCA security of the traditional KEM and the PRF security security of
+the KDF remain intact.
+
 
 # Out of Scope
 
