@@ -899,7 +899,7 @@ security, under different assumptions about the component algorithms:
     * `KDF` is indifferentiable from a random oracle
     * If using `Group_T`: The strong Diffie-Hellman problem is hard in `Group_T`
     * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
-    * If using `PQImplicit`: `KEM_PQ` is C2PRI
+    * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->
 * IND-CCA against a quantum attacker if all of the following are true:
     * `KDF` is indifferentiable from a random oracle
     * `KEM_PQ` is IND-CCA against a quantum attacker
