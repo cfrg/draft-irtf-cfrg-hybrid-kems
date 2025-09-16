@@ -739,7 +739,7 @@ components:
 
 We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{security-requirements}}.
+described in {{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
@@ -818,7 +818,7 @@ components:
   constituents being used.
 
 The KEMs, groups, KDFs, and PRGs MUST meet the security requirements in
-{{security-requirements}}.
+{{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
