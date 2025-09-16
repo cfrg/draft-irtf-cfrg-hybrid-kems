@@ -539,39 +539,67 @@ laid out in {{security-kdfs}}.
 
 # Hybrid KEM Frameworks {#frameworks}
 
-In this section, we define a family of four generic frameworks for building
-hybrid KEMs:
+We define a family of generic frameworks for building hybrid KEMs, which are
+differentiated along two axes:
+
+- whether the post-quantum KEM component provides C2PRI security in the
+  pre-quantum setting, and
+- whether the traditional component is secure group for use in
+  Diffie-Hellman, or an IND-CCA KEM
 
 
-GHP:
-: A generic framework that is suitable for use with any choice of IND-CCA PQ and
-  traditional KEMs, with minimal security assumptions on the constituent KEMs
+The first gives us optimized schemes that leave out the possibly large PQ KEM
+ciphertext from the KDF input. We are able to define common key generation
+algorithms based on the second.
 
-QSF:
-: An optimized generic framework for the case where the PQ component is also
-  C2PRI-secure and the traditional component is a nominal group
+## Key Generation {#keygen}
 
-QSH:
-: A generic framework where the PQ component is IND-CCA and C2PRI-secure and
-  the traditional component is an IND-CCA KEM
+We define seed-based key generation algorithms, that vary by whether the
+traditional component algorithm is a KEM or a group.
 
-HQB:
-: An optimized generic framework where the PQ component is IND-CCA and the
-  traditional component is a nominal group, without relying on C2PRI
+~~~
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
 
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+    return (concat(ek_PQ, ek_T), seed)
+~~~
 
-These frameworks share a common overall structure, differing mainly in how they
-compute the final shared secret and the security requirements of their
-components.
-
-
-<!-- todo: the keygen between frameworks that use groups and those that use
-all KEMs are identical, esp. because they are all using seed-based; write
-down group-based keygen algorithms and kem-based keygen algorithms and invoke
-those from each of the four frameworks -->
+The definition of `expandDecapsulationKey(seed)` diverges from here depending
+on the components:
 
 
-## GHP {#ghp}
+### `expandDecapsulationKey(seed)` where the traditional component is a KEM {#trad-kem-keygen}
+
+~~~
+def expandDecapsulationKey(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+~~~
+
+### `expandDecapsulationKey(seed)` where the traditional component is a group {#trad-group-keygen}
+
+~~~
+def expandDecapsulationKey(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
+
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    dk_T = Group_T.RandomScalar(seed_T)
+    ek_T = Group_T.Exp(Group_T.g, dk_T)
+
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+~~~
+
+
+## IND-CCA-only Schemes {#indcca-reliant} <!-- todo: I don't love this name, the C2PRI schemes also rely on IND-CCA as well -->
+
+### GHP {#ghp}
 
 The GHP hybrid KEM depends on the following constituent
 components:
@@ -606,24 +634,11 @@ Nss = min(KEM_PQ.Nss, KEM_T.Nss)
 
 Since we use the seed as the decapsulation key, `Ndk = Nseed`.
 
+For key generation, MUST use {{trad-kem-keygen}} definition of `expandDecapsulationKey(seed)`
+
 Given these constituent parts, the GHP hybrid KEM is defined as follows:
 
 ~~~
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
-    return (ek_PQ, ek_T, dk_PQ, dk_T)
-
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
@@ -643,87 +658,8 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## QSF {#qsf}
 
-The QSF hybrid KEM (QSF below) depends on the following constituent
-components:
-
-* `Group_T`: A nominal group
-* `KEM_PQ`: A post-quantum KEM
-* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
-  Group_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
-* `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
-  == KDF.Nss`)
-* `Label` - A byte string used to label the specific combination of the above
-  constituents being used.
-
-We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
-described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{hybrid-ind-cca}}.
-
-The constants for public values are derived from the concatenation of
-encapsulation keys and ciphertexts:
-
-~~~
-Nek = KEM_PQ.Nek + Group_T.Nelem
-Nct = KEM_PQ.Nct + Group_T.Nelem
-~~~
-
-The `Nseed` and `Nss` constants should reflect the overall security level of
-the combined KEM, with the following recommended values:
-
-~~~
-Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
-Nss = min(KEM_PQ.Nss, Group_T.Nss)
-~~~
-
-Since we use the seed as the decapsulation key, `Ndk = Nseed`.
-
-Given these constituent parts, we define the QSF hybrid KEM as follows:
-
-~~~
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
-
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    dk_T = Group_T.RandomScalar(seed_T)
-    ek_T = Group_T.Exp(Group_T.g, dk_T)
-
-    return (ek_PQ, ek_T, dk_PQ, dk_T)
-
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
-    ct_T = Group_T.Exp(Group_T.g, sk_E)
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
-
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
-    ct_H = concat(ct_PQ, ct_T)
-    return (ss_H, ct_H)
-
-def Decaps(dk, ct):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
-
-    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
-
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
-    return ss_H
-~~~
-
-## HQB {#hqb}
+### HQB {#hqb}
 
 The HQB generic hybrid KEM framework depends on the following constituent
 components:
@@ -759,27 +695,11 @@ Nss = min(KEM_PQ.Nss, Group_T.Nss)
 
 Since we use the seed as the decapsulation key, `Ndk = Nseed`.
 
+For key generation, MUST use {{trad-kem-keygen}} definition of `expandDecapsulationKey(seed)`
+
 Given these constituent parts, we define the HQB generic hybrid KEM framework as follows:
 
 ~~~
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
-
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    dk_T = Group_T.RandomScalar(seed_T)
-    ek_T = Group_T.Exp(Group_T.g, dk_T)
-
-    return (ek_PQ, ek_T, dk_PQ, dk_T)
-
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
 
@@ -803,7 +723,100 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## QSH {#qsh}
+
+<!-- In this section, we define a family of four generic frameworks for building -->
+<!-- hybrid KEMs: -->
+
+
+<!-- GHP: -->
+<!-- : A generic framework that is suitable for use with any choice of IND-CCA PQ and -->
+<!--   traditional KEMs, with minimal security assumptions on the constituent KEMs -->
+
+<!-- QSF: -->
+<!-- : An optimized generic framework for the case where the PQ component is also -->
+<!--   C2PRI-secure and the traditional component is a nominal group -->
+
+<!-- QSH: -->
+<!-- : A generic framework where the PQ component is IND-CCA and C2PRI-secure and -->
+<!--   the traditional component is an IND-CCA KEM -->
+
+<!-- HQB: -->
+<!-- : An optimized generic framework where the PQ component is IND-CCA and the -->
+<!--   traditional component is a nominal group, without relying on C2PRI -->
+
+
+<!-- These frameworks share a common overall structure, differing mainly in how they -->
+<!-- compute the final shared secret and the security requirements of their -->
+<!-- components. -->
+
+## C2PRI-reliant Schemes {#c2pri-reliant}
+
+### QSF {#qsf}
+
+The QSF hybrid KEM (QSF below) depends on the following constituent
+components:
+
+* `Group_T`: A nominal group
+* `KEM_PQ`: A post-quantum KEM
+* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
+  Group_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
+* `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
+  == KDF.Nss`)
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used.
+
+We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
+described in {{cryptographic-deps}} and MUST meet the security requirements
+described in {{hybrid-ind-cca}}.
+
+The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:
+
+~~~
+Nek = KEM_PQ.Nek + Group_T.Nelem
+Nct = KEM_PQ.Nct + Group_T.Nelem
+~~~
+
+The `Nseed` and `Nss` constants should reflect the overall security level of
+the combined KEM, with the following recommended values:
+
+~~~
+Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
+Nss = min(KEM_PQ.Nss, Group_T.Nss)
+~~~
+
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.
+
+For key generation, MUST use {{trad-group-keygen}} definition of `expandDecapsulationKey(seed)`
+
+Given these constituent parts, we define the QSF hybrid KEM as follows:
+
+~~~
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
+    ct_T = Group_T.Exp(Group_T.g, sk_E)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
+
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
+
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+
+    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+~~~
+
+
+### QSH {#qsh}
 
 The QSH hybrid KEM generic framework depends on the following constituent
 components:
@@ -838,24 +851,11 @@ Nss = min(KEM_PQ.Nss, KEM_T.Nss)
 
 Since we use the seed as the decapsulation key, `Ndk = Nseed`.
 
+For key generation, MUST use {{trad-group-keygen}} definition of `expandDecapsulationKey(seed)`
+
 Given these constituent parts, the QSH hybrid KEM is defined as follows:
 
 ~~~
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
-    return (ek_PQ, ek_T, dk_PQ, dk_T)
-
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
 
@@ -1294,6 +1294,46 @@ different from that specified in this document.
 
 Therefore, this specification MUST only be used with algorithms which have
 fixed-length shared secrets.
+
+### Separate Key Generation {#separate-key-generation} <!-- literally @rlb's text from PR #73 -->
+
+The hybrid KEM frameworks described a "shared seed" process for keypair
+generation, in which a shared seed is expanded into seeds for the individual
+constituent algorithms. This shared seed is used as the decapsulation key for
+the hybrid KEM and expanded into the two per-constituent decapsulation keys
+as necessary.
+
+In some deployment environments, it is not possible to instantiate this
+process.  Some implementations of constituent algorithms do not support the
+`DeriveKeyPair` function, only `GenerateKeyPair`.  Likewise in the nominal
+group case, a (scalar, group element) pair will only be generated when the
+scalar is generated internal to the implementation.
+
+An implementation of a hybrid KEM in such environemnts MAY deviate from the
+above description in the following ways:
+
+* `DeriveKeyPair` is not implemented.
+* The decapsulation key returned by `GenerateKeyPair` and consumed by `Decaps`
+  is a tuple `(dk_PQ, dk_T)` of per-constituent decapsulation keys (or
+  pointers/handles to keys).
+
+These deviations have both interoperability and security impacts. <!-- todo: say more? -->
+
+From an interoperatbility point of view, the use of a second format for the
+hybrid KEM decapsulation key (other than the shared seed) introduces the risk
+of incompatibilities in cases where a private key needs to be moved from one
+system to another.
+
+One known security impact of this deviation is to reduce binding properties
+from MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed, binding properties can
+address a variety of attack scenarios, including LEAK scenarios in which an
+attacker has passive access to the decapsulation key and MAL scenarios in
+which an attacker can cause the victim to use a crafted decapsulation
+key. The hybrid KEM frameworks defined in this document assure binding
+properties in the face of a LEAK attacker, contingent on the properties of
+the component PQ KEM, irrespective of how key generation is done.  The
+additional provided by the default "shared seed" key generation upgrades this
+to protection against a MAL attacker.
 
 # In Scope
 
