@@ -351,23 +351,24 @@ Table of Contents
 
    A pseudorandom generator (PRG) is a deterministic function G whose
    outputs are longer than its inputs.  When the input to G is chosen
-   uniformly at random, it induces a certain distribution over the
+   uniformly at random, this induces a certain distribution over the
    possible output.  The output distribution is pseudorandom if it is
    indistinguishable from the uniform distribution.
 
-   The PRGs used in this document have a simpler form, with a fixed
-   output lengths:
+   The PRGs used in this document have a simpler form, with fixed output
+   lengths:
 
-   *  Nout - The length in bytes of an output from this PRG.
+   *  Nout: The length in bytes of an output from this PRG.
 
    *  PRG(seed) -> output: Produce a byte string of length Nout from an
       input byte string seed.
 
    The fixed sizes are for both security and simplicity.
 
-   MUST provide the bit-security required to source input randomness for
-   PQ/T components from a seed that is expanded to a output length, of
-   which a subset is passed to the component key generation algorithms.
+   PRGs used with the frameworks in this document MUST provide the bit-
+   security required to source input randomness for PQ/T components from
+   a seed that is expanded to a output length, of which a subset is
+   passed to the component key generation algorithms.
 
    The security requirements for PRGs used with the frameworks in this
    document are laid out in Section 6.1.6.
@@ -379,25 +380,25 @@ Table of Contents
 
    While KDFs in the literature can typically consume and produce byte
    strings of arbitrary length, the KDFs used in this document have a
-   simpler form, with a fixed output lengths:
+   simpler form, with fixed output lengths:
 
-   *  Nout - The length in bytes of an output from this KDF.
+   *  Nout: The length in bytes of an output from this KDF.
 
    *  KDF(input) -> output: Produce a byte string of length Nout from an
       input byte string.
 
    The fixed sizes are for both security and simplicity.
 
-   For instances of the Extract()/Expand() KDF paradigm such as HKDF, we
-   fix the salt and sizes to fit this form.
+   Any KDF that utilizes HKDF [HKDF] must fully specify HKDF's salt,
+   IKM, info, and L arguments.
 
    The security requirements for KDFs used with the frameworks in this
    document are laid out in Section 6.1.5.
 
 5.  Hybrid KEM Frameworks
 
-   In this section, we define three generic frameworks for building for
-   hybrid KEMs:
+   In this section, we define two generic frameworks for building hybrid
+   KEMs:
 
    GHP:  A generic framework that is suitable for use with any choice of
       PQ and traditional KEMs, with minimal security assumptions on the
@@ -595,14 +596,14 @@ Table of Contents
    for public-key encryption [BHK09].)
 
    Whether a given KEM provides IND-CCA depends on whether the attacker
-   is assumed to have access to quantum computing capabilities or not.
-   Post-quantum KEMs are intended to provide IND-CCA security against
-   such an attacker.  Traditional KEMs are not.
+   is assumed to have access to quantum computing capabilities or not
+   (assuming the scheme is without bugs and the implementation is
+   correct).  Post-quantum KEMs are intended to provide IND-CCA security
+   against such an attacker.  Traditional KEMs are not.
 
-   Since IND-CCA is the standard security notion for KEMs, all KEMs in
-   wide use have this property.  This is especially true of PQ KEMs,
-   which were developed after the security definitions for KEMs were
-   better established.
+   IND-CCA is the standard security notion for KEMs; most PQ KEMs were
+   explicitly designed to achieve this type of security against both a
+   quantum attacker and a traditional one.
 
    For traditional algorithms, things are less clear.  The DHKEM
    construction in [RFC9180] is an IND-CCA KEM based on Diffie-Hellman
@@ -621,7 +622,7 @@ Table of Contents
    same shared secret.  In other words, if an honest party computes (ss,
    ct) = Encaps(ek), then it is infeasible for an attacker to find
    another ciphertext ct' such that Decaps(dk, ct) == ss (where dk is
-   the decapsulation keye corresponding to the encapsulation key ek).
+   the decapsulation key corresponding to the encapsulation key ek).
 
    A related notion in the literature is chosen-ciphertext resistance
    (CCR) [CDM23].  C2PRI targets preimage-resistance, whereas CCR
@@ -672,20 +673,20 @@ Table of Contents
    of the form X-BIND-P-Q.  The first element X is the model for how the
    attacker can access the decapsulation key: HON for the case where the
    attacker never accesses the decapsulation key, LEAK for the case
-   where the attacker can see the decapsulation key, or MAL for the case
-   where the attacker can choose the decapsulation key used by the
-   victim.  P,Q means that given the value P, it is hard to produce
-   another Q that causes Decaps to succeed.  For example, LEAK-BIND-K-PK
-   means that for a given shared secret (K), there is a unique
-   encapsulation key (PK) that could have produced it, even if all of
-   the secrets involved are given to the adversary after the
-   encapsulation operation is completed (LEAK).
+   where the attacker has access to the honestly-generated decapsulation
+   key, or MAL for the case where the attacker can choose or manipulate
+   the keys used by the victim.  P,Q means that given the value P, it is
+   hard to produce another Q that causes Decaps to succeed.  For
+   example, LEAK-BIND-K-PK means that for a given shared secret (K),
+   there is a unique encapsulation key (PK) that could have produced it,
+   even if all of the secrets involved are given to the adversary after
+   the encapsulation operation is completed (LEAK).
 
    There is quite a bit of diversity in the binding properties provided
    by KEMs.  Table 5 of [CDM23] shows the binding properties of a few
    KEMs.  For example: DHKEM provides MAL-level binding for several
    properties.  ML-KEM provides only LEAK-level binding.  Classic
-   McEleice provides MAL-BIND-K-CT, but no assurance at all of X-BIND-
+   McEliece provides MAL-BIND-K-CT, but no assurance at all of X-BIND-
    K-PK.
 
 6.1.5.  Indifferentiability from a Random Oracle
@@ -792,7 +793,7 @@ Table of Contents
    There have been attacks in the LEAK model are known [BJKS24] [FG24],
    so a hybrid KEM needs to be resilient at least to LEAK attacks (i.e.,
    HON is too weak).  Internet applications generally assume that
-   private keys are honestly generated, so MAL is too strong a attack
+   private keys are honestly generated, so MAL is too strong an attack
    model to address.
 
    The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally
@@ -857,7 +858,7 @@ Table of Contents
    in the ROM, the KDF used in GHP meets the split-key pseudorandomness
    property used in GHP's analysis.
 
-   Therefore all three hybrid KEMs in this document are IND-CCA when
+   Therefore both hybrid KEMs in this document are IND-CCA when
    instantiated with cryptographic components that meet the security
    requirements described above.  Any changes to the algorithms,
    including key generation/derivation, are not guaranteed to produce
@@ -865,8 +866,8 @@ Table of Contents
 
 6.4.2.  Binding analyses
 
-   There are three hybrid KEM frameworks, and two target binding
-   properties, so we need six total analyses.  None of these exact
+   There are two hybrid KEM frameworks, and two target binding
+   properties, so we need four total analyses.  None of these exact
    results were known; thus the following are new results by the
    editorial team.  We include informal justifications here and defer
    rigorous proofs to a forthcoming paper.
@@ -915,9 +916,9 @@ Table of Contents
    ciphertext from the KDF.  We will show that QSF still has our target
    LEAK-BIND properties as long as the underlying PQ-KEM also has the
    corresponding LEAK-BIND property.  We note that our preliminary
-   results suggest a different proof strategy, which instead directly
-   uses properties of the nominal group, may work here; we present the
-   PQ-KEM route for concreteness.
+   results suggest that a different proof strategy, which instead
+   directly uses properties of the nominal group, may work here; we
+   present the PQ-KEM route for concreteness.
 
 6.4.2.3.1.  LEAK-BIND-K-CT of QSF
 
@@ -1025,7 +1026,7 @@ Table of Contents
    'additional data' parts of the split key PRF proof there, and binds
    to the encapsulation keys, which is a nice property for protocols
    integrating concrete instances.  GHP also matches NIST SP 800-227
-   IPD, and gives good binding properties Section 6.1.4 is generally
+   IPD, and gives good binding properties.  Section 6.1.4 is generally
    safe with no caveats on use for constructing concrete instances using
    a broad array of components.
 
