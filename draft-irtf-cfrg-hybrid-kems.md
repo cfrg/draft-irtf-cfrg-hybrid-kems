@@ -913,7 +913,7 @@ The LEAK attack model is most appropriate for Internet protocols.  There have
 been attacks in the LEAK model are known {{BJKS24}} {{FG24}}, so a hybrid KEM
 needs to be resilient at least to LEAK attacks (i.e., HON is too weak).
 Internet applications generally assume that private keys are honestly generated,
-so MAL is too strong a attack model to address.
+so MAL is too strong an attack model to address.
 
 The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally aligned with the
 needs of protocol design.  Protocols based on traditional algorithms frequently
