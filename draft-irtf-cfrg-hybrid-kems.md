@@ -818,7 +818,7 @@ the adversary after the encapsulation operation is completed (LEAK).
 There is quite a bit of diversity in the binding properties provided by KEMs.
 Table 5 of {{CDM23}} shows the binding properties of a few KEMs.  For example:
 DHKEM provides MAL-level binding for several properties. ML-KEM provides only
-LEAK-level binding. Classic McEleice provides MAL-BIND-K-CT, but no assurance at
+LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT, but no assurance at
 all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
