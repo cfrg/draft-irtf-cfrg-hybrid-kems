@@ -741,7 +741,8 @@ is without bugs and the implementation is correct).  Post-quantum KEMs are
 intended to provide IND-CCA security against such an attacker.  Traditional KEMs
 are not.
 
-
+IND-CCA is the standard security notion for KEMs; most PQ KEMs were explicitly designed
+to achieve this type of security against both a quantum attacker and a traditional one.
 For traditional algorithms, things are less clear.  The DHKEM construction in
 {{?RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but "raw"
 ephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the
