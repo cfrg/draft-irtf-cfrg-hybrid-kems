@@ -548,15 +548,22 @@ post-quantum KEM in order for the hybrid KEM to be secure.
 
 To instantiate this framework, a designer will have to make two choices:
 
-1. Whether traditional component is a KEM or a nominal group
+1. Whether traditional component is a nominal group or a KEM
 2. Whether to rely on the C2PRI property holding for the post-quantum component
 
-The former choice will dictate the overall structure of the hybrid KEM, since
-traditional KEMs and nominal groups have different operations.  The latter
-choice will determine which combiner function should be used.
+The first choice will dictate the overall structure of the hybrid KEM, since
+traditional KEMs and nominal groups have different operations.  When a nominal
+group is used, the hybrid KEM MUST use the structure defined in {{group-inst}}.
+When a KEM is used, the hybrid KEM MUST use the structure defined in
+{{kem-inst}}.
 
-There are thus four ways that this framework can be instantiated, summarized in
-{{variants}}:
+The second choice will determine which combiner function should be used.  If the
+designer does not wish to rely on the C2PRI property for the PQ component, then
+the Explicit combiner MUST be used.  If the designer is comfortable relying on
+the C2PRI property for the PQ component, then the PQImplicit combiner MAY be
+used.
+
+Each instantiation of this framework thus corresponds to one of four variants:
 
 | PQ C2PRI? | T component   |    | Structure      | Combiner   |
 |:==========|:==============|====|:===============|:===========|
@@ -564,7 +571,7 @@ There are thus four ways that this framework can be instantiated, summarized in
 | No        | KEM           | => | {{kem-inst}}   | Explicit   |
 | Yes       | Nominal group | => | {{group-inst}} | PQImplicit |
 | Yes       | KEM           | => | {{kem-inst}}   | PQImplicit |
-{: #variants title="Variants of the overall framework" }
+{: #variants title="Variants of the hybrid KEM framework" }
 
 ## Combiner Functions
 
@@ -590,9 +597,8 @@ particular, when the framework is instantiated with a nominal group, the
 "ciphertext" component is an ephemeral group element, and the "encapsulation
 key" is the group element that functions as the recipient's public key.
 
-As discusssed in {{security-requirements}}, the choice of combiner in a given
-instantitation determines the assumptions under which the resulting hybrid KEM
-is secure.
+The choice of combiner in a given instantitation determines the assumptions
+under which the resulting hybrid KEM is secure.
 
 The `Explicit` combiner explicitly hashes shared secrets, ciphertexts, and
 encapsulation keys from both constituent.  This allows the resulting hybrid KEM
@@ -600,7 +606,7 @@ to be secure as long as either component is secure, with no further assumptions.
 
 The `PQImplicit` combiner does not explicitly hash in the ciphertext or
 encapsulation key from the PQ constituent.  The resulting hybrid KEM will only
-be secure if, in addition to one constituent being secre, the PQ constituent
+be secure if, in addition to one constituent being secure, the PQ constituent
 also satisfies the C2PRI property.
 
 ## Instantiation with a Traditional KEM {#kem-inst}
