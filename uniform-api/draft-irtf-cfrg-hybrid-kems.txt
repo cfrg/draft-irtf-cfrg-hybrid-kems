@@ -429,19 +429,19 @@ Table of Contents
    Each instantiation of this framework thus corresponds to one of four
    variants:
 
-       +===========+===============+====+=============+============+
-       | PQ C2PRI? | T component   |    | Structure   | Combiner   |
-       +===========+===============+====+=============+============+
-       | No        | Nominal group | => | Section 5.3 | Explicit   |
-       +-----------+---------------+----+-------------+------------+
-       | No        | KEM           | => | Section 5.2 | Explicit   |
-       +-----------+---------------+----+-------------+------------+
-       | Yes       | Nominal group | => | Section 5.3 | PQImplicit |
-       +-----------+---------------+----+-------------+------------+
-       | Yes       | KEM           | => | Section 5.2 | PQImplicit |
-       +-----------+---------------+----+-------------+------------+
+   +======+===========+===============+====+=============+============+
+   | Name | PQ C2PRI? | T component   |    | Structure   | Combiner   |
+   +======+===========+===============+====+=============+============+
+   | GX   | No        | Nominal group | => | Section 5.3 | Explicit   |
+   +------+-----------+---------------+----+-------------+------------+
+   | KX   | No        | KEM           | => | Section 5.2 | Explicit   |
+   +------+-----------+---------------+----+-------------+------------+
+   | GM   | Yes       | Nominal group | => | Section 5.3 | PQImplicit |
+   +------+-----------+---------------+----+-------------+------------+
+   | KM   | Yes       | KEM           | => | Section 5.2 | PQImplicit |
+   +------+-----------+---------------+----+-------------+------------+
 
-               Table 1: Variants of the hybrid KEM framework
+              Table 1: Variants of the hybrid KEM framework
 
 5.1.  Combiner Functions
 
