@@ -565,12 +565,12 @@ used.
 
 Each instantiation of this framework thus corresponds to one of four variants:
 
-| PQ C2PRI? | T component   |    | Structure      | Combiner   |
-|:==========|:==============|====|:===============|:===========|
-| No        | Nominal group | => | {{group-inst}} | Explicit   |
-| No        | KEM           | => | {{kem-inst}}   | Explicit   |
-| Yes       | Nominal group | => | {{group-inst}} | PQImplicit |
-| Yes       | KEM           | => | {{kem-inst}}   | PQImplicit |
+| Name    | PQ C2PRI? | T component   |    | Structure      | Combiner   |
+|:========|:==========|:==============|====|:===============|:===========|
+| GX      | No        | Nominal group | => | {{group-inst}} | Explicit   |
+| KX      | No        | KEM           | => | {{kem-inst}}   | Explicit   |
+| GM      | Yes       | Nominal group | => | {{group-inst}} | PQImplicit |
+| KM      | Yes       | KEM           | => | {{kem-inst}}   | PQImplicit |
 {: #variants title="Variants of the hybrid KEM framework" }
 
 ## Combiner Functions
