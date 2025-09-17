@@ -108,14 +108,32 @@ informative:
     title: "Cryptographic sponge functions"
     target: https://keccak.team/files/CSF-0.1.pdf
     date: 2011
+  BHK09:
+    title: "Subtleties in the Definition of IND-CCA: When and How Should Challenge-Decryption be
+Disallowed?"
+    target: https://eprint.iacr.org/2009/418
+    date: 2009
+    author:
+      -
+        fullname: Mihir Bellare
+        org: University of California San Diego
+      -
+        fullname: Dennis Hofheinz
+        org: CWI Amsterdam
+      -
+        fullname: Eike Kiltz
+        org: CWI Amsterdam
   BJKS24:
     title: "Formal verification of the PQXDH Post-Quantum key agreement protocol for end-to-end secure messaging"
     date: 2024
     target: https://www.usenix.org/system/files/usenixsecurity24-bhargavan.pdf
-  CAMPBELL25:
-    title: "Re: Binding and QSF-style hybrid KEMs"
-    target: https://mailarchive.ietf.org/arch/msg/cfrg/qp_YxofDEl5fN6W7Xyab-juwaCc/
-    date: 2025
+  Cheon06:
+    title: "Security Analysis of the Strong Diffie-Hellman Problem"
+    date: 2006
+    author:
+      -
+        fullname: Jung Hee Cheon
+        org: Seoul National University
   CDM23:
     title: "Keeping Up with the KEMs: Stronger Security Notions for KEMs and automated analysis of KEM-based protocols"
     target: https://eprint.iacr.org/2023/1933.pdf
@@ -133,6 +151,10 @@ informative:
         ins: N. Medinger
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
+  CHH+25:
+    title: "Starfighters — on the general applicability of X-Wing"
+    target: https://eprint.iacr.org/2025/1397
+    date: 2025
   DRS+13:
     title: "To Hash or Not to Hash Again? (In)differentiability Results for H^2 and HMAC"
     target: https://eprint.iacr.org/2013/382.pdf
@@ -185,6 +207,10 @@ informative:
     -
       ins: K. G. Paterson
   HKDF: RFC5869
+  ISO18033-2:
+    title: "Information technology -- Security techniques -- Encryption algorithms -- Part 2: Asymmetric ciphers"
+    date: 2006
+    target: "https://www.iso.org/standard/37971.html"
   MOHASSEL10:
     title: "A closer look at anonymity and robustness in encryption schemes."
     date: 2010
@@ -291,7 +317,7 @@ which hybrid KEMs are built, and then a framework for building hybrid KEMs.  The
 {{security}}, we lay out the security analyses that support these frameworks,
 including the security requirements for constituent components and the
 security notions satisfied by hybrid KEMS constructed according to the
-frameworks in the document {{security-requirements}}.  Finally, we discuss
+frameworks in the document {{hybrid-ind-cca}}.  Finally, we discuss
 some "path not taken", related topics that might be of interest to readers,
 but which are not treated in depth.
 
@@ -462,29 +488,30 @@ fixed lengths:
 - `Nss`: The length in bytes of a shared secret produced by
   ElementToSharedSecret
 
-The security requirements for groups used with the frameworks in this document
-are laid out in {{security-groups}}.
+Groups used with the hybrid KEM framework in this document should be secure with
+respect to the strong Diffie-Hellman problem (see {{sdh}}).
 
 ## Pseudorandom Generators {#prgs}
 
 A pseudorandom generator (PRG) is a deterministic function `G` whose outputs
 are longer than its inputs. When the input to `G` is chosen uniformly at
-random, it induces a certain distribution over the possible output. The
+random, this induces a certain distribution over the possible output. The
 output distribution is pseudorandom if it is indistinguishable from the
 uniform distribution.
 
-The PRGs used in this document have a simpler form, with a fixed
+The PRGs used in this document have a simpler form, with fixed
 output lengths:
 
-- `Nout` - The length in bytes of an output from this PRG.
+- `Nout`: The length in bytes of an output from this PRG.
 - `PRG(seed) -> output`: Produce a byte string of length `Nout` from an input
   byte string `seed`.
 
 The fixed sizes are for both security and simplicity.
 
-MUST provide the bit-security required to source input randomness for PQ/T
-components from a seed that is expanded to a output length, of which a subset
-is passed to the component key generation algorithms.
+PRGs used with the frameworks in this document MUST provide the bit-security
+required to source input randomness for PQ/T components from a seed that is
+expanded to a output length, of which a subset is passed to the component key
+generation algorithms.
 
 The security requirements for PRGs used with the frameworks in this document are
 laid out in {{security-prgs}}.
@@ -495,17 +522,17 @@ A Key Derivation Function (KDF) is a function that produces
 keying material based on an input secret and other information.
 
 While KDFs in the literature can typically consume and produce byte strings of
-arbitrary length, the KDFs used in this document have a simpler form, with a fixed
+arbitrary length, the KDFs used in this document have a simpler form, with fixed
 output lengths:
 
-- `Nout` - The length in bytes of an output from this KDF.
+- `Nout`: The length in bytes of an output from this KDF.
 - `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
   byte string.
 
 The fixed sizes are for both security and simplicity.
 
-For instances of the `Extract()`/`Expand()` KDF paradigm such as `HKDF`, we fix
-the salt and sizes to fit this form.
+Any KDF that utilizes `HKDF` {{HKDF}} must fully specify HKDF's salt, IKM, info,
+and L arguments.
 
 The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
@@ -593,7 +620,7 @@ constituent depends on the following components:
 
 `KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{security-requirements}}.
+described in {{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
@@ -667,7 +694,7 @@ constituent depends on the following components:
 
 `KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{security-requirements}}.
+described in {{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
@@ -733,20 +760,25 @@ def Decaps(dk, ct):
 
 # Security Considerations {#security}
 
-Hybrid KEM constructions aim to provide security by combining two or more
-schemes so that security is preserved if all but one schemes are replaced by
-an arbitrarily bad scheme. Informally, these hybrid KEMs are secure if the
-`KDF` is secure, and either the traditional component is secure, or the
-post-quantum KEM is secure: this is the 'hybrid' property. Next we describe
-this document's specific security goals for hybrid KEMs.
+Hybrid KEMs provide security by combining two or more schemes so that security
+is preserved if all but one scheme is broken. Informally, these hybrid KEMs are
+secure if the `KDF` is secure, and either the traditional component is secure,
+or the post-quantum KEM is secure: this is the 'hybrid' property.
 
-## Cryptographic Security Goals for Hybrid KEMs {#security-properties}
+In this section, we review the important security properties for hybrid KEMs,
+and discuss how these security properties are provided by hybrid KEMs
+constructed according to the framework in this document.
 
-### IND-CCA Security {#ind-cca}
+## Security Properties for Component Algortihms
+
+In order to precisely define our security objectives for a hybrid KEM, we need
+to describe some properties that we will require from the component algorithms.
+
+### Indistinguishability under Chosen Ciphertext Attack (IND-CCA)
 
 The first goal we have for our hybrid KEM constructions is
 indistinguishability under adaptive chosen ciphertext attack, or
-IND-CCA. This is most common security goal for KEMs and public-key
+IND-CCA {{BHK09}}. This is most common security goal for KEMs and public-key
 encryption.
 
 For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
@@ -754,9 +786,69 @@ obtained by running `Encaps()` with an honestly-generated public key, can
 distinguish whether it is given the "real" secret output from `Encaps()`, or a
 random string unrelated to the `Encaps()` call that created that
 ciphertext. (Readers should note that this definition is slightly different
-than the corresponding one for public-key encryption {{RS92}}.)
+than the corresponding definitions for public-key encryption {{BHK09}}.)
 
-## Binding Properties {#binding-properties}
+Whether a given KEM provides IND-CCA depends on whether the attacker is assumed
+to have access to quantum computing capabilities or not (assuming the scheme
+is without bugs and the implementation is correct).  Post-quantum KEMs are
+intended to provide IND-CCA security against such an attacker.  Traditional KEMs
+are not.
+
+IND-CCA is the standard security notion for KEMs; most PQ KEMs were
+explicitly designed to achieve this type of security against both a
+quantum attacker and a traditional one.
+
+For traditional algorithms, things are less clear.  The DHKEM construction in
+{{?RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but "raw"
+ephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the
+ciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure {{ISO18033-2}},
+and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM, but
+"classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}}) is not
+even IND-CCA secure as a public-key encryption algorithm.
+
+### Ciphertext Second-Preimage Resistence (C2PRI)
+
+Ciphertext Second-Preimage Resistence (C2PRI) is the property that given an
+honestly generated ciphertext, it is difficult for an attacker to generate a
+different ciphertext that decapsulates to the same shared secret.  In other
+words, if an honest party computes `(ss, ct) = Encaps(ek)`, then it is
+infeasible for an attacker to find another ciphertext `ct'` such that
+`Decaps(dk, ct) == ss` (where `dk` is the decapsulation key corresponding to
+the encapsulation key `ek`).
+
+A related notion in the literature is chosen-ciphertext resistance (CCR)
+{{CDM23}}. C2PRI targets preimage-resistance, whereas CCR targets
+collision-resistance, much like the analogous properties for hash functions.  In
+the language of the binding properties discussed in {{binding-properties}}, CCR
+is equivalent to the property LEAK-BIND-K,PK-CT.
+
+C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires the
+attacker to match a specific, honestly generated ciphertext, as opposed to
+finding an arbitrary pair.
+
+Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to have this
+property in {{XWING}}, and {{CHH+25}} proves C2PRI for several other algorithms,
+including FrodoKEM, HQC, Classic McEliece, and sntrup.
+
+### Strong Diffie-Hellman Problem (SDH) {#sdh}
+
+The standard Diffie-Hellman problem is whether an attacker can compute `g^xy`
+given access to `g^x` and `g^y`.  The strong Diffie-Hellman problem additionally
+equips the attacker with an oracle `DH(Y, Z)` that answers whether `Y^x = Z`.
+(This is the notion specified in {{XWING}}, not the notion of the same name
+used in the context of bilinear pairings {{Cheon06}}.)
+
+When we say that the strong Diffie-Hellman problem is hard in a group, we always
+mean this in the context of classical attackers, without access to quantum
+computers.  An attacker with access to a quantum computer that can execute Shor's algorithm
+for a group can efficiently solve the discrete log problem in that group, which
+implies the ability to solve the strong Diffie-Hellman problem.
+
+As shown in {{ABH+21}}, this problem is hard in prime-order groups such as the
+NIST elliptic curve groups P-256, P-384, and P-521, as well as in the Montgomery
+curves Curve25519 and Curve448.
+
+### Binding Properties {#binding-properties}
 
 It is often useful for a KEM to have certain "binding" properties, by which
 certain parameters determine certain others. Recent work {{CDM23}} gave a
@@ -764,87 +856,34 @@ useful framework of definitions for these binding properties. Binding for
 KEMs is related to other properties for KEMs and public-key encryption, such
 as robustness {{GMP22}} {{ABN10}}, and collision-freeness {{MOHASSEL10}}.
 
-The framework given by {{CDM23}} refers to these properties with labels of
-the form X-BIND-P-Q.  The first element X is the attack model---HON, LEAK, or
-MAL.  P,Q means that given the value P, it is hard to produce another Q that
-causes Decaps to succeed.  For example, LEAK-BIND-K-PK means that for a given
-shared secret (K), there is a unique encapsulation key (PK) that could have
-produced it, even if all of the secrets involved are given to the adversary
-after the encapsulation operation is completed (LEAK).
+The framework given by {{CDM23}} refers to these properties with labels of the
+form X-BIND-P-Q.  The first element X is the model for how the attacker can
+access the decapsulation key: HON for the case where the attacker never
+accesses the decapsulation key, LEAK for the case where the attacker has
+access to the honestly-generated decapsulation key, or MAL for the case
+where the attacker can choose or manipulate the keys used by the victim.
+P,Q means that given the value P, it is hard to produce another Q that
+causes Decaps to succeed. For example, LEAK-BIND-K-PK means that for a
+given shared secret (K), there is a unique encapsulation key (PK) that
+could have produced it, even if all of the secrets involved are given to
+the adversary after the encapsulation operation is completed (LEAK).
 
-We treat LEAK-BIND-K-PK and LEAK-BIND-K-CT to be target binding properties.
-The HON-BIND security model seems too weak for real applications---real
-attacks in the LEAK model are known {{BJKS24}} {{FG24}}. We are not aware
-of any common settings where the MAL-BIND security model is needed; thus,
-LEAK-BIND seems a sensible middle ground.
+There is quite a bit of diversity in the binding properties provided by KEMs.
+Table 5 of {{CDM23}} shows the binding properties of a few KEMs.  For example:
+DHKEM provides MAL-level binding for several properties. ML-KEM provides only
+LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT, but no assurance at
+all of X-BIND-K-PK.
 
-The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties independently allow using
-a KEM shared secret such that the likelihood of finding a colliding value with the
-encapsulation key used in its computation or the ciphertext used in its
-computation is negligible. Such properties are attractive when integrating
-KEMs into protocols where once protocol designers would have used
-Diffie-Hellman, as they can use the smaller shared secret value alone as an
-input to a protocol key schedule for example, without necessarily also needing
-to include the much larger ciphertext or the encapsulation key to be
-protected against key confusion attacks {{FG24}} or KEM re-encapsulation
-attacks {{BJKS24}}. Protocol designers may still need or want to include the
-ciphertext or encapsulation key into their protocol or key schedule for other
-reasons, but that can be independent of the specific properties of the KEM
-and its resulting shared secret.
+### Indifferentiability from a Random Oracle {#security-kdfs}
 
-Implementors should not interpret the paragraph above as absolving them
-of their responsibility to carefully think through whether MAL-BIND attacks
-apply in their settings.
-
-## Security Non-goals for Hybrid KEMs {#non-goals}
-
-Security properties that were considered and not included in these designs:
-
-Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
-or binding {{GMP22}}, {{CDM23}}
-
-<!-- todo: distinguish key binding from the things we call X-BIND-K-[CT/PK]
-above but haven't explained yet -->
-
-## Security Requirements for Constituent Components {#security-requirements}
-
-### Security Requirements for KEMs {#security-kems}
-
-Component KEMs MUST be IND-CCA-secure {{GHP2018}} {{XWING}}.
-
-For instances of QSF, the component KEM MUST also be ciphertext second
-preimage resistant (C2PRI) {{XWING}}: this allows the component KEM
-encapsulation key and ciphertext to be left out from the KDF input.
-
-#### Ciphertext Second Preimage Resistant (C2PRI) Security {#c2pri}
-
-Roughly, C2PRI {{XWING}} says that an adversary given an honestly-generated
-key pair (sk, pk) and the result of an *honest* Encaps(pk) - call it k, c -
-cannot find a _distinct_ c' such that Decaps(sk, c') = k. A related notion has
-also been described as chosen-ciphertext resistance (CCR) {{CDM23}}. C2PRI targets
-preimage-resistance, whereas CCR targets collision-resistance {{CAMPBELL25}}.
-
-### Security Requirements for Groups {#security-groups}
-
-The groups MUST be modelable as nominal groups in which the strong
-Diffie-Hellman problem holds {{ABH+21}} {{XWING}}.
-
-Prime-order groups such as P-256, P-384, and P-521 and the Montgomery curves
-Curve25519 and Curve448 have been shown to be modelable as nominal groups in
-{{ABH+21}}, as well as showing the `X25519()` and `X448()` functions
-respectively pertain to the nominal group `exp(X, y)` function, specifically
-clamping secret keys when they are generated, instead of clamping secret keys
-together with exponentiation.
-
-### Security Requirements for KDFs {#security-kdfs}
-
-The KDF MUST be indifferentiable from a random oracle (RO) {{MRH03}}, even to
-a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a conservative choice
-given a review of the existing security analyses for our hybrid KEM
-constructions.  (In short, most IND-CCA analyses require only that the KDF is
-some kind of pseudorandom function, but the SDH-based IND-CCA analysis of QSF
-in {{XWING}} relies on the KDF being a RO. Proofs of our target binding
-properties for our hybrid KEMs require the KDF is a collision-resistant
+<!-- todo: HQB doesn't need a secure RO, only secure PRF -->
+The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
+(RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a
+conservative choice given a review of the existing security analyses for our
+hybrid KEM constructions.  (In short, most IND-CCA analyses require only that
+the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA
+analysis of QSF in {{XWING}} relies on the KDF being a RO. Proofs of our target
+binding properties for our hybrid KEMs require the KDF is a collision-resistant
 function.)
 
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
@@ -890,7 +929,70 @@ uniform outputs.
 PRGs are related to extendable output functions (XOFs) which can be
 built from random oracles. Examples include SHAKE256.
 
-## Security Properties of Hybrid KEMs Frameworks
+## Security Goals for Hybrid KEMs {#security-properties}
+
+The security notions for hybrid KEMs are largely the same as for other
+algorithms, but they are contingent on the security properties of the component
+algorithms.  In this section we discuss the intended security properties for
+hybrid KEMs and the requirements that the component algorithms must meet in
+order for those properties to hold.
+
+### IND-CCA Security {#hybrid-ind-cca}
+
+The idea of a hybrid KEM is that it should maintain its security if only one of
+the two component KEMs is secure.  For a PQ/T hybrid KEM, this means that the
+hybrid KEM should be secure against a quantum attacker if the T component is
+broken, and secure against at least a classical attacker if the PQ component is
+broken.
+
+More precisely, the hybrid KEM should meet two different notions of IND-CCA
+security, under different assumptions about the component algorithms:
+
+* IND-CCA against a classical attacker all of the following are true:
+    * `KDF` is indifferentiable from a random oracle <!-- todo: GHP, QSH only need PRF security here... -->
+    * If using `Group_T`: The strong Diffie-Hellman problem is hard in `Group_T`
+    * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
+    * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->
+* IND-CCA against a quantum attacker if all of the following are true:
+    * `KDF` is indifferentiable from a random oracle <!-- todo: the PQ proofs rely on PRF not RO... -->
+    * `KEM_PQ` is IND-CCA against a quantum attacker
+
+### Binding Properties {#hybrid-binding}
+
+The most salient binding properties for a hybrid KEM to be used in Internet
+protocols are LEAK-BIND-K-PK and LEAK-BIND-K-CT.
+
+The LEAK attack model is most appropriate for Internet protocols.  There have
+been attacks in the LEAK model are known {{BJKS24}} {{FG24}}, so a hybrid KEM
+needs to be resilient at least to LEAK attacks (i.e., HON is too weak).
+Internet applications generally assume that private keys are honestly generated,
+so MAL is too strong an attack model to address.
+
+The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally aligned with the
+needs of protocol design.  Protocols based on traditional algorithms frequently
+need to incorporate transcript hashing in order to protect against key confusion
+attacks {{FG24}} or KEM re-encapsulation attacks {{BJKS24}}.  The LEAK-BIND-K-PK
+and LEAK-BIND-K-CT properties prevent these attacks at the level of the hybrid
+KEM. Protocol designers may still need or want to include the ciphertext or
+encapsulation key into their protocol or key schedule for other reasons, but
+that can be independent of the specific properties of the KEM and its resulting
+shared secret.
+
+Implementors should not interpret the paragraph above as absolving them
+of their responsibility to carefully think through whether MAL-BIND attacks
+apply in their settings.
+
+## Security Non-goals for Hybrid KEMs {#non-goals}
+
+Security properties that were considered and not included in these designs:
+
+Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
+or binding {{GMP22}}, {{CDM23}}.
+
+## Security Analysis
+
+In this section, we describe how the hybrid KEM framework in this document
+provides the security properties described above.
 
 ### IND-CCA analyses
 
@@ -925,15 +1027,15 @@ used in GHP meets the split-key pseudorandomness property used in
 GHP's analysis. <!-- TODO: apparently there is no good citation for this
 foklore, maybe we can explicitly lay it out -->
 
-Therefore all three hybrid KEMs in this document are IND-CCA when
+Therefore both hybrid KEMs in this document are IND-CCA when
 instantiated with cryptographic components that meet the security
 requirements described above. Any changes to the algorithms, including key
 generation/derivation, are not guaranteed to produce secure results.
 
 ### Binding analyses
 
-There are three hybrid KEM frameworks, and two target binding properties, so
-we need six total analyses. None of these exact results were known; thus the
+There are two hybrid KEM frameworks, and two target binding properties, so
+we need four total analyses. None of these exact results were known; thus the
 following are new results by the editorial team. We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.
 
@@ -981,7 +1083,7 @@ The LEAK-BIND proofs for QSF are a bit more subtle than for GHP; the
 main reason for this is QSF's omission of the PQ KEM key and ciphertext from
 the KDF. We will show that QSF still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
-property. We note that our preliminary results suggest a different proof
+property. We note that our preliminary results suggest that a different proof
 strategy, which instead directly uses properties of the nominal group, may
 work here; we present the PQ-KEM route for concreteness.
 
@@ -1082,7 +1184,7 @@ an IND-CCA proof from {{GHP2018}}. Including the public encapsulation keys as
 part of the KDF preimage fits in the 'additional data' parts of the split key
 PRF proof there, and binds to the encapsulation keys, which is a nice
 property for protocols integrating concrete instances. GHP also matches NIST
-SP 800-227 IPD, and gives good binding properties {{binding-properties}} is
+SP 800-227 IPD, and gives good binding properties. {{binding-properties}} is
 generally safe with no caveats on use for constructing concrete instances
 using a broad array of components.
 
