@@ -565,7 +565,9 @@ components:
 * `KDF`: A KDF producing byte strings of length `GHP.Nss` (`KDF.Nout
   == GHP.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
-  constituents being used.
+  constituents being used.  This value should be registered in the Hybrid KEM
+  Labels IANA registry to avoid conflict with other instantiations (see
+  {{iana-considerations}}.
 
 The KEMs, groups, KDFs, and PRGs MUST meet the security requirements listed in
 {{hybrid-ind-cca}}.
@@ -637,7 +639,9 @@ components:
 * `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
   == KDF.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
-  constituents being used.
+  constituents being used.  This value should be registered in the Hybrid KEM
+  Labels IANA registry to avoid conflict with other instantiations (see
+  {{iana-considerations}}.
 
 We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
@@ -1121,6 +1125,37 @@ different from that specified in this document.
 
 Therefore, this specification MUST only be used with algorithms which have
 fixed-length shared secrets.
+
+# IANA Considerations
+
+This document requests that IANA create a registry "Hybrid KEM Labels", which
+lists labels that uniquely identify instantiations of the frameworks in this
+document.  The registry should be administered under the First Come First Served
+policy {{!RFC8126}}.
+
+Template:
+
+* Label: The name of the wire format
+
+* Framework: The framework used in the hybrid KEM.  This value MUST be either
+  "GHP" or "QSF".
+
+* PQ component: The name of the post-quantum KEM used in the hybrid KEM.
+
+* Traditional component: The name of the traditional KEM or nominal group used
+  in the hybrid KEM.
+
+* KDF: The name of the Key Derivation Function used in the hybrid KEM.
+
+* PRG: The name of the Pseudo-Random Generator used in the hybrid KEM.
+
+* Nseed: An integer representing the size of a seed for this hybrid KEM.
+
+* Nss: An integer representing the size of a shared secret for this hybrid KEM.
+
+* Reference (optional): The document where this hybrid KEM is defined
+
+The registry should initially be empty.
 
 # In Scope
 
