@@ -522,11 +522,22 @@ post-quantum KEM in order for the hybrid KEM to be secure.
 To instantiate this framework, a designer will have to make two choices:
 
 1. Whether traditional component is a KEM or a nominal group
-2. Whether the post-quantum component assumed to satisfy the C2PRI property
+2. Whether to rely on the C2PRI property holding for the post-quantum component
 
 The former choice will dictate the overall structure of the hybrid KEM, since
 traditional KEMs and nominal groups have different operations.  The latter
 choice will determine which combiner function should be used.
+
+There are thus four ways that this framework can be instantiated, summarized in
+{{variants}}:
+
+| PQ C2PRI? | T component   |    | Structure      | Combiner   |
+|:==========|:==============|====|:===============|:===========|
+| No        | Nominal group | => | {{group-inst}} | Explicit   |
+| No        | KEM           | => | {{kem-inst}}   | Explicit   |
+| Yes       | Nominal group | => | {{group-inst}} | PQImplicit |
+| Yes       | KEM           | => | {{kem-inst}}   | PQImplicit |
+{: #variants title="Variants of the overall framework" }
 
 ## Combiner Functions
 
@@ -537,13 +548,13 @@ properties.
 
 The two combiner functions defined in this document are as follows:
 
-```
+~~~
 def Explicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
     KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
 
 def PQImplicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
     KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
-```
+~~~
 
 Note that while the names of the inputs are suggestive of the shared secret,
 ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
@@ -565,7 +576,7 @@ encapsulation key from the PQ constituent.  The resulting hybrid KEM will only
 be secure if, in addition to one constituent being secre, the PQ constituent
 also satisfies the C2PRI property.
 
-## Instantiation with a Traditional KEM
+## Instantiation with a Traditional KEM {#kem-inst}
 
 A hybrid KEM `KEM_H` instantiated with a KEM for its traditional
 constituent depends on the following components:
@@ -639,7 +650,7 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## Instantiation with a Nominal Group
+## Instantiation with a Nominal Group {#group-inst}
 
 A hybrid KEM `KEM_H` instantiated with a nominal group for its traditional
 constituent depends on the following components:
