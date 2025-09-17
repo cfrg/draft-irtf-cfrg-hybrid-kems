@@ -312,8 +312,8 @@ given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.
 
 The remainder of this document is structured as follows: first, in
-{{cryptographic-deps}} and {{frameworks}}, we define the abstractions on
-which the frameworks are built, and then the frameworks themselves.  Then, in
+{{cryptographic-deps}} and {{framework}}, we define the abstractions on
+which hybrid KEMs are built, and then a framework for building hybrid KEMs.  Then, in
 {{security}}, we lay out the security analyses that support these frameworks,
 including the security requirements for constituent components and the
 security notions satisfied by hybrid KEMS constructed according to the
@@ -537,38 +537,96 @@ and L arguments.
 The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
 
-# Hybrid KEM Frameworks {#frameworks}
+# Hybrid KEM Framework {#framework}
 
-In this section, we define two generic frameworks for building hybrid KEMs:
+In this section, we define a generic framework for building hybrid KEMs.  All
+instantiations of this framework share a common structure, which differs
+slightly depending on whether the framework is instantiated with a KEM or a
+nominal group as the traditional component.  This common structure uses one of
+two "combiner" functions, which determines the security requirements for the
+post-quantum KEM in order for the hybrid KEM to be secure.
 
-GHP:
-: A generic framework that is suitable for use with any choice of PQ and
-  traditional KEMs, with minimal security assumptions on the constituent KEMs
+To instantiate this framework, a designer will have to make two choices:
 
-QSF:
-: An optimized generic framework for the case where the PQ component has strong
-  binding properties and the traditional component is a nominal group
+1. Whether traditional component is a nominal group or a KEM
+2. Whether to rely on the C2PRI property holding for the post-quantum component
 
-These frameworks share a common overall structure, differing mainly in how they
-compute the final shared secret and the security requirements of their
-components.
+The first choice will dictate the overall structure of the hybrid KEM, since
+traditional KEMs and nominal groups have different operations.  When a nominal
+group is used, the hybrid KEM MUST use the structure defined in {{group-inst}}.
+When a KEM is used, the hybrid KEM MUST use the structure defined in
+{{kem-inst}}.
 
-## GHP {#ghp}
+The second choice will determine which combiner function should be used.  If the
+designer does not wish to rely on the C2PRI property for the PQ component, then
+the Explicit combiner MUST be used.  If the designer is comfortable relying on
+the C2PRI property for the PQ component, then the PQImplicit combiner MAY be
+used.
 
-The GHP hybrid KEM depends on the following constituent
-components:
+Each instantiation of this framework thus corresponds to one of four variants:
+
+| Name    | PQ C2PRI? | T component   |    | Structure      | Combiner   |
+|:========|:==========|:==============|====|:===============|:===========|
+| GX      | No        | Nominal group | => | {{group-inst}} | Explicit   |
+| KX      | No        | KEM           | => | {{kem-inst}}   | Explicit   |
+| GM      | Yes       | Nominal group | => | {{group-inst}} | PQImplicit |
+| KM      | Yes       | KEM           | => | {{kem-inst}}   | PQImplicit |
+{: #variants title="Variants of the hybrid KEM framework" }
+
+## Combiner Functions
+
+A combiner function uses the KDF used in the hybrid KEM to combine the shared
+secrets output by the constituent algorithms with metadata.  This operation is
+important to the IND-CCA security of the hybrid KEM, as well as its binding
+properties.
+
+The two combiner functions defined in this document are as follows:
+
+~~~
+def Explicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
+    KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+
+def PQImplicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
+    KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
+~~~
+
+Note that while the names of the inputs are suggestive of the shared secret,
+ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
+in the hybrid KEM framework are not necessarily the output of a secure KEM.  In
+particular, when the framework is instantiated with a nominal group, the
+"ciphertext" component is an ephemeral group element, and the "encapsulation
+key" is the group element that functions as the recipient's public key.
+
+The choice of combiner in a given instantitation determines the assumptions
+under which the resulting hybrid KEM is secure.
+
+The `Explicit` combiner explicitly hashes shared secrets, ciphertexts, and
+encapsulation keys from both constituent.  This allows the resulting hybrid KEM
+to be secure as long as either component is secure, with no further assumptions.
+
+The `PQImplicit` combiner does not explicitly hash in the ciphertext or
+encapsulation key from the PQ constituent.  The resulting hybrid KEM will only
+be secure if, in addition to one constituent being secure, the PQ constituent
+also satisfies the C2PRI property.
+
+## Instantiation with a Traditional KEM {#kem-inst}
+
+A hybrid KEM `KEM_H` instantiated with a KEM for its traditional
+constituent depends on the following components:
 
 * `KEM_PQ`: A post-quantum KEM
 * `KEM_T`: A traditional KEM
 * `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed + KEM_T.Nseed`
   (`PRG.Nout == KEM_PQ.Nseed + KEM_T.Nseed`)
-* `KDF`: A KDF producing byte strings of length `GHP.Nss` (`KDF.Nout
-  == GHP.Nss`)
+* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
+  == KEM_H.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
+* `Combiner` - One of the combiner functions described in {{combiner-functions}}
 
-The KEMs, groups, KDFs, and PRGs MUST meet the security requirements listed in
-{{hybrid-ind-cca}}.
+`KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
+described in {{cryptographic-deps}} and MUST meet the security requirements
+described in {{hybrid-ind-cca}}.
 
 The constants for public values are derived from the concatenation of
 encapsulation keys and ciphertexts:
@@ -588,7 +646,7 @@ Nss = min(KEM_PQ.Nss, KEM_T.Nss)
 
 Since we use the seed as the decapsulation key, `Ndk = Nseed`.
 
-Given these constituent parts, the GHP hybrid KEM is defined as follows:
+Given these constituent parts, the hybrid KEM is defined as follows:
 
 ~~~
 def expandDecapsulationKey(seed):
@@ -610,7 +668,7 @@ def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
     (ss_T, ct_T) = KEM_T.Encap(ek_T)
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ss_H = Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -621,25 +679,26 @@ def Decaps(dk, ct):
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
     ss_T = KEM_T.Decap(dk_T, ct_T)
 
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    ss_H = Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
     return ss_H
 ~~~
 
-## QSF {#qsf}
+## Instantiation with a Nominal Group {#group-inst}
 
-The QSF hybrid KEM (QSF below) depends on the following constituent
-components:
+A hybrid KEM `KEM_H` instantiated with a nominal group for its traditional
+constituent depends on the following components:
 
 * `Group_T`: A nominal group
 * `KEM_PQ`: A post-quantum KEM
 * `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
   Group_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
-* `KDF`: A KDF producing byte strings of length `QSF.Nss` (`KDF.Nout
+* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
   == KDF.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
   constituents being used.
+* `Combiner` - One of the combiner functions described in {{combiner-functions}}
 
-We presume that `KEM_PQ`, `Group_T`, and the KDFs meet the interfaces
+`KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
 described in {{hybrid-ind-cca}}.
 
@@ -661,7 +720,7 @@ Nss = min(KEM_PQ.Nss, Group_T.Nss)
 
 Since we use the seed as the decapsulation key, `Ndk = Nseed`.
 
-Given these constituent parts, we define the QSF hybrid KEM as follows:
+Given these constituent parts, we define the hybrid KEM as follows:
 
 ~~~
 def expandDecapsulationKey(seed):
