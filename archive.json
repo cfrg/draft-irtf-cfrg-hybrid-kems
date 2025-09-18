@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-16T01:03:49.370435+00:00",
+  "timestamp": "2025-09-18T01:03:14.000153+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -383,7 +383,7 @@
       "id": "I_kwDOMmhxws643qD-",
       "title": "Specify the security requirements for constituent elements",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/25",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -394,8 +394,8 @@
       ],
       "body": "We have three types of constituents that go into our hybrid schemes:\n\n1. KEMs\n2. Nominal groups\n3. Hash functions\n\nThe security requirements for the former two are pretty clear: A KEM needs to be IND-CCA, and if it is going to be used with QSF / HashTraditionalOnly, it needs to have some additional binding properties.  A nominal group needs to be secure in the sense of [ABH+20].\n\nFor the \"hash functions\", we should define a requirement that aligns well with the constructions in the literature, some combination of notions of XOF, KDF, and RO.",
       "createdAt": "2025-05-29T22:12:54Z",
-      "updatedAt": "2025-07-17T06:51:49Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-17T22:45:32Z",
+      "closedAt": "2025-09-17T22:45:32Z",
       "comments": [
         {
           "author": "pag-crypto",
@@ -417,6 +417,13 @@
           "body": "On the QSF description text, I would strike out the \"the traditional component is a nominal group and\" part. While X-Wing paper only proves the nominal group case, the proof goes through with trivial modifications for any hashed traditional part (with whatever terms arise from traditional part replacing the nominal group terms in the advantage bound).\n",
           "createdAt": "2025-07-17T06:51:49Z",
           "updatedAt": "2025-07-17T06:51:49Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by #78 ",
+          "createdAt": "2025-09-17T22:45:32Z",
+          "updatedAt": "2025-09-17T22:45:32Z"
         }
       ]
     },
@@ -1113,7 +1120,7 @@
       ],
       "body": "In #73, we allow for two different styles of key generation: the default \"shared seed\" approach, and an \"external keygen\" approach that basically just invokes whatever keygen the component algorithms provide.  In the shared seed approach, the decapsulation key is `seed`; in the \"external keygen\" approach, the decapsulation key is `(dk_PQ, dk_T)`.\n\nConsider two implementations of a hybrid KEM that differ **only in terms of keygen** -- they use the same component algorithms, same constants, etc.  Should these implementations be considered to be different things?\n\nIn the scope of this document, this question primarily comes down to labels -- should these two cases have different domain separation labels?\n\nIn favor of different:\n* The two keygen processes result in different security properties.  MAL-BIND vs. LEAK-BIND\n* Since the decapsulation key formats are different, so it's not clear what private key format an implementation of the algorithm should accept\n\nIn favor of same:\n* The two \"algorithms\" are identical when it comes to the part that matters for interop, i.e., the encapsulation logic.\n* Which key generation the decapsulator uses is invisible to the encapsulator.  Any claim about is an unenforceable promise.  The encapsulator shouldn't have to care.",
       "createdAt": "2025-09-15T21:46:50Z",
-      "updatedAt": "2025-09-15T23:16:50Z",
+      "updatedAt": "2025-09-18T00:55:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -1129,6 +1136,127 @@
           "body": "_Strong_ preference for same. My current use case for the hybrids is post-quantum age keys. It would be ridiculous for a key split half in hardware (P-256) and half in software (ML-KEM-768) not to interoperate with a key wholly in software. I would almost certainly disregard the \"external keygen\" label, and use the default one everywhere. But then we'd be obviously signing ourselves up for endless interoperability issues and MUST violation debates when others disagree and feel backed up by the RFC.\n\nI can't make sense of expressing in the label properties of the keygen. Should we have different labels for ECDH keys generated with rejection sampling and wide reduction? With a FIPS 140 DRBG or not?\n\nIn my career I don't think I have cared once about a malicious private key (further than \"can it crash the system\").",
           "createdAt": "2025-09-15T23:16:50Z",
           "updatedAt": "2025-09-15T23:16:50Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I do not favor 'same', at least because supporting two different keygens for 'one' possible scheme supported by this document with the same secret key value (eg 96 bytes, either as a seed or two keygens slapped together) will produce different public keys. This does impact the binding properties of the generic schemes, whose component KEMs we don't have further requirements on their own binding properties (C2PRI is preimage resistance, not collision resistance.) In contrast, for the X-Wing scheme, which is concretely using ML-KEM-768 and x25519, we can make a more informed decision about whether the 'same' keygen variant is fine to use alongside the actual specified seed variant\u2014 we have multiple papers now analyzing the zoo of binding properties of ML-KEM and other more practical properties in practice (bugs like KyberSlash etc). For generics, there's a lot more unwritten about the component schemes\u2014 we only make requirements about IND-CCA and C2PRI and SDH, etc.\n\nI think having /two/ keygens be allowed for a concrete hybrid KEM is not good\u2014 picking one, whichever one, is more important. We've already seen consequences of two key formats for FIPS 203/FIPS 204. \n\nIn the generic document, writing the algorithms down for one keygen seems necessary to have a whole generic hybrid KEM framework to analyze; having a section that's basically a escape hatch ('when instantiating these schemes concretely, you MAY choose a non-seed variant of the keygen, but you SHOULD only choose one keygen per concrete instance', or something like that) seems like a compromise that will favor seed-based as a default, but allow exceptions. I know this doesn't help much with doing non-seed X-Wing keygen, but that was already going off-spec anyway\u2014 but if that proposed language were in the generic document, it would be compliant, I think",
+          "createdAt": "2025-09-16T18:08:43Z",
+          "updatedAt": "2025-09-16T18:13:28Z"
+        },
+        {
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "body": "> having a section that's basically a escape hatch ('when instantiating these schemes concretely, you MAY choose a non-seed variant of the keygen, but you SHOULD only choose one keygen per concrete instance', or something like that) seems like a compromise that will favor seed-based as a default, but allow exceptions\n\nThat sounds good to me. Non-seed keygen can and IMHO should be an exceptional, even off-spec path. As long as it's still interoperable when it makes sense (e.g. in the hardware case, where there isn't the concept of turning bytes into keys at all).",
+          "createdAt": "2025-09-16T19:08:45Z",
+          "updatedAt": "2025-09-16T19:08:45Z"
+        },
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> having a section that's basically a escape hatch ('when instantiating these schemes concretely, you MAY choose a non-seed variant of the keygen, but you SHOULD only choose one keygen per concrete instance', or something like that) seems like a compromise that will favor seed-based as a default, but allow exceptions.\n\nI agree with Deirdre - this seems like a good approach.",
+          "createdAt": "2025-09-16T20:59:03Z",
+          "updatedAt": "2025-09-16T20:59:03Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree with guiding toward shared-seed as the default.  The only part of the quoted text that concerns me is:\n\n> you SHOULD only choose one keygen per concrete instance\n\nIn the parlance we are using, \"concrete instance\" means \"specific combination of KEMs and KDF\", so this would mean, for example, \"only seeds are allowed with X-Wing\".  It is precisely the \"different\" approach, in the sense that if you want both seed and separate keygen, they would have to be different \"concrete instances\", thus different labels, thus non-interoperable.  And as I said above, this is all pain and no gain.",
+          "createdAt": "2025-09-18T00:20:18Z",
+          "updatedAt": "2025-09-18T00:20:18Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I agree with guiding toward shared-seed as the default. The only part of the quoted text that concerns me is:\n> \n> > you SHOULD only choose one keygen per concrete instance\n> \n> In the parlance we are using, \"concrete instance\" means \"specific combination of KEMs and KDF\", so this would mean, for example, \"only seeds are allowed with X-Wing\". It is precisely the \"different\" approach, in the sense that if you want both seed and separate keygen, they would have to be different \"concrete instances\", thus different labels, thus non-interoperable. And as I said above, this is all pain and no gain.\n\nCorrect, which is why it's written SHOULD, and not MUST. ",
+          "createdAt": "2025-09-18T00:24:36Z",
+          "updatedAt": "2025-09-18T00:24:36Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Maybe [OUGHT TO](https://rfcs.online/rfcs/rfc6919.html#section-4)?  \n\nA SHOULD here would basically say, \"support only one of shared seed or separate unless you need to support both\".  But this seems like too low a level at which to address this question.  Does QSF-MLKEM768-P256 need to support separate keygen?  Who knows!  Who knows where it will get deployed?",
+          "createdAt": "2025-09-18T00:32:13Z",
+          "updatedAt": "2025-09-18T00:32:13Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Maybe [OUGHT TO](https://rfcs.online/rfcs/rfc6919.html#section-4)?\n> \n> A SHOULD here would basically say, \"support only one of shared seed or separate unless you need to support both\". But this seems like too low a level at which to address this question. Does QSF-MLKEM768-P256 need to support separate keygen? Who knows! Who knows where it will get deployed?\n\nAt the level of the scheme this is a perfectly fine level to address this question, same as if we were discussing it for Ed25519 or RSA. It is appropriate to say 'you really SHOULD pick one, but we're not going to call you incompatible/non-compliant if you have two, we know at least one or two scenarios where that may be necessary'",
+          "createdAt": "2025-09-18T00:36:46Z",
+          "updatedAt": "2025-09-18T00:36:46Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Going back to this concern:\n\n> the same secret key value (eg 96 bytes, either as a seed or two keygens slapped together) will produce different public keys\n\nFailing to distinguish between key formats is a library design / higher-level protocol failure.  (Thanks to LAMPS for showing that [it's something we need to worry about](https://keymaterial.net/2025/02/19/how-not-to-format-a-private-key/).)  I agree we should do what we can here, but that could be as simple as requiring `Nseed != KEM_PQ.Ndk + KEM_T.Ndk`.",
+          "createdAt": "2025-09-18T00:38:21Z",
+          "updatedAt": "2025-09-18T00:38:21Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I agree we should do what we can here, but that could be as simple as requiring `Nseed != KEM_PQ.Ndk + KEM_T.Ndk`\n\nOh that's a good idea",
+          "createdAt": "2025-09-18T00:40:15Z",
+          "updatedAt": "2025-09-18T00:40:15Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > A SHOULD here would basically say, \"support only one of shared seed or separate unless you need to support both\". But this seems like too low a level at which to address this question. Does QSF-MLKEM768-P256 need to support separate keygen? Who knows! Who knows where it will get deployed?\n> \n> At the level of the scheme this is a perfectly fine level to address this question, same as if we were discussing it for Ed25519 or RSA. It is appropriate to say 'you really SHOULD pick one, but we're not going to call you incompatible/non-compliant if you have two, we know at least one or two scenarios where that may be necessary'\n\nExcept this is unlike Ed25519 and RSA, because there are constituent algorithms involved.  Which is precisely why we have this problem.\n\nAlso, I wonder if we're talking past each other a little.  If you mean \"**Each implementation** should be shared-seed only, unless you really need to support separate\", I'm on board with that, because implementations are the right spot to think about use cases.  My problem is when you say \"**Each combination** should be one keygen only\".",
+          "createdAt": "2025-09-18T00:42:30Z",
+          "updatedAt": "2025-09-18T00:42:30Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Except this is unlike Ed25519 and RSA, because there are constituent algorithms involved. Which is precisely why we have this problem.\n\nAnd yet we are designing a cryptographic scheme. Just because different signing algorithms use existing hash functions or primitives doesn't mean they are not distinguished from each other at the parameter set level, etc.\n\n\n> \"Each combination should be one keygen only\".\n\nYes, each concrete instantiation (including generic framework, kdf, prg, component algorithms) SHOULD be one keygen only, where SHOULD is to be interpreted as described in [RFC2119](https://datatracker.ietf.org/doc/rfc2119/)\n",
+          "createdAt": "2025-09-18T00:55:13Z",
+          "updatedAt": "2025-09-18T00:55:13Z"
+        }
+      ]
+    },
+    {
+      "number": 80,
+      "id": "I_kwDOMmhxws7MErJv",
+      "title": "Appendix to describe pre-hashing?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/80",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "In scenarios where encapsulation keys and ciphertexts are reused for multiple decapsulation operations, it can be improve the performance of decapsulation operations to have a combiner that pre-hashes these values and a stateful algorithm that caches the pre-hashed values.  This was the basis for the Chempat and PRE hybrid KEMs that have been discussed.\n\nFeedback at the CFRG meeting at IETF 123 and subsequent mailing list discussion indicated that these use cases are not a priority for the CFRG community, and thus that the additional complexity of pre-hashing doesn't make sense for the main body of the document.  There was also concern that the introduction of extra hashes took us further from the constructions that have been validated in the literature, though it was proposed on the mailing list that there might be easy indifferentiability arguments to connect the pre-hashed variants with their non-pre-hashed analogues.\n\nIf the latter argument could be fleshed out and made precise, we could add an appendix to the document that describes variants of the main hybrid KEM framework that provide pre-hashing, which applications could use if the key/ciphertext reuse cases are important to them.  I would propose the following outline for the content of this section\n\n* Review of use cases in which pre-hashing can make a performance difference\n* Combinator functions:\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), ek_PQ, ek_T, label))`\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, H(ek_PQ, ek_T), label))`\n    * Pre-hash both: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), H(ek_PQ, ek_T), label))`\n* Security analysis\n    * Requirements for the pre-hashing function H\n    * Indifferentiability arguments for the security of the pre-hashed constructions\n    * Label MUST be different from non-pre-hashed variant with the same constituents\n\nBut we should only do this if enough folks are interested to merit it.",
+      "createdAt": "2025-09-16T21:16:18Z",
+      "updatedAt": "2025-09-17T00:48:55Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 81,
+      "id": "I_kwDOMmhxws7MFCoI",
+      "title": "IANA registry for labels?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/81",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "discuss"
+      ],
+      "body": "The `label` input to the KDFs is intended to distinguish different instances of the hybrid KEM framework.  Right now, this is a free text field, which means there's a risk that different implementations might choose the same label, removing the desired separation.  It might be good to be a little more structured about labels to reduce the risk of such collisions.\n\nThe maximally structured approach would be to do something like HPKE: Assign unique identifiers to the constituent components (KEMs, KDF, etc.) and encode that into a standard label.  That has a couple of drawbacks: You need to manage registries of constituent components, and forcing everything to use a standard label would prevent backward compatibility with X-Wing.\n\nIt seems to me that there are a couple of options here.  They all involve an IANA registry (the standard IETF technology for collision avoidance), the question is what goes in the registry and how we accommodate X-Wing as a legacy case.\n\n| Label | T component | PQ component | KDF | ... |\n|-------|-----|-----|-----|-----|\n|  ??? | X25519 | ML-KEM-768 | SHAKE256 | ... |\n|  ??? | RSA-1024 | HQC | HKDF-SHA-256 | ... |\n\n* **Labels are strings:** Labels is any string chosen by the person that registers the combination.  We might recommend a default construction (e.g., concatenating names as we have done [in the concrete doc](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/blob/main/draft-irtf-cfrg-concrete-hybrid-kems.md#qsf-mlkem768-p256-sha3256-shake256-qsf-p256))  This would directly accommodate X-Wing by registering its label string for the appropriate combination.\n\n* **Labels are integers:** Label is an integer selected by IANA at registration time (since all we need for domain separation is a few distinct bits).  There would have to be some convention for how this integer was translated to a byte string, e.g., a varint encoding.  X-Wing would be an explicit legacy case.\n\nSo the questions for feedback are:\n\n1. Should we bother with an IANA registry here at all?\n2. If so, should we use strings or integers?\n\nPersonally, my take is (1) yes, and (2) strings.  Having a clear conflict avoidance story seems worth the overhead of maintaining a registry.  Integers don't save you anything over strings (unless the strings are huge and cause extra hash iterations, which is avoidable), and it's simpler to describe both how they plug into the KDF and how they accommodate X-Wing.",
+      "createdAt": "2025-09-16T22:00:50Z",
+      "updatedAt": "2025-09-17T09:45:46Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agree on yes; strings. Nit: perhaps the strings should (also) be represented in hex for clarity?",
+          "createdAt": "2025-09-17T09:45:46Z",
+          "updatedAt": "2025-09-17T09:45:46Z"
         }
       ]
     }
@@ -6654,19 +6782,140 @@
       "labels": [],
       "body": "It has become clear in CFRG discussions that the limitation of GHP to only KEM+KEM and QSF to only KEM+Group is insufficient.  Folks want to instantiate QSF with RSA (see, e.g., [LAMPS](https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-07.html)), and folks being conservative about C2PRI want to instantiate GHP with ECDH groups in the T component.\r\n\r\nWe thus end up with four combinations to consider:\r\n1. PQ(IND-CCA + C2PRI) + T(Group) = QSF\r\n2. PQ(IND-CCA + C2PRI) + T(KEM)\r\n3. PQ(IND-CCA only) + T(Group)\r\n4. PQ(IND-CCA only) + T(KEM) = GHP\r\n\r\nThis PR attempts to present these options in a unified framework, with two binary choices: KEM vs. group, and C2PRI or not.  This PR does not make the corresponding changes to the Security Considerations, which will need to be updated to match if we adopt this approach.\r\n\r\nThe framework here could be simpler if we defined a DH-based thing that satisfied the KEM interface.  This would be problematic, however, because the resulting \"KEM\" would not be IND-CCA.  Given this fact, and the fact that defining such a \"KEM\" would take up about the same amount of space as the repetition we currently have, I think the current approach of keeping these separate is the right one.",
       "createdAt": "2025-08-28T20:12:10Z",
-      "updatedAt": "2025-08-28T20:14:51Z",
+      "updatedAt": "2025-09-17T01:33:41Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
-      "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
+      "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "uniform-api",
-      "headRefOid": "1e70a840dd8ed2c84d7f70576072f4336b6a692e",
+      "headRefOid": "56f58b1a12d1069eeea1b31ea9f806b025a52a9d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7AYMxW",
+          "commit": {
+            "abbreviatedOid": "1e70a84"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T06:10:31Z",
+          "updatedAt": "2025-09-16T06:10:31Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "I do not think this simplification / uniform API helps us much and seems squishier and more unclear than explicit generic frameworks; we can explicitly write them all (4?) down and that's it",
+              "createdAt": "2025-09-16T06:10:31Z",
+              "updatedAt": "2025-09-16T06:10:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AYQ9C",
+          "commit": {
+            "abbreviatedOid": "1e70a84"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T06:13:17Z",
+          "updatedAt": "2025-09-16T06:13:17Z",
+          "comments": [
+            {
+              "originalPosition": 137,
+              "body": "I definitely think removing the names is a step back, names help",
+              "createdAt": "2025-09-16T06:13:17Z",
+              "updatedAt": "2025-09-16T06:13:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AYTCc",
+          "commit": {
+            "abbreviatedOid": "1e70a84"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T06:14:42Z",
+          "updatedAt": "2025-09-16T06:14:42Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "Neither if these functions are explicitly called?",
+              "createdAt": "2025-09-16T06:14:42Z",
+              "updatedAt": "2025-09-16T06:14:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZfnZ",
+          "commit": {
+            "abbreviatedOid": "1e70a84"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:03:41Z",
+          "updatedAt": "2025-09-16T07:03:41Z",
+          "comments": [
+            {
+              "originalPosition": 137,
+              "body": "We have names, we just name the combiner functions instead of the frameworks.  There are two binary parameters to configure, (1) Group or KEM for T and (2) which combiner, and the former is clear from the T component.  So for example, X-Wing would be (ML-KEM-768, X25519, PQImplicit).",
+              "createdAt": "2025-09-16T07:03:41Z",
+              "updatedAt": "2025-09-16T07:03:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZiHu",
+          "commit": {
+            "abbreviatedOid": "1e70a84"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:05:41Z",
+          "updatedAt": "2025-09-16T07:05:41Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "They're the two options for the `Combiner` component of the hybrid KEM, [as specified below](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/72/files#diff-f4a6c39bb3f52913d3a7bc10dc3628c226ba57bf16bde130f806a1fefd38e6b8R581).",
+              "createdAt": "2025-09-16T07:05:41Z",
+              "updatedAt": "2025-09-16T07:05:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZl3l",
+          "commit": {
+            "abbreviatedOid": "1e70a84"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:08:23Z",
+          "updatedAt": "2025-09-16T07:08:23Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "\"Squishier\" in what sense?\n\nRewriting all of this for 4 frameworks is a lot of duplication, especially when the only variations are (a) whether you use group or KEM names for effectively the same things and (b) what you put in the KDF.",
+              "createdAt": "2025-09-16T07:08:23Z",
+              "updatedAt": "2025-09-16T07:08:23Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 73,
@@ -6920,6 +7169,380 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 78,
+      "id": "PR_kwDOMmhxws6ov55Z",
+      "title": "Reframe and extend security considerations",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/78",
+      "state": "MERGED",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR does some reframing of the security considerations to make them correspond a little better to the charter we have and hopefully make them more usable by lay folks.  The revised structure is:\r\n\r\n* Prerequisites: IND-CCA, C2PRI, SDH, binding properties, RO, PRG; with examples for each\r\n* Goals for hybrid KEM: Hybrid IND-CCA, LEAK-BIND-K-PK, LEAK-BIND-K-CT",
+      "createdAt": "2025-09-16T02:18:51Z",
+      "updatedAt": "2025-09-16T07:36:03Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "b143401ed26565bb54960f6663ce267e193485a7",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "sec-prop",
+      "headRefOid": "85a97207ee97438b7fcb32607174f0925cfeae2f",
+      "closedAt": "2025-09-16T07:36:01Z",
+      "mergedAt": "2025-09-16T07:36:01Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "f048e2bf9b36857dc10fa10e8023df77518d95f5"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7AZc7y",
+          "commit": {
+            "abbreviatedOid": "848daff"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:01:40Z",
+          "updatedAt": "2025-09-16T07:01:41Z",
+          "comments": [
+            {
+              "originalPosition": 146,
+              "body": "```suggestion\r\nWhether a given KEM provides IND-CCA depends on whether the attacker is assumed\r\nto have access to quantum computing capabilities or not (assuming the scheme \r\nis without bugs and the implementation is correct).  Post-quantum KEMs are\r\nintended to provide IND-CCA security against such an attacker.  Traditional KEMs\r\nare not.\r\n```",
+              "createdAt": "2025-09-16T07:01:41Z",
+              "updatedAt": "2025-09-16T07:01:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZfz4",
+          "commit": {
+            "abbreviatedOid": "2d1bf80"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:03:50Z",
+          "updatedAt": "2025-09-16T07:03:51Z",
+          "comments": [
+            {
+              "originalPosition": 151,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-09-16T07:03:50Z",
+              "updatedAt": "2025-09-16T07:03:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZjLB",
+          "commit": {
+            "abbreviatedOid": "f8cca4a"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:06:27Z",
+          "updatedAt": "2025-09-16T07:06:27Z",
+          "comments": [
+            {
+              "originalPosition": 149,
+              "body": "```suggestion\r\nIND-CCA is the standard security notion for KEMs; most PQ KEMs were explicitly designed\r\nto achieve this type of security against both a quantum attacker and a traditional one.\r\n```",
+              "createdAt": "2025-09-16T07:06:27Z",
+              "updatedAt": "2025-09-16T07:06:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZj7T",
+          "commit": {
+            "abbreviatedOid": "67b4c3d"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:07:01Z",
+          "updatedAt": "2025-09-16T07:07:02Z",
+          "comments": [
+            {
+              "originalPosition": 157,
+              "body": "```suggestion\r\nIND-CCA is the standard security notion for KEMs; most PQ KEMs were\r\nexplicitly designed to achieve this type of security against both a\r\nquantum attacker and a traditional one.\r\n\r\nFor traditional algorithms, things are less clear.  The DHKEM construction in\r\n{{?RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but \"raw\"\r\nephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the\r\nciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure {{ISO18033-2}},\r\nand RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM, but\r\n\"classical\" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}}) is not\r\neven IND-CCA secure as a public-key encryption algorithm.\r\n```",
+              "createdAt": "2025-09-16T07:07:01Z",
+              "updatedAt": "2025-09-16T07:07:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZmrn",
+          "commit": {
+            "abbreviatedOid": "5168a15"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:09:02Z",
+          "updatedAt": "2025-09-16T07:09:03Z",
+          "comments": [
+            {
+              "originalPosition": 168,
+              "body": "```suggestion\r\n`Decaps(dk, ct) == ss` (where `dk` is the decapsulation key corresponding to\r\n```",
+              "createdAt": "2025-09-16T07:09:02Z",
+              "updatedAt": "2025-09-16T07:09:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZv1E",
+          "commit": {
+            "abbreviatedOid": "d86969d"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:16:05Z",
+          "updatedAt": "2025-09-16T07:16:06Z",
+          "comments": [
+            {
+              "originalPosition": 302,
+              "body": "```suggestion\r\nThe framework given by {{CDM23}} refers to these properties with labels of the\r\nform X-BIND-P-Q.  The first element X is the model for how the attacker can\r\naccess the decapsulation key: HON for the case where the attacker never\r\naccesses the decapsulation key, LEAK for the case where the attacker has\r\naccess to the honestly-generated decapsulation key, or MAL for the case\r\nwhere the attacker can choose or manipulate the keys used by the victim. \r\nP,Q means that given the value P, it is hard to produce another Q that\r\ncauses Decaps to succeed. For example, LEAK-BIND-K-PK means that for a\r\ngiven shared secret (K), there is a unique encapsulation key (PK) that\r\ncould have produced it, even if all of the secrets involved are given to\r\nthe adversary after the encapsulation operation is completed (LEAK).\r\n```",
+              "createdAt": "2025-09-16T07:16:05Z",
+              "updatedAt": "2025-09-16T07:16:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZwqF",
+          "commit": {
+            "abbreviatedOid": "4751ba6"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:16:41Z",
+          "updatedAt": "2025-09-16T07:16:42Z",
+          "comments": [
+            {
+              "originalPosition": 307,
+              "body": "```suggestion\r\nLEAK-level binding. Classic McEliece provides MAL-BIND-K-CT, but no assurance at\r\n```",
+              "createdAt": "2025-09-16T07:16:42Z",
+              "updatedAt": "2025-09-16T07:16:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZy5K",
+          "commit": {
+            "abbreviatedOid": "bce20df"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:18:12Z",
+          "updatedAt": "2025-09-16T07:18:12Z",
+          "comments": [
+            {
+              "originalPosition": 312,
+              "body": "```suggestion\r\n<!-- todo: HQB doesn't need a secure RO, only secure PRF -->\r\nThe KDF used with a hybrid KEM MUST be indifferentiable from a random oracle\r\n```",
+              "createdAt": "2025-09-16T07:18:12Z",
+              "updatedAt": "2025-09-16T07:18:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZ2KQ",
+          "commit": {
+            "abbreviatedOid": "a736931"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:20:31Z",
+          "updatedAt": "2025-09-16T07:20:31Z",
+          "comments": [
+            {
+              "originalPosition": 351,
+              "body": "```suggestion\r\n    * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->\r\n```",
+              "createdAt": "2025-09-16T07:20:31Z",
+              "updatedAt": "2025-09-16T07:20:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZ4DT",
+          "commit": {
+            "abbreviatedOid": "34e3233"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:21:58Z",
+          "updatedAt": "2025-09-16T07:21:59Z",
+          "comments": [
+            {
+              "originalPosition": 353,
+              "body": "```suggestion\r\n    * `KDF` is indifferentiable from a random oracle <!-- todo: the PQ proofs rely on PRF not RO... -->\r\n```",
+              "createdAt": "2025-09-16T07:21:58Z",
+              "updatedAt": "2025-09-16T07:21:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZ5Xd",
+          "commit": {
+            "abbreviatedOid": "34e3233"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:23:06Z",
+          "updatedAt": "2025-09-16T07:23:06Z",
+          "comments": [
+            {
+              "originalPosition": 348,
+              "body": "```suggestion\r\n    * `KDF` is indifferentiable from a random oracle <!-- todo: GHP, QSH only need PRF security here... -->\r\n```",
+              "createdAt": "2025-09-16T07:23:06Z",
+              "updatedAt": "2025-09-16T07:23:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZ6fW",
+          "commit": {
+            "abbreviatedOid": "7338669"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:24:08Z",
+          "updatedAt": "2025-09-16T07:24:08Z",
+          "comments": [
+            {
+              "originalPosition": 365,
+              "body": "```suggestion\r\nso MAL is too strong an attack model to address.\r\n```",
+              "createdAt": "2025-09-16T07:24:08Z",
+              "updatedAt": "2025-09-16T07:24:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AZ8Bq",
+          "commit": {
+            "abbreviatedOid": "aac5c89"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-09-16T07:25:22Z",
+          "updatedAt": "2025-09-16T07:25:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AaFZw",
+          "commit": {
+            "abbreviatedOid": "1846f97"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:32:14Z",
+          "updatedAt": "2025-09-16T07:32:15Z",
+          "comments": [
+            {
+              "originalPosition": 147,
+              "body": "```suggestion\r\nWhether a given KEM provides IND-CCA depends on whether the attacker is assumed\r\nto have access to quantum computing capabilities or not (assuming the scheme\r\nis without bugs and the implementation is correct).  Post-quantum KEMs are\r\nintended to provide IND-CCA security against such an attacker.  Traditional KEMs\r\nare not.\r\n```",
+              "createdAt": "2025-09-16T07:32:14Z",
+              "updatedAt": "2025-09-16T07:32:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7AaGPt",
+          "commit": {
+            "abbreviatedOid": "1846f97"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-16T07:33:01Z",
+          "updatedAt": "2025-09-16T07:33:01Z",
+          "comments": [
+            {
+              "originalPosition": 297,
+              "body": "```suggestion\r\nwhere the attacker can choose or manipulate the keys used by the victim.\r\n```",
+              "createdAt": "2025-09-16T07:33:01Z",
+              "updatedAt": "2025-09-16T07:33:01Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 79,
+      "id": "PR_kwDOMmhxws6oyINa",
+      "title": "Add HQB and QSH frameworks, proofs still pending",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/79",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-09-16T06:51:46Z",
+      "updatedAt": "2025-09-16T19:21:30Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "hqb-and-qsh",
+      "headRefOid": "feb21f6d9021203f4d3c4b90dbc215c83146e1da",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 82,
+      "id": "PR_kwDOMmhxws6pJ2KM",
+      "title": "Add an IANA registry of labels",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/82",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #81 ",
+      "createdAt": "2025-09-17T20:50:27Z",
+      "updatedAt": "2025-09-17T20:50:29Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "iana",
+      "headRefOid": "d0c382b0e1758592b58bd49c2474d5c4d874f183",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
