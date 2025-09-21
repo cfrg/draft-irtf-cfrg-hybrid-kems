@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-18T01:03:14.000153+00:00",
+  "timestamp": "2025-09-21T01:10:55.638844+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1120,7 +1120,7 @@
       ],
       "body": "In #73, we allow for two different styles of key generation: the default \"shared seed\" approach, and an \"external keygen\" approach that basically just invokes whatever keygen the component algorithms provide.  In the shared seed approach, the decapsulation key is `seed`; in the \"external keygen\" approach, the decapsulation key is `(dk_PQ, dk_T)`.\n\nConsider two implementations of a hybrid KEM that differ **only in terms of keygen** -- they use the same component algorithms, same constants, etc.  Should these implementations be considered to be different things?\n\nIn the scope of this document, this question primarily comes down to labels -- should these two cases have different domain separation labels?\n\nIn favor of different:\n* The two keygen processes result in different security properties.  MAL-BIND vs. LEAK-BIND\n* Since the decapsulation key formats are different, so it's not clear what private key format an implementation of the algorithm should accept\n\nIn favor of same:\n* The two \"algorithms\" are identical when it comes to the part that matters for interop, i.e., the encapsulation logic.\n* Which key generation the decapsulator uses is invisible to the encapsulator.  Any claim about is an unenforceable promise.  The encapsulator shouldn't have to care.",
       "createdAt": "2025-09-15T21:46:50Z",
-      "updatedAt": "2025-09-18T00:55:13Z",
+      "updatedAt": "2025-09-18T01:25:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -1213,6 +1213,27 @@
           "body": "> Except this is unlike Ed25519 and RSA, because there are constituent algorithms involved. Which is precisely why we have this problem.\n\nAnd yet we are designing a cryptographic scheme. Just because different signing algorithms use existing hash functions or primitives doesn't mean they are not distinguished from each other at the parameter set level, etc.\n\n\n> \"Each combination should be one keygen only\".\n\nYes, each concrete instantiation (including generic framework, kdf, prg, component algorithms) SHOULD be one keygen only, where SHOULD is to be interpreted as described in [RFC2119](https://datatracker.ietf.org/doc/rfc2119/)\n",
           "createdAt": "2025-09-18T00:55:13Z",
           "updatedAt": "2025-09-18T00:55:13Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Just because we're designing a KEM doesn't meant that it's hermetically sealed and created from scratch.  People are going to build it with the tools they have.\n\nTBH, I think if you write it that way, it's going to be [MUST (BUT WE KNOW YOU WON'T)](https://rfcs.online/rfcs/rfc6919.html#section-1).  Because everyone designing an instantiation is going to be like \"Well, I don't know if someone is going to try to do this on an HSM, maybe @FiloSottile is going to want to use a YubiKey for half of it\".",
+          "createdAt": "2025-09-18T01:15:28Z",
+          "updatedAt": "2025-09-18T01:15:28Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\n> TBH, I think if you write it that way, it's going to be [MUST (BUT WE KNOW YOU WON'T)](https://rfcs.online/rfcs/rfc6919.html#section-1).\n\n```\nSHOULD   This word, or the adjective \"RECOMMENDED\", mean that there\n   may exist valid reasons in particular circumstances to ignore a\n   particular item, but the full implications must be understood and\n   carefully weighed before choosing a different course.\n```\n\nI think SHOULD is exactly appropriate here.\n",
+          "createdAt": "2025-09-18T01:18:34Z",
+          "updatedAt": "2025-09-18T01:18:34Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > TBH, I think if you write it that way, it's going to be [MUST (BUT WE KNOW YOU WON'T)](https://rfcs.online/rfcs/rfc6919.html#section-1).\n> \n> ```\n> SHOULD   This word, or the adjective \"RECOMMENDED\", mean that there\n>    may exist valid reasons in particular circumstances to ignore a\n>    particular item, but the full implications must be understood and\n>    carefully weighed before choosing a different course.\n> ```\n> \n> I think SHOULD is exactly appropriate here.\n\nWhat we recommend with the SHOULD in the generics document does not say boo about what a concrete instantiation document says\u2014 this proposed text for this document says concrete instantiators SHOULD choose a single keygen, and then they may know their audience better and have more than one for a single concrete instance and use whatever keywords they like, hopefully having 'understood the full implications' and 'carefully weighed' them before doing so. ",
+          "createdAt": "2025-09-18T01:25:57Z",
+          "updatedAt": "2025-09-18T01:25:57Z"
         }
       ]
     },
