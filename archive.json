@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-21T01:10:55.638844+00:00",
+  "timestamp": "2025-09-28T01:11:49.750424+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1249,9 +1249,9 @@
       "labels": [
         "discuss"
       ],
-      "body": "In scenarios where encapsulation keys and ciphertexts are reused for multiple decapsulation operations, it can be improve the performance of decapsulation operations to have a combiner that pre-hashes these values and a stateful algorithm that caches the pre-hashed values.  This was the basis for the Chempat and PRE hybrid KEMs that have been discussed.\n\nFeedback at the CFRG meeting at IETF 123 and subsequent mailing list discussion indicated that these use cases are not a priority for the CFRG community, and thus that the additional complexity of pre-hashing doesn't make sense for the main body of the document.  There was also concern that the introduction of extra hashes took us further from the constructions that have been validated in the literature, though it was proposed on the mailing list that there might be easy indifferentiability arguments to connect the pre-hashed variants with their non-pre-hashed analogues.\n\nIf the latter argument could be fleshed out and made precise, we could add an appendix to the document that describes variants of the main hybrid KEM framework that provide pre-hashing, which applications could use if the key/ciphertext reuse cases are important to them.  I would propose the following outline for the content of this section\n\n* Review of use cases in which pre-hashing can make a performance difference\n* Combinator functions:\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), ek_PQ, ek_T, label))`\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, H(ek_PQ, ek_T), label))`\n    * Pre-hash both: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), H(ek_PQ, ek_T), label))`\n* Security analysis\n    * Requirements for the pre-hashing function H\n    * Indifferentiability arguments for the security of the pre-hashed constructions\n    * Label MUST be different from non-pre-hashed variant with the same constituents\n\nBut we should only do this if enough folks are interested to merit it.",
+      "body": "In scenarios where encapsulation keys and ciphertexts are reused for multiple decapsulation operations, it can be improve the performance of decapsulation operations to have a combiner that pre-hashes these values and a stateful algorithm that caches the pre-hashed values.  This was the basis for the Chempat and PRE hybrid KEMs that have been discussed.\n\nFeedback at the CFRG meeting at IETF 123 and subsequent mailing list discussion indicated that these use cases are not a priority for the CFRG community, and thus that the additional complexity of pre-hashing doesn't make sense for the main body of the document.  There was also concern that the introduction of extra hashes took us further from the constructions that have been validated in the literature, though it was proposed on the mailing list that there might be easy indifferentiability arguments to connect the pre-hashed variants with their non-pre-hashed analogues.\n\nIf the latter argument could be fleshed out and made precise, we could add an appendix to the document that describes variants of the main hybrid KEM framework that provide pre-hashing, which applications could use if the key/ciphertext reuse cases are important to them.  I would propose the following outline for the content of this section\n\n* Review of use cases in which pre-hashing can make a performance difference\n* Combinator functions:\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), ek_PQ, ek_T, label))`\n    * Pre-hash PK: `KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, H(ek_PQ, ek_T), label))`\n    * Pre-hash both: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), H(ek_PQ, ek_T), label))`\n* Security analysis\n    * Requirements for the pre-hashing function H\n    * Indifferentiability arguments for the security of the pre-hashed constructions\n    * Label MUST be different from non-pre-hashed variant with the same constituents\n\nBut we should only do this if enough folks are interested to merit it.",
       "createdAt": "2025-09-16T21:16:18Z",
-      "updatedAt": "2025-09-17T00:48:55Z",
+      "updatedAt": "2025-09-26T16:44:02Z",
       "closedAt": null,
       "comments": []
     },
@@ -1269,7 +1269,7 @@
       ],
       "body": "The `label` input to the KDFs is intended to distinguish different instances of the hybrid KEM framework.  Right now, this is a free text field, which means there's a risk that different implementations might choose the same label, removing the desired separation.  It might be good to be a little more structured about labels to reduce the risk of such collisions.\n\nThe maximally structured approach would be to do something like HPKE: Assign unique identifiers to the constituent components (KEMs, KDF, etc.) and encode that into a standard label.  That has a couple of drawbacks: You need to manage registries of constituent components, and forcing everything to use a standard label would prevent backward compatibility with X-Wing.\n\nIt seems to me that there are a couple of options here.  They all involve an IANA registry (the standard IETF technology for collision avoidance), the question is what goes in the registry and how we accommodate X-Wing as a legacy case.\n\n| Label | T component | PQ component | KDF | ... |\n|-------|-----|-----|-----|-----|\n|  ??? | X25519 | ML-KEM-768 | SHAKE256 | ... |\n|  ??? | RSA-1024 | HQC | HKDF-SHA-256 | ... |\n\n* **Labels are strings:** Labels is any string chosen by the person that registers the combination.  We might recommend a default construction (e.g., concatenating names as we have done [in the concrete doc](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/blob/main/draft-irtf-cfrg-concrete-hybrid-kems.md#qsf-mlkem768-p256-sha3256-shake256-qsf-p256))  This would directly accommodate X-Wing by registering its label string for the appropriate combination.\n\n* **Labels are integers:** Label is an integer selected by IANA at registration time (since all we need for domain separation is a few distinct bits).  There would have to be some convention for how this integer was translated to a byte string, e.g., a varint encoding.  X-Wing would be an explicit legacy case.\n\nSo the questions for feedback are:\n\n1. Should we bother with an IANA registry here at all?\n2. If so, should we use strings or integers?\n\nPersonally, my take is (1) yes, and (2) strings.  Having a clear conflict avoidance story seems worth the overhead of maintaining a registry.  Integers don't save you anything over strings (unless the strings are huge and cause extra hash iterations, which is avoidable), and it's simpler to describe both how they plug into the KDF and how they accommodate X-Wing.",
       "createdAt": "2025-09-16T22:00:50Z",
-      "updatedAt": "2025-09-17T09:45:46Z",
+      "updatedAt": "2025-09-26T20:57:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -1278,6 +1278,20 @@
           "body": "Agree on yes; strings. Nit: perhaps the strings should (also) be represented in hex for clarity?",
           "createdAt": "2025-09-17T09:45:46Z",
           "updatedAt": "2025-09-17T09:45:46Z"
+        },
+        {
+          "author": "pag-crypto",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Apologies for a basic question, but what would be involved in an IANA registry? Is the process simple or time-consuming?",
+          "createdAt": "2025-09-26T16:46:21Z",
+          "updatedAt": "2025-09-26T16:46:21Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To create the registry, we would just include a section in this document.\r\n\r\nTo register a new value \u2014 we can decide how much work we want to make it\r\n(by setting the policy for the registry in this document).  The simplest\r\nwould be \u201cFirst come first served\u201d, in which case registering a new value\r\njust requires sending email to IANA.  The next level up would be\r\n\u201cSpecification Required\u201d, to which you have to publish some spec (like an\r\nInternet draft) and send email to IANA, which then gets reviewed by some\r\npeople designated by CFRG.  For example, Chris Wood and I are the reviewers\r\nfor the HPKE registries.\r\n\r\nEither way, IANA does the work of actually putting stuff in the registry\r\nand publishing it.\r\n\r\nI think we definitely don\u2019t need anything more than Specification Required\r\nhere, and might be fine with FCFS, especially if we go with strings.\r\n\r\n\r\nOn Fri, Sep 26, 2025 at 06:46 Paul Grubbs ***@***.***> wrote:\r\n\r\n> *pag-crypto* left a comment (cfrg/draft-irtf-cfrg-hybrid-kems#81)\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/81#issuecomment-3339577516>\r\n>\r\n> Apologies for a basic question, but what would be involved in an IANA\r\n> registry? Is the process simple or time-consuming?\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/81#issuecomment-3339577516>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/AAASOTLCZTWWDNT4JQOAT2D3UVUXHAVCNFSM6AAAAACGWHFRA6VHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZTGMZZGU3TONJRGY>\r\n> .\r\n> You are receiving this because you authored the thread.Message ID:\r\n> ***@***.***>\r\n>\r\n",
+          "createdAt": "2025-09-26T20:57:44Z",
+          "updatedAt": "2025-09-26T20:57:44Z"
         }
       ]
     }
