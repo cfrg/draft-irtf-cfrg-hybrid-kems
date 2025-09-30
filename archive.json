@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-28T01:11:49.750424+00:00",
+  "timestamp": "2025-09-30T01:06:03.036953+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -232,7 +232,7 @@
       "id": "I_kwDOMmhxws6y1lj0",
       "title": "Flesh out tradeoffs",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/14",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -241,8 +241,8 @@
       ],
       "body": "- [ ] include not looking at 'layered' style hybrids\n- [ ] include not looking at split/dualPRF style",
       "createdAt": "2025-04-16T18:15:46Z",
-      "updatedAt": "2025-07-03T19:49:02Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-29T19:29:37Z",
+      "closedAt": "2025-09-29T19:29:37Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -432,7 +432,7 @@
       "id": "I_kwDOMmhxws643qoZ",
       "title": "Define the desired security properties for the hybrid KEMs",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/26",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -443,8 +443,8 @@
       ],
       "body": "Normal KEM security notions apply, particularly IND-CCA and X-BIND-P-Q.\n\nThe interesting thing will be how to discuss the \"hybrid\" security notion, i.e., the survival of at least IND-CCA when at least one KEM fails -- for some definition of \"fails\".",
       "createdAt": "2025-05-29T22:14:34Z",
-      "updatedAt": "2025-07-17T07:22:58Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-29T19:30:23Z",
+      "closedAt": "2025-09-29T19:30:23Z",
       "comments": [
         {
           "author": "pag-crypto",
@@ -473,6 +473,13 @@
           "body": "Has there been even remotely realistic scenarios where LEAK-BIND-K-PK is needed, but MAL-BIND-K-CT is not enough? Because for some stuff (e.g., anything involving RSA, HQC or FrodoKEM), binding the key is much more annoying than binding the ciphertext. And the hybrid construction seems to be always MAL-BIND-K-CT if the hashes are strong enough (since either the component ciphertext is hashed, or component is C2PIR).\n\nThere may be some annoying edge cases, tho, e.g., ciphertexts that always decrypt the same way for any key (one infamous KEM had those?), but no honest initiator should ever produce those, so I think that should be enough to stop at least re-encapsulation attacks.",
           "createdAt": "2025-07-17T07:14:30Z",
           "updatedAt": "2025-07-17T07:22:58Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed in #78 ",
+          "createdAt": "2025-09-29T19:30:23Z",
+          "updatedAt": "2025-09-29T19:30:23Z"
         }
       ]
     },
@@ -754,11 +761,11 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "discuss"
+        "TODO"
       ],
       "body": "In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)",
       "createdAt": "2025-06-24T16:51:38Z",
-      "updatedAt": "2025-08-11T20:44:44Z",
+      "updatedAt": "2025-09-29T19:29:14Z",
       "closedAt": null,
       "comments": [
         {
@@ -788,6 +795,13 @@
           "body": "I agree with @bwesterb that we should consider all KEMs here explicitly rejecting.\n\nThe Python-ish pseudocode we are using kind of obscures this, since Python exceptions can be raised anywhere.  So it would be good to be explicit.",
           "createdAt": "2025-08-11T20:44:44Z",
           "updatedAt": "2025-08-11T20:44:44Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Interim 2025-09: Hybrid KEMs should only pass on any failures from the component KEMs.  Basically: \u201cwrite pseudocode as if things are infallible, write advisory text about failures\u201d. Where the advisory text would be something like \"if one KEM fails, fail the hybrid, but don't reveal anything other than failure\".  We should not do the strong form of \"implicit\", which would be something like, \"if a KEM explicitly fails, generate a random SS for it\"\n",
+          "createdAt": "2025-09-29T19:29:06Z",
+          "updatedAt": "2025-09-29T19:29:06Z"
         }
       ]
     },
@@ -1116,11 +1130,11 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "discuss"
+        "TODO"
       ],
       "body": "In #73, we allow for two different styles of key generation: the default \"shared seed\" approach, and an \"external keygen\" approach that basically just invokes whatever keygen the component algorithms provide.  In the shared seed approach, the decapsulation key is `seed`; in the \"external keygen\" approach, the decapsulation key is `(dk_PQ, dk_T)`.\n\nConsider two implementations of a hybrid KEM that differ **only in terms of keygen** -- they use the same component algorithms, same constants, etc.  Should these implementations be considered to be different things?\n\nIn the scope of this document, this question primarily comes down to labels -- should these two cases have different domain separation labels?\n\nIn favor of different:\n* The two keygen processes result in different security properties.  MAL-BIND vs. LEAK-BIND\n* Since the decapsulation key formats are different, so it's not clear what private key format an implementation of the algorithm should accept\n\nIn favor of same:\n* The two \"algorithms\" are identical when it comes to the part that matters for interop, i.e., the encapsulation logic.\n* Which key generation the decapsulator uses is invisible to the encapsulator.  Any claim about is an unenforceable promise.  The encapsulator shouldn't have to care.",
       "createdAt": "2025-09-15T21:46:50Z",
-      "updatedAt": "2025-09-18T01:25:57Z",
+      "updatedAt": "2025-09-29T19:28:25Z",
       "closedAt": null,
       "comments": [
         {
@@ -1234,6 +1248,13 @@
           "body": "> > TBH, I think if you write it that way, it's going to be [MUST (BUT WE KNOW YOU WON'T)](https://rfcs.online/rfcs/rfc6919.html#section-1).\n> \n> ```\n> SHOULD   This word, or the adjective \"RECOMMENDED\", mean that there\n>    may exist valid reasons in particular circumstances to ignore a\n>    particular item, but the full implications must be understood and\n>    carefully weighed before choosing a different course.\n> ```\n> \n> I think SHOULD is exactly appropriate here.\n\nWhat we recommend with the SHOULD in the generics document does not say boo about what a concrete instantiation document says\u2014 this proposed text for this document says concrete instantiators SHOULD choose a single keygen, and then they may know their audience better and have more than one for a single concrete instance and use whatever keywords they like, hopefully having 'understood the full implications' and 'carefully weighed' them before doing so. ",
           "createdAt": "2025-09-18T01:25:57Z",
           "updatedAt": "2025-09-18T01:25:57Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Interim 2025-09: .  We should allow interop, but (1) have shared-seed keygen be the default and (2) put appropriate warning labels around separate keygen.",
+          "createdAt": "2025-09-29T19:27:53Z",
+          "updatedAt": "2025-09-29T19:27:53Z"
         }
       ]
     },
@@ -1247,20 +1268,28 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "discuss"
+        "TODO"
       ],
       "body": "In scenarios where encapsulation keys and ciphertexts are reused for multiple decapsulation operations, it can be improve the performance of decapsulation operations to have a combiner that pre-hashes these values and a stateful algorithm that caches the pre-hashed values.  This was the basis for the Chempat and PRE hybrid KEMs that have been discussed.\n\nFeedback at the CFRG meeting at IETF 123 and subsequent mailing list discussion indicated that these use cases are not a priority for the CFRG community, and thus that the additional complexity of pre-hashing doesn't make sense for the main body of the document.  There was also concern that the introduction of extra hashes took us further from the constructions that have been validated in the literature, though it was proposed on the mailing list that there might be easy indifferentiability arguments to connect the pre-hashed variants with their non-pre-hashed analogues.\n\nIf the latter argument could be fleshed out and made precise, we could add an appendix to the document that describes variants of the main hybrid KEM framework that provide pre-hashing, which applications could use if the key/ciphertext reuse cases are important to them.  I would propose the following outline for the content of this section\n\n* Review of use cases in which pre-hashing can make a performance difference\n* Combinator functions:\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), ek_PQ, ek_T, label))`\n    * Pre-hash PK: `KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, H(ek_PQ, ek_T), label))`\n    * Pre-hash both: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), H(ek_PQ, ek_T), label))`\n* Security analysis\n    * Requirements for the pre-hashing function H\n    * Indifferentiability arguments for the security of the pre-hashed constructions\n    * Label MUST be different from non-pre-hashed variant with the same constituents\n\nBut we should only do this if enough folks are interested to merit it.",
       "createdAt": "2025-09-16T21:16:18Z",
-      "updatedAt": "2025-09-26T16:44:02Z",
+      "updatedAt": "2025-09-29T19:28:13Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Interim 2025-09: No, we should not actually specify it.  At most, we could mention it in our \u201cpaths not taken\u201d section.",
+          "createdAt": "2025-09-29T19:27:18Z",
+          "updatedAt": "2025-09-29T19:27:18Z"
+        }
+      ]
     },
     {
       "number": 81,
       "id": "I_kwDOMmhxws7MFCoI",
       "title": "IANA registry for labels?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/81",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -1269,8 +1298,8 @@
       ],
       "body": "The `label` input to the KDFs is intended to distinguish different instances of the hybrid KEM framework.  Right now, this is a free text field, which means there's a risk that different implementations might choose the same label, removing the desired separation.  It might be good to be a little more structured about labels to reduce the risk of such collisions.\n\nThe maximally structured approach would be to do something like HPKE: Assign unique identifiers to the constituent components (KEMs, KDF, etc.) and encode that into a standard label.  That has a couple of drawbacks: You need to manage registries of constituent components, and forcing everything to use a standard label would prevent backward compatibility with X-Wing.\n\nIt seems to me that there are a couple of options here.  They all involve an IANA registry (the standard IETF technology for collision avoidance), the question is what goes in the registry and how we accommodate X-Wing as a legacy case.\n\n| Label | T component | PQ component | KDF | ... |\n|-------|-----|-----|-----|-----|\n|  ??? | X25519 | ML-KEM-768 | SHAKE256 | ... |\n|  ??? | RSA-1024 | HQC | HKDF-SHA-256 | ... |\n\n* **Labels are strings:** Labels is any string chosen by the person that registers the combination.  We might recommend a default construction (e.g., concatenating names as we have done [in the concrete doc](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/blob/main/draft-irtf-cfrg-concrete-hybrid-kems.md#qsf-mlkem768-p256-sha3256-shake256-qsf-p256))  This would directly accommodate X-Wing by registering its label string for the appropriate combination.\n\n* **Labels are integers:** Label is an integer selected by IANA at registration time (since all we need for domain separation is a few distinct bits).  There would have to be some convention for how this integer was translated to a byte string, e.g., a varint encoding.  X-Wing would be an explicit legacy case.\n\nSo the questions for feedback are:\n\n1. Should we bother with an IANA registry here at all?\n2. If so, should we use strings or integers?\n\nPersonally, my take is (1) yes, and (2) strings.  Having a clear conflict avoidance story seems worth the overhead of maintaining a registry.  Integers don't save you anything over strings (unless the strings are huge and cause extra hash iterations, which is avoidable), and it's simpler to describe both how they plug into the KDF and how they accommodate X-Wing.",
       "createdAt": "2025-09-16T22:00:50Z",
-      "updatedAt": "2025-09-26T20:57:44Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-29T18:50:13Z",
+      "closedAt": "2025-09-29T18:50:13Z",
       "comments": [
         {
           "author": "bwesterb",
@@ -1292,6 +1321,30 @@
           "body": "To create the registry, we would just include a section in this document.\r\n\r\nTo register a new value \u2014 we can decide how much work we want to make it\r\n(by setting the policy for the registry in this document).  The simplest\r\nwould be \u201cFirst come first served\u201d, in which case registering a new value\r\njust requires sending email to IANA.  The next level up would be\r\n\u201cSpecification Required\u201d, to which you have to publish some spec (like an\r\nInternet draft) and send email to IANA, which then gets reviewed by some\r\npeople designated by CFRG.  For example, Chris Wood and I are the reviewers\r\nfor the HPKE registries.\r\n\r\nEither way, IANA does the work of actually putting stuff in the registry\r\nand publishing it.\r\n\r\nI think we definitely don\u2019t need anything more than Specification Required\r\nhere, and might be fine with FCFS, especially if we go with strings.\r\n\r\n\r\nOn Fri, Sep 26, 2025 at 06:46 Paul Grubbs ***@***.***> wrote:\r\n\r\n> *pag-crypto* left a comment (cfrg/draft-irtf-cfrg-hybrid-kems#81)\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/81#issuecomment-3339577516>\r\n>\r\n> Apologies for a basic question, but what would be involved in an IANA\r\n> registry? Is the process simple or time-consuming?\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/81#issuecomment-3339577516>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/AAASOTLCZTWWDNT4JQOAT2D3UVUXHAVCNFSM6AAAAACGWHFRA6VHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZTGMZZGU3TONJRGY>\r\n> .\r\n> You are receiving this because you authored the thread.Message ID:\r\n> ***@***.***>\r\n>\r\n",
           "createdAt": "2025-09-26T20:57:44Z",
           "updatedAt": "2025-09-26T20:57:44Z"
+        }
+      ]
+    },
+    {
+      "number": 83,
+      "id": "I_kwDOMmhxws7OlUpx",
+      "title": "Names:  GK, GM, KK, KM",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/83",
+      "state": "OPEN",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Isn't X the same as K; so wouldn't GK, GM, KK, KM make more sense?",
+      "createdAt": "2025-09-29T17:16:39Z",
+      "updatedAt": "2025-09-29T19:26:34Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't see how \"X is the same as K\" follows.  And \"KK\" has some unfortunate resonances.",
+          "createdAt": "2025-09-29T19:26:33Z",
+          "updatedAt": "2025-09-29T19:26:33Z"
         }
       ]
     }
@@ -7539,7 +7592,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-09-16T06:51:46Z",
-      "updatedAt": "2025-09-16T19:21:30Z",
+      "updatedAt": "2025-09-28T16:52:25Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
@@ -7558,26 +7611,42 @@
       "id": "PR_kwDOMmhxws6pJ2KM",
       "title": "Add an IANA registry of labels",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/82",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #81 ",
       "createdAt": "2025-09-17T20:50:27Z",
-      "updatedAt": "2025-09-17T20:50:29Z",
+      "updatedAt": "2025-09-29T18:50:13Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "iana",
       "headRefOid": "d0c382b0e1758592b58bd49c2474d5c4d874f183",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-09-29T18:50:12Z",
+      "mergedAt": "2025-09-29T18:50:12Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "bc25ae8254fd60325580e9271fa74b4a63a198df"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7Dj276",
+          "commit": {
+            "abbreviatedOid": "d0c382b"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Show of hands at the interim supported this",
+          "createdAt": "2025-09-29T17:35:33Z",
+          "updatedAt": "2025-09-29T17:35:33Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
