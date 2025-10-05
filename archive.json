@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-30T01:06:03.036953+00:00",
+  "timestamp": "2025-10-05T01:11:08.121549+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1347,6 +1347,22 @@
           "updatedAt": "2025-09-29T19:26:33Z"
         }
       ]
+    },
+    {
+      "number": 84,
+      "id": "I_kwDOMmhxws7Pm4th",
+      "title": "Comments from Chris Patton",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/84",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "https://mailarchive.ietf.org/arch/msg/cfrg/SsuoZgdaZGqUwS1Sn6Q6L7QzqvY/\n\n- I ended up combining the PRG and KDF APIs into a single trait that was more convenient for defining the KEMs.\n- I ended up combining Nseed, Nss, and Nout into one variable. I suspect most of the time these will all always be the same, though perhaps not for larger than usual elliptic curves.\n- Rather than rederive the encapsulation key during decapsulation, I just stored the encapsulation key in the decapsulation key. My guess is that implementations would do this most of the time.\n- Section 3: It seems like `GenerateKeyPair()` is there just for convenience. I would get rid of it and just explain that `DeriveKeyPair()` needs a (pseudo)random input.\n- Section 3: The draft uses `random()` for samping random bytes strings and the more academic $x \\getsr \\bits^n$ for sampling bit strings. I would go with just one of these.\n- Section 4.2: `DeriveScalar(seed)` would be more consistent than `RandomScalar(seed)`.\n- Section 4.3: The first paragraph calls the function `G`, but the rest of the document uses `PRG`.\n- nit: I like `Combine()` as the name for the combiner function rather than `Combine()`. This aligns grammatically better with the rest of the API in the doc.\n- nit: Perhaps drop \"PQ\" from \"PQImplicit\". I understand \"explicit\" to mean \"explicitly hash the PQ ciphertext and encapsulation key\", in which case \"PQ\" is a little redundant.",
+      "createdAt": "2025-10-04T02:29:31Z",
+      "updatedAt": "2025-10-04T02:29:31Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -6870,7 +6886,7 @@
       "labels": [],
       "body": "It has become clear in CFRG discussions that the limitation of GHP to only KEM+KEM and QSF to only KEM+Group is insufficient.  Folks want to instantiate QSF with RSA (see, e.g., [LAMPS](https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-07.html)), and folks being conservative about C2PRI want to instantiate GHP with ECDH groups in the T component.\r\n\r\nWe thus end up with four combinations to consider:\r\n1. PQ(IND-CCA + C2PRI) + T(Group) = QSF\r\n2. PQ(IND-CCA + C2PRI) + T(KEM)\r\n3. PQ(IND-CCA only) + T(Group)\r\n4. PQ(IND-CCA only) + T(KEM) = GHP\r\n\r\nThis PR attempts to present these options in a unified framework, with two binary choices: KEM vs. group, and C2PRI or not.  This PR does not make the corresponding changes to the Security Considerations, which will need to be updated to match if we adopt this approach.\r\n\r\nThe framework here could be simpler if we defined a DH-based thing that satisfied the KEM interface.  This would be problematic, however, because the resulting \"KEM\" would not be IND-CCA.  Given this fact, and the fact that defining such a \"KEM\" would take up about the same amount of space as the repetition we currently have, I think the current approach of keeping these separate is the right one.",
       "createdAt": "2025-08-28T20:12:10Z",
-      "updatedAt": "2025-09-17T01:33:41Z",
+      "updatedAt": "2025-10-03T22:26:22Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
@@ -7000,6 +7016,66 @@
               "body": "\"Squishier\" in what sense?\n\nRewriting all of this for 4 frameworks is a lot of duplication, especially when the only variations are (a) whether you use group or KEM names for effectively the same things and (b) what you put in the KDF.",
               "createdAt": "2025-09-16T07:08:23Z",
               "updatedAt": "2025-09-16T07:08:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Ew7Vg",
+          "commit": {
+            "abbreviatedOid": "56f58b1"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-03T22:18:35Z",
+          "updatedAt": "2025-10-03T22:18:35Z",
+          "comments": [
+            {
+              "originalPosition": 120,
+              "body": "```suggestion\n`KEM_PQ`, `KEM_T`, `PRG`, and `KDF` MUST meet the interfaces\n```",
+              "createdAt": "2025-10-03T22:18:35Z",
+              "updatedAt": "2025-10-03T22:18:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Ew8gU",
+          "commit": {
+            "abbreviatedOid": "56f58b1"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-03T22:20:43Z",
+          "updatedAt": "2025-10-03T22:20:43Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Should Nss also be the max of KEM_PQ and KEM_T?",
+              "createdAt": "2025-10-03T22:20:43Z",
+              "updatedAt": "2025-10-03T22:20:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Ew_f_",
+          "commit": {
+            "abbreviatedOid": "56f58b1"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-03T22:26:17Z",
+          "updatedAt": "2025-10-03T22:26:22Z",
+          "comments": [
+            {
+              "originalPosition": 137,
+              "body": "Likely elsewhere as well.\n```suggestion\n    (ct_PQ, ss_PQ) = KEM_PQ.Encap(ek_PQ)\n```",
+              "createdAt": "2025-10-03T22:26:17Z",
+              "updatedAt": "2025-10-03T22:26:22Z"
             }
           ]
         }
@@ -7592,7 +7668,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-09-16T06:51:46Z",
-      "updatedAt": "2025-09-28T16:52:25Z",
+      "updatedAt": "2025-10-04T00:12:31Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
@@ -7603,7 +7679,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "body": "@dconnolly mind rebasing this one? Also can you tell why the document is failing to build?",
+          "createdAt": "2025-10-04T00:12:31Z",
+          "updatedAt": "2025-10-04T00:12:31Z"
+        }
+      ],
       "reviews": []
     },
     {
