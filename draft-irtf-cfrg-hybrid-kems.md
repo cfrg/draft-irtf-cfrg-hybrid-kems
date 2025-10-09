@@ -311,6 +311,14 @@ provide a small set of techniques to achieve specific security properties
 given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.
 
+We define four generic frameworks as variants of a common overall scheme.  The
+variations are based on (1) what type of cryptographic object is being used for
+the traditional component, and (2) whether the PQ KEM is assumed to have an
+additional property known as Ciphertext Second Preimage Resistance (C2PRI).
+Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the same security
+level with more efficient computations, trading off performance for an
+additional security assumption. 
+
 The remainder of this document is structured as follows: first, in
 {{cryptographic-deps}} and {{framework}}, we define the abstractions on
 which hybrid KEMs are built, and then a framework for building hybrid KEMs.  Then, in
@@ -537,43 +545,130 @@ and L arguments.
 The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
 
-# Hybrid KEM Framework {#framework}
+# Hybrid KEMs {#framework}
 
-In this section, we define a generic framework for building hybrid KEMs.  All
-instantiations of this framework share a common structure, which differs
-slightly depending on whether the framework is instantiated with a KEM or a
-nominal group as the traditional component.  This common structure uses one of
-two "combiner" functions, which determines the security requirements for the
-post-quantum KEM in order for the hybrid KEM to be secure.
+In this section, we define four frameworks for building hybrid KEMs.  These
+frameworks are based on a common set of subroutines for things like key
+generation and computing a final shared secret. 
 
-To instantiate this framework, a designer will have to make two choices:
+The four frameworks vary along two axes:
 
 1. Whether traditional component is a nominal group or a KEM
-2. Whether to rely on the C2PRI property holding for the post-quantum component
+2. Whether to rely on the C2PRI property for the post-quantum component
 
-The first choice will dictate the overall structure of the hybrid KEM, since
-traditional KEMs and nominal groups have different operations.  When a nominal
-group is used, the hybrid KEM MUST use the structure defined in {{group-inst}}.
-When a KEM is used, the hybrid KEM MUST use the structure defined in
-{{kem-inst}}.
+The choice of which framwork to use when building a hybrid KEM will depend on
+the application's needs along these two axes.
 
-The second choice will determine which combiner function should be used.  If the
-designer does not wish to rely on the C2PRI property for the PQ component, then
-the Explicit combiner MUST be used.  If the designer is comfortable relying on
-the C2PRI property for the PQ component, then the PQImplicit combiner MAY be
-used.
+| Name    | PQ C2PRI? | T component   |
+|:========|:==========|:==============|
+| UG      | No        | Nominal group |
+| UK      | No        | KEM           |
+| CG      | Yes       | Nominal group |
+| CK      | Yes       | KEM           |
+{: #variants title="Hybrid KEM frameworks" }
 
-Each instantiation of this framework thus corresponds to one of four variants:
+These frameworks create a hybrid KEM `KEM_H` based on the following constituent
+components:
 
-| Name    | PQ C2PRI? | T component   |    | Structure      | Combiner   |
-|:========|:==========|:==============|====|:===============|:===========|
-| GX      | No        | Nominal group | => | {{group-inst}} | Explicit   |
-| KX      | No        | KEM           | => | {{kem-inst}}   | Explicit   |
-| GM      | Yes       | Nominal group | => | {{group-inst}} | PQImplicit |
-| KM      | Yes       | KEM           | => | {{kem-inst}}   | PQImplicit |
-{: #variants title="Variants of the hybrid KEM framework" }
+* A traditional component that is either a nominal group or a KEM:
+    * `Group_T`: A nominal group
+    * `KEM_T`: A traditional KEM
+* `KEM_PQ`: A post-quantum KEM
+* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
+  Comp_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Comp_T.Nseed`)
+* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
+  == KEM_H.Nss`)
+* `Label` - A byte string used to label the specific combination of the above
+  constituents being used, as well as which framework is being instantiated.
 
-## Combiner Functions
+`KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
+described in {{cryptographic-deps}} and MUST meet the security requirements
+described in {{hybrid-ind-cca}}.
+
+The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:
+
+~~~
+KEM_H.Nek = KEM_PQ.Nek + (KEM_T.Nek or Group_T.Nelem)
+KEM_H.Nct = KEM_PQ.Nct + (KEM_T.Nct or Group_T.Nelem)
+~~~
+
+The `Nseed` and `Nss` constants should reflect the overall security level of
+the combined KEM, with the following recommended values:
+
+~~~
+KEM_H.Nseed = max(KEM_PQ.Nseed, (KEM_T.Nseed or Group_T.Nseed))
+KEM_H.Nss = min(KEM_PQ.Nss, (KEM_T.Nss or Group_T.Nss))
+~~~
+
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.  For legacy cases
+where it is not possible to derive per-component decapsulation keys from a
+common seed, see {{key-generation}}.
+
+## Subroutines
+
+The four hybrid KEM framework share a substantial amount of structure, which we
+capture in a set of subroutines.
+
+### Using a Nominal Group
+
+Hybrid KEM frameworks that use a KEM for the traditional component invoke the
+DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside analogous
+functions of the nominal group.  The "encapsulation key" is the receiver's
+public group element; the "ciphertext" is an ephemeral group element; and
+the shared secret is the secret value resulting from an ephemeral-static
+Diffie-Hellman exchange.
+
+~~~ pseudocode
+def expandDecapsKeyG(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
+
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    dk_T = Group_T.RandomScalar(seed_T)
+    ek_T = Group_T.Exp(Group_T.g, dk_T)
+
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+def prepareEncapG(ek_PQ, ek_T):
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
+    ct_T = Group_T.Exp(Group_T.g, sk_E)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
+    return (ss_PQ, ss_T, ct_PQ, ct_T)
+
+def prepareDecapG(ct_PQ, ct_T, dk_PQ, dk_T):
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+    return (ss_PQ, ss_T)
+~~~
+
+### Using a Traditional KEM
+
+Hybrid KEM frameworks that use a KEM for the traditional component invoke the
+DeriveKeyPair, Encap, and Decap functions of the traditional and PQ KEMs in
+parallel.
+
+~~~ pseudocode
+def expandDecapsKeyK(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)    
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+def prepareEncapK(ek_PQ, ek_T):
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encap(ek_T)
+    return (ss_PQ, ss_T, ct_PQ, ct_T)
+
+def prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T):
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+    return (ss_PQ, ss_T)
+~~~
+
+### Combiners
 
 A combiner function uses the KDF used in the hybrid KEM to combine the shared
 secrets output by the constituent algorithms with metadata.  This operation is
@@ -583,10 +678,10 @@ properties.
 The two combiner functions defined in this document are as follows:
 
 ~~~
-def Explicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
+def UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
     KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
 
-def PQImplicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
+def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
     KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
 ~~~
 
@@ -600,167 +695,173 @@ key" is the group element that functions as the recipient's public key.
 The choice of combiner in a given instantitation determines the assumptions
 under which the resulting hybrid KEM is secure.
 
-The `Explicit` combiner explicitly hashes shared secrets, ciphertexts, and
+The `UniversalCombiner` combiner explicitly hashes shared secrets, ciphertexts, and
 encapsulation keys from both constituent.  This allows the resulting hybrid KEM
 to be secure as long as either component is secure, with no further assumptions.
 
-The `PQImplicit` combiner does not explicitly hash in the ciphertext or
+The `C2PRICombiner` combiner does not explicitly hash in the ciphertext or
 encapsulation key from the PQ constituent.  The resulting hybrid KEM will only
 be secure if, in addition to one constituent being secure, the PQ constituent
 also satisfies the C2PRI property.
 
-## Instantiation with a Traditional KEM {#kem-inst}
+## Key Generation
 
-A hybrid KEM `KEM_H` instantiated with a KEM for its traditional
-constituent depends on the following components:
-
-* `KEM_PQ`: A post-quantum KEM
-* `KEM_T`: A traditional KEM
-* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed + KEM_T.Nseed`
-  (`PRG.Nout == KEM_PQ.Nseed + KEM_T.Nseed`)
-* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
-  == KEM_H.Nss`)
-* `Label` - A byte string used to label the specific combination of the above
-  constituents being used.
-* `Combiner` - One of the combiner functions described in {{combiner-functions}}
-
-`KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
-described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{hybrid-ind-cca}}.
-
-The constants for public values are derived from the concatenation of
-encapsulation keys and ciphertexts:
+All four frameworks share a common key generation function:
 
 ~~~
-Nek = KEM_PQ.Nek + KEM_T.Nek
-Nct = KEM_PQ.Nct + KEM_T.Nct
-~~~
-
-The `Nseed` and `Nss` constants should reflect the overall security level of the
-combined KEM, with the following recommended values:
-
-~~~
-Nseed = max(KEM_PQ.Nseed, KEM_T.Nseed)
-Nss = min(KEM_PQ.Nss, KEM_T.Nss)
-~~~
-
-Since we use the seed as the decapsulation key, `Ndk = Nseed`.
-
-Given these constituent parts, the hybrid KEM is defined as follows:
-
-~~~
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
-    return (ek_PQ, ek_T, dk_PQ, dk_T)
-
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
-
-def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    (ss_T, ct_T) = KEM_T.Encap(ek_T)
-    ss_H = Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
-    ct_H = concat(ct_PQ, ct_T)
-    return (ss_H, ct_H)
-
-def Decaps(dk, ct):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
-
-    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
-
-    ss_H = Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
-    return ss_H
 ~~~
 
-## Instantiation with a Nominal Group {#group-inst}
+In some deployment environments, it is not possible to instantiate this process.
+Some implementations of constituent algorithms do not support the DeriveKeyPair
+function, only GenerateKeyPair. Likewise in the nominal group case, a (scalar,
+group element) pair will only be generated when the scalar is generated internal
+to the implementation.
 
-A hybrid KEM `KEM_H` instantiated with a nominal group for its traditional
-constituent depends on the following components:
+An implementation of a hybrid KEM in such environemnts MAY deviate from the
+above description in the following ways:
 
-* `Group_T`: A nominal group
-* `KEM_PQ`: A post-quantum KEM
-* `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
-  Group_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed`)
-* `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
-  == KDF.Nss`)
-* `Label` - A byte string used to label the specific combination of the above
-  constituents being used.
-* `Combiner` - One of the combiner functions described in {{combiner-functions}}
+* DeriveKeyPair is not implemented.
+* The decapsulation key returned by GenerateKeyPair and consumed by Decaps is a
+  tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or pointers/handles
+  to keys).
+* The `expandDecapsulationKeyG` and `expandDecapsulationKeyK` functions are
+  replaced by the following, where `decapsToEncaps()` is a function that returns
+  the encapsulation key associated with a decapsulation key:
 
-`KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
-described in {{cryptographic-deps}} and MUST meet the security requirements
-described in {{hybrid-ind-cca}}.
-
-The constants for public values are derived from the concatenation of
-encapsulation keys and ciphertexts:
-
-~~~
-Nek = KEM_PQ.Nek + Group_T.Nelem
-Nct = KEM_PQ.Nct + Group_T.Nelem
-~~~
-
-The `Nseed` and `Nss` constants should reflect the overall security level of
-the combined KEM, with the following recommended values:
-
-~~~
-Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
-Nss = min(KEM_PQ.Nss, Group_T.Nss)
-~~~
-
-Since we use the seed as the decapsulation key, `Ndk = Nseed`.
-
-Given these constituent parts, we define the hybrid KEM as follows:
-
-~~~
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
-
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    dk_T = Group_T.RandomScalar(seed_T)
-    ek_T = Group_T.Exp(Group_T.g, dk_T)
-
+```
+def expandDecapsulationKey(dk):
+    (dk_PQ, dkT) = dk # depending on the private key storage format
+    ek_PQ = decapsToEncaps(dk_PQ)
+    ek_T = decapsToEncaps(dk_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
+```
 
+These deviations have both interoperability and security impacts.
+
+From an interoperatbility point of view, the use of a second format for the
+hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
+incompatibilities in cases where a private key needs to be moved from one system
+to another.
+
+The security impact of this deviation is to reduce binding properties from
+MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
+address a variety of attack scenarios, including LEAK scenarios in which an
+attacker has passive access to the decapsulation key and MAL scenarios in which
+an attacker can cause the victim to use a crafted decapsulation key. The above
+hybrid KEM framework assures binding properties in the face of a LEAK attacker,
+irrespective of how key generation is done. The additional provided by the
+default "shared seed" key generation upgrades this to protection against a MAL
+attacker.
+
+As a result, this alternative style of key generation should only be used in
+environments where implementations of component algorithms do not allow
+decapsulation keys to be imported or exported.  When decapsulation keys are
+moved around, they MUST always use the seed format.
+
+## UG Framework: Universal Combiner with a Nominal Group
+
+This framework combines a PQ KEM with a nominal group, using the universal
+combiner function.  It should be used in cases where the application wants to
+use a nominal group for the traditional component, and does not want to rely on
+the C2PRI assumption for the PQ KEM.
+
+~~~
 def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
     return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
-    ct_T = Group_T.Exp(Group_T.g, sk_E)
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
-
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapG(ek_PQ, ek_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
+    (ss_PQ, ss_T) = prepareDecapG(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+~~~
 
-    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+## UK Framework: Universal Combiner with a KEM
 
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+This framework combines a PQ KEM with a traditional KEM, using the universal
+combiner function.  It should be used in cases where the application wants to
+use a KEM for the traditional component, and does not want to rely on the C2PRI
+assumption for the PQ KEM.
+
+~~~
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapK(ek_PQ, ek_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
+    (ss_PQ, ss_T) = prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+~~~
+
+## CG Framework: C2PRI Combiner with a Nominal Group
+
+This framework combines a PQ KEM with a nominal group, using the C2PRI combiner
+function.  It should be used in cases where the application wants to use a
+nominal group for the traditional component, and is comfortable relying on the
+C2PRI assumption for the PQ KEM.
+
+~~~
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapG(ek_PQ, ek_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
+    (ss_PQ, ss_T) = prepareDecapG(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+~~~
+
+## CG Framework: C2PRI Combiner with a KEM
+
+This framework combines a PQ KEM with a traditional KEM, using the C2PRI
+combiner function.  It should be used in cases where the application wants to
+use a KEM for the traditional component, and is comfortable relying on the C2PRI
+assumption for the PQ KEM.
+
+~~~
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapK(ek_PQ, ek_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
+    (ss_PQ, ss_T) = prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
 
@@ -775,7 +876,7 @@ In this section, we review the important security properties for hybrid KEMs,
 and discuss how these security properties are provided by hybrid KEMs
 constructed according to the framework in this document.
 
-## Security Properties for Component Algortihms
+## Security Properties for Component Algortihms {#security-properties}
 
 In order to precisely define our security objectives for a hybrid KEM, we need
 to describe some properties that we will require from the component algorithms.
