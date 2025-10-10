@@ -317,11 +317,11 @@ the traditional component, and (2) whether the PQ KEM is assumed to have an
 additional property known as Ciphertext Second Preimage Resistance (C2PRI).
 Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the same security
 level with more efficient computations, trading off performance for an
-additional security assumption. 
+additional security assumption.
 
 The remainder of this document is structured as follows: first, in
-{{cryptographic-deps}} and {{framework}}, we define the abstractions on
-which hybrid KEMs are built, and then a framework for building hybrid KEMs.  Then, in
+{{cryptographic-deps}} and {{frameworks}}, we define the abstractions on
+which the frameworks are built, and then the frameworks themselves.  Then, in
 {{security}}, we lay out the security analyses that support these frameworks,
 including the security requirements for constituent components and the
 security notions satisfied by hybrid KEMS constructed according to the
@@ -545,11 +545,11 @@ and L arguments.
 The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
 
-# Hybrid KEMs {#framework}
+# Hybrid KEMs {#frameworks}
 
 In this section, we define four frameworks for building hybrid KEMs.  These
 frameworks are based on a common set of subroutines for things like key
-generation and computing a final shared secret. 
+generation and computing a final shared secret.
 
 The four frameworks vary along two axes:
 
@@ -657,7 +657,7 @@ def expandDecapsKeyK(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
     (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)    
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
 def prepareEncapK(ek_PQ, ek_T):
@@ -879,7 +879,7 @@ In this section, we review the important security properties for hybrid KEMs,
 and discuss how these security properties are provided by hybrid KEMs
 constructed according to the framework in this document.
 
-## Security Properties for Component Algortihms {#security-properties}
+## Security Properties for Component Algortihms
 
 In order to precisely define our security objectives for a hybrid KEM, we need
 to describe some properties that we will require from the component algorithms.
