@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-05T01:11:08.121549+00:00",
+  "timestamp": "2025-10-12T01:08:29.892979+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -7731,6 +7731,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 85,
+      "id": "PR_kwDOMmhxws6s9so8",
+      "title": "Name individual frameworks, but call out subroutines",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/85",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR attempts a middle ground between #72 and #79, reflecting a few points of feedback from the 2026-09-25 CFRG interim:\r\n\r\n* Having names and section titles for specific frameworks helps implementors zero in on the right parts\r\n* But we should also minimize duplication across these sections\r\n\r\nTo do this, I made a section for each specific framework (using the \"two letter\" naming scheme), but having a section full of subroutines to capture the common structure.\r\n\r\nThis PR also:\r\n\r\n* Replaces #73 by addressing key generation and its variations.  \r\n* Adds a note about C2PRI to the introduction, reflecting mailing list feedback that an earlier mention was needed",
+      "createdAt": "2025-10-09T19:53:14Z",
+      "updatedAt": "2025-10-10T00:08:52Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "bc25ae8254fd60325580e9271fa74b4a63a198df",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "mid-72-79",
+      "headRefOid": "b94e927c1d285606393ce776f9110ce3d8adf6db",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
