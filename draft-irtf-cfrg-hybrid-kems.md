@@ -556,7 +556,7 @@ The four frameworks vary along two axes:
 1. Whether traditional component is a nominal group or a KEM
 2. Whether to rely on the C2PRI property for the post-quantum component
 
-The choice of which framwork to use when building a hybrid KEM will depend on
+The choice of which framework to use when building a hybrid KEM will depend on
 the application's needs along these two axes.
 
 | Name    | PQ C2PRI? | T component   |
