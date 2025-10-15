@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 13 April 2026                                             Cisco
+Expires: 17 April 2026                                             Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                         10 October 2025
+                                                         14 October 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 April 2026.
+   This Internet-Draft will expire on 17 April 2026.
 
 Copyright Notice
 
@@ -425,7 +425,7 @@ Table of Contents
    2.  Whether to rely on the C2PRI property for the post-quantum
        component
 
-   The choice of which framwork to use when building a hybrid KEM will
+   The choice of which framework to use when building a hybrid KEM will
    depend on the application's needs along these two axes.
 
                    +======+===========+===============+
