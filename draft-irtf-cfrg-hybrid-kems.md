@@ -579,7 +579,7 @@ components:
 * `KDF`: A KDF producing byte strings of length `KEM_H.Nss` (`KDF.Nout
   == KEM_H.Nss`)
 * `Label` - A byte string used to label the specific combination of the above
-  constituents being used, as well as which framework is being instantiated.
+  components being used, as well as which framework is being instantiated.
   This value should be registered in the Hybrid KEM
   Labels IANA registry to avoid conflict with other instantiations (see
   {{iana-considerations}}.
@@ -610,15 +610,15 @@ common seed, see {{key-generation}}.
 
 ## Subroutines
 
-The four hybrid KEM framework share a substantial amount of structure, which we
+The four hybrid KEM frameworks share a substantial amount of structure, which we
 capture in a set of subroutines.
 
 ### Using a Nominal Group
 
-Hybrid KEM frameworks that use a KEM for the traditional component invoke the
+Hybrid KEM frameworks that use a nominal group for the traditional component invoke the
 DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside analogous
 functions of the nominal group.  The "encapsulation key" is the receiver's
-public group element; the "ciphertext" is an ephemeral group element; and
+public key group element; the "ciphertext" is an ephemeral group element; and
 the shared secret is the secret value resulting from an ephemeral-static
 Diffie-Hellman exchange.
 
