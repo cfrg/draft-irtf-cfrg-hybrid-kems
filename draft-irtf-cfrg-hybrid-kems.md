@@ -660,12 +660,12 @@ def expandDecapsKeyK(seed):
     (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
-def prepareEncapK(ek_PQ, ek_T):
+def prepareEncapsK(ek_PQ, ek_T):
     (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
     (ss_T, ct_T) = KEM_T.Encap(ek_T)
     return (ss_PQ, ss_T, ct_PQ, ct_T)
 
-def prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T):
+def prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
     ss_T = KEM_T.Decap(dk_T, ct_T)
     return (ss_PQ, ss_T)
@@ -674,9 +674,7 @@ def prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T):
 ### Combiners
 
 A combiner function uses the KDF used in the hybrid KEM to combine the shared
-secrets output by the constituent algorithms with metadata.  This operation is
-important to the IND-CCA security of the hybrid KEM, as well as its binding
-properties.
+secrets output by the component algorithms with contextual information.
 
 The two combiner functions defined in this document are as follows:
 
@@ -690,22 +688,22 @@ def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
 
 Note that while the names of the inputs are suggestive of the shared secret,
 ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
-in the hybrid KEM framework are not necessarily the output of a secure KEM.  In
+in the hybrid KEM framework are not necessarily the output of a secure KEM. In
 particular, when the framework is instantiated with a nominal group, the
 "ciphertext" component is an ephemeral group element, and the "encapsulation
 key" is the group element that functions as the recipient's public key.
 
-The choice of combiner in a given instantitation determines the assumptions
+The choice of combiner brings with it certain assumptions
 under which the resulting hybrid KEM is secure.
 
-The `UniversalCombiner` combiner explicitly hashes shared secrets, ciphertexts, and
-encapsulation keys from both constituent.  This allows the resulting hybrid KEM
-to be secure as long as either component is secure, with no further assumptions.
+The `UniversalCombiner` combiner explicitly computes over shared secrets, ciphertexts, and
+encapsulation keys from both components.  This allows the resulting hybrid KEM
+to be secure as long as either component is secure, with no further assumptions on the components.
 
-The `C2PRICombiner` combiner does not explicitly hash in the ciphertext or
-encapsulation key from the PQ constituent.  The resulting hybrid KEM will only
-be secure if, in addition to one constituent being secure, the PQ constituent
-also satisfies the C2PRI property.
+The `C2PRICombiner` combiner does not compute over the ciphertext or
+encapsulation key from the PQ component. The resulting hybrid KEM will
+be secure if the PQ component is IND-CCA secure, or, the traditional
+component is secure and the PQ component also satisfies the C2PRI property.
 
 ## Key Generation
 
@@ -718,7 +716,7 @@ def GenerateKeyPair():
 ~~~
 
 In some deployment environments, it is not possible to instantiate this process.
-Some implementations of constituent algorithms do not support the DeriveKeyPair
+Some implementations of component schemes do not support the `DeriveKeyPair`
 function, only GenerateKeyPair. Likewise in the nominal group case, a (scalar,
 group element) pair will only be generated when the scalar is generated internal
 to the implementation.
@@ -778,14 +776,14 @@ def DeriveKeyPair(seed):
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapG(ek_PQ, ek_T)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
     ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
-    (ss_PQ, ss_T) = prepareDecapG(ct_PQ, ct_T, dk_PQ, dk_T)
+    (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
     ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
@@ -804,14 +802,14 @@ def DeriveKeyPair(seed):
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapK(ek_PQ, ek_T)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
     ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
-    (ss_PQ, ss_T) = prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T)
+    (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
     ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
@@ -830,14 +828,14 @@ def DeriveKeyPair(seed):
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapG(ek_PQ, ek_T)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
     ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
-    (ss_PQ, ss_T) = prepareDecapG(ct_PQ, ct_T, dk_PQ, dk_T)
+    (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
     ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
@@ -856,14 +854,14 @@ def DeriveKeyPair(seed):
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapK(ek_PQ, ek_T)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
     ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
-    (ss_PQ, ss_T) = prepareDecapK(ct_PQ, ct_T, dk_PQ, dk_T)
+    (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
     ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
 ~~~
