@@ -1825,7 +1825,7 @@ Comp_T.Nseed</code> (<code>PRG.Nout == KEM_PQ.Nseed + Comp_T.Nseed</code>)<a hre
 </li>
         <li class="normal" id="section-5-7.5">
           <p id="section-5-7.5.1"><code>Label</code> - A byte string used to label the specific combination of the above
-constituents being used, as well as which framework is being instantiated.
+components being used, as well as which framework is being instantiated.
 This value should be registered in the Hybrid KEM
 Labels IANA registry to avoid conflict with other instantiations (see
 <a href="#iana-considerations" class="auto internal xref">Section 7</a>.<a href="#section-5-7.5.1" class="pilcrow">¶</a></p>
@@ -1858,17 +1858,17 @@ common seed, see <a href="#key-generation" class="auto internal xref">Section 5.
         <h3 id="name-subroutines">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-subroutines" class="section-name selfRef">Subroutines</a>
         </h3>
-<p id="section-5.1-1">The four hybrid KEM framework share a substantial amount of structure, which we
+<p id="section-5.1-1">The four hybrid KEM frameworks share a substantial amount of structure, which we
 capture in a set of subroutines.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <div id="using-a-nominal-group">
 <section id="section-5.1.1">
           <h4 id="name-using-a-nominal-group">
 <a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-using-a-nominal-group" class="section-name selfRef">Using a Nominal Group</a>
           </h4>
-<p id="section-5.1.1-1">Hybrid KEM frameworks that use a KEM for the traditional component invoke the
+<p id="section-5.1.1-1">Hybrid KEM frameworks that use a nominal group for the traditional component invoke the
 DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside analogous
 functions of the nominal group.  The "encapsulation key" is the receiver's
-public group element; the "ciphertext" is an ephemeral group element; and
+public key group element; the "ciphertext" is an ephemeral group element; and
 the shared secret is the secret value resulting from an ephemeral-static
 Diffie-Hellman exchange.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
 <div class="lang-pseudocode sourcecode" id="section-5.1.1-2">
