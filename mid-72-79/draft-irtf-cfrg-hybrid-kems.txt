@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 17 April 2026                                             Cisco
+Expires: 19 April 2026                                             Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                         14 October 2025
+                                                         16 October 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 April 2026.
+   This Internet-Draft will expire on 19 April 2026.
 
 Copyright Notice
 
@@ -71,7 +71,7 @@ Table of Contents
      4.2.  Nominal Groups
      4.3.  Pseudorandom Generators
      4.4.  Key Derivation Functions
-   5.  Hybrid KEMs
+   5.  Hybrid KEM Frameworks
      5.1.  Subroutines
        5.1.1.  Using a Nominal Group
        5.1.2.  Using a Traditional KEM
@@ -412,7 +412,7 @@ Table of Contents
    The security requirements for KDFs used with the frameworks in this
    document are laid out in Section 6.1.5.
 
-5.  Hybrid KEMs
+5.  Hybrid KEM Frameworks
 
    In this section, we define four frameworks for building hybrid KEMs.
    These frameworks are based on a common set of subroutines for things
@@ -442,8 +442,8 @@ Table of Contents
 
                       Table 1: Hybrid KEM frameworks
 
-   These frameworks create a hybrid KEM KEM_H based on the following
-   constituent components:
+   Instantiating one of these frameworks creates a hybrid KEM KEM_H
+   based on the following constituent components:
 
    *  A traditional component that is either a nominal group or a KEM:
 

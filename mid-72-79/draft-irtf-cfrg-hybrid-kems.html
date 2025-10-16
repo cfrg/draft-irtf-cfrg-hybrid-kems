@@ -1053,7 +1053,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 17 April 2026</td>
+<td class="center">Expires 19 April 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1066,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-10-14" class="published">14 October 2025</time>
+<time datetime="2025-10-16" class="published">16 October 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-04-17">17 April 2026</time></dd>
+<dd class="expires"><time datetime="2026-04-19">19 April 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1128,7 +1128,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 19 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1181,7 +1181,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-hybrid-kems" class="internal xref">Hybrid KEMs</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-hybrid-kem-frameworks" class="internal xref">Hybrid KEM Frameworks</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
                 <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-subroutines" class="internal xref">Subroutines</a></p>
@@ -1744,8 +1744,8 @@ laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a
 </div>
 <div id="frameworks">
 <section id="section-5">
-      <h2 id="name-hybrid-kems">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hybrid-kems" class="section-name selfRef">Hybrid KEMs</a>
+      <h2 id="name-hybrid-kem-frameworks">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hybrid-kem-frameworks" class="section-name selfRef">Hybrid KEM Frameworks</a>
       </h2>
 <p id="section-5-1">In this section, we define four frameworks for building hybrid KEMs.  These
 frameworks are based on a common set of subroutines for things like key
@@ -1761,11 +1761,11 @@ generation and computing a final shared secret.<a href="#section-5-1" class="pil
       </ol>
 <p id="section-5-4">The choice of which framework to use when building a hybrid KEM will depend on
 the application's needs along these two axes.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<span id="name-hybrid-kem-frameworks"></span><div id="variants">
+<span id="name-hybrid-kem-frameworks-2"></span><div id="variants">
 <table class="center" id="table-1">
         <caption>
 <a href="#table-1" class="selfRef">Table 1</a>:
-<a href="#name-hybrid-kem-frameworks" class="selfRef">Hybrid KEM frameworks</a>
+<a href="#name-hybrid-kem-frameworks-2" class="selfRef">Hybrid KEM frameworks</a>
         </caption>
 <thead>
           <tr>
@@ -1798,7 +1798,7 @@ the application's needs along these two axes.<a href="#section-5-4" class="pilcr
         </tbody>
       </table>
 </div>
-<p id="section-5-6">These frameworks create a hybrid KEM <code>KEM_H</code> based on the following constituent
+<p id="section-5-6">Instantiating one of these frameworks creates a hybrid KEM <code>KEM_H</code> based on the following constituent
 components:<a href="#section-5-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5-7.1">
