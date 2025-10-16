@@ -633,14 +633,14 @@ def expandDecapsKeyG(seed):
 
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
-def prepareEncapG(ek_PQ, ek_T):
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+def prepareEncapsG(ek_PQ, ek_T):
+    (ss_PQ, ct_PQ) = KEM_PQ.Encaps(ek_PQ)
     sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
     ct_T = Group_T.Exp(Group_T.g, sk_E)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
     return (ss_PQ, ss_T, ct_PQ, ct_T)
 
-def prepareDecapG(ct_PQ, ct_T, dk_PQ, dk_T):
+def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
     ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     return (ss_PQ, ss_T)
