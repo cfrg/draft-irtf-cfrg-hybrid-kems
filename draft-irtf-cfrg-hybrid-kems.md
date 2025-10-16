@@ -582,7 +582,7 @@ components:
   components being used, as well as which framework is being instantiated.
   This value should be registered in the Hybrid KEM
   Labels IANA registry to avoid conflict with other instantiations (see
-  {{iana-considerations}}.
+  {{iana-considerations}}).
 
 `KEM_PQ`, `Group_T`, `PRG`, and `KDF` MUST meet the interfaces
 described in {{cryptographic-deps}} and MUST meet the security requirements
