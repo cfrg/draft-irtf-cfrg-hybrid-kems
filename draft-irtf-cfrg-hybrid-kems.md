@@ -545,7 +545,7 @@ and L arguments.
 The security requirements for KDFs used with the frameworks in this document are
 laid out in {{security-kdfs}}.
 
-# Hybrid KEMs {#frameworks}
+# Hybrid KEM Frameworks {#frameworks}
 
 In this section, we define four frameworks for building hybrid KEMs.  These
 frameworks are based on a common set of subroutines for things like key
@@ -567,7 +567,7 @@ the application's needs along these two axes.
 | CK      | Yes       | KEM           |
 {: #variants title="Hybrid KEM frameworks" }
 
-These frameworks create a hybrid KEM `KEM_H` based on the following constituent
+Instantiating one of these frameworks creates a hybrid KEM `KEM_H` based on the following constituent
 components:
 
 * A traditional component that is either a nominal group or a KEM:
