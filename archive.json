@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-12T01:08:29.892979+00:00",
+  "timestamp": "2025-10-16T01:06:34.649842+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -7744,19 +7744,356 @@
       "labels": [],
       "body": "This PR attempts a middle ground between #72 and #79, reflecting a few points of feedback from the 2026-09-25 CFRG interim:\r\n\r\n* Having names and section titles for specific frameworks helps implementors zero in on the right parts\r\n* But we should also minimize duplication across these sections\r\n\r\nTo do this, I made a section for each specific framework (using the \"two letter\" naming scheme), but having a section full of subroutines to capture the common structure.\r\n\r\nThis PR also:\r\n\r\n* Replaces #73 by addressing key generation and its variations.  \r\n* Adds a note about C2PRI to the introduction, reflecting mailing list feedback that an earlier mention was needed",
       "createdAt": "2025-10-09T19:53:14Z",
-      "updatedAt": "2025-10-10T00:08:52Z",
+      "updatedAt": "2025-10-15T00:53:29Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bc25ae8254fd60325580e9271fa74b4a63a198df",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "mid-72-79",
-      "headRefOid": "b94e927c1d285606393ce776f9110ce3d8adf6db",
+      "headRefOid": "6ed3157c5c58aa8e7043f080ab8446807f268d21",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7G9JeX",
+          "commit": {
+            "abbreviatedOid": "b94e927"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-14T23:56:07Z",
+          "updatedAt": "2025-10-14T23:56:07Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "We aren't defining concrete instances...",
+              "createdAt": "2025-10-14T23:56:07Z",
+              "updatedAt": "2025-10-14T23:56:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7G9Jqz",
+          "commit": {
+            "abbreviatedOid": "b94e927"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-14T23:56:45Z",
+          "updatedAt": "2025-10-14T23:56:46Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I don't love this but what about: \n\n```suggestion\n# Hybrid KEMs (Generic) {#frameworks}\n```",
+              "createdAt": "2025-10-14T23:56:45Z",
+              "updatedAt": "2025-10-14T23:58:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7G9KhY",
+          "commit": {
+            "abbreviatedOid": "b94e927"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-14T23:59:26Z",
+          "updatedAt": "2025-10-14T23:59:27Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\nThe choice of which framework to use when building a hybrid KEM will depend on\n```",
+              "createdAt": "2025-10-14T23:59:26Z",
+              "updatedAt": "2025-10-14T23:59:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7G9Ljy",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-15T00:02:53Z",
+          "updatedAt": "2025-10-15T00:02:54Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "```suggestion\nInstantiate one of these frameworks creates a hybrid KEM `KEM_H` based on the following constituent\n```",
+              "createdAt": "2025-10-15T00:02:54Z",
+              "updatedAt": "2025-10-15T00:02:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7G9MQ1",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-15T00:05:09Z",
+          "updatedAt": "2025-10-15T00:05:09Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "'Labels' hm? Yes we want to un-collide labels but are we secretly registering concrete hybrid KEM constructions with this?",
+              "createdAt": "2025-10-15T00:05:09Z",
+              "updatedAt": "2025-10-15T00:05:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7G9M0o",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-15T00:06:32Z",
+          "updatedAt": "2025-10-15T00:53:29Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "non-blocking but see comment on IANA registry for 'Labels'\n\nhttps://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/85/files#r2430788084",
+              "createdAt": "2025-10-15T00:06:32Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 112,
+              "body": "```suggestion\nThe four hybrid KEM frameworks share a substantial amount of structure, which we\n```",
+              "createdAt": "2025-10-15T00:07:29Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\nThis document defines generic constructions for hybrid key encapsulation\nmechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a traditional\n```",
+              "createdAt": "2025-10-15T00:10:02Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\ncomputer. KEMs, are a standardized class of\n```",
+              "createdAt": "2025-10-15T00:10:34Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 119,
+              "body": "```suggestion\nHybrid KEM frameworks that use a KEM for the traditional component invoke the\n`DeriveKeyPair`, `Encaps`, and `Decaps` functions of PQ KEMs, alongside analogous\n```",
+              "createdAt": "2025-10-15T00:11:13Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 136,
+              "body": "```suggestion\ndef prepareEncapsG(ek_PQ, ek_T):\n```",
+              "createdAt": "2025-10-15T00:11:23Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 143,
+              "body": "```suggestion\ndef prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):\n```",
+              "createdAt": "2025-10-15T00:11:30Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 137,
+              "body": "```suggestion\n    (ss_PQ, ct_PQ) = KEM_PQ.Encaps(ek_PQ)\n```",
+              "createdAt": "2025-10-15T00:11:35Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 174,
+              "body": "```suggestion\ndef prepareEncapsK(ek_PQ, ek_T):\n```",
+              "createdAt": "2025-10-15T00:11:53Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 186,
+              "body": "```suggestion\ndef prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):\n```",
+              "createdAt": "2025-10-15T00:12:00Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 341,
+              "body": "```suggestion\n    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)\n```",
+              "createdAt": "2025-10-15T00:12:37Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 348,
+              "body": "```suggestion\n    (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)\n```",
+              "createdAt": "2025-10-15T00:12:47Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 367,
+              "body": "```suggestion\n    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)\n```",
+              "createdAt": "2025-10-15T00:13:01Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 378,
+              "body": "```suggestion\n    (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)\n```",
+              "createdAt": "2025-10-15T00:13:10Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 398,
+              "body": "```suggestion\n    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)\n```",
+              "createdAt": "2025-10-15T00:13:20Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 406,
+              "body": "```suggestion\n    (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)\n```",
+              "createdAt": "2025-10-15T00:13:31Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 429,
+              "body": "```suggestion\n    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)\n```",
+              "createdAt": "2025-10-15T00:13:40Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 436,
+              "body": "```suggestion\n    (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)\n```",
+              "createdAt": "2025-10-15T00:13:49Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 121,
+              "body": "```suggestion\npublic key group element; the \"ciphertext\" is an ephemeral group element; and\n```",
+              "createdAt": "2025-10-15T00:20:12Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 157,
+              "body": "We might be risky here, `DecapsKeyK` smells more like `K` the shared secret than `K = KEM`\n",
+              "createdAt": "2025-10-15T00:26:42Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 153,
+              "body": "```suggestion\n`DeriveKeyPair`, `Encaps`, and `Decaps` functions of the traditional and PQ KEMs in\n```",
+              "createdAt": "2025-10-15T00:27:58Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 195,
+              "body": "```suggestion\nsecrets output by the constituent component algorithms with contextual information.  This operation is\n```",
+              "createdAt": "2025-10-15T00:30:50Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 197,
+              "body": "```suggestion\nsecrets output by the component algorithms with metadata.\n```",
+              "createdAt": "2025-10-15T00:31:10Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 204,
+              "body": "I would rename this as 'universal' scans as the one for all frameworks, not just not-C2PRI ones\n\nWhat about B for Basic:\n\n```suggestion\ndef BasicCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):\n```\n\nI won't update the other places yet",
+              "createdAt": "2025-10-15T00:35:04Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 143,
+              "body": "Not sure about 'prepare', this is doing a lot of the work of `Encaps`/`Decaps`, maybe 'process'?",
+              "createdAt": "2025-10-15T00:36:31Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 219,
+              "body": "```suggestion\nin the hybrid KEM framework are not necessarily the output of a secure KEM. In\nparticular, when the framework is instantiated with a nominal group, the\n\"ciphertext\" component is an ephemeral group element, and the \"encapsulation\nkey\" is the group element that functions as the recipient's public key.\n```",
+              "createdAt": "2025-10-15T00:37:05Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 232,
+              "body": "```suggestion\nThe choice of combiner brings with it certain assumptions\nunder which the resulting hybrid KEM is secure.\n```",
+              "createdAt": "2025-10-15T00:38:13Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 239,
+              "body": "```suggestion\nThe `UniversalCombiner` combiner explicitly computes over shared secrets, ciphertexts, and\nencapsulation keys from both components.  This allows the resulting hybrid KEM\nto be secure as long as either component is secure, with no further assumptions on the components.\n```",
+              "createdAt": "2025-10-15T00:39:21Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 246,
+              "body": "This is incorrect.\n\n```suggestion\nThe `C2PRICombiner` combiner does not compute over the ciphertext or\nencapsulation key from the PQ component. The resulting hybrid KEM will\nbe secure if the PQ component is IND-CCA secure, or, the traditional\ncomponent is secure and the PQ component also satisfies the C2PRI property.\n```",
+              "createdAt": "2025-10-15T00:43:41Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\n  constituent components being used, as well as which framework is being instantiated.\n```",
+              "createdAt": "2025-10-15T00:44:44Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 268,
+              "body": "```suggestion\nSome implementations of component schemes do not support the `DeriveKeyPair`\n```",
+              "createdAt": "2025-10-15T00:46:06Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 269,
+              "body": "```suggestion\nfunction, only `GenerateKeyPair`. Likewise in the nominal group case, a (scalar,\n```",
+              "createdAt": "2025-10-15T00:46:13Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 279,
+              "body": "```suggestion\n* `DeriveKeyPair` is not implemented.\n* The decapsulation key returned by `GenerateKeyPair` and consumed by `Decaps` is a\n  tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or pointers/handles\n  to keys).\n```",
+              "createdAt": "2025-10-15T00:46:33Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 342,
+              "body": "The invocation of `*Combiner` seems to be doing less than the 'prepare*'/'process' functions, I wonder if we can just inline them (as one line each)",
+              "createdAt": "2025-10-15T00:48:32Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 353,
+              "body": "Repeating 'meh'-ness with 'Universal'",
+              "createdAt": "2025-10-15T00:49:30Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 363,
+              "body": "Other places have the secret key first, left to right",
+              "createdAt": "2025-10-15T00:50:36Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            },
+            {
+              "originalPosition": 369,
+              "body": "We do `concat()` on their own lines in some places but not others, should we try to be consistent?\n",
+              "createdAt": "2025-10-15T00:51:29Z",
+              "updatedAt": "2025-10-15T00:53:29Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
