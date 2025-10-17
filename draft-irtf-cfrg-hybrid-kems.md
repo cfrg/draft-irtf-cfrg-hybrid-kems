@@ -758,11 +758,11 @@ default "shared seed" key generation upgrades this to protection against a MAL
 attacker.
 
 Allowing for separate private key generation and handling also introduces a risk
-of inappropriate key reuse and cross-protocol attacks.  A given key pair must
+of inappropriate key reuse and cross-protocol attacks.  A given key pair MUST
 never be used in both a hybrid KEM and with a non-hybrid algorithm. A pair of
-key pairs generated for a hybrid algorithm must only be used with that hybrid
+key pairs generated for a hybrid algorithm MUST only be used with that hybrid
 algorithm, not separately with their component algorithms.  Likewise, key pairs
-generated outside of the context of a hybrid KEM must not be used with a hybrid
+generated outside of the context of a hybrid KEM MUST NOT be used with a hybrid
 KEM.  The "shared seed" style of key generation prevents such reuse, because the
 per-component private keys are derived internally to the hybrid KEM.
 
