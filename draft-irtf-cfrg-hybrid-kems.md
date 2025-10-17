@@ -747,7 +747,7 @@ hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
 incompatibilities in cases where a private key needs to be moved from one system
 to another.
 
-Separate key genereation / handling also reduces binding properties from
+Separate key generation / handling also reduces binding properties from
 MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
 address a variety of attack scenarios, including LEAK scenarios in which an
 attacker has passive access to the decapsulation key and MAL scenarios in which
