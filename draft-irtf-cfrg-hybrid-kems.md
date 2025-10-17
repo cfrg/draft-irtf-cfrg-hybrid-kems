@@ -1294,8 +1294,8 @@ Template:
 
 * Label: The name of the wire format
 
-* Framework: The framework used in the hybrid KEM.  This value MUST be either
-  "GHP" or "QSF".
+* Framework: The framework used in the hybrid KEM.  This value MUST be one of
+  the following values: "GU", "GC", "KU", or "KC".
 
 * PQ component: The name of the post-quantum KEM used in the hybrid KEM.
 
@@ -1313,27 +1313,6 @@ Template:
 * Reference (optional): The document where this hybrid KEM is defined
 
 The registry should initially be empty.
-
-# In Scope
-
-## GHP Framework
-
-The GHP framework works for generic IND-CCA component schemes. GHP also has
-an IND-CCA proof from {{GHP2018}}. Including the public encapsulation keys as
-part of the KDF preimage fits in the 'additional data' parts of the split key
-PRF proof there, and binds to the encapsulation keys, which is a nice
-property for protocols integrating concrete instances. GHP also matches NIST
-SP 800-227 IPD, and gives good binding properties. {{binding-properties}} is
-generally safe with no caveats on use for constructing concrete instances
-using a broad array of components.
-
-## QSF Framework
-
-QSF works for most elliptic curve groups and C2PRI-secure quantum-resistant
-KEMs.  It is an optimization that leaves out large ciphertexts and
-encapsulation keys from the KDF preimage, saving extra hashing, if the PQ KEM
-meets requirements. More KEMs can be proven to be C2PRI-secure eventually for
-use with QSF.
 
 # Out of Scope
 
