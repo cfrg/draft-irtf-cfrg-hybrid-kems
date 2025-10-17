@@ -15,10 +15,10 @@ cryptographic component. Hybrid KEMs built using these constructions provide
 strong security properties as long as either of the underlying algorithms are
 secure. 
     " name="description">
-<meta content="xml2rfc 3.30.1" name="generator">
+<meta content="xml2rfc 3.30.2" name="generator">
 <meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.30.1
+  xml2rfc 3.30.2
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -30,7 +30,7 @@ secure.
     PyYAML 6.0.2
     requests 2.32.5
     setuptools 80.9.0
-    wcwidth 0.2.13
+    wcwidth 0.2.14
 -->
 <link href="draft-irtf-cfrg-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1049,11 +1049,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">hybrid-kems</td>
-<td class="right">September 2025</td>
+<td class="right">October 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 21 March 2026</td>
+<td class="center">Expires 20 April 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1066,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-09-17" class="published">17 September 2025</time>
+<time datetime="2025-10-17" class="published">17 October 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-03-21">21 March 2026</time></dd>
+<dd class="expires"><time datetime="2026-04-20">20 April 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1128,7 +1128,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 20 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1181,16 +1181,36 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-hybrid-kem-framework" class="internal xref">Hybrid KEM Framework</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-hybrid-kem-frameworks" class="internal xref">Hybrid KEM Frameworks</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-combiner-functions" class="internal xref">Combiner Functions</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-subroutines" class="internal xref">Subroutines</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
+                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-using-a-nominal-group" class="internal xref">Using a Nominal Group</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.2">
+                    <p id="section-toc.1-1.5.2.1.2.2.1"><a href="#section-5.1.2" class="auto internal xref">5.1.2</a>.  <a href="#name-using-a-traditional-kem" class="internal xref">Using a Traditional KEM</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.3">
+                    <p id="section-toc.1-1.5.2.1.2.3.1"><a href="#section-5.1.3" class="auto internal xref">5.1.3</a>.  <a href="#name-combiners" class="internal xref">Combiners</a></p>
+</li>
+                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-instantiation-with-a-tradit" class="internal xref">Instantiation with a Traditional KEM</a></p>
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-key-generation" class="internal xref">Key Generation</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-instantiation-with-a-nomina" class="internal xref">Instantiation with a Nominal Group</a></p>
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-ug-framework-universal-comb" class="internal xref">UG Framework: Universal Combiner with a Nominal Group</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-uk-framework-universal-comb" class="internal xref">UK Framework: Universal Combiner with a KEM</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-cg-framework-c2pri-combiner" class="internal xref">CG Framework: C2PRI Combiner with a Nominal Group</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
+                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-cg-framework-c2pri-combiner-" class="internal xref">CG Framework: C2PRI Combiner with a KEM</a></p>
 </li>
             </ul>
 </li>
@@ -1259,15 +1279,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-in-scope" class="internal xref">In Scope</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-ghp-framework" class="internal xref">GHP Framework</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-qsf-framework" class="internal xref">QSF Framework</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
             <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-out-of-scope" class="internal xref">Out of Scope</a></p>
@@ -1335,15 +1347,22 @@ from a PQ KEM and a traditional algorithm.  The aim of this document is
 provide a small set of techniques to achieve specific security properties
 given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">The remainder of this document is structured as follows: first, in
-<a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <a href="#framework" class="auto internal xref">Section 5</a>, we define the abstractions on
-which hybrid KEMs are built, and then a framework for building hybrid KEMs.  Then, in
+<p id="section-1-5">We define four generic frameworks as variants of a common overall scheme.  The
+variations are based on (1) what type of cryptographic object is being used for
+the traditional component, and (2) whether the PQ KEM is assumed to have an
+additional property known as Ciphertext Second Preimage Resistance (C2PRI).
+Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the same security
+level with more efficient computations, trading off performance for an
+additional security assumption.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">The remainder of this document is structured as follows: first, in
+<a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <a href="#frameworks" class="auto internal xref">Section 5</a>, we define the abstractions on
+which the frameworks are built, and then the frameworks themselves.  Then, in
 <a href="#security" class="auto internal xref">Section 6</a>, we lay out the security analyses that support these frameworks,
 including the security requirements for constituent components and the
 security notions satisfied by hybrid KEMS constructed according to the
 frameworks in the document <a href="#hybrid-ind-cca" class="auto internal xref">Section 6.2.1</a>.  Finally, we discuss
 some "path not taken", related topics that might be of interest to readers,
-but which are not treated in depth.<a href="#section-1-5" class="pilcrow">¶</a></p>
+but which are not treated in depth.<a href="#section-1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="requirements-notation">
@@ -1712,276 +1731,138 @@ laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a
 </div>
 </section>
 </div>
-<div id="framework">
+<div id="frameworks">
 <section id="section-5">
-      <h2 id="name-hybrid-kem-framework">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hybrid-kem-framework" class="section-name selfRef">Hybrid KEM Framework</a>
+      <h2 id="name-hybrid-kem-frameworks">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hybrid-kem-frameworks" class="section-name selfRef">Hybrid KEM Frameworks</a>
       </h2>
-<p id="section-5-1">In this section, we define a generic framework for building hybrid KEMs.  All
-instantiations of this framework share a common structure, which differs
-slightly depending on whether the framework is instantiated with a KEM or a
-nominal group as the traditional component.  This common structure uses one of
-two "combiner" functions, which determines the security requirements for the
-post-quantum KEM in order for the hybrid KEM to be secure.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">To instantiate this framework, a designer will have to make two choices:<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-1">In this section, we define four frameworks for building hybrid KEMs.  These
+frameworks are based on a common set of subroutines for things like key
+generation and computing a final shared secret.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">The four frameworks vary along two axes:<a href="#section-5-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5-3">
 <li id="section-5-3.1">
           <p id="section-5-3.1.1">Whether traditional component is a nominal group or a KEM<a href="#section-5-3.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-5-3.2">
-          <p id="section-5-3.2.1">Whether to rely on the C2PRI property holding for the post-quantum component<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-5-3.2.1">Whether to rely on the C2PRI property for the post-quantum component<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
-<p id="section-5-4">The first choice will dictate the overall structure of the hybrid KEM, since
-traditional KEMs and nominal groups have different operations.  When a nominal
-group is used, the hybrid KEM <span class="bcp14">MUST</span> use the structure defined in <a href="#group-inst" class="auto internal xref">Section 5.3</a>.
-When a KEM is used, the hybrid KEM <span class="bcp14">MUST</span> use the structure defined in
-<a href="#kem-inst" class="auto internal xref">Section 5.2</a>.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">The second choice will determine which combiner function should be used.  If the
-designer does not wish to rely on the C2PRI property for the PQ component, then
-the Explicit combiner <span class="bcp14">MUST</span> be used.  If the designer is comfortable relying on
-the C2PRI property for the PQ component, then the PQImplicit combiner <span class="bcp14">MAY</span> be
-used.<a href="#section-5-5" class="pilcrow">¶</a></p>
-<p id="section-5-6">Each instantiation of this framework thus corresponds to one of four variants:<a href="#section-5-6" class="pilcrow">¶</a></p>
-<span id="name-variants-of-the-hybrid-kem-"></span><div id="variants">
+<p id="section-5-4">The choice of which framework to use when building a hybrid KEM will depend on
+the application's needs along these two axes.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<span id="name-hybrid-kem-frameworks-2"></span><div id="variants">
 <table class="center" id="table-1">
         <caption>
 <a href="#table-1" class="selfRef">Table 1</a>:
-<a href="#name-variants-of-the-hybrid-kem-" class="selfRef">Variants of the hybrid KEM framework</a>
+<a href="#name-hybrid-kem-frameworks-2" class="selfRef">Hybrid KEM frameworks</a>
         </caption>
 <thead>
           <tr>
             <th class="text-left" rowspan="1" colspan="1">Name</th>
             <th class="text-left" rowspan="1" colspan="1">PQ C2PRI?</th>
             <th class="text-left" rowspan="1" colspan="1">T component</th>
-            <th class="text-left" rowspan="1" colspan="1"> </th>
-            <th class="text-left" rowspan="1" colspan="1">Structure</th>
-            <th class="text-left" rowspan="1" colspan="1">Combiner</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="text-left" rowspan="1" colspan="1">GX</td>
+            <td class="text-left" rowspan="1" colspan="1">UG</td>
             <td class="text-left" rowspan="1" colspan="1">No</td>
             <td class="text-left" rowspan="1" colspan="1">Nominal group</td>
-            <td class="text-left" rowspan="1" colspan="1">=&gt;</td>
-            <td class="text-left" rowspan="1" colspan="1">
-              <a href="#group-inst" class="auto internal xref">Section 5.3</a>
-</td>
-            <td class="text-left" rowspan="1" colspan="1">Explicit</td>
           </tr>
           <tr>
-            <td class="text-left" rowspan="1" colspan="1">KX</td>
+            <td class="text-left" rowspan="1" colspan="1">UK</td>
             <td class="text-left" rowspan="1" colspan="1">No</td>
             <td class="text-left" rowspan="1" colspan="1">KEM</td>
-            <td class="text-left" rowspan="1" colspan="1">=&gt;</td>
-            <td class="text-left" rowspan="1" colspan="1">
-              <a href="#kem-inst" class="auto internal xref">Section 5.2</a>
-</td>
-            <td class="text-left" rowspan="1" colspan="1">Explicit</td>
           </tr>
           <tr>
-            <td class="text-left" rowspan="1" colspan="1">GM</td>
+            <td class="text-left" rowspan="1" colspan="1">CG</td>
             <td class="text-left" rowspan="1" colspan="1">Yes</td>
             <td class="text-left" rowspan="1" colspan="1">Nominal group</td>
-            <td class="text-left" rowspan="1" colspan="1">=&gt;</td>
-            <td class="text-left" rowspan="1" colspan="1">
-              <a href="#group-inst" class="auto internal xref">Section 5.3</a>
-</td>
-            <td class="text-left" rowspan="1" colspan="1">PQImplicit</td>
           </tr>
           <tr>
-            <td class="text-left" rowspan="1" colspan="1">KM</td>
+            <td class="text-left" rowspan="1" colspan="1">CK</td>
             <td class="text-left" rowspan="1" colspan="1">Yes</td>
             <td class="text-left" rowspan="1" colspan="1">KEM</td>
-            <td class="text-left" rowspan="1" colspan="1">=&gt;</td>
-            <td class="text-left" rowspan="1" colspan="1">
-              <a href="#kem-inst" class="auto internal xref">Section 5.2</a>
-</td>
-            <td class="text-left" rowspan="1" colspan="1">PQImplicit</td>
           </tr>
         </tbody>
       </table>
 </div>
-<div id="combiner-functions">
+<p id="section-5-6">Instantiating one of these frameworks creates a hybrid KEM <code>KEM_H</code> based on the following constituent
+components:<a href="#section-5-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-7.1">
+          <p id="section-5-7.1.1">A traditional component that is either a nominal group or a KEM:<a href="#section-5-7.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-7.1.2.1">
+              <p id="section-5-7.1.2.1.1"><code>Group_T</code>: A nominal group<a href="#section-5-7.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5-7.1.2.2">
+              <p id="section-5-7.1.2.2.1"><code>KEM_T</code>: A traditional KEM<a href="#section-5-7.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</li>
+        <li class="normal" id="section-5-7.2">
+          <p id="section-5-7.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5-7.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-7.3">
+          <p id="section-5-7.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed +
+Comp_T.Nseed</code> (<code>PRG.Nout == KEM_PQ.Nseed + Comp_T.Nseed</code>)<a href="#section-5-7.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-7.4">
+          <p id="section-5-7.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>KEM_H.Nss</code> (<code>KDF.Nout
+== KEM_H.Nss</code>)<a href="#section-5-7.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-7.5">
+          <p id="section-5-7.5.1"><code>Label</code> - A byte string used to label the specific combination of the above
+components being used, as well as which framework is being instantiated.
+This value should be registered in the Hybrid KEM
+Labels IANA registry to avoid conflict with other instantiations (see
+<a href="#iana-considerations" class="auto internal xref">Section 7</a>).<a href="#section-5-7.5.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-5-8"><code>KEM_PQ</code>, <code>Group_T</code>, <code>PRG</code>, and <code>KDF</code> <span class="bcp14">MUST</span> meet the interfaces
+described in <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <span class="bcp14">MUST</span> meet the security requirements
+described in <a href="#hybrid-ind-cca" class="auto internal xref">Section 6.2.1</a>.<a href="#section-5-8" class="pilcrow">¶</a></p>
+<p id="section-5-9">The constants for public values are derived from the concatenation of
+encapsulation keys and ciphertexts:<a href="#section-5-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-10">
+<pre>
+KEM_H.Nek = KEM_PQ.Nek + (KEM_T.Nek or Group_T.Nelem)
+KEM_H.Nct = KEM_PQ.Nct + (KEM_T.Nct or Group_T.Nelem)
+</pre><a href="#section-5-10" class="pilcrow">¶</a>
+</div>
+<p id="section-5-11">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of
+the combined KEM, with the following recommended values:<a href="#section-5-11" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-12">
+<pre>
+KEM_H.Nseed = max(KEM_PQ.Nseed, (KEM_T.Nseed or Group_T.Nseed))
+KEM_H.Nss = min(KEM_PQ.Nss, (KEM_T.Nss or Group_T.Nss))
+</pre><a href="#section-5-12" class="pilcrow">¶</a>
+</div>
+<p id="section-5-13">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.  For legacy cases
+where it is not possible to derive per-component decapsulation keys from a
+common seed, see <a href="#key-generation" class="auto internal xref">Section 5.2</a>.<a href="#section-5-13" class="pilcrow">¶</a></p>
+<div id="subroutines">
 <section id="section-5.1">
-        <h3 id="name-combiner-functions">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-combiner-functions" class="section-name selfRef">Combiner Functions</a>
+        <h3 id="name-subroutines">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-subroutines" class="section-name selfRef">Subroutines</a>
         </h3>
-<p id="section-5.1-1">A combiner function uses the KDF used in the hybrid KEM to combine the shared
-secrets output by the constituent algorithms with metadata.  This operation is
-important to the IND-CCA security of the hybrid KEM, as well as its binding
-properties.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1-2">The two combiner functions defined in this document are as follows:<a href="#section-5.1-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-3">
+<p id="section-5.1-1">The four hybrid KEM frameworks share a substantial amount of structure, which we
+capture in a set of subroutines.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<div id="using-a-nominal-group">
+<section id="section-5.1.1">
+          <h4 id="name-using-a-nominal-group">
+<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-using-a-nominal-group" class="section-name selfRef">Using a Nominal Group</a>
+          </h4>
+<p id="section-5.1.1-1">Hybrid KEM frameworks that use a nominal group for the traditional component invoke the
+DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside analogous
+functions of the nominal group.  The "encapsulation key" is the receiver's
+public key group element; the "ciphertext" is an ephemeral group element; and
+the shared secret is the secret value resulting from an ephemeral-static
+Diffie-Hellman exchange.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-5.1.1-2">
 <pre>
-def Explicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
-
-def PQImplicit(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
-</pre><a href="#section-5.1-3" class="pilcrow">¶</a>
-</div>
-<p id="section-5.1-4">Note that while the names of the inputs are suggestive of the shared secret,
-ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
-in the hybrid KEM framework are not necessarily the output of a secure KEM.  In
-particular, when the framework is instantiated with a nominal group, the
-"ciphertext" component is an ephemeral group element, and the "encapsulation
-key" is the group element that functions as the recipient's public key.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.1-5">The choice of combiner in a given instantitation determines the assumptions
-under which the resulting hybrid KEM is secure.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.1-6">The <code>Explicit</code> combiner explicitly hashes shared secrets, ciphertexts, and
-encapsulation keys from both constituent.  This allows the resulting hybrid KEM
-to be secure as long as either component is secure, with no further assumptions.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
-<p id="section-5.1-7">The <code>PQImplicit</code> combiner does not explicitly hash in the ciphertext or
-encapsulation key from the PQ constituent.  The resulting hybrid KEM will only
-be secure if, in addition to one constituent being secure, the PQ constituent
-also satisfies the C2PRI property.<a href="#section-5.1-7" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="kem-inst">
-<section id="section-5.2">
-        <h3 id="name-instantiation-with-a-tradit">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-instantiation-with-a-tradit" class="section-name selfRef">Instantiation with a Traditional KEM</a>
-        </h3>
-<p id="section-5.2-1">A hybrid KEM <code>KEM_H</code> instantiated with a KEM for its traditional
-constituent depends on the following components:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.2-2.1">
-            <p id="section-5.2-2.1.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.2-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.2-2.2">
-            <p id="section-5.2-2.2.1"><code>KEM_T</code>: A traditional KEM<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.2-2.3">
-            <p id="section-5.2-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed + KEM_T.Nseed</code>
-(<code>PRG.Nout == KEM_PQ.Nseed + KEM_T.Nseed</code>)<a href="#section-5.2-2.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.2-2.4">
-            <p id="section-5.2-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>KEM_H.Nss</code> (<code>KDF.Nout
-== KEM_H.Nss</code>)<a href="#section-5.2-2.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.2-2.5">
-            <p id="section-5.2-2.5.1"><code>Label</code> - A byte string used to label the specific combination of the above
-constituents being used.<a href="#section-5.2-2.5.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.2-2.6">
-            <p id="section-5.2-2.6.1"><code>Combiner</code> - One of the combiner functions described in <a href="#combiner-functions" class="auto internal xref">Section 5.1</a><a href="#section-5.2-2.6.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-5.2-3"><code>KEM_PQ</code>, <code>Group_T</code>, <code>PRG</code>, and <code>KDF</code> <span class="bcp14">MUST</span> meet the interfaces
-described in <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <span class="bcp14">MUST</span> meet the security requirements
-described in <a href="#hybrid-ind-cca" class="auto internal xref">Section 6.2.1</a>.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
-<p id="section-5.2-4">The constants for public values are derived from the concatenation of
-encapsulation keys and ciphertexts:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-5">
-<pre>
-Nek = KEM_PQ.Nek + KEM_T.Nek
-Nct = KEM_PQ.Nct + KEM_T.Nct
-</pre><a href="#section-5.2-5" class="pilcrow">¶</a>
-</div>
-<p id="section-5.2-6">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of the
-combined KEM, with the following recommended values:<a href="#section-5.2-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-7">
-<pre>
-Nseed = max(KEM_PQ.Nseed, KEM_T.Nseed)
-Nss = min(KEM_PQ.Nss, KEM_T.Nss)
-</pre><a href="#section-5.2-7" class="pilcrow">¶</a>
-</div>
-<p id="section-5.2-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.2-8" class="pilcrow">¶</a></p>
-<p id="section-5.2-9">Given these constituent parts, the hybrid KEM is defined as follows:<a href="#section-5.2-9" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-10">
-<pre>
-def expandDecapsulationKey(seed):
-    seed_full = PRG(seed)
-    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
-    return (ek_PQ, ek_T, dk_PQ, dk_T)
-
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    (ss_T, ct_T) = KEM_T.Encap(ek_T)
-    ss_H = Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
-    ct_H = concat(ct_PQ, ct_T)
-    return (ss_H, ct_H)
-
-def Decaps(dk, ct):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
-
-    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
-
-    ss_H = Combiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label)
-    return ss_H
-</pre><a href="#section-5.2-10" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
-<div id="group-inst">
-<section id="section-5.3">
-        <h3 id="name-instantiation-with-a-nomina">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-instantiation-with-a-nomina" class="section-name selfRef">Instantiation with a Nominal Group</a>
-        </h3>
-<p id="section-5.3-1">A hybrid KEM <code>KEM_H</code> instantiated with a nominal group for its traditional
-constituent depends on the following components:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.3-2.1">
-            <p id="section-5.3-2.1.1"><code>Group_T</code>: A nominal group<a href="#section-5.3-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.3-2.2">
-            <p id="section-5.3-2.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.3-2.3">
-            <p id="section-5.3-2.3.1"><code>PRG</code>: A PRG producing byte strings of length <code>KEM_PQ.Nseed +
-Group_T.Nseed</code> (<code>PRG.Nout == KEM_PQ.Nseed + Group_T.Nseed</code>)<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.3-2.4">
-            <p id="section-5.3-2.4.1"><code>KDF</code>: A KDF producing byte strings of length <code>KEM_H.Nss</code> (<code>KDF.Nout
-== KDF.Nss</code>)<a href="#section-5.3-2.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.3-2.5">
-            <p id="section-5.3-2.5.1"><code>Label</code> - A byte string used to label the specific combination of the above
-constituents being used.<a href="#section-5.3-2.5.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.3-2.6">
-            <p id="section-5.3-2.6.1"><code>Combiner</code> - One of the combiner functions described in <a href="#combiner-functions" class="auto internal xref">Section 5.1</a><a href="#section-5.3-2.6.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-5.3-3"><code>KEM_PQ</code>, <code>Group_T</code>, <code>PRG</code>, and <code>KDF</code> <span class="bcp14">MUST</span> meet the interfaces
-described in <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <span class="bcp14">MUST</span> meet the security requirements
-described in <a href="#hybrid-ind-cca" class="auto internal xref">Section 6.2.1</a>.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
-<p id="section-5.3-4">The constants for public values are derived from the concatenation of
-encapsulation keys and ciphertexts:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-5">
-<pre>
-Nek = KEM_PQ.Nek + Group_T.Nelem
-Nct = KEM_PQ.Nct + Group_T.Nelem
-</pre><a href="#section-5.3-5" class="pilcrow">¶</a>
-</div>
-<p id="section-5.3-6">The <code>Nseed</code> and <code>Nss</code> constants should reflect the overall security level of
-the combined KEM, with the following recommended values:<a href="#section-5.3-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-7">
-<pre>
-Nseed = max(KEM_PQ.Nseed, Group_T.Nseed)
-Nss = min(KEM_PQ.Nss, Group_T.Nss)
-</pre><a href="#section-5.3-7" class="pilcrow">¶</a>
-</div>
-<p id="section-5.3-8">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.<a href="#section-5.3-8" class="pilcrow">¶</a></p>
-<p id="section-5.3-9">Given these constituent parts, we define the hybrid KEM as follows:<a href="#section-5.3-9" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-10">
-<pre>
-def expandDecapsulationKey(seed):
+def expandDecapsKeyG(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
 
@@ -1991,36 +1872,270 @@ def expandDecapsulationKey(seed):
 
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
-def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(seed)
-    return (concat(ek_PQ, ek_T), seed)
-
-def GenerateKeyPair():
-    seed = random(Nseed)
-    return DeriveKeyPair(seed)
-
-def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
-
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+def prepareEncapsG(ek_PQ, ek_T):
+    (ss_PQ, ct_PQ) = KEM_PQ.Encaps(ek_PQ)
     sk_E = Group_T.RandomScalar(random(Group_T.Nseed))
     ct_T = Group_T.Exp(Group_T.g, sk_E)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ek_T, sk_E))
+    return (ss_PQ, ss_T, ct_PQ, ct_T)
 
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
+    return (ss_PQ, ss_T)
+</pre><a href="#section-5.1.1-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="using-a-traditional-kem">
+<section id="section-5.1.2">
+          <h4 id="name-using-a-traditional-kem">
+<a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-using-a-traditional-kem" class="section-name selfRef">Using a Traditional KEM</a>
+          </h4>
+<p id="section-5.1.2-1">Hybrid KEM frameworks that use a KEM for the traditional component invoke the
+DeriveKeyPair, Encap, and Decap functions of the traditional and PQ KEMs in
+parallel.<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-5.1.2-2">
+<pre>
+def expandDecapsKeyK(seed):
+    seed_full = PRG(seed)
+    (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
+    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+
+def prepareEncapsK(ek_PQ, ek_T):
+    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encap(ek_T)
+    return (ss_PQ, ss_T, ct_PQ, ct_T)
+
+def prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):
+    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decap(dk_T, ct_T)
+    return (ss_PQ, ss_T)
+</pre><a href="#section-5.1.2-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="combiners">
+<section id="section-5.1.3">
+          <h4 id="name-combiners">
+<a href="#section-5.1.3" class="section-number selfRef">5.1.3. </a><a href="#name-combiners" class="section-name selfRef">Combiners</a>
+          </h4>
+<p id="section-5.1.3-1">A combiner function uses the KDF used in the hybrid KEM to combine the shared
+secrets output by the component algorithms with contextual information.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-2">The two combiner functions defined in this document are as follows:<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1.3-3">
+<pre>
+def UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
+    KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+
+def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
+    KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
+</pre><a href="#section-5.1.3-3" class="pilcrow">¶</a>
+</div>
+<p id="section-5.1.3-4">Note that while the names of the inputs are suggestive of the shared secret,
+ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
+in the hybrid KEM framework are not necessarily the output of a secure KEM. In
+particular, when the framework is instantiated with a nominal group, the
+"ciphertext" component is an ephemeral group element, and the "encapsulation
+key" is the group element that functions as the recipient's public key.<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-5">The choice of combiner brings with it certain assumptions
+under which the resulting hybrid KEM is secure.<a href="#section-5.1.3-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-6">The <code>UniversalCombiner</code> combiner explicitly computes over shared secrets, ciphertexts, and
+encapsulation keys from both components.  This allows the resulting hybrid KEM
+to be secure as long as either component is secure, with no further assumptions on the components.<a href="#section-5.1.3-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-7">The <code>C2PRICombiner</code> combiner does not compute over the ciphertext or
+encapsulation key from the PQ component. The resulting hybrid KEM will
+be secure if the PQ component is IND-CCA secure, or, the traditional
+component is secure and the PQ component also satisfies the C2PRI property.<a href="#section-5.1.3-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="key-generation">
+<section id="section-5.2">
+        <h3 id="name-key-generation">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-key-generation" class="section-name selfRef">Key Generation</a>
+        </h3>
+<p id="section-5.2-1">All four frameworks share a common key generation function:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-2">
+<pre>
+def GenerateKeyPair():
+    seed = random(Nseed)
+    return DeriveKeyPair(seed)
+</pre><a href="#section-5.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-5.2-3">In some deployment environments, it is not possible to instantiate this process.
+Some implementations of component schemes do not support the <code>DeriveKeyPair</code>
+function, only GenerateKeyPair. Likewise in the nominal group case, a (scalar,
+group element) pair will only be generated when the scalar is generated internal
+to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-4">An implementation of a hybrid KEM in such environemnts <span class="bcp14">MAY</span> deviate from the
+above description in the following ways:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.2-5.1">
+            <p id="section-5.2-5.1.1">DeriveKeyPair is not implemented.<a href="#section-5.2-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.2-5.2">
+            <p id="section-5.2-5.2.1">The decapsulation key returned by GenerateKeyPair and consumed by Decaps is a
+tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or pointers/handles
+to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.2-5.3">
+            <p id="section-5.2-5.3.1">The <code>expandDecapsulationKeyG</code> and <code>expandDecapsulationKeyK</code> functions are
+replaced by the following, where <code>decapsToEncaps()</code> is a function that returns
+the encapsulation key associated with a decapsulation key:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.2-6"><code>
+def expandDecapsulationKey(dk):
+    (dk_PQ, dkT) = dk # depending on the private key storage format
+    ek_PQ = decapsToEncaps(dk_PQ)
+    ek_T = decapsToEncaps(dk_T)
+    return (ek_PQ, ek_T, dk_PQ, dk_T)
+</code><a href="#section-5.2-6" class="pilcrow">¶</a></p>
+<p id="section-5.2-7">These deviations have both interoperability and security impacts.<a href="#section-5.2-7" class="pilcrow">¶</a></p>
+<p id="section-5.2-8">From an interoperatbility point of view, the use of a second format for the
+hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
+incompatibilities in cases where a private key needs to be moved from one system
+to another.<a href="#section-5.2-8" class="pilcrow">¶</a></p>
+<p id="section-5.2-9">The security impact of this deviation is to reduce binding properties from
+MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
+address a variety of attack scenarios, including LEAK scenarios in which an
+attacker has passive access to the decapsulation key and MAL scenarios in which
+an attacker can cause the victim to use a crafted decapsulation key. The above
+hybrid KEM framework assures binding properties in the face of a LEAK attacker,
+irrespective of how key generation is done. The additional provided by the
+default "shared seed" key generation upgrades this to protection against a MAL
+attacker.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
+<p id="section-5.2-10">As a result, this alternative style of key generation should only be used in
+environments where implementations of component algorithms do not allow
+decapsulation keys to be imported or exported.  When decapsulation keys are
+moved around, they <span class="bcp14">MUST</span> always use the seed format.<a href="#section-5.2-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ug-framework-universal-combiner-with-a-nominal-group">
+<section id="section-5.3">
+        <h3 id="name-ug-framework-universal-comb">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-ug-framework-universal-comb" class="section-name selfRef">UG Framework: Universal Combiner with a Nominal Group</a>
+        </h3>
+<p id="section-5.3-1">This framework combines a PQ KEM with a nominal group, using the universal
+combiner function.  It should be used in cases where the application wants to
+use a nominal group for the traditional component, and does not want to rely on
+the C2PRI assumption for the PQ KEM.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-2">
+<pre>
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsulationKey(dk)
-
-    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
-
-    ss_H = KDF(concat(ss_PQ, ss_T, ct_T, ek_T, Label))
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
+    (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
     return ss_H
-</pre><a href="#section-5.3-10" class="pilcrow">¶</a>
+</pre><a href="#section-5.3-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="uk-framework-universal-combiner-with-a-kem">
+<section id="section-5.4">
+        <h3 id="name-uk-framework-universal-comb">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-uk-framework-universal-comb" class="section-name selfRef">UK Framework: Universal Combiner with a KEM</a>
+        </h3>
+<p id="section-5.4-1">This framework combines a PQ KEM with a traditional KEM, using the universal
+combiner function.  It should be used in cases where the application wants to
+use a KEM for the traditional component, and does not want to rely on the C2PRI
+assumption for the PQ KEM.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.4-2">
+<pre>
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
+    (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+</pre><a href="#section-5.4-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="cg-framework-c2pri-combiner-with-a-nominal-group">
+<section id="section-5.5">
+        <h3 id="name-cg-framework-c2pri-combiner">
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-cg-framework-c2pri-combiner" class="section-name selfRef">CG Framework: C2PRI Combiner with a Nominal Group</a>
+        </h3>
+<p id="section-5.5-1">This framework combines a PQ KEM with a nominal group, using the C2PRI combiner
+function.  It should be used in cases where the application wants to use a
+nominal group for the traditional component, and is comfortable relying on the
+C2PRI assumption for the PQ KEM.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5-2">
+<pre>
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
+    (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+</pre><a href="#section-5.5-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="cg-framework-c2pri-combiner-with-a-kem">
+<section id="section-5.6">
+        <h3 id="name-cg-framework-c2pri-combiner-">
+<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-cg-framework-c2pri-combiner-" class="section-name selfRef">CG Framework: C2PRI Combiner with a KEM</a>
+        </h3>
+<p id="section-5.6-1">This framework combines a PQ KEM with a traditional KEM, using the C2PRI
+combiner function.  It should be used in cases where the application wants to
+use a KEM for the traditional component, and is comfortable relying on the C2PRI
+assumption for the PQ KEM.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.6-2">
+<pre>
+def DeriveKeyPair(seed):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
+    return (concat(ek_PQ, ek_T), seed)
+
+def Encaps(ek):
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ct_H = concat(ct_PQ, ct_T)
+    return (ss_H, ct_H)
+
+def Decaps(dk, ct):
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
+    (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    return ss_H
+</pre><a href="#section-5.6-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -2520,38 +2635,48 @@ fixed-length shared secrets.<a href="#section-6.5.2-4" class="pilcrow">¶</a></p
 </div>
 </section>
 </div>
-<div id="in-scope">
+<div id="iana-considerations">
 <section id="section-7">
-      <h2 id="name-in-scope">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-in-scope" class="section-name selfRef">In Scope</a>
+      <h2 id="name-iana-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<div id="ghp-framework">
-<section id="section-7.1">
-        <h3 id="name-ghp-framework">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-ghp-framework" class="section-name selfRef">GHP Framework</a>
-        </h3>
-<p id="section-7.1-1">The GHP framework works for generic IND-CCA component schemes. GHP also has
-an IND-CCA proof from <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>. Including the public encapsulation keys as
-part of the KDF preimage fits in the 'additional data' parts of the split key
-PRF proof there, and binds to the encapsulation keys, which is a nice
-property for protocols integrating concrete instances. GHP also matches NIST
-SP 800-227 IPD, and gives good binding properties. <a href="#binding-properties" class="auto internal xref">Section 6.1.4</a> is
-generally safe with no caveats on use for constructing concrete instances
-using a broad array of components.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="qsf-framework">
-<section id="section-7.2">
-        <h3 id="name-qsf-framework">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-qsf-framework" class="section-name selfRef">QSF Framework</a>
-        </h3>
-<p id="section-7.2-1">QSF works for most elliptic curve groups and C2PRI-secure quantum-resistant
-KEMs.  It is an optimization that leaves out large ciphertexts and
-encapsulation keys from the KDF preimage, saving extra hashing, if the PQ KEM
-meets requirements. More KEMs can be proven to be C2PRI-secure eventually for
-use with QSF.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-7-1">This document requests that IANA create a registry "Hybrid KEM Labels", which
+lists labels that uniquely identify instantiations of the frameworks in this
+document.  The registry should be administered under the First Come First Served
+policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">Template:<a href="#section-7-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7-3.1">
+          <p id="section-7-3.1.1">Label: The name of the wire format<a href="#section-7-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.2">
+          <p id="section-7-3.2.1">Framework: The framework used in the hybrid KEM.  This value <span class="bcp14">MUST</span> be one of
+the following values: "GU", "GC", "KU", or "KC".<a href="#section-7-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.3">
+          <p id="section-7-3.3.1">PQ component: The name of the post-quantum KEM used in the hybrid KEM.<a href="#section-7-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.4">
+          <p id="section-7-3.4.1">Traditional component: The name of the traditional KEM or nominal group used
+in the hybrid KEM.<a href="#section-7-3.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.5">
+          <p id="section-7-3.5.1">KDF: The name of the Key Derivation Function used in the hybrid KEM.<a href="#section-7-3.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.6">
+          <p id="section-7-3.6.1">PRG: The name of the Pseudo-Random Generator used in the hybrid KEM.<a href="#section-7-3.6.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.7">
+          <p id="section-7-3.7.1">Nseed: An integer representing the size of a seed for this hybrid KEM.<a href="#section-7-3.7.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.8">
+          <p id="section-7-3.8.1">Nss: An integer representing the size of a shared secret for this hybrid KEM.<a href="#section-7-3.8.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-3.9">
+          <p id="section-7-3.9.1">Reference (optional): The document where this hybrid KEM is defined<a href="#section-7-3.9.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-7-4">The registry should initially be empty.<a href="#section-7-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="out-of-scope">
@@ -2604,6 +2729,10 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8126">[RFC8126]</dt>
+        <dd>
+<span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Leiba, B.</span>, and <span class="refAuthor">T. Narten</span>, <span class="refTitle">"Guidelines for Writing an IANA Considerations Section in RFCs"</span>, <span class="seriesInfo">BCP 26</span>, <span class="seriesInfo">RFC 8126</span>, <span class="seriesInfo">DOI 10.17487/RFC8126</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8126">https://www.rfc-editor.org/rfc/rfc8126</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
       <dd>
