@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 19 April 2026                                             Cisco
+Expires: 20 April 2026                                             Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                         16 October 2025
+                                                         17 October 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 April 2026.
+   This Internet-Draft will expire on 20 April 2026.
 
 Copyright Notice
 
@@ -101,15 +101,12 @@ Table of Contents
        6.5.1.  Domain Separation
        6.5.2.  Fixed-length
    7.  IANA Considerations
-   8.  In Scope
-     8.1.  GHP Framework
-     8.2.  QSF Framework
-   9.  Out of Scope
-     9.1.  More than Two Component KEMs
-     9.2.  Parameterized Output Length
-   10. References
-     10.1.  Normative References
-     10.2.  Informative References
+   8.  Out of Scope
+     8.1.  More than Two Component KEMs
+     8.2.  Parameterized Output Length
+   9.  References
+     9.1.  Normative References
+     9.2.  Informative References
    Appendix A.  Deterministic Encapsulation
    Acknowledgments
    Authors' Addresses
@@ -1203,7 +1200,7 @@ Table of Contents
    *  Label: The name of the wire format
 
    *  Framework: The framework used in the hybrid KEM.  This value MUST
-      be either "GHP" or "QSF".
+      be one of the following values: "GU", "GC", "KU", or "KC".
 
    *  PQ component: The name of the post-quantum KEM used in the hybrid
       KEM.
@@ -1228,29 +1225,7 @@ Table of Contents
 
    The registry should initially be empty.
 
-8.  In Scope
-
-8.1.  GHP Framework
-
-   The GHP framework works for generic IND-CCA component schemes.  GHP
-   also has an IND-CCA proof from [GHP2018].  Including the public
-   encapsulation keys as part of the KDF preimage fits in the
-   'additional data' parts of the split key PRF proof there, and binds
-   to the encapsulation keys, which is a nice property for protocols
-   integrating concrete instances.  GHP also matches NIST SP 800-227
-   IPD, and gives good binding properties.  Section 6.1.4 is generally
-   safe with no caveats on use for constructing concrete instances using
-   a broad array of components.
-
-8.2.  QSF Framework
-
-   QSF works for most elliptic curve groups and C2PRI-secure quantum-
-   resistant KEMs.  It is an optimization that leaves out large
-   ciphertexts and encapsulation keys from the KDF preimage, saving
-   extra hashing, if the PQ KEM meets requirements.  More KEMs can be
-   proven to be C2PRI-secure eventually for use with QSF.
-
-9.  Out of Scope
+8.  Out of Scope
 
    Considerations that were considered and not included in these
    designs:
@@ -1258,19 +1233,19 @@ Table of Contents
    Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
    robustness or binding [GMP22], [CDM23]
 
-9.1.  More than Two Component KEMs
+8.1.  More than Two Component KEMs
 
    Design team decided to restrict the space to only two components, a
    post-quantum and a traditional KEM.
 
-9.2.  Parameterized Output Length
+8.2.  Parameterized Output Length
 
    Not analyzed as part of any security proofs in the literature, and a
    complication deemed unnecessary.
 
-10.  References
+9.  References
 
-10.1.  Normative References
+9.1.  Normative References
 
    [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
               output functions", National Institute of Standards and
@@ -1296,7 +1271,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-10.2.  Informative References
+9.2.  Informative References
 
    [ABH_21]   Joël Alwen, Bruno Blanchet, Eduard Hauck, Eike Kiltz,
               Benjamin Lipp, and Doreen Riepel, "Analysing the HPKE
