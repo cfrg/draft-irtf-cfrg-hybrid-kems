@@ -2000,7 +2000,7 @@ def expandDecapsulationKey(dk):
 hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
 incompatibilities in cases where a private key needs to be moved from one system
 to another.<a href="#section-5.2-8" class="pilcrow">¶</a></p>
-<p id="section-5.2-9">The security impact of this deviation is to reduce binding properties from
+<p id="section-5.2-9">Separate key generation / handling also reduces binding properties from
 MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
 address a variety of attack scenarios, including LEAK scenarios in which an
 attacker has passive access to the decapsulation key and MAL scenarios in which
@@ -2009,10 +2009,19 @@ hybrid KEM framework assures binding properties in the face of a LEAK attacker,
 irrespective of how key generation is done. The additional provided by the
 default "shared seed" key generation upgrades this to protection against a MAL
 attacker.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
-<p id="section-5.2-10">As a result, this alternative style of key generation should only be used in
+<p id="section-5.2-10">Allowing for separate private key generation and handling also introduces a risk
+of inappropriate key reuse and cross-protocol attacks.  A given key pair <span class="bcp14">MUST</span>
+never be used in both a hybrid KEM and with a non-hybrid algorithm. A pair of
+key pairs generated for a hybrid algorithm <span class="bcp14">MUST</span> only be used with that hybrid
+algorithm, not separately with their component algorithms.  Likewise, key pairs
+generated outside of the context of a hybrid KEM <span class="bcp14">MUST NOT</span> be used with a hybrid
+KEM.  The "shared seed" style of key generation prevents such reuse, because the
+per-component private keys are derived internally to the hybrid KEM.<a href="#section-5.2-10" class="pilcrow">¶</a></p>
+<p id="section-5.2-11">As a result, this alternative style of key generation should only be used in
 environments where implementations of component algorithms do not allow
-decapsulation keys to be imported or exported.  When decapsulation keys are
-moved around, they <span class="bcp14">MUST</span> always use the seed format.<a href="#section-5.2-10" class="pilcrow">¶</a></p>
+decapsulation keys to be imported or exported.  In scenarios where separate key
+generation is used and decapsulation keys can be imported/exported, additional
+measures should be put in place to mitigate the key reuse risks noted above.<a href="#section-5.2-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="ug-framework-universal-combiner-with-a-nominal-group">
