@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-16T01:06:34.649842+00:00",
+  "timestamp": "2025-10-19T01:14:13.086127+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1363,6 +1363,69 @@
       "updatedAt": "2025-10-04T02:29:31Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 86,
+      "id": "I_kwDOMmhxws7SA1lq",
+      "title": "Be consistent about backticks",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/86",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Right now, we are not consistent about which words go in `verbatim` backtics.  The current document is mixed (`Encaps()`, but not `DeriveKeyPair`).  We should be consistent here.\n\nMy usual policy is to reserve backticks for words that start lower-case (so `derive_key_pair` but not `DeriveKeyPair`), since there's more risk of ambiguity there.  But I would be open to verbatim-izing more things if folks prefer.",
+      "createdAt": "2025-10-16T20:35:45Z",
+      "updatedAt": "2025-10-16T20:35:45Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 87,
+      "id": "I_kwDOMmhxws7SA5tr",
+      "title": "Naming of combiners",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/87",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In #85, the two combiner functions are Universal and C2PRI.  Are there other names that would be better?\n\n* Basic / C2PRI\n* \"Any PQ KEM\" / \"Only C2PRI PQ KEM\" (would need to figure out how to make into labels)\n",
+      "createdAt": "2025-10-16T20:41:43Z",
+      "updatedAt": "2025-10-16T20:41:43Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 88,
+      "id": "I_kwDOMmhxws7SA9xu",
+      "title": "DeriveKeyPair: (ek, dk) or (dk, ek)?",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/88",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "`Encaps()` returns the secret output first, `(ss, ct)`.  `DeriveKeyPair` should do the same thing.",
+      "createdAt": "2025-10-16T20:48:31Z",
+      "updatedAt": "2025-10-16T20:55:22Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Along similar lines, look at whether `concat` is on its own line or inline.  I think \"own line\" is probably a little clearer, because you get to give a name to the compound thing.",
+          "createdAt": "2025-10-16T20:49:56Z",
+          "updatedAt": "2025-10-16T20:49:56Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Along similar lines, maybe suffix the subruotines with `_KEM` and `_Group` instead of `K`/`G`.",
+          "createdAt": "2025-10-16T20:55:22Z",
+          "updatedAt": "2025-10-16T20:55:22Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -6879,21 +6942,21 @@
       "id": "PR_kwDOMmhxws6l3yfG",
       "title": "Uniform API",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/72",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "It has become clear in CFRG discussions that the limitation of GHP to only KEM+KEM and QSF to only KEM+Group is insufficient.  Folks want to instantiate QSF with RSA (see, e.g., [LAMPS](https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-07.html)), and folks being conservative about C2PRI want to instantiate GHP with ECDH groups in the T component.\r\n\r\nWe thus end up with four combinations to consider:\r\n1. PQ(IND-CCA + C2PRI) + T(Group) = QSF\r\n2. PQ(IND-CCA + C2PRI) + T(KEM)\r\n3. PQ(IND-CCA only) + T(Group)\r\n4. PQ(IND-CCA only) + T(KEM) = GHP\r\n\r\nThis PR attempts to present these options in a unified framework, with two binary choices: KEM vs. group, and C2PRI or not.  This PR does not make the corresponding changes to the Security Considerations, which will need to be updated to match if we adopt this approach.\r\n\r\nThe framework here could be simpler if we defined a DH-based thing that satisfied the KEM interface.  This would be problematic, however, because the resulting \"KEM\" would not be IND-CCA.  Given this fact, and the fact that defining such a \"KEM\" would take up about the same amount of space as the repetition we currently have, I think the current approach of keeping these separate is the right one.",
       "createdAt": "2025-08-28T20:12:10Z",
-      "updatedAt": "2025-10-03T22:26:22Z",
+      "updatedAt": "2025-10-16T15:54:39Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "uniform-api",
       "headRefOid": "56f58b1a12d1069eeea1b31ea9f806b025a52a9d",
-      "closedAt": null,
+      "closedAt": "2025-10-16T15:54:39Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -7086,21 +7149,21 @@
       "id": "PR_kwDOMmhxws6l4FIU",
       "title": "Add a section on separate key generation",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/73",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "It is apparently very important to the LAMPS community to be able to deploy hybrid KEMs without the \"shared seed\" key generation that is the preferred approach here.  (In other words, to make a hybrid KEM without your HSM having to be aware of it.)  This PR adds a section that discusses this option.  The idea being: You [OUGHT TO](https://rfcs.online/rfcs/rfc6919.html#section-4) do shared seed, but if you can't, here's how you adapt and the trade-offs.\r\n\r\n@dconnolly - I would appreciate suggested text for the security aspects.\r\n\r\nDepends on #72.  Read [this commit](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/73/commits/25efa466175c1069c9f8b91fc4db404ec42bb235) for the more focused version.",
       "createdAt": "2025-08-28T20:50:00Z",
-      "updatedAt": "2025-09-15T21:03:59Z",
+      "updatedAt": "2025-10-16T15:53:54Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "16df319bd90bc10540c4e109ec7de020bb7e8f5d",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "keygen",
       "headRefOid": "fca53b6746f72c5b5143c7ac48d26ec6739e63fc",
-      "closedAt": null,
+      "closedAt": "2025-10-16T15:53:54Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -7661,21 +7724,21 @@
       "id": "PR_kwDOMmhxws6oyINa",
       "title": "Add HQB and QSH frameworks, proofs still pending",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/79",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-09-16T06:51:46Z",
-      "updatedAt": "2025-10-04T00:12:31Z",
+      "updatedAt": "2025-10-16T15:53:00Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "f048e2bf9b36857dc10fa10e8023df77518d95f5",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "hqb-and-qsh",
       "headRefOid": "feb21f6d9021203f4d3c4b90dbc215c83146e1da",
-      "closedAt": null,
+      "closedAt": "2025-10-16T15:53:00Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -7737,25 +7800,35 @@
       "id": "PR_kwDOMmhxws6s9so8",
       "title": "Name individual frameworks, but call out subroutines",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/85",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR attempts a middle ground between #72 and #79, reflecting a few points of feedback from the 2026-09-25 CFRG interim:\r\n\r\n* Having names and section titles for specific frameworks helps implementors zero in on the right parts\r\n* But we should also minimize duplication across these sections\r\n\r\nTo do this, I made a section for each specific framework (using the \"two letter\" naming scheme), but having a section full of subroutines to capture the common structure.\r\n\r\nThis PR also:\r\n\r\n* Replaces #73 by addressing key generation and its variations.  \r\n* Adds a note about C2PRI to the introduction, reflecting mailing list feedback that an earlier mention was needed",
       "createdAt": "2025-10-09T19:53:14Z",
-      "updatedAt": "2025-10-15T00:53:29Z",
+      "updatedAt": "2025-10-16T21:07:39Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bc25ae8254fd60325580e9271fa74b4a63a198df",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "mid-72-79",
-      "headRefOid": "6ed3157c5c58aa8e7043f080ab8446807f268d21",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "headRefOid": "470874d170df53cda4838330e86a34214c298cdf",
+      "closedAt": "2025-10-16T21:07:37Z",
+      "mergedAt": "2025-10-16T21:07:37Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "35b8534bf6f25878f1ade8f7d7da29530b2a5a74"
+      },
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for the thorough review @dconnolly.  I accepted most of your suggestions, and filed a couple of follow-ons for others.",
+          "createdAt": "2025-10-16T21:07:32Z",
+          "updatedAt": "2025-10-16T21:07:32Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOMmhxws7G9JeX",
@@ -8092,6 +8165,418 @@
               "updatedAt": "2025-10-15T00:53:29Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfVfx",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:23:31Z",
+          "updatedAt": "2025-10-16T20:23:31Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I would prefer just to go back to Frameworks like we had before.  \r\n\r\n  ",
+              "createdAt": "2025-10-16T20:23:31Z",
+              "updatedAt": "2025-10-16T20:23:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfVt9",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:23:51Z",
+          "updatedAt": "2025-10-16T20:23:52Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\n# Hybrid KEM Frameworks {#frameworks}\r\n```",
+              "createdAt": "2025-10-16T20:23:52Z",
+              "updatedAt": "2025-10-16T20:23:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfWSo",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:24:34Z",
+          "updatedAt": "2025-10-16T20:24:35Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "```suggestion\r\nInstantiating one of these frameworks creates a hybrid KEM `KEM_H` based on the following constituent\r\n```",
+              "createdAt": "2025-10-16T20:24:35Z",
+              "updatedAt": "2025-10-16T20:24:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfYEK",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:27:09Z",
+          "updatedAt": "2025-10-16T20:27:09Z",
+          "comments": [
+            {
+              "originalPosition": 118,
+              "body": "```suggestion\r\nHybrid KEM frameworks that use a nominal group for the traditional component invoke the\r\n```",
+              "createdAt": "2025-10-16T20:27:09Z",
+              "updatedAt": "2025-10-16T20:27:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfYSB",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:27:30Z",
+          "updatedAt": "2025-10-16T20:27:30Z",
+          "comments": [
+            {
+              "originalPosition": 119,
+              "body": "Should be \"that use a nominal group\".  Copy/paste error.",
+              "createdAt": "2025-10-16T20:27:30Z",
+              "updatedAt": "2025-10-16T20:27:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfaX9",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:30:02Z",
+          "updatedAt": "2025-10-16T20:30:02Z",
+          "comments": [
+            {
+              "originalPosition": 143,
+              "body": "\"Prepare\" in the sense of \"preparing the inputs to the KDF\"",
+              "createdAt": "2025-10-16T20:30:02Z",
+              "updatedAt": "2025-10-16T20:30:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Hfc0P",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:33:32Z",
+          "updatedAt": "2025-10-16T20:33:32Z",
+          "comments": [
+            {
+              "originalPosition": 153,
+              "body": "My general policy is to reserve backticks for words that start lower-case (so `derive_key_pair` but not DeriveKeyPair), since there's more risk of ambiguity there.  But we should be consistent across the document.  It looks like the current document is mixed (`Encaps()`, but not `DeriveKeyPair`), so let's do a consistency pass in a follow-on PR.  (This could even get fixed in AUTH48.)",
+              "createdAt": "2025-10-16T20:33:32Z",
+              "updatedAt": "2025-10-16T20:33:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfeqE",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:35:52Z",
+          "updatedAt": "2025-10-16T20:35:52Z",
+          "comments": [
+            {
+              "originalPosition": 153,
+              "body": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/86",
+              "createdAt": "2025-10-16T20:35:52Z",
+              "updatedAt": "2025-10-16T20:35:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfkgN",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:42:19Z",
+          "updatedAt": "2025-10-16T20:42:19Z",
+          "comments": [
+            {
+              "originalPosition": 204,
+              "body": "\"Universal\" in the sense that it is secure for any KEM, not just a C2PRI KEM.  Maybe that's the way to phrase it: \"any KEM\" vs. \"only C2PRI\".  I will probably merge this PR to get the structure in, and then we can iterate on the naming.\r\n\r\nhttps://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/87",
+              "createdAt": "2025-10-16T20:42:19Z",
+              "updatedAt": "2025-10-16T20:42:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Hfncc",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:46:24Z",
+          "updatedAt": "2025-10-16T20:46:24Z",
+          "comments": [
+            {
+              "originalPosition": 342,
+              "body": "I don't feel strongly, but I kind of like having the indirection because (a) it highlights the commonality and (b) having a name for it highlights the security assumptions.",
+              "createdAt": "2025-10-16T20:46:24Z",
+              "updatedAt": "2025-10-16T20:46:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HfpEV",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:48:57Z",
+          "updatedAt": "2025-10-16T20:48:57Z",
+          "comments": [
+            {
+              "originalPosition": 363,
+              "body": "It looks like DeriveKeyPair is consistent here, so I'm going to leave it for this PR, but filed https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/88.",
+              "createdAt": "2025-10-16T20:48:57Z",
+              "updatedAt": "2025-10-16T20:48:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Hfq3b",
+          "commit": {
+            "abbreviatedOid": "6ed3157"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:51:27Z",
+          "updatedAt": "2025-10-16T20:51:27Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\r\n  components being used, as well as which framework is being instantiated.\r\n```",
+              "createdAt": "2025-10-16T20:51:27Z",
+              "updatedAt": "2025-10-16T20:51:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Hfvyv",
+          "commit": {
+            "abbreviatedOid": "54f3665"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T20:59:28Z",
+          "updatedAt": "2025-10-16T20:59:28Z",
+          "comments": [
+            {
+              "originalPosition": 194,
+              "body": "```suggestion\r\nsecrets output by the component algorithms with contextual information.\r\n```",
+              "createdAt": "2025-10-16T20:59:28Z",
+              "updatedAt": "2025-10-16T20:59:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Hfw8L",
+          "commit": {
+            "abbreviatedOid": "0488544"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T21:01:21Z",
+          "updatedAt": "2025-10-16T21:01:22Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\r\n  {{iana-considerations}}).\r\n```",
+              "createdAt": "2025-10-16T21:01:22Z",
+              "updatedAt": "2025-10-16T21:01:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7Hfz_1",
+          "commit": {
+            "abbreviatedOid": "470874d"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T21:06:08Z",
+          "updatedAt": "2025-10-16T21:06:09Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "GitHub seems to have broken the link, but I'm assuming it's the comment about \"secretly registering concrete hybrid KEM constructions\"?  Not sure what the concern is there.  The registry is First Come First Served, so (a) it's non-rivalrous, and (b) it's not hard to register something (just email IANA).  The only way to get around this would be to remove the information from the IANA registry about what the label indicates, which seems like it removes most of the utility from the registry.  In any case, this issue seems separate from this PR.",
+              "createdAt": "2025-10-16T21:06:08Z",
+              "updatedAt": "2025-10-16T21:06:09Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 89,
+      "id": "PR_kwDOMmhxws6uYnxl",
+      "title": "Clean up some unnecessary mentions of GHP and QSF",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/89",
+      "state": "MERGED",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-10-17T20:53:28Z",
+      "updatedAt": "2025-10-17T20:54:03Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "35b8534bf6f25878f1ade8f7d7da29530b2a5a74",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "cleanup-ghp-qsf",
+      "headRefOid": "7dbb973416f61967048c758d3c5ceb2da97abbd0",
+      "closedAt": "2025-10-17T20:54:02Z",
+      "mergedAt": "2025-10-17T20:54:02Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "0c1650a401ecd026e33ce363f38746a8c8570cc7"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 90,
+      "id": "PR_kwDOMmhxws6uYus0",
+      "title": "Update key generation requirements",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/90",
+      "state": "MERGED",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR updates the key generation text to loosen the current prohibition on moving keys around in non-seed form.  In exchange, it adds more caveats about the risks that you have to account for in such situations. ",
+      "createdAt": "2025-10-17T21:05:03Z",
+      "updatedAt": "2025-10-17T22:54:41Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "0c1650a401ecd026e33ce363f38746a8c8570cc7",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "looser-keygen",
+      "headRefOid": "4f163f3799085a5e7fb4427b146fa44a9ec8bd7e",
+      "closedAt": "2025-10-17T22:54:40Z",
+      "mergedAt": "2025-10-17T22:54:40Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "2a4fa5eb1d3840d2b1b7fa1ed0b272ab78be9061"
+      },
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "cc @ounsworth\r\n",
+          "createdAt": "2025-10-17T21:05:14Z",
+          "updatedAt": "2025-10-17T21:05:14Z"
+        },
+        {
+          "author": "ounsworth",
+          "authorAssociation": "NONE",
+          "body": "I have formed my opinion on this, and that is that ECDH.keygen_from_seed() is novel cryptography. I checked SEC1 and SP 800-56A, and they do not specify a keygen function that accepts the randomness from outside the crypto module. I was not able to implement this draft and use your test vectors on top of the standard python cryptography library, and to me, that indicates a major design problem. Python Cryptography does have this:\r\n\r\n```\r\nec.derive_private_key(int.from_bytes(TSeed, \"little\"), ec.SECP256R1())\r\n```\r\nbut it did not give me the same private key -- perhaps we should debug this more?\r\nBut even if we can make this work with python cryptography, it's clear that this function is not FIPS-allowed, so there will many crypto libraries that don't implement it, and many production environments where, even if the software supports it, it is not allowed to be used due to US Gov regulations around FIPS compliance.\r\n\r\nSo, if you're going to extol the dangers of not using seeds for ECDH, then I think you equally need to extol the dangers of requiring readers of this document to implement their own EC point multiplication on private key data. I think that the security gained by the seeds binding thing will be undone multiple times over when people write bad ECC code.\r\n\r\nI feel quite strongly that the RECOMMENDED implementation here should be \"Go find a hardened ML-KEM module, and go find a harnened ECDH module, and then use them unmodified\", and unfortunately, that is going to mean no seed-based EC keygen, at least not in the RECOMMENDED implementation.\r\n\r\nI understand that HPKE needs deterministic keygen, so I would have no problem with an appendix or something that specifies it as an alternate implementation, but I think it needs the appropriate HERE BE DRAGONS text:\r\n\r\n> Note that a seed-based keygen for elliptic curve, while similar to the keygen routines specified in [SEC1] and [SP800-56A], is not actually standardized and allowed by those specifications. This has a couple of implications. First, an implementation of this specification cannot be done in a FIPS-compliant way. Second, although ML-KEM and ECDH are standardized components, this specification cannot be implemented on top of most existing cryptographic libraries and cryptographic hardware. Implementing the seed-based elliptic curve keygen requires implementing EC point multiplication handling private key data, and SHOULD NOT be done except by expert cryptographers who are aware of the side-channel requirements of their implementation and who are qualified to write such hardened code.\r\n\r\nNote that none of this applies to the X25519 variant because there the private key is already a seed in all the standardized implementations, and that's why we were able to trivially do interop-testing between this draft and the LAMPS draft.",
+          "createdAt": "2025-10-17T21:36:35Z",
+          "updatedAt": "2025-10-17T21:36:35Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's a little strong to call deterministic EC key generation \"novel cryptography\".  It is, for example, essential to MLS (via HPKE), which is used in production millions of times per day across multiple products.\r\n\r\nI agree that there are not great standards for it, which is why HPKE had to [define its own rejection sampling loop](https://rfcs.online/rfcs/rfc9180.html#section-7.1.3) and we're having to do the same thing [in the concrete doc](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/30).  But given that there are a bunch of HPKE implementations out there, using several different cryptographic libraries, I don't think library support is really a blocker here.\r\n\r\nIt seems like we're down to a question of emphasis here, since the current text allows both, just with a bias toward shared-seed.  I'm going to go with this text as a compromise for now, and we can solicit more feedback from the rest of CFRG.",
+          "createdAt": "2025-10-17T21:46:50Z",
+          "updatedAt": "2025-10-17T21:46:50Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7HzM1W",
+          "commit": {
+            "abbreviatedOid": "3c55c2f"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-17T21:06:14Z",
+          "updatedAt": "2025-10-17T21:06:14Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\nSeparate key generation / handling also reduces binding properties from\n```",
+              "createdAt": "2025-10-17T21:06:14Z",
+              "updatedAt": "2025-10-17T21:06:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7HzR9w",
+          "commit": {
+            "abbreviatedOid": "4f163f3"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I like this",
+          "createdAt": "2025-10-17T21:12:39Z",
+          "updatedAt": "2025-10-17T21:12:39Z",
+          "comments": []
         }
       ]
     }
