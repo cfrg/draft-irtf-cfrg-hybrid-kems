@@ -1153,8 +1153,8 @@ used in GHP meets the split-key pseudorandomness property used in
 GHP's analysis. <!-- TODO: apparently there is no good citation for this
 foklore, maybe we can explicitly lay it out -->
 
-Like UG, the CG construction has two complementary IND-CCA analyses. Both were given
-in {{XWING}}. We summarize them but elide some details.
+Like UG, the CG construction has two complementary IND-CCA analyses. Both were
+given in {{XWING}}. We summarize them but elide some details.
 
 One analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,
 IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
