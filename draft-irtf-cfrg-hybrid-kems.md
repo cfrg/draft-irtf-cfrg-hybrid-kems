@@ -1119,11 +1119,11 @@ provides the security properties described above.
 
 ### IND-CCA analyses
 
-The UG construction has two complementary IND-CCA analyses: one for when the SDH problem
-holds but the PQ KEM is broken, and one for the reverse. Both are technically novel but
-are substantially similar to the existing peer-reviewed analyses of the CG {{XWING}} and
-UK {{GHP18}} constructions. A forthcoming document by the editorial team will describe
-the analysis of UG in detail.
+The UG construction has two complementary IND-CCA analyses: one for when the
+SDH problem holds but the PQ KEM is broken, and one for the reverse. Both are
+technically novel but are substantially similar to the existing peer-reviewed
+analyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming
+document by the editorial team will describe the analysis of UG in detail.
 
 The first IND-CCA analysis, based on SDH, is very similar to the corresponding
 analysis of CG given in {{XWING}}: it gives a straightforward reduction to the SDH
