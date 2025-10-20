@@ -10,26 +10,25 @@
 <meta content="Paul Grubbs" name="author">
 <meta content="
        This document defines generic constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a traditional
-cryptographic component. Hybrid KEMs built using these constructions provide
-strong security properties as long as either of the underlying algorithms are
-secure. 
+Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a
+traditional cryptographic component. Hybrid KEMs built using these
+constructions provide strong security properties as long as either of the
+underlying algorithms are secure. 
     " name="description">
-<meta content="xml2rfc 3.30.2" name="generator">
+<meta content="xml2rfc 3.31.0" name="generator">
 <meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.30.2
-    Python 3.12.11
+  xml2rfc 3.31.0
+    Python 3.12.12
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
     lxml 5.3.1
-    platformdirs 4.4.0
+    platformdirs 4.5.0
     pycountry 24.6.1
     PyYAML 6.0.2
     requests 2.32.5
-    setuptools 80.9.0
     wcwidth 0.2.14
 -->
 <link href="draft-irtf-cfrg-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
@@ -1053,7 +1052,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 20 April 2026</td>
+<td class="center">Expires 23 April 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1065,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-10-17" class="published">17 October 2025</time>
+<time datetime="2025-10-20" class="published">20 October 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-04-20">20 April 2026</time></dd>
+<dd class="expires"><time datetime="2026-04-23">23 April 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1093,10 +1092,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document defines generic constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a traditional
-cryptographic component. Hybrid KEMs built using these constructions provide
-strong security properties as long as either of the underlying algorithms are
-secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a
+traditional cryptographic component. Hybrid KEMs built using these
+constructions provide strong security properties as long as either of the
+underlying algorithms are secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1128,7 +1127,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1210,7 +1209,7 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-cg-framework-c2pri-combiner" class="internal xref">CG Framework: C2PRI Combiner with a Nominal Group</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
-                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-cg-framework-c2pri-combiner-" class="internal xref">CG Framework: C2PRI Combiner with a KEM</a></p>
+                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-ck-framework-c2pri-combiner" class="internal xref">CK Framework: C2PRI Combiner with a KEM</a></p>
 </li>
             </ul>
 </li>
@@ -1321,12 +1320,12 @@ secure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Post-quantum (PQ) cryptographic algorithms are based on
-problems that are conjectured to be resistant to attacks possible on a quantum
-computer. Key Encapsulation Mechanisms (KEMs), are a standardized class of
-cryptographic scheme that can be used to build protocols in lieu of
-traditional, quantum-vulnerable variants such as finite field or elliptic
-curve Diffie-Hellman (DH) based protocols.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">Post-quantum (PQ) cryptographic algorithms are based on problems that are
+conjectured to be resistant to attacks possible on a quantum computer. Key
+Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic
+scheme that can be used to build protocols in lieu of traditional,
+quantum-vulnerable variants such as finite field or elliptic curve
+Diffie-Hellman (DH) based protocols.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help
@@ -1347,13 +1346,13 @@ from a PQ KEM and a traditional algorithm.  The aim of this document is
 provide a small set of techniques to achieve specific security properties
 given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">We define four generic frameworks as variants of a common overall scheme.  The
-variations are based on (1) what type of cryptographic object is being used for
-the traditional component, and (2) whether the PQ KEM is assumed to have an
-additional property known as Ciphertext Second Preimage Resistance (C2PRI).
-Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the same security
-level with more efficient computations, trading off performance for an
-additional security assumption.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-5">We define four generic frameworks as variants of a common overall scheme.
+The variations are based on (1) what type of cryptographic object is being
+used for the traditional component, and (2) whether the PQ KEM is assumed to
+have an additional property known as Ciphertext Second Preimage Resistance
+(C2PRI).  Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the
+same security level with more efficient computations, trading off performance
+for an additional security assumption.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <p id="section-1-6">The remainder of this document is structured as follows: first, in
 <a href="#cryptographic-deps" class="auto internal xref">Section 4</a> and <a href="#frameworks" class="auto internal xref">Section 5</a>, we define the abstractions on
 which the frameworks are built, and then the frameworks themselves.  Then, in
@@ -1648,12 +1647,12 @@ elements.<a href="#section-4.2-3.1.2.1.1" class="pilcrow">¶</a></p>
 byte string <code>seed</code>.<a href="#section-4.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.2-3.3">
-            <p id="section-4.2-3.3.1"><code>ElementToSharedSecret(P) -&gt; ss</code>: Extract a shared secret from an element of
-the group (e.g., by taking the X coordinate of an elliptic curve point).<a href="#section-4.2-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-4.2-3.3.1"><code>ElementToSharedSecret(P) -&gt; ss</code>: Extract a shared secret from an element
+of the group (e.g., by taking the X coordinate of an elliptic curve point).<a href="#section-4.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.2-4">We assume that scalars and group elements are represented by byte strings with
-fixed lengths:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">We assume that scalars and group elements are represented by byte strings
+with fixed lengths:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.2-5.1">
             <p id="section-4.2-5.1.1"><code>Nseed</code>: The length in bytes of a seed (input to RandomScalar)<a href="#section-4.2-5.1.1" class="pilcrow">¶</a></p>
@@ -1669,8 +1668,8 @@ fixed lengths:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 ElementToSharedSecret<a href="#section-4.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.2-6">Groups used with the hybrid KEM framework in this document should be secure with
-respect to the strong Diffie-Hellman problem (see <a href="#sdh" class="auto internal xref">Section 6.1.3</a>).<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">Groups used with the hybrid KEM framework in this document should be secure
+with respect to the strong Diffie-Hellman problem (see <a href="#sdh" class="auto internal xref">Section 6.1.3</a>).<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="prgs">
@@ -1699,8 +1698,8 @@ byte string <code>seed</code>.<a href="#section-4.3-3.2.1" class="pilcrow">¶</a
 required to source input randomness for PQ/T components from a seed that is
 expanded to a output length, of which a subset is passed to the component key
 generation algorithms.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
-<p id="section-4.3-6">The security requirements for PRGs used with the frameworks in this document are
-laid out in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a>.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
+<p id="section-4.3-6">The security requirements for PRGs used with the frameworks in this document
+are laid out in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a>.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="kdfs">
@@ -1710,23 +1709,23 @@ laid out in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a
         </h3>
 <p id="section-4.4-1">A Key Derivation Function (KDF) is a function that produces
 keying material based on an input secret and other information.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
-<p id="section-4.4-2">While KDFs in the literature can typically consume and produce byte strings of
-arbitrary length, the KDFs used in this document have a simpler form, with fixed
-output lengths:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">While KDFs in the literature can typically consume and produce byte strings
+of arbitrary length, the KDFs used in this document have a simpler form, with
+fixed output lengths:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.4-3.1">
             <p id="section-4.4-3.1.1"><code>Nout</code>: The length in bytes of an output from this KDF.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.4-3.2">
-            <p id="section-4.4-3.2.1"><code>KDF(input) -&gt; output</code>: Produce a byte string of length <code>Nout</code> from an input
-byte string.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.4-3.2.1"><code>KDF(input) -&gt; output</code>: Produce a byte string of length <code>Nout</code> from an
+input byte string.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-4.4-4">The fixed sizes are for both security and simplicity.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.4-5">Any KDF that utilizes <code>HKDF</code> <span>[<a href="#HKDF" class="cite xref">HKDF</a>]</span> must fully specify HKDF's salt, IKM, info,
-and L arguments.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
-<p id="section-4.4-6">The security requirements for KDFs used with the frameworks in this document are
-laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a>.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
+<p id="section-4.4-5">Any KDF that utilizes <code>HKDF</code> <span>[<a href="#HKDF" class="cite xref">HKDF</a>]</span> must fully specify HKDF's salt, IKM,
+info, and L arguments.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+<p id="section-4.4-6">The security requirements for KDFs used with the frameworks in this document
+are laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a>.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1748,8 +1747,8 @@ generation and computing a final shared secret.<a href="#section-5-1" class="pil
           <p id="section-5-3.2.1">Whether to rely on the C2PRI property for the post-quantum component<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
-<p id="section-5-4">The choice of which framework to use when building a hybrid KEM will depend on
-the application's needs along these two axes.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-4">The choice of which framework to use when building a hybrid KEM will depend
+on the application's needs along these two axes.<a href="#section-5-4" class="pilcrow">¶</a></p>
 <span id="name-hybrid-kem-frameworks-2"></span><div id="variants">
 <table class="center" id="table-1">
         <caption>
@@ -1787,8 +1786,8 @@ the application's needs along these two axes.<a href="#section-5-4" class="pilcr
         </tbody>
       </table>
 </div>
-<p id="section-5-6">Instantiating one of these frameworks creates a hybrid KEM <code>KEM_H</code> based on the following constituent
-components:<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-6">Instantiating one of these frameworks creates a hybrid KEM <code>KEM_H</code> based on
+the following constituent components:<a href="#section-5-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5-7.1">
           <p id="section-5-7.1.1">A traditional component that is either a nominal group or a KEM:<a href="#section-5-7.1.1" class="pilcrow">¶</a></p>
@@ -1839,28 +1838,28 @@ KEM_H.Nseed = max(KEM_PQ.Nseed, (KEM_T.Nseed or Group_T.Nseed))
 KEM_H.Nss = min(KEM_PQ.Nss, (KEM_T.Nss or Group_T.Nss))
 </pre><a href="#section-5-12" class="pilcrow">¶</a>
 </div>
-<p id="section-5-13">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.  For legacy cases
-where it is not possible to derive per-component decapsulation keys from a
-common seed, see <a href="#key-generation" class="auto internal xref">Section 5.2</a>.<a href="#section-5-13" class="pilcrow">¶</a></p>
+<p id="section-5-13">Since we use the seed as the decapsulation key, <code>Ndk = Nseed</code>.  For legacy
+cases where it is not possible to derive per-component decapsulation keys
+from a common seed, see <a href="#key-generation" class="auto internal xref">Section 5.2</a>.<a href="#section-5-13" class="pilcrow">¶</a></p>
 <div id="subroutines">
 <section id="section-5.1">
         <h3 id="name-subroutines">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-subroutines" class="section-name selfRef">Subroutines</a>
         </h3>
-<p id="section-5.1-1">The four hybrid KEM frameworks share a substantial amount of structure, which we
-capture in a set of subroutines.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-1">The four hybrid KEM frameworks share a substantial amount of structure, which
+we capture in a set of subroutines.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <div id="using-a-nominal-group">
 <section id="section-5.1.1">
           <h4 id="name-using-a-nominal-group">
 <a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-using-a-nominal-group" class="section-name selfRef">Using a Nominal Group</a>
           </h4>
-<p id="section-5.1.1-1">Hybrid KEM frameworks that use a nominal group for the traditional component invoke the
-DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside analogous
-functions of the nominal group.  The "encapsulation key" is the receiver's
-public key group element; the "ciphertext" is an ephemeral group element; and
-the shared secret is the secret value resulting from an ephemeral-static
-Diffie-Hellman exchange.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
-<div class="lang-pseudocode sourcecode" id="section-5.1.1-2">
+<p id="section-5.1.1-1">Hybrid KEM frameworks that use a nominal group for the traditional component
+invoke the DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside
+analogous functions of the nominal group.  The "encapsulation key" is the
+receiver's public key group element; the "ciphertext" is an ephemeral group
+element; and the shared secret is the secret value resulting from an
+ephemeral-static Diffie-Hellman exchange.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1.1-2">
 <pre>
 def expandDecapsKeyG(seed):
     seed_full = PRG(seed)
@@ -1895,7 +1894,7 @@ def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
 <p id="section-5.1.2-1">Hybrid KEM frameworks that use a KEM for the traditional component invoke the
 DeriveKeyPair, Encap, and Decap functions of the traditional and PQ KEMs in
 parallel.<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
-<div class="lang-pseudocode sourcecode" id="section-5.1.2-2">
+<div class="alignLeft art-text artwork" id="section-5.1.2-2">
 <pre>
 def expandDecapsKeyK(seed):
     seed_full = PRG(seed)
@@ -1935,16 +1934,18 @@ def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
 </pre><a href="#section-5.1.3-3" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.3-4">Note that while the names of the inputs are suggestive of the shared secret,
-ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
-in the hybrid KEM framework are not necessarily the output of a secure KEM. In
-particular, when the framework is instantiated with a nominal group, the
-"ciphertext" component is an ephemeral group element, and the "encapsulation
-key" is the group element that functions as the recipient's public key.<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
+ciphertext, and encapsulation key outputs of a KEM, the inputs to this
+function in the hybrid KEM framework are not necessarily the output of a
+secure KEM. In particular, when the framework is instantiated with a nominal
+group, the "ciphertext" component is an ephemeral group element, and the
+"encapsulation key" is the group element that functions as the recipient's
+public key.<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.3-5">The choice of combiner brings with it certain assumptions
 under which the resulting hybrid KEM is secure.<a href="#section-5.1.3-5" class="pilcrow">¶</a></p>
-<p id="section-5.1.3-6">The <code>UniversalCombiner</code> combiner explicitly computes over shared secrets, ciphertexts, and
-encapsulation keys from both components.  This allows the resulting hybrid KEM
-to be secure as long as either component is secure, with no further assumptions on the components.<a href="#section-5.1.3-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-6">The <code>UniversalCombiner</code> combiner explicitly computes over shared secrets,
+ciphertexts, and encapsulation keys from both components.  This allows the
+resulting hybrid KEM to be secure as long as either component is secure, with
+no further assumptions on the components.<a href="#section-5.1.3-6" class="pilcrow">¶</a></p>
 <p id="section-5.1.3-7">The <code>C2PRICombiner</code> combiner does not compute over the ciphertext or
 encapsulation key from the PQ component. The resulting hybrid KEM will
 be secure if the PQ component is IND-CCA secure, or, the traditional
@@ -1966,11 +1967,11 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 </pre><a href="#section-5.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-3">In some deployment environments, it is not possible to instantiate this process.
-Some implementations of component schemes do not support the <code>DeriveKeyPair</code>
-function, only GenerateKeyPair. Likewise in the nominal group case, a (scalar,
-group element) pair will only be generated when the scalar is generated internal
-to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-3">In some deployment environments, it is not possible to instantiate this
+process.  Some implementations of component schemes do not support the
+<code>DeriveKeyPair</code> function, only GenerateKeyPair. Likewise in the nominal group
+case, a (scalar, group element) pair will only be generated when the scalar
+is generated internal to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.2-4">An implementation of a hybrid KEM in such environemnts <span class="bcp14">MAY</span> deviate from the
 above description in the following ways:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1978,14 +1979,14 @@ above description in the following ways:<a href="#section-5.2-4" class="pilcrow"
             <p id="section-5.2-5.1.1">DeriveKeyPair is not implemented.<a href="#section-5.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.2">
-            <p id="section-5.2-5.2.1">The decapsulation key returned by GenerateKeyPair and consumed by Decaps is a
-tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or pointers/handles
-to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-5.2.1">The decapsulation key returned by GenerateKeyPair and consumed by Decaps is
+a tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or
+pointers/handles to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.3">
             <p id="section-5.2-5.3.1">The <code>expandDecapsulationKeyG</code> and <code>expandDecapsulationKeyK</code> functions are
-replaced by the following, where <code>decapsToEncaps()</code> is a function that returns
-the encapsulation key associated with a decapsulation key:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
+replaced by the following, where <code>decapsToEncaps()</code> is a function that
+returns the encapsulation key associated with a decapsulation key:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-5.2-6"><code>
@@ -1996,32 +1997,34 @@ def expandDecapsulationKey(dk):
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 </code><a href="#section-5.2-6" class="pilcrow">¶</a></p>
 <p id="section-5.2-7">These deviations have both interoperability and security impacts.<a href="#section-5.2-7" class="pilcrow">¶</a></p>
-<p id="section-5.2-8">From an interoperatbility point of view, the use of a second format for the
-hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
-incompatibilities in cases where a private key needs to be moved from one system
-to another.<a href="#section-5.2-8" class="pilcrow">¶</a></p>
+<p id="section-5.2-8">From an interoperability point of view, the use of a second format for the
+hybrid KEM decapsulation key (other than the shared seed) introduces the risk
+of incompatibilities in cases where a private key needs to be moved from one
+system to another.<a href="#section-5.2-8" class="pilcrow">¶</a></p>
 <p id="section-5.2-9">Separate key generation / handling also reduces binding properties from
 MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
 address a variety of attack scenarios, including LEAK scenarios in which an
-attacker has passive access to the decapsulation key and MAL scenarios in which
-an attacker can cause the victim to use a crafted decapsulation key. The above
-hybrid KEM framework assures binding properties in the face of a LEAK attacker,
-irrespective of how key generation is done. The additional provided by the
-default "shared seed" key generation upgrades this to protection against a MAL
-attacker.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
-<p id="section-5.2-10">Allowing for separate private key generation and handling also introduces a risk
-of inappropriate key reuse and cross-protocol attacks.  A given key pair <span class="bcp14">MUST</span>
-never be used in both a hybrid KEM and with a non-hybrid algorithm. A pair of
-key pairs generated for a hybrid algorithm <span class="bcp14">MUST</span> only be used with that hybrid
-algorithm, not separately with their component algorithms.  Likewise, key pairs
-generated outside of the context of a hybrid KEM <span class="bcp14">MUST NOT</span> be used with a hybrid
-KEM.  The "shared seed" style of key generation prevents such reuse, because the
-per-component private keys are derived internally to the hybrid KEM.<a href="#section-5.2-10" class="pilcrow">¶</a></p>
+attacker has passive access to the decapsulation key and MAL scenarios in
+which an attacker can cause the victim to use a crafted decapsulation
+key. The above hybrid KEM framework assures binding properties in the face of
+a LEAK attacker, irrespective of how key generation is done. The additional
+provided by the default "shared seed" key generation upgrades this to
+protection against a MAL attacker.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
+<p id="section-5.2-10">Allowing for separate private key generation and handling also introduces a
+risk of inappropriate key reuse and cross-protocol attacks.  A given key pair
+<span class="bcp14">MUST</span> never be used in both a hybrid KEM and with a non-hybrid algorithm. A
+pair of key pairs generated for a hybrid algorithm <span class="bcp14">MUST</span> only be used with
+that hybrid algorithm, not separately with their component algorithms.
+Likewise, key pairs generated outside of the context of a hybrid KEM <span class="bcp14">MUST NOT</span>
+be used with a hybrid KEM.  The "shared seed" style of key generation
+prevents such reuse, because the per-component private keys are derived
+internally to the hybrid KEM.<a href="#section-5.2-10" class="pilcrow">¶</a></p>
 <p id="section-5.2-11">As a result, this alternative style of key generation should only be used in
 environments where implementations of component algorithms do not allow
-decapsulation keys to be imported or exported.  In scenarios where separate key
-generation is used and decapsulation keys can be imported/exported, additional
-measures should be put in place to mitigate the key reuse risks noted above.<a href="#section-5.2-11" class="pilcrow">¶</a></p>
+decapsulation keys to be imported or exported.  In scenarios where separate
+key generation is used and decapsulation keys can be imported/exported,
+additional measures should be put in place to mitigate the key reuse risks
+noted above.<a href="#section-5.2-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="ug-framework-universal-combiner-with-a-nominal-group">
@@ -2031,8 +2034,8 @@ measures should be put in place to mitigate the key reuse risks noted above.<a h
         </h3>
 <p id="section-5.3-1">This framework combines a PQ KEM with a nominal group, using the universal
 combiner function.  It should be used in cases where the application wants to
-use a nominal group for the traditional component, and does not want to rely on
-the C2PRI assumption for the PQ KEM.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+use a nominal group for the traditional component, and does not want to rely
+on the C2PRI assumption for the PQ KEM.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.3-2">
 <pre>
 def DeriveKeyPair(seed):
@@ -2062,8 +2065,8 @@ def Decaps(dk, ct):
         </h3>
 <p id="section-5.4-1">This framework combines a PQ KEM with a traditional KEM, using the universal
 combiner function.  It should be used in cases where the application wants to
-use a KEM for the traditional component, and does not want to rely on the C2PRI
-assumption for the PQ KEM.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+use a KEM for the traditional component, and does not want to rely on the
+C2PRI assumption for the PQ KEM.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.4-2">
 <pre>
 def DeriveKeyPair(seed):
@@ -2091,10 +2094,10 @@ def Decaps(dk, ct):
         <h3 id="name-cg-framework-c2pri-combiner">
 <a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-cg-framework-c2pri-combiner" class="section-name selfRef">CG Framework: C2PRI Combiner with a Nominal Group</a>
         </h3>
-<p id="section-5.5-1">This framework combines a PQ KEM with a nominal group, using the C2PRI combiner
-function.  It should be used in cases where the application wants to use a
-nominal group for the traditional component, and is comfortable relying on the
-C2PRI assumption for the PQ KEM.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.5-1">This framework combines a PQ KEM with a nominal group, using the C2PRI
+combiner function.  It should be used in cases where the application wants to
+use a nominal group for the traditional component, and is comfortable relying
+on the C2PRI assumption for the PQ KEM.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.5-2">
 <pre>
 def DeriveKeyPair(seed):
@@ -2117,15 +2120,15 @@ def Decaps(dk, ct):
 </div>
 </section>
 </div>
-<div id="cg-framework-c2pri-combiner-with-a-kem">
+<div id="ck-framework-c2pri-combiner-with-a-kem">
 <section id="section-5.6">
-        <h3 id="name-cg-framework-c2pri-combiner-">
-<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-cg-framework-c2pri-combiner-" class="section-name selfRef">CG Framework: C2PRI Combiner with a KEM</a>
+        <h3 id="name-ck-framework-c2pri-combiner">
+<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-ck-framework-c2pri-combiner" class="section-name selfRef">CK Framework: C2PRI Combiner with a KEM</a>
         </h3>
 <p id="section-5.6-1">This framework combines a PQ KEM with a traditional KEM, using the C2PRI
 combiner function.  It should be used in cases where the application wants to
-use a KEM for the traditional component, and is comfortable relying on the C2PRI
-assumption for the PQ KEM.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
+use a KEM for the traditional component, and is comfortable relying on the
+C2PRI assumption for the PQ KEM.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.6-2">
 <pre>
 def DeriveKeyPair(seed):
@@ -2155,10 +2158,11 @@ def Decaps(dk, ct):
       <h2 id="name-security-considerations">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-6-1">Hybrid KEMs provide security by combining two or more schemes so that security
-is preserved if all but one scheme is broken. Informally, these hybrid KEMs are
-secure if the <code>KDF</code> is secure, and either the traditional component is secure,
-or the post-quantum KEM is secure: this is the 'hybrid' property.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">Hybrid KEMs provide security by combining two or more schemes so that
+security is preserved if all but one scheme is broken. Informally, these
+hybrid KEMs are secure if the <code>KDF</code> is secure, and either the traditional
+component is secure, or the post-quantum KEM is secure: this is the 'hybrid'
+property.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <p id="section-6-2">In this section, we review the important security properties for hybrid KEMs,
 and discuss how these security properties are provided by hybrid KEMs
 constructed according to the framework in this document.<a href="#section-6-2" class="pilcrow">¶</a></p>
@@ -2167,8 +2171,9 @@ constructed according to the framework in this document.<a href="#section-6-2" c
         <h3 id="name-security-properties-for-com">
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-security-properties-for-com" class="section-name selfRef">Security Properties for Component Algortihms</a>
         </h3>
-<p id="section-6.1-1">In order to precisely define our security objectives for a hybrid KEM, we need
-to describe some properties that we will require from the component algorithms.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-1">In order to precisely define our security objectives for a hybrid KEM, we
+need to describe some properties that we will require from the component
+algorithms.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <div id="indistinguishability-under-chosen-ciphertext-attack-ind-cca">
 <section id="section-6.1.1">
           <h4 id="name-indistinguishability-under-">
@@ -2180,15 +2185,15 @@ IND-CCA <span>[<a href="#BHK09" class="cite xref">BHK09</a>]</span>. This is mos
 encryption.<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-2">For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
 obtained by running <code>Encaps()</code> with an honestly-generated public key, can
-distinguish whether it is given the "real" secret output from <code>Encaps()</code>, or a
-random string unrelated to the <code>Encaps()</code> call that created that
+distinguish whether it is given the "real" secret output from <code>Encaps()</code>, or
+a random string unrelated to the <code>Encaps()</code> call that created that
 ciphertext. (Readers should note that this definition is slightly different
 than the corresponding definitions for public-key encryption <span>[<a href="#BHK09" class="cite xref">BHK09</a>]</span>.)<a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-3">Whether a given KEM provides IND-CCA depends on whether the attacker is assumed
-to have access to quantum computing capabilities or not (assuming the scheme
-is without bugs and the implementation is correct).  Post-quantum KEMs are
-intended to provide IND-CCA security against such an attacker.  Traditional KEMs
-are not.<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.1.1-3">Whether a given KEM provides IND-CCA depends on whether the attacker is
+assumed to have access to quantum computing capabilities or not (assuming the
+scheme is without bugs and the implementation is correct).  Post-quantum KEMs
+are intended to provide IND-CCA security against such an attacker.
+Traditional KEMs are not.<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-4">IND-CCA is the standard security notion for KEMs; most PQ KEMs were
 explicitly designed to achieve this type of security against both a
 quantum attacker and a traditional one.<a href="#section-6.1.1-4" class="pilcrow">¶</a></p>
@@ -2196,9 +2201,9 @@ quantum attacker and a traditional one.<a href="#section-6.1.1-4" class="pilcrow
 <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> is an IND-CCA KEM based on Diffie-Hellman <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>, but "raw"
 ephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the
 ciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure <span>[<a href="#ISO18033-2" class="cite xref">ISO18033-2</a>]</span>,
-and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM, but
-"classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in <span>[<a href="#RFC8017" class="cite xref">RFC8017</a>]</span>) is not
-even IND-CCA secure as a public-key encryption algorithm.<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
+and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM,
+but "classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in <span>[<a href="#RFC8017" class="cite xref">RFC8017</a>]</span>)
+is not even IND-CCA secure as a public-key encryption algorithm.<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="ciphertext-second-preimage-resistence-c2pri">
@@ -2215,15 +2220,15 @@ infeasible for an attacker to find another ciphertext <code>ct'</code> such that
 the encapsulation key <code>ek</code>).<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.2-2">A related notion in the literature is chosen-ciphertext resistance (CCR)
 <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>. C2PRI targets preimage-resistance, whereas CCR targets
-collision-resistance, much like the analogous properties for hash functions.  In
-the language of the binding properties discussed in <a href="#binding-properties" class="auto internal xref">Section 6.1.4</a>, CCR
-is equivalent to the property LEAK-BIND-K,PK-CT.<a href="#section-6.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-3">C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires the
-attacker to match a specific, honestly generated ciphertext, as opposed to
-finding an arbitrary pair.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
+collision-resistance, much like the analogous properties for hash functions.
+In the language of the binding properties discussed in
+<a href="#binding-properties" class="auto internal xref">Section 6.1.4</a>, CCR is equivalent to the property LEAK-BIND-K,PK-CT.<a href="#section-6.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.1.2-3">C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires
+the attacker to match a specific, honestly generated ciphertext, as opposed
+to finding an arbitrary pair.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.1.2-4">Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to have this
-property in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and <span>[<a href="#CHH_25" class="cite xref">CHH_25</a>]</span> proves C2PRI for several other algorithms,
-including FrodoKEM, HQC, Classic McEliece, and sntrup.<a href="#section-6.1.2-4" class="pilcrow">¶</a></p>
+property in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and <span>[<a href="#CHH_25" class="cite xref">CHH_25</a>]</span> proves C2PRI for several other
+algorithms, including FrodoKEM, HQC, Classic McEliece, and sntrup.<a href="#section-6.1.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sdh">
@@ -2232,18 +2237,18 @@ including FrodoKEM, HQC, Classic McEliece, and sntrup.<a href="#section-6.1.2-4"
 <a href="#section-6.1.3" class="section-number selfRef">6.1.3. </a><a href="#name-strong-diffie-hellman-probl" class="section-name selfRef">Strong Diffie-Hellman Problem (SDH)</a>
           </h4>
 <p id="section-6.1.3-1">The standard Diffie-Hellman problem is whether an attacker can compute <code>g^xy</code>
-given access to <code>g^x</code> and <code>g^y</code>.  The strong Diffie-Hellman problem additionally
-equips the attacker with an oracle <code>DH(Y, Z)</code> that answers whether <code>Y^x = Z</code>.
-(This is the notion specified in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, not the notion of the same name
-used in the context of bilinear pairings <span>[<a href="#Cheon06" class="cite xref">Cheon06</a>]</span>.)<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-6.1.3-2">When we say that the strong Diffie-Hellman problem is hard in a group, we always
-mean this in the context of classical attackers, without access to quantum
-computers.  An attacker with access to a quantum computer that can execute Shor's algorithm
-for a group can efficiently solve the discrete log problem in that group, which
-implies the ability to solve the strong Diffie-Hellman problem.<a href="#section-6.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.3-3">As shown in <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>, this problem is hard in prime-order groups such as the
-NIST elliptic curve groups P-256, P-384, and P-521, as well as in the Montgomery
-curves Curve25519 and Curve448.<a href="#section-6.1.3-3" class="pilcrow">¶</a></p>
+given access to <code>g^x</code> and <code>g^y</code> and an oracle <code>DH(Y, Z)</code> that answers whether
+<code>Y^x = Z</code>. (This is the notion specified in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, not the notion of the
+same name used in the context of bilinear pairings <span>[<a href="#Cheon06" class="cite xref">Cheon06</a>]</span>.)<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.3-2">When we say that the strong Diffie-Hellman problem is hard in a group, we
+always mean this in the context of classical attackers, without access to
+quantum computers.  An attacker with access to a quantum computer that can
+execute Shor's algorithm for a group can efficiently solve the discrete log
+problem in that group, which implies the ability to solve the strong
+Diffie-Hellman problem.<a href="#section-6.1.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.1.3-3">As shown in <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>, this problem is hard in prime-order groups such as
+the NIST elliptic curve groups P-256, P-384, and P-521, as well as in the
+Montgomery curves Curve25519 and Curve448.<a href="#section-6.1.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="binding-properties">
@@ -2256,22 +2261,22 @@ certain parameters determine certain others. Recent work <span>[<a href="#CDM23"
 useful framework of definitions for these binding properties. Binding for
 KEMs is related to other properties for KEMs and public-key encryption, such
 as robustness <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span> <span>[<a href="#ABN10" class="cite xref">ABN10</a>]</span>, and collision-freeness <span>[<a href="#MOHASSEL10" class="cite xref">MOHASSEL10</a>]</span>.<a href="#section-6.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-6.1.4-2">The framework given by <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> refers to these properties with labels of the
-form X-BIND-P-Q.  The first element X is the model for how the attacker can
-access the decapsulation key: HON for the case where the attacker never
+<p id="section-6.1.4-2">The framework given by <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> refers to these properties with labels of
+the form X-BIND-P-Q.  The first element X is the model for how the attacker
+can access the decapsulation key: HON for the case where the attacker never
 accesses the decapsulation key, LEAK for the case where the attacker has
-access to the honestly-generated decapsulation key, or MAL for the case
-where the attacker can choose or manipulate the keys used by the victim.
-P,Q means that given the value P, it is hard to produce another Q that
-causes Decaps to succeed. For example, LEAK-BIND-K-PK means that for a
-given shared secret (K), there is a unique encapsulation key (PK) that
-could have produced it, even if all of the secrets involved are given to
-the adversary after the encapsulation operation is completed (LEAK).<a href="#section-6.1.4-2" class="pilcrow">¶</a></p>
+access to the honestly-generated decapsulation key, or MAL for the case where
+the attacker can choose or manipulate the keys used by the victim.  P,Q means
+that given the value P, it is hard to produce another Q that causes Decaps to
+succeed. For example, LEAK-BIND-K-PK means that for a given shared secret
+(K), there is a unique encapsulation key (PK) that could have produced it,
+even if all of the secrets involved are given to the adversary after the
+encapsulation operation is completed (LEAK).<a href="#section-6.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-6.1.4-3">There is quite a bit of diversity in the binding properties provided by KEMs.
-Table 5 of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> shows the binding properties of a few KEMs.  For example:
-DHKEM provides MAL-level binding for several properties. ML-KEM provides only
-LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT, but no assurance at
-all of X-BIND-K-PK.<a href="#section-6.1.4-3" class="pilcrow">¶</a></p>
+Table 5 of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> shows the binding properties of a few KEMs.  For
+example: DHKEM provides MAL-level binding for several properties. ML-KEM
+provides only LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT,
+but no assurance at all of X-BIND-K-PK.<a href="#section-6.1.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-kdfs">
@@ -2280,18 +2285,19 @@ all of X-BIND-K-PK.<a href="#section-6.1.4-3" class="pilcrow">¶</a></p>
 <a href="#section-6.1.5" class="section-number selfRef">6.1.5. </a><a href="#name-indifferentiability-from-a-" class="section-name selfRef">Indifferentiability from a Random Oracle</a>
           </h4>
 <p id="section-6.1.5-1">The KDF used with a hybrid KEM <span class="bcp14">MUST</span> be indifferentiable from a random oracle
-(RO) <span>[<a href="#MRH03" class="cite xref">MRH03</a>]</span>, even to a quantum attacker <span>[<a href="#BDFL_10" class="cite xref">BDFL_10</a>]</span> <span>[<a href="#ZHANDRY19" class="cite xref">ZHANDRY19</a>]</span>.  This is a
-conservative choice given a review of the existing security analyses for our
-hybrid KEM constructions.  (In short, most IND-CCA analyses require only that
-the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA
-analysis of QSF in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> relies on the KDF being a RO. Proofs of our target
-binding properties for our hybrid KEMs require the KDF is a collision-resistant
-function.)<a href="#section-6.1.5-1" class="pilcrow">¶</a></p>
+(RO) <span>[<a href="#MRH03" class="cite xref">MRH03</a>]</span>, even to a quantum attacker <span>[<a href="#BDFL_10" class="cite xref">BDFL_10</a>]</span> <span>[<a href="#ZHANDRY19" class="cite xref">ZHANDRY19</a>]</span>.  This
+is a conservative choice given a review of the existing security analyses for
+our hybrid KEM constructions: most IND-CCA analyses for the four frameworks
+require only that the KDF is some kind of pseudorandom function, but the
+SDH-based IND-CCA analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and the corresponding analysis
+for UG (forthcoming) relies on the KDF being a RO. Proofs of our target
+binding properties for our hybrid KEMs require the KDF is a
+collision-resistant function.<a href="#section-6.1.5-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.5-2">If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in GHP <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>
-or the standard-model analysis of QSF in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, apply.<a href="#section-6.1.5-2" class="pilcrow">¶</a></p>
+which require the KDF to be a PRF, such as the one given in GHP <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>
+for UK, or the standard-model analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, apply.<a href="#section-6.1.5-2" class="pilcrow">¶</a></p>
 <p id="section-6.1.5-3">Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical <span>[<a href="#BDP_08" class="cite xref">BDP_08</a>]</span> as well as quantum adversaries
 <span>[<a href="#ACM_25" class="cite xref">ACM_25</a>]</span>.<a href="#section-6.1.5-3" class="pilcrow">¶</a></p>
@@ -2342,20 +2348,20 @@ built from random oracles. Examples include SHAKE256.<a href="#section-6.1.6-3" 
 <a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-security-goals-for-hybrid-k" class="section-name selfRef">Security Goals for Hybrid KEMs</a>
         </h3>
 <p id="section-6.2-1">The security notions for hybrid KEMs are largely the same as for other
-algorithms, but they are contingent on the security properties of the component
-algorithms.  In this section we discuss the intended security properties for
-hybrid KEMs and the requirements that the component algorithms must meet in
-order for those properties to hold.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+algorithms, but they are contingent on the security properties of the
+component algorithms.  In this section we discuss the intended security
+properties for hybrid KEMs and the requirements that the component algorithms
+must meet in order for those properties to hold.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <div id="hybrid-ind-cca">
 <section id="section-6.2.1">
           <h4 id="name-ind-cca-security">
 <a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-ind-cca-security" class="section-name selfRef">IND-CCA Security</a>
           </h4>
-<p id="section-6.2.1-1">The idea of a hybrid KEM is that it should maintain its security if only one of
-the two component KEMs is secure.  For a PQ/T hybrid KEM, this means that the
-hybrid KEM should be secure against a quantum attacker if the T component is
-broken, and secure against at least a classical attacker if the PQ component is
-broken.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.1-1">The idea of a hybrid KEM is that it should maintain its security if only one
+of the two component KEMs is secure.  For a PQ/T hybrid KEM, this means that
+the hybrid KEM should be secure against a quantum attacker if the T component
+is broken, and secure against at least a classical attacker if the PQ
+component is broken.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-2">More precisely, the hybrid KEM should meet two different notions of IND-CCA
 security, under different assumptions about the component algorithms:<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -2366,13 +2372,14 @@ security, under different assumptions about the component algorithms:<a href="#s
                   <p id="section-6.2.1-3.1.2.1.1"><code>KDF</code> is indifferentiable from a random oracle<a href="#section-6.2.1-3.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-6.2.1-3.1.2.2">
-                  <p id="section-6.2.1-3.1.2.2.1">If using <code>Group_T</code>: The strong Diffie-Hellman problem is hard in <code>Group_T</code><a href="#section-6.2.1-3.1.2.2.1" class="pilcrow">¶</a></p>
+                  <p id="section-6.2.1-3.1.2.2.1">If using <code>Group_T</code>: The strong Diffie-Hellman problem is hard in
+<code>Group_T</code><a href="#section-6.2.1-3.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-6.2.1-3.1.2.3">
                   <p id="section-6.2.1-3.1.2.3.1">If using <code>KEM_T</code>: <code>KEM_T</code> is IND-CCA against a classical attacker<a href="#section-6.2.1-3.1.2.3.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-6.2.1-3.1.2.4">
-                  <p id="section-6.2.1-3.1.2.4.1">If using <code>PQImplicit</code>: <code>KEM_PQ</code> is C2PRI<a href="#section-6.2.1-3.1.2.4.1" class="pilcrow">¶</a></p>
+                  <p id="section-6.2.1-3.1.2.4.1">If using <code>C2PRICombiner</code>: <code>KEM_PQ</code> is C2PRI<a href="#section-6.2.1-3.1.2.4.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 </li>
@@ -2388,6 +2395,10 @@ security, under different assumptions about the component algorithms:<a href="#s
               </ul>
 </li>
           </ul>
+<p id="section-6.2.1-4">Some IND-CCA analyses do not strictly require the KDF to be indifferentiable
+from a random oracle; they instead only require a kind of PRF assumption on
+the KDF. For simplicity we ignore this here; the security analyses described
+below for our constructions will elaborate on this point when appropriate.<a href="#section-6.2.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="hybrid-binding">
@@ -2398,19 +2409,19 @@ security, under different assumptions about the component algorithms:<a href="#s
 <p id="section-6.2.2-1">The most salient binding properties for a hybrid KEM to be used in Internet
 protocols are LEAK-BIND-K-PK and LEAK-BIND-K-CT.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.2-2">The LEAK attack model is most appropriate for Internet protocols.  There have
-been attacks in the LEAK model are known <span>[<a href="#BJKS24" class="cite xref">BJKS24</a>]</span> <span>[<a href="#FG24" class="cite xref">FG24</a>]</span>, so a hybrid KEM
-needs to be resilient at least to LEAK attacks (i.e., HON is too weak).
-Internet applications generally assume that private keys are honestly generated,
-so MAL is too strong an attack model to address.<a href="#section-6.2.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.2.2-3">The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally aligned with the
-needs of protocol design.  Protocols based on traditional algorithms frequently
-need to incorporate transcript hashing in order to protect against key confusion
-attacks <span>[<a href="#FG24" class="cite xref">FG24</a>]</span> or KEM re-encapsulation attacks <span>[<a href="#BJKS24" class="cite xref">BJKS24</a>]</span>.  The LEAK-BIND-K-PK
-and LEAK-BIND-K-CT properties prevent these attacks at the level of the hybrid
-KEM. Protocol designers may still need or want to include the ciphertext or
-encapsulation key into their protocol or key schedule for other reasons, but
-that can be independent of the specific properties of the KEM and its resulting
-shared secret.<a href="#section-6.2.2-3" class="pilcrow">¶</a></p>
+been attacks in the LEAK model <span>[<a href="#BJKS24" class="cite xref">BJKS24</a>]</span> <span>[<a href="#FG24" class="cite xref">FG24</a>]</span>, so a hybrid KEM needs to
+be resilient at least to LEAK attacks (i.e., HON is too weak).  Internet
+applications generally assume that private keys are honestly generated, so
+MAL is too strong an attack model to address.<a href="#section-6.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-3">The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally aligned with
+the needs of protocol design.  Protocols based on traditional algorithms
+frequently need to incorporate transcript hashing in order to protect against
+key confusion attacks <span>[<a href="#FG24" class="cite xref">FG24</a>]</span> or KEM re-encapsulation attacks <span>[<a href="#BJKS24" class="cite xref">BJKS24</a>]</span>.
+The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties prevent these attacks at the
+level of the hybrid KEM. Protocol designers may still need or want to include
+the ciphertext or encapsulation key into their protocol or key schedule for
+other reasons, but that can be independent of the specific properties of the
+KEM and its resulting shared secret.<a href="#section-6.2.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.2.2-4">Implementors should not interpret the paragraph above as absolving them
 of their responsibility to carefully think through whether MAL-BIND attacks
 apply in their settings.<a href="#section-6.2.2-4" class="pilcrow">¶</a></p>
@@ -2440,35 +2451,57 @@ provides the security properties described above.<a href="#section-6.4-1" class=
           <h4 id="name-ind-cca-analyses">
 <a href="#section-6.4.1" class="section-number selfRef">6.4.1. </a><a href="#name-ind-cca-analyses" class="section-name selfRef">IND-CCA analyses</a>
           </h4>
-<p id="section-6.4.1-1">The QSF construction has two complementary IND-CCA analyses. Both were given
-in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>. We summarize them but elide some details.<a href="#section-6.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-2">One analysis (Theorem 1) <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> shows that if the KDF is modelled as a RO,
-IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
-the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)
-<span>[<a href="#XWING" class="cite xref">XWING</a>]</span> shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
-the PQ-KEM's shared secret, IND-CCA holds.<a href="#section-6.4.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-3">As long as the aforementioned security requirements of the component parts
-are met, these analyses imply that this document's QSF construction satisfies
-IND-CCA security.<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-4">This document's exact GHP construction does not have an IND-CCA analysis;
-the GHP paper gives a slightly different version, namely they do not include
-the public encapsulation keys in the KDF. However, we argue that the proof
-goes through with trivial modifications if the public encapsulation keys are
-included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces
-to the split-key pseudorandomness of the KDF. (GHP call the KDF a "core"
-function, and denote it as W.) We observe that adding the public
-encapsulation keys to the inputs only changes the concrete contents of the
-reduction's queries to its oracle. Since the reduction chooses the public
-encapsulation keys itself, they can be added to the oracle inputs, and the
-remainder of the proof goes through unmodified.<a href="#section-6.4.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-1">The UG construction has two complementary IND-CCA analyses: one for when the
+SDH problem holds but the PQ KEM is broken, and one for the reverse. Both are
+technically novel but are substantially similar to the existing peer-reviewed
+analyses of the CG <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> and UK <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> constructions. A forthcoming
+document by the editorial team will describe the analysis of UG in detail.<a href="#section-6.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-2">The first IND-CCA analysis, based on SDH, is very similar to the
+corresponding analysis of CG given in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>: it gives a straightforward
+reduction to the SDH hardness in the underlying group. Notably, since the PQ
+KEM key and ciphertext are hashed, the C2PRI security of the PQ KEM does not
+appear in the bound.<a href="#section-6.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-3">The second IND-CCA analysis is a straightforward reduction to the IND-CCA
+security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
+KEM's shared secret.<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-4">This document's UK construction does not have an IND-CCA analysis; the GHP
+paper on which the construction is based gives a slightly different version,
+namely they do not include the public encapsulation keys in the KDF. However,
+we argue that the proof goes through with trivial modifications if the public
+encapsulation keys are included in the KDF. The relevant step is claim 3 of
+Theorem 1, which reduces to the split-key pseudorandomness of the KDF. (GHP
+call the KDF a "core" function, and denote it as W.) We observe that adding
+the public encapsulation keys to the inputs only changes the concrete
+contents of the reduction's queries to its oracle. Since the reduction
+chooses the public encapsulation keys itself, they can be added to the oracle
+inputs, and the remainder of the proof goes through unmodified.<a href="#section-6.4.1-4" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-5">We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
 used in GHP meets the split-key pseudorandomness property used in
 GHP's analysis.<a href="#section-6.4.1-5" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-6">Therefore both hybrid KEMs in this document are IND-CCA when
-instantiated with cryptographic components that meet the security
-requirements described above. Any changes to the algorithms, including key
-generation/derivation, are not guaranteed to produce secure results.<a href="#section-6.4.1-6" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-6">Like UG, the CG construction has two complementary IND-CCA analyses. Both
+were given in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>. We summarize them but elide some details.<a href="#section-6.4.1-6" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-7">One analysis (Theorem 1) <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> shows that if the KDF is modelled as a RO,
+IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
+the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)
+<span>[<a href="#XWING" class="cite xref">XWING</a>]</span> shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
+the PQ-KEM's shared secret, IND-CCA holds.<a href="#section-6.4.1-7" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-8">As long as the aforementioned security requirements of the component parts
+are met, these analyses imply that this document's CG construction satisfies
+IND-CCA security.<a href="#section-6.4.1-8" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-9">The CK construction's IND-CCA analysis is based on forthcoming work by the
+editorial team.<a href="#section-6.4.1-9" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-10">The CK construction has two complementary IND-CCA analyses: one for when the
+IND-CCA security of the traditional PKE-based KEM holds but the PQ KEM is
+broken, except for the PQ KEM's C2PRI security, and one for where the IND-CCA
+security of the PQ KEM holds.  Both are technically novel but are
+substantially similar to the existing peer-reviewed analyses of the CG
+<span>[<a href="#XWING" class="cite xref">XWING</a>]</span> and UK <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> constructions. A forthcoming document by the
+editorial team will describe the analysis of CK in detail.<a href="#section-6.4.1-10" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-11">Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
+with cryptographic components that meet the security requirements described
+above. Any changes to the algorithms, including key generation/derivation,
+are not guaranteed to produce secure results.<a href="#section-6.4.1-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="binding-analyses">
@@ -2476,9 +2509,9 @@ generation/derivation, are not guaranteed to produce secure results.<a href="#se
           <h4 id="name-binding-analyses">
 <a href="#section-6.4.2" class="section-number selfRef">6.4.2. </a><a href="#name-binding-analyses" class="section-name selfRef">Binding analyses</a>
           </h4>
-<p id="section-6.4.2-1">There are two hybrid KEM frameworks, and two target binding properties, so
-we need four total analyses. None of these exact results were known; thus the
-following are new results by the editorial team. We include informal
+<p id="section-6.4.2-1">There are four hybrid KEM frameworks, and two target binding properties, so
+we need eight total analyses. None of these exact results were known; thus
+the following are new results by the editorial team. We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.<a href="#section-6.4.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2-2">We note that these sketches implicitly ignore the fact that in our hybrid
 KEMs, both key pairs are derived from a common random seed; we instead
@@ -2492,89 +2525,110 @@ common random seed provides further protection against manipulation or
 corruption of keys such that it can contribute to stronger binding properties
 against a MAL adversary, as well as operational benefits in practice, but we
 do not prove that here.<a href="#section-6.4.2-2" class="pilcrow">¶</a></p>
-<div id="ghp-binding">
+<div id="ug-binding">
 <section id="section-6.4.2.1">
-            <h5 id="name-ghp-binding">
-<a href="#section-6.4.2.1" class="section-number selfRef">6.4.2.1. </a><a href="#name-ghp-binding" class="section-name selfRef">GHP Binding</a>
+            <h5 id="name-ug-binding">
+<a href="#section-6.4.2.1" class="section-number selfRef">6.4.2.1. </a><a href="#name-ug-binding" class="section-name selfRef">UG Binding</a>
             </h5>
-<div id="leak-bind-k-ct-of-ghp">
+<div id="leak-bind-k-ct-of-ug">
 <section id="section-6.4.2.1.1">
-              <h6 id="name-leak-bind-k-ct-of-ghp">
-<a href="#section-6.4.2.1.1" class="section-number selfRef">6.4.2.1.1. </a><a href="#name-leak-bind-k-ct-of-ghp" class="section-name selfRef">LEAK-BIND-K-CT of GHP</a>
+              <h6 id="name-leak-bind-k-ct-of-ug">
+<a href="#section-6.4.2.1.1" class="section-number selfRef">6.4.2.1.1. </a><a href="#name-leak-bind-k-ct-of-ug" class="section-name selfRef">LEAK-BIND-K-CT of UG</a>
               </h6>
-<p id="section-6.4.2.1.1-1">Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-CT.<a href="#section-6.4.2.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.1.1-2">Justification: To win LEAK-BIND-K-CT, given knowledge of two
-honestly-generated GHP secret keys, the adversary must construct two distinct
-GHP ciphertexts that decapsulate to the same (non-bot) key. Since GHP
+</section>
+</div>
+</section>
+</div>
+<div id="leak-bind-k-pk-of-ug">
+<section id="section-6.4.2.2">
+            <h5 id="name-leak-bind-k-pk-of-ug">
+<a href="#section-6.4.2.2" class="section-number selfRef">6.4.2.2. </a><a href="#name-leak-bind-k-pk-of-ug" class="section-name selfRef">LEAK-BIND-K-PK of UG</a>
+            </h5>
+</section>
+</div>
+<div id="uk-binding">
+<section id="section-6.4.2.3">
+            <h5 id="name-uk-binding">
+<a href="#section-6.4.2.3" class="section-number selfRef">6.4.2.3. </a><a href="#name-uk-binding" class="section-name selfRef">UK Binding</a>
+            </h5>
+<div id="leak-bind-k-ct-of-uk">
+<section id="section-6.4.2.3.1">
+              <h6 id="name-leak-bind-k-ct-of-uk">
+<a href="#section-6.4.2.3.1" class="section-number selfRef">6.4.2.3.1. </a><a href="#name-leak-bind-k-ct-of-uk" class="section-name selfRef">LEAK-BIND-K-CT of UK</a>
+              </h6>
+<p id="section-6.4.2.3.1-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-CT.<a href="#section-6.4.2.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.1-2">Justification: To win LEAK-BIND-K-CT, given knowledge of two
+honestly-generated UK secret keys, the adversary must construct two distinct
+UK ciphertexts that decapsulate to the same (non-bot) key. Since UK
 includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
-collision in the KDF.<a href="#section-6.4.2.1.1-2" class="pilcrow">¶</a></p>
+collision in the KDF.<a href="#section-6.4.2.3.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
-<div id="leak-bind-k-pk-of-ghp">
-<section id="section-6.4.2.2">
-            <h5 id="name-leak-bind-k-pk-of-ghp">
-<a href="#section-6.4.2.2" class="section-number selfRef">6.4.2.2. </a><a href="#name-leak-bind-k-pk-of-ghp" class="section-name selfRef">LEAK-BIND-K-PK of GHP</a>
+<div id="leak-bind-k-pk-of-uk">
+<section id="section-6.4.2.4">
+            <h5 id="name-leak-bind-k-pk-of-uk">
+<a href="#section-6.4.2.4" class="section-number selfRef">6.4.2.4. </a><a href="#name-leak-bind-k-pk-of-uk" class="section-name selfRef">LEAK-BIND-K-PK of UK</a>
             </h5>
-<p id="section-6.4.2.2-1">Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-PK.<a href="#section-6.4.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.2-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
+<p id="section-6.4.2.4-1">Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-PK.<a href="#section-6.4.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
 adversary must construct two ciphertexts that decapsulate to the same non-bot
-key, for distinct GHP public keys. Again, since GHP includes the public keys
+key, for distinct UK public keys. Again, since UK includes the public keys
 in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
-collide the KDF.<a href="#section-6.4.2.2-2" class="pilcrow">¶</a></p>
+collide the KDF.<a href="#section-6.4.2.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="qsf-binding">
-<section id="section-6.4.2.3">
-            <h5 id="name-qsf-binding">
-<a href="#section-6.4.2.3" class="section-number selfRef">6.4.2.3. </a><a href="#name-qsf-binding" class="section-name selfRef">QSF Binding</a>
+<div id="cg-binding">
+<section id="section-6.4.2.5">
+            <h5 id="name-cg-binding">
+<a href="#section-6.4.2.5" class="section-number selfRef">6.4.2.5. </a><a href="#name-cg-binding" class="section-name selfRef">CG Binding</a>
             </h5>
-<p id="section-6.4.2.3-1">The LEAK-BIND proofs for QSF are a bit more subtle than for GHP; the
-main reason for this is QSF's omission of the PQ KEM key and ciphertext from
-the KDF. We will show that QSF still has our target LEAK-BIND properties as
+<p id="section-6.4.2.5-1">The LEAK-BIND proofs for CG are a bit more subtle than for UK; the
+main reason for this is CG's omission of the PQ KEM key and ciphertext from
+the KDF. We will show that UK still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
 property. We note that our preliminary results suggest that a different proof
 strategy, which instead directly uses properties of the nominal group, may
-work here; we present the PQ-KEM route for concreteness.<a href="#section-6.4.2.3-1" class="pilcrow">¶</a></p>
-<div id="leak-bind-k-ct-of-qsf">
-<section id="section-6.4.2.3.1">
-              <h6 id="name-leak-bind-k-ct-of-qsf">
-<a href="#section-6.4.2.3.1" class="section-number selfRef">6.4.2.3.1. </a><a href="#name-leak-bind-k-ct-of-qsf" class="section-name selfRef">LEAK-BIND-K-CT of QSF</a>
+work here; we present the PQ-KEM route for concreteness.<a href="#section-6.4.2.5-1" class="pilcrow">¶</a></p>
+<div id="leak-bind-k-ct-of-cg">
+<section id="section-6.4.2.5.1">
+              <h6 id="name-leak-bind-k-ct-of-cg">
+<a href="#section-6.4.2.5.1" class="section-number selfRef">6.4.2.5.1. </a><a href="#name-leak-bind-k-ct-of-cg" class="section-name selfRef">LEAK-BIND-K-CT of CG</a>
               </h6>
-<p id="section-6.4.2.3.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
-QSF is LEAK-BIND-K-CT.<a href="#section-6.4.2.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.1-2">Justification: To win the adversary must construct two distinct QSF
-ciphertexts that decapsulate to the same non-bot key.  Call the QSF
+<p id="section-6.4.2.5.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
+CG is LEAK-BIND-K-CT.<a href="#section-6.4.2.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.5.1-2">Justification: To win the adversary must construct two distinct CG
+ciphertexts that decapsulate to the same non-bot key.  Call the CG
 ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
 ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
-ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.5.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.5.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
 KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
-KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.3.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
+KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.5.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
 output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
 reduction does this by generating two nominal-group key pairs and running the
-QSF LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
+CG LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
 lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
-game against the PQ KEM.<a href="#section-6.4.2.3.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.4.2.3.1-5" class="pilcrow">¶</a></p>
+game against the PQ KEM.<a href="#section-6.4.2.5.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.5.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.4.2.5.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="leak-bind-k-pk-of-qsf">
-<section id="section-6.4.2.3.2">
-              <h6 id="name-leak-bind-k-pk-of-qsf">
-<a href="#section-6.4.2.3.2" class="section-number selfRef">6.4.2.3.2. </a><a href="#name-leak-bind-k-pk-of-qsf" class="section-name selfRef">LEAK-BIND-K-PK of QSF</a>
+<div id="leak-bind-k-pk-of-cg">
+<section id="section-6.4.2.5.2">
+              <h6 id="name-leak-bind-k-pk-of-cg">
+<a href="#section-6.4.2.5.2" class="section-number selfRef">6.4.2.5.2. </a><a href="#name-leak-bind-k-pk-of-cg" class="section-name selfRef">LEAK-BIND-K-PK of CG</a>
               </h6>
-<p id="section-6.4.2.3.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
-QSF is LEAK-BIND-K-PK.<a href="#section-6.4.2.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
+<p id="section-6.4.2.5.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+CG is LEAK-BIND-K-PK.<a href="#section-6.4.2.5.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.5.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
@@ -2582,8 +2636,29 @@ the other case we can directly get a KDF collision from a winning output. In
 this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
-reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.3.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.4.2.3.2-3" class="pilcrow">¶</a></p>
+reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.5.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.5.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.4.2.5.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="ck-binding">
+<section id="section-6.4.2.6">
+            <h5 id="name-ck-binding">
+<a href="#section-6.4.2.6" class="section-number selfRef">6.4.2.6. </a><a href="#name-ck-binding" class="section-name selfRef">CK Binding</a>
+            </h5>
+<div id="leak-bind-k-ct-of-ck">
+<section id="section-6.4.2.6.1">
+              <h6 id="name-leak-bind-k-ct-of-ck">
+<a href="#section-6.4.2.6.1" class="section-number selfRef">6.4.2.6.1. </a><a href="#name-leak-bind-k-ct-of-ck" class="section-name selfRef">LEAK-BIND-K-CT of CK</a>
+              </h6>
+</section>
+</div>
+<div id="leak-bind-k-pk-of-ck">
+<section id="section-6.4.2.6.2">
+              <h6 id="name-leak-bind-k-pk-of-ck">
+<a href="#section-6.4.2.6.2" class="section-number selfRef">6.4.2.6.2. </a><a href="#name-leak-bind-k-pk-of-ck" class="section-name selfRef">LEAK-BIND-K-PK of CK</a>
+              </h6>
 </section>
 </div>
 </section>
@@ -2602,10 +2677,10 @@ reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.3.2-2" class="
           <h4 id="name-domain-separation">
 <a href="#section-6.5.1" class="section-number selfRef">6.5.1. </a><a href="#name-domain-separation" class="section-name selfRef">Domain Separation</a>
           </h4>
-<p id="section-6.5.1-1">ASCII-encoded bytes provide oracle cloning <span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in the security game
+<p id="section-6.5.1-1">ASCII-encoded bytes provide oracle cloning <span>[<a href="#BDG20" class="cite xref">BDG20</a>]</span> in the security game
 via domain separation. The IND-CCA security of hybrid KEMs often relies on
 the KDF function <code>KDF</code> to behave as an independent random oracle, which the
-inclusion of the <code>label</code> achieves via domain separation <span>[<a href="#GHP2018" class="cite xref">GHP2018</a>]</span>.<a href="#section-6.5.1-1" class="pilcrow">¶</a></p>
+inclusion of the <code>label</code> achieves via domain separation <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>.<a href="#section-6.5.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.5.1-2">By design, the calls to <code>KDF</code> in these frameworks and usage anywhere else
 in higher level protocol use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed parameters. This
@@ -2613,8 +2688,8 @@ justifies modeling them as independent functions even if instantiated by the
 same KDF. This domain separation is achieved by using prefix-free sets of
 <code>label</code> values. Recall that a set is prefix-free if no element is a prefix of
 another within the set.<a href="#section-6.5.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.5.1-3">Length differentiation is sometimes used to achieve domain separation but as a
-technique it is brittle and prone to misuse <span>[<a href="#BDG2020" class="cite xref">BDG2020</a>]</span> in practice so we
+<p id="section-6.5.1-3">Length differentiation is sometimes used to achieve domain separation but as
+a technique it is brittle and prone to misuse <span>[<a href="#BDG20" class="cite xref">BDG20</a>]</span> in practice so we
 favor the use of an explicit post-fix label.<a href="#section-6.5.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2651,8 +2726,8 @@ fixed-length shared secrets.<a href="#section-6.5.2-4" class="pilcrow">¶</a></p
       </h2>
 <p id="section-7-1">This document requests that IANA create a registry "Hybrid KEM Labels", which
 lists labels that uniquely identify instantiations of the frameworks in this
-document.  The registry should be administered under the First Come First Served
-policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-7-1" class="pilcrow">¶</a></p>
+document.  The registry should be administered under the First Come First
+Served policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-7-1" class="pilcrow">¶</a></p>
 <p id="section-7-2">Template:<a href="#section-7-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7-3.1">
@@ -2666,8 +2741,8 @@ the following values: "GU", "GC", "KU", or "KC".<a href="#section-7-3.2.1" class
           <p id="section-7-3.3.1">PQ component: The name of the post-quantum KEM used in the hybrid KEM.<a href="#section-7-3.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.4">
-          <p id="section-7-3.4.1">Traditional component: The name of the traditional KEM or nominal group used
-in the hybrid KEM.<a href="#section-7-3.4.1" class="pilcrow">¶</a></p>
+          <p id="section-7-3.4.1">Traditional component: The name of the traditional KEM or nominal group
+used in the hybrid KEM.<a href="#section-7-3.4.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.5">
           <p id="section-7-3.5.1">KDF: The name of the Key Derivation Function used in the hybrid KEM.<a href="#section-7-3.5.1" class="pilcrow">¶</a></p>
@@ -2679,7 +2754,8 @@ in the hybrid KEM.<a href="#section-7-3.4.1" class="pilcrow">¶</a></p>
           <p id="section-7-3.7.1">Nseed: An integer representing the size of a seed for this hybrid KEM.<a href="#section-7-3.7.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.8">
-          <p id="section-7-3.8.1">Nss: An integer representing the size of a shared secret for this hybrid KEM.<a href="#section-7-3.8.1" class="pilcrow">¶</a></p>
+          <p id="section-7-3.8.1">Nss: An integer representing the size of a shared secret for this hybrid
+KEM.<a href="#section-7-3.8.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.9">
           <p id="section-7-3.9.1">Reference (optional): The document where this hybrid KEM is defined<a href="#section-7-3.9.1" class="pilcrow">¶</a></p>
@@ -2788,7 +2864,7 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
         <dd>
 <span class="refTitle">"Random Oracles in a Quantum World"</span>, <time datetime="2010" class="refDate">2010</time>, <span>&lt;<a href="https://eprint.iacr.org/2010/428.pdf">https://eprint.iacr.org/2010/428.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="BDG2020">[BDG2020]</dt>
+<dt id="BDG20">[BDG20]</dt>
         <dd>
 <span class="refTitle">"Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"</span>, <time datetime="2020" class="refDate">2020</time>, <span>&lt;<a href="https://eprint.iacr.org/2020/241.pdf">https://eprint.iacr.org/2020/241.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
@@ -2832,7 +2908,7 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
         <dd>
 <span class="refTitle">"Digital Signature Standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-5</span>, <time datetime="2023-02" class="refDate">February 2023</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-5">https://doi.org/10.6028/nist.fips.186-5</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="GHP2018">[GHP2018]</dt>
+<dt id="GHP18">[GHP18]</dt>
         <dd>
 <span class="refAuthor">Giacon, F.</span>, <span class="refAuthor">Heuer, F.</span>, and <span class="refAuthor">B. Poettering</span>, <span class="refTitle">"KEM Combiners"</span>, <time datetime="2018" class="refDate">2018</time>, <span>&lt;<a href="https://eprint.iacr.org/2018/024.pdf">https://eprint.iacr.org/2018/024.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
@@ -2954,17 +3030,17 @@ the hybrid KEM's <code>EncapsDerand</code> algorithm is the same as its <code>En
 with the following differences:<a href="#appendix-A-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-A-7.1">
-          <p id="appendix-A-7.1.1">The <code>EncapsDerand</code> algorithm also takes a <code>randomness</code> parameter, which is a
-byte string of length <code>Nrandom</code>.<a href="#appendix-A-7.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-A-7.1.1">The <code>EncapsDerand</code> algorithm also takes a <code>randomness</code> parameter, which is
+a byte string of length <code>Nrandom</code>.<a href="#appendix-A-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.2">
-          <p id="appendix-A-7.2.1">Invocations of <code>Encaps</code> or <code>RandomScalar</code> (with a random input) in the constituent
-algorithms are replaced with calls to <code>EncapsDerand</code> or <code>RandomScalar</code> with a
-deterministic input.<a href="#appendix-A-7.2.1" class="pilcrow">¶</a></p>
+          <p id="appendix-A-7.2.1">Invocations of <code>Encaps</code> or <code>RandomScalar</code> (with a random input) in the
+constituent algorithms are replaced with calls to <code>EncapsDerand</code> or
+<code>RandomScalar</code> with a deterministic input.<a href="#appendix-A-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.3">
-          <p id="appendix-A-7.3.1">The randomness used by the PQ constituent is the first <code>PQ.Nrandom</code> bytes of
-the input randomness.<a href="#appendix-A-7.3.1" class="pilcrow">¶</a></p>
+          <p id="appendix-A-7.3.1">The randomness used by the PQ constituent is the first <code>PQ.Nrandom</code> bytes
+of the input randomness.<a href="#appendix-A-7.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-7.4">
           <p id="appendix-A-7.4.1">The randomness used by the traditional constituent is the final <code>T.Nrandom</code>
