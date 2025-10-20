@@ -1018,7 +1018,7 @@ collision-resistant function.
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in GHP {{GHP18}}
+which require the KDF to be a PRF, such as the one given in {{GHP18}}
 for UK, or the standard-model analysis of CG in {{XWING}}, apply.
 
 Sponge-based constructions such as SHA-3 have been shown to be
@@ -1221,11 +1221,24 @@ do not prove that here.
 
 ##### LEAK-BIND-K-CT of UG
 
-<!-- TODO: Port UK proof mutatis mutandis -->
+Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-CT.
+
+Justification: To win LEAK-BIND-K-CT, given knowledge of two
+honestly-generated UG secret keys, the adversary must construct two distinct
+UG ciphertexts that decapsulate to the same (non-bot) key. Since UG
+includes the ciphertexts in the key derivation, the condition that the
+ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
+collision in the KDF.
 
 #### LEAK-BIND-K-PK of UG
 
-<!-- TODO: Port UK proof mutatis mutandis -->
+Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-PK.
+
+Justification: As described above, in the LEAK-BIND-K-PK game, to win the
+adversary must construct two ciphertexts that decapsulate to the same non-bot
+key, for distinct UG public keys. Again, since UG includes the public keys
+in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
+collide the KDF.
 
 #### UK Binding
 
@@ -1242,7 +1255,7 @@ collision in the KDF.
 
 #### LEAK-BIND-K-PK of UK
 
-Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-PK.
+Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-PK.
 
 Justification: As described above, in the LEAK-BIND-K-PK game, to win the
 adversary must construct two ciphertexts that decapsulate to the same non-bot
@@ -1310,11 +1323,49 @@ Again, we conclude by noting that these cases are exhaustive.
 
 ##### LEAK-BIND-K-CT of CK
 
-<!-- TODO -->
+Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
+CK is LEAK-BIND-K-CT.
+
+Justification: To win the adversary must construct two distinct CK
+ciphertexts that decapsulate to the same non-bot key.  Call the CK
+ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
+ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
+
+Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
+ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
+ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
+KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
+
+If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
+of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
+output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
+reduction does this by generating two nominal-group key pairs and running the
+CK LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
+KEM ciphertexts output by the adversary. The probability that the adversary
+wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
+lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
+game against the PQ KEM.
+
+We conclude by noting these cases are exhaustive.
 
 ##### LEAK-BIND-K-PK of CK
 
-<!-- TODO -->
+Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+CK is LEAK-BIND-K-PK.
+
+Justification: Similar to the above, we proceed by a case analysis on the win
+condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
+(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
+nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
+the other case we can directly get a KDF collision from a winning output. In
+this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
+the same or different. IF they are different, we again get a KDF collision
+from a win. If they are the same, in a similar way as above, we can build a
+reduction to the LEAK-BIND-K-PK of PQ KEM.
+
+Again, we conclude by noting that these cases are exhaustive.
 
 ## Other Considerations
 
