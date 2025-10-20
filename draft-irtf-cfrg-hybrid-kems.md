@@ -997,8 +997,8 @@ all of X-BIND-K-PK.
 The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
 (RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a
 conservative choice given a review of the existing security analyses for our
-hybrid KEM constructions: most IND-CCA analyses for the four frameworks require only that
-the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA
+hybrid KEM constructions: most IND-CCA analyses for the four frameworks require
+only that the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA
 analysis of CG in {{XWING}}, and the corresponding analysis for UG (forthcoming)
 relies on the KDF being a RO. Proofs of our target
 binding properties for our hybrid KEMs require the KDF is a collision-resistant
