@@ -859,7 +859,7 @@ assumption for the PQ KEM.
 
 ~~~
 def DeriveKeyPair(seed):
-d    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
+    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
     return (concat(ek_PQ, ek_T), seed)
 
 def Encaps(ek):
