@@ -1148,22 +1148,22 @@ The second IND-CCA analysis is a straightforward reduction to the IND-CCA
 security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
 KEM's shared secret.
 
-This document's UK construction does not have an IND-CCA analysis; the GHP
-paper on which the construction is based gives a slightly different version,
-namely they do not include the public encapsulation keys in the KDF. However,
-we argue that the proof goes through with trivial modifications if the public
-encapsulation keys are included in the KDF. The relevant step is claim 3 of
-Theorem 1, which reduces to the split-key pseudorandomness of the KDF. (GHP
-call the KDF a "core" function, and denote it as W.) We observe that adding
-the public encapsulation keys to the inputs only changes the concrete
-contents of the reduction's queries to its oracle. Since the reduction
-chooses the public encapsulation keys itself, they can be added to the oracle
-inputs, and the remainder of the proof goes through unmodified.
+This document's UK construction does not have an IND-CCA analysis; the
+{{GHP18}} paper on which the construction is based gives a slightly different
+version, namely they do not include the public encapsulation keys in the
+KDF. However, we argue that the proof goes through with trivial modifications
+if the public encapsulation keys are included in the KDF. The relevant step
+is claim 3 of Theorem 1, which reduces to the split-key pseudorandomness of
+the KDF. ({{GHP18}} call the KDF a "core" function, and denote it as W.) We
+observe that adding the public encapsulation keys to the inputs only changes
+the concrete contents of the reduction's queries to its oracle. Since the
+reduction chooses the public encapsulation keys itself, they can be added to
+the oracle inputs, and the remainder of the proof goes through unmodified.
 
 We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
-used in GHP meets the split-key pseudorandomness property used in
-GHP's analysis. <!-- TODO: apparently there is no good citation for this
+used in {{GHP18}} meets the split-key pseudorandomness property used in
+{{GHP18}}'s analysis. <!-- TODO: apparently there is no good citation for this
 foklore, maybe we can explicitly lay it out -->
 
 Like UG, the CG construction has two complementary IND-CCA analyses. Both
