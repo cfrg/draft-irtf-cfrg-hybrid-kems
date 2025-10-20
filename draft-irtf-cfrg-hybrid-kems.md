@@ -1075,9 +1075,10 @@ security, under different assumptions about the component algorithms:
     * `KDF` is indifferentiable from a random oracle 
     * `KEM_PQ` is IND-CCA against a quantum attacker
 
-Some IND-CCA analyses do not strictly require the KDF to be indifferentiable from a random oracle;
-they instead only require a kind of PRF assumption on the KDF. For simplicity we ignore this here;
-the security analyses described below for our constructions will elaborate on this point when appropriate.
+Some IND-CCA analyses do not strictly require the KDF to be indifferentiable
+from a random oracle; they instead only require a kind of PRF assumption on
+the KDF. For simplicity we ignore this here; the security analyses described
+below for our constructions will elaborate on this point when appropriate.
 
 ### Binding Properties {#hybrid-binding}
 
