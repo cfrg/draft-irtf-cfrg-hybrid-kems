@@ -2045,14 +2045,15 @@ def DeriveKeyPair(seed):
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
     (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
     return ss_H
 </pre><a href="#section-5.3-2" class="pilcrow">¶</a>
 </div>
@@ -2074,16 +2075,17 @@ def DeriveKeyPair(seed):
     return (concat(ek_PQ, ek_T), seed)
 
 def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
     (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
     return ss_H
 </pre><a href="#section-5.4-2" class="pilcrow">¶</a>
 </div>
@@ -2112,6 +2114,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
     (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
     ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
@@ -2143,6 +2146,7 @@ def Encaps(ek):
     return (ss_H, ct_H)
 
 def Decaps(dk, ct):
+    (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
     (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
     ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
@@ -2735,7 +2739,7 @@ Served policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a
 </li>
         <li class="normal" id="section-7-3.2">
           <p id="section-7-3.2.1">Framework: The framework used in the hybrid KEM.  This value <span class="bcp14">MUST</span> be one of
-the following values: "GU", "GC", "KU", or "KC".<a href="#section-7-3.2.1" class="pilcrow">¶</a></p>
+the following values: "UG", "UK", "CG", or "CK".<a href="#section-7-3.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.3">
           <p id="section-7-3.3.1">PQ component: The name of the post-quantum KEM used in the hybrid KEM.<a href="#section-7-3.3.1" class="pilcrow">¶</a></p>
