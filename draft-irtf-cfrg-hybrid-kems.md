@@ -1132,7 +1132,6 @@ the C2PRI security of the PQ KEM does not appear in the bound.
 
 The second IND-CCA analysis  is a straightforward reduction to the IND-CCA security
 of the PQ KEM, and the PRF security of the RO when keyed with the PQ KEM's shared secret.
-<!-- TODO: where, if anywhere, does the split-key PRF requirement come up?-->
 
 This document's UK construction does not have an IND-CCA analysis; the
 GHP paper on which the construction is based gives a slightly different
