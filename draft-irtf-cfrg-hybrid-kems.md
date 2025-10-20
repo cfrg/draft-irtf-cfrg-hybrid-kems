@@ -1067,12 +1067,12 @@ More precisely, the hybrid KEM should meet two different notions of IND-CCA
 security, under different assumptions about the component algorithms:
 
 * IND-CCA against a classical attacker all of the following are true:
-    * `KDF` is indifferentiable from a random oracle 
+    * `KDF` is indifferentiable from a random oracle
     * If using `Group_T`: The strong Diffie-Hellman problem is hard in `Group_T`
     * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
     * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->
 * IND-CCA against a quantum attacker if all of the following are true:
-    * `KDF` is indifferentiable from a random oracle 
+    * `KDF` is indifferentiable from a random oracle
     * `KEM_PQ` is IND-CCA against a quantum attacker
 
 Some IND-CCA analyses do not strictly require the KDF to be indifferentiable
@@ -1086,20 +1086,20 @@ The most salient binding properties for a hybrid KEM to be used in Internet
 protocols are LEAK-BIND-K-PK and LEAK-BIND-K-CT.
 
 The LEAK attack model is most appropriate for Internet protocols.  There have
-been attacks in the LEAK model {{BJKS24}} {{FG24}}, so a hybrid KEM
-needs to be resilient at least to LEAK attacks (i.e., HON is too weak).
-Internet applications generally assume that private keys are honestly generated,
-so MAL is too strong an attack model to address.
+been attacks in the LEAK model {{BJKS24}} {{FG24}}, so a hybrid KEM needs to
+be resilient at least to LEAK attacks (i.e., HON is too weak).  Internet
+applications generally assume that private keys are honestly generated, so
+MAL is too strong an attack model to address.
 
-The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally aligned with the
-needs of protocol design.  Protocols based on traditional algorithms frequently
-need to incorporate transcript hashing in order to protect against key confusion
-attacks {{FG24}} or KEM re-encapsulation attacks {{BJKS24}}.  The LEAK-BIND-K-PK
-and LEAK-BIND-K-CT properties prevent these attacks at the level of the hybrid
-KEM. Protocol designers may still need or want to include the ciphertext or
-encapsulation key into their protocol or key schedule for other reasons, but
-that can be independent of the specific properties of the KEM and its resulting
-shared secret.
+The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties are naturally aligned with
+the needs of protocol design.  Protocols based on traditional algorithms
+frequently need to incorporate transcript hashing in order to protect against
+key confusion attacks {{FG24}} or KEM re-encapsulation attacks {{BJKS24}}.
+The LEAK-BIND-K-PK and LEAK-BIND-K-CT properties prevent these attacks at the
+level of the hybrid KEM. Protocol designers may still need or want to include
+the ciphertext or encapsulation key into their protocol or key schedule for
+other reasons, but that can be independent of the specific properties of the
+KEM and its resulting shared secret.
 
 Implementors should not interpret the paragraph above as absolving them
 of their responsibility to carefully think through whether MAL-BIND attacks
@@ -1125,26 +1125,27 @@ technically novel but are substantially similar to the existing peer-reviewed
 analyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming
 document by the editorial team will describe the analysis of UG in detail.
 
-The first IND-CCA analysis, based on SDH, is very similar to the corresponding
-analysis of CG given in {{XWING}}: it gives a straightforward reduction to the SDH
-hardness in the underlying group. Notably, since the PQ KEM key and ciphertext are hashed,
-the C2PRI security of the PQ KEM does not appear in the bound.
+The first IND-CCA analysis, based on SDH, is very similar to the
+corresponding analysis of CG given in {{XWING}}: it gives a straightforward
+reduction to the SDH hardness in the underlying group. Notably, since the PQ
+KEM key and ciphertext are hashed, the C2PRI security of the PQ KEM does not
+appear in the bound.
 
-The second IND-CCA analysis is a straightforward reduction to the IND-CCA security
-of the PQ KEM, and the PRF security of the RO when keyed with the PQ KEM's shared secret.
+The second IND-CCA analysis is a straightforward reduction to the IND-CCA
+security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
+KEM's shared secret.
 
-This document's UK construction does not have an IND-CCA analysis; the
-GHP paper on which the construction is based gives a slightly different
-version, namely they do not include the public encapsulation keys in
-the KDF. However, we argue that the proof goes through with trivial
-modifications if the public encapsulation keys are
-included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces
-to the split-key pseudorandomness of the KDF. (GHP call the KDF a "core"
-function, and denote it as W.) We observe that adding the public
-encapsulation keys to the inputs only changes the concrete contents of the
-reduction's queries to its oracle. Since the reduction chooses the public
-encapsulation keys itself, they can be added to the oracle inputs, and the
-remainder of the proof goes through unmodified.
+This document's UK construction does not have an IND-CCA analysis; the GHP
+paper on which the construction is based gives a slightly different version,
+namely they do not include the public encapsulation keys in the KDF. However,
+we argue that the proof goes through with trivial modifications if the public
+encapsulation keys are included in the KDF. The relevant step is claim 3 of
+Theorem 1, which reduces to the split-key pseudorandomness of the KDF. (GHP
+call the KDF a "core" function, and denote it as W.) We observe that adding
+the public encapsulation keys to the inputs only changes the concrete
+contents of the reduction's queries to its oracle. Since the reduction
+chooses the public encapsulation keys itself, they can be added to the oracle
+inputs, and the remainder of the proof goes through unmodified.
 
 We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
@@ -1152,8 +1153,8 @@ used in GHP meets the split-key pseudorandomness property used in
 GHP's analysis. <!-- TODO: apparently there is no good citation for this
 foklore, maybe we can explicitly lay it out -->
 
-Like UG, the CG construction has two complementary IND-CCA analyses. Both were
-given in {{XWING}}. We summarize them but elide some details.
+Like UG, the CG construction has two complementary IND-CCA analyses. Both
+were given in {{XWING}}. We summarize them but elide some details.
 
 One analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,
 IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
@@ -1165,27 +1166,30 @@ As long as the aforementioned security requirements of the component parts
 are met, these analyses imply that this document's CG construction satisfies
 IND-CCA security.
 
-The CK construction's IND-CCA analysis is based on forthcoming work by the editorial team.
+The CK construction's IND-CCA analysis is based on forthcoming work by the
+editorial team.
 
-The CK construction has two complementary IND-CCA analyses: one for when the IND-CCA
-security of the traditional PKE-based KEM holds but the PQ KEM is broken, except for
-the PQ KEM's C2PRI security, and one for where the IND-CCA security of the PQ KEM holds.
-Both are technically novel but are substantially similar to the existing peer-reviewed
-analyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming document by
-the editorial team will describe the analysis of CK in detail.
+The CK construction has two complementary IND-CCA analyses: one for when the
+IND-CCA security of the traditional PKE-based KEM holds but the PQ KEM is
+broken, except for the PQ KEM's C2PRI security, and one for where the IND-CCA
+security of the PQ KEM holds.  Both are technically novel but are
+substantially similar to the existing peer-reviewed analyses of the CG
+{{XWING}} and UK {{GHP18}} constructions. A forthcoming document by the
+editorial team will describe the analysis of CK in detail.
 
-Therefore all four hybrid KEMs in this document are IND-CCA when
-instantiated with cryptographic components that meet the security
-requirements described above. Any changes to the algorithms, including key
-generation/derivation, are not guaranteed to produce secure results.
+Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
+with cryptographic components that meet the security requirements described
+above. Any changes to the algorithms, including key generation/derivation,
+are not guaranteed to produce secure results.
 
 ### Binding analyses
 
 There are four hybrid KEM frameworks, and two target binding properties, so
-we need eight total analyses. None of these exact results were known; thus the
-following are new results by the editorial team. We include informal
-justifications here and defer rigorous proofs to a forthcoming paper.
-<!-- TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results about hybrid kem binding; unclear how they compare to ours though.-->
+we need eight total analyses. None of these exact results were known; thus
+the following are new results by the editorial team. We include informal
+justifications here and defer rigorous proofs to a forthcoming paper.  <!--
+TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results
+about hybrid kem binding; unclear how they compare to ours though.-->
 
 We note that these sketches implicitly ignore the fact that in our hybrid
 KEMs, both key pairs are derived from a common random seed; we instead
@@ -1198,7 +1202,7 @@ indistinguishable. The derivation of component scheme key pairs from the
 common random seed provides further protection against manipulation or
 corruption of keys such that it can contribute to stronger binding properties
 against a MAL adversary, as well as operational benefits in practice, but we
-do not prove that here. 
+do not prove that here.
 
 #### UG Binding
 
@@ -1345,8 +1349,8 @@ fixed-length shared secrets.
 
 This document requests that IANA create a registry "Hybrid KEM Labels", which
 lists labels that uniquely identify instantiations of the frameworks in this
-document.  The registry should be administered under the First Come First Served
-policy {{!RFC8126}}.
+document.  The registry should be administered under the First Come First
+Served policy {{!RFC8126}}.
 
 Template:
 
@@ -1357,8 +1361,8 @@ Template:
 
 * PQ component: The name of the post-quantum KEM used in the hybrid KEM.
 
-* Traditional component: The name of the traditional KEM or nominal group used
-  in the hybrid KEM.
+* Traditional component: The name of the traditional KEM or nominal group
+  used in the hybrid KEM.
 
 * KDF: The name of the Key Derivation Function used in the hybrid KEM.
 
@@ -1366,7 +1370,8 @@ Template:
 
 * Nseed: An integer representing the size of a seed for this hybrid KEM.
 
-* Nss: An integer representing the size of a shared secret for this hybrid KEM.
+* Nss: An integer representing the size of a shared secret for this hybrid
+  KEM.
 
 * Reference (optional): The document where this hybrid KEM is defined
 
@@ -1417,13 +1422,13 @@ encapsulation (either KEMs or groups), the hybrid KEM can also support
 the hybrid KEM's `EncapsDerand` algorithm is the same as its `Encaps` method,
 with the following differences:
 
-* The `EncapsDerand` algorithm also takes a `randomness` parameter, which is a
-  byte string of length `Nrandom`.
-* Invocations of `Encaps` or `RandomScalar` (with a random input) in the constituent
-  algorithms are replaced with calls to `EncapsDerand` or `RandomScalar` with a
-  deterministic input.
-* The randomness used by the PQ constituent is the first `PQ.Nrandom` bytes of
-  the input randomness.
+* The `EncapsDerand` algorithm also takes a `randomness` parameter, which is
+  a byte string of length `Nrandom`.
+* Invocations of `Encaps` or `RandomScalar` (with a random input) in the
+  constituent algorithms are replaced with calls to `EncapsDerand` or
+  `RandomScalar` with a deterministic input.
+* The randomness used by the PQ constituent is the first `PQ.Nrandom` bytes
+  of the input randomness.
 * The randomness used by the traditional constituent is the final `T.Nrandom`
   bytes of the input randomness.
 
