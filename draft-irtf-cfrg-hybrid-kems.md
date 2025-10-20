@@ -96,7 +96,7 @@ informative:
     title: "Random Oracles in a Quantum World"
     date: 2010
     target: https://eprint.iacr.org/2010/428.pdf
-  BDG2020:
+  BDG20:
     title: "Separate Your Domains: NIST PQC KEMs, Oracle Cloning and Read-Only Indifferentiability"
     target: https://eprint.iacr.org/2020/241.pdf
     date: 2020
@@ -164,7 +164,7 @@ Disallowed?"
     title: "Security Analysis of Signal's PQXDH Handshake"
     date: 2024
     target: https://link.springer.com/chapter/10.1007/978-3-031-91823-0_5
-  GHP2018:
+  GHP18:
     title: "KEM Combiners"
     target: https://eprint.iacr.org/2018/024.pdf
     date: 2018
@@ -1014,7 +1014,7 @@ collision-resistant function.
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in GHP {{GHP2018}}
+which require the KDF to be a PRF, such as the one given in GHP {{GHP18}}
 for UK, or the standard-model analysis of CG in {{XWING}}, apply.
 
 Sponge-based constructions such as SHA-3 have been shown to be
@@ -1316,10 +1316,10 @@ Again, we conclude by noting that these cases are exhaustive.
 
 ### Domain Separation {#domain-separation}
 
-ASCII-encoded bytes provide oracle cloning {{BDG2020}} in the security game
+ASCII-encoded bytes provide oracle cloning {{BDG20}} in the security game
 via domain separation. The IND-CCA security of hybrid KEMs often relies on
 the KDF function `KDF` to behave as an independent random oracle, which the
-inclusion of the `label` achieves via domain separation {{GHP2018}}.
+inclusion of the `label` achieves via domain separation {{GHP18}}.
 
 By design, the calls to `KDF` in these frameworks and usage anywhere else
 in higher level protocol use separate input domains unless intentionally
@@ -1330,7 +1330,7 @@ same KDF. This domain separation is achieved by using prefix-free sets of
 another within the set.
 
 Length differentiation is sometimes used to achieve domain separation but as
-a technique it is brittle and prone to misuse {{BDG2020}} in practice so we
+a technique it is brittle and prone to misuse {{BDG20}} in practice so we
 favor the use of an explicit post-fix label.
 
 ### Fixed-length
