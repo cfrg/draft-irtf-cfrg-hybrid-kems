@@ -2468,21 +2468,21 @@ appear in the bound.<a href="#section-6.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-3">The second IND-CCA analysis is a straightforward reduction to the IND-CCA
 security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
 KEM's shared secret.<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-4">This document's UK construction does not have an IND-CCA analysis; the GHP
-paper on which the construction is based gives a slightly different version,
-namely they do not include the public encapsulation keys in the KDF. However,
-we argue that the proof goes through with trivial modifications if the public
-encapsulation keys are included in the KDF. The relevant step is claim 3 of
-Theorem 1, which reduces to the split-key pseudorandomness of the KDF. (GHP
-call the KDF a "core" function, and denote it as W.) We observe that adding
-the public encapsulation keys to the inputs only changes the concrete
-contents of the reduction's queries to its oracle. Since the reduction
-chooses the public encapsulation keys itself, they can be added to the oracle
-inputs, and the remainder of the proof goes through unmodified.<a href="#section-6.4.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-4">This document's UK construction does not have an IND-CCA analysis; the
+<span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> paper on which the construction is based gives a slightly different
+version, namely they do not include the public encapsulation keys in the
+KDF. However, we argue that the proof goes through with trivial modifications
+if the public encapsulation keys are included in the KDF. The relevant step
+is claim 3 of Theorem 1, which reduces to the split-key pseudorandomness of
+the KDF. (<span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> call the KDF a "core" function, and denote it as W.) We
+observe that adding the public encapsulation keys to the inputs only changes
+the concrete contents of the reduction's queries to its oracle. Since the
+reduction chooses the public encapsulation keys itself, they can be added to
+the oracle inputs, and the remainder of the proof goes through unmodified.<a href="#section-6.4.1-4" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-5">We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
-used in GHP meets the split-key pseudorandomness property used in
-GHP's analysis.<a href="#section-6.4.1-5" class="pilcrow">¶</a></p>
+used in <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> meets the split-key pseudorandomness property used in
+<span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>'s analysis.<a href="#section-6.4.1-5" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-6">Like UG, the CG construction has two complementary IND-CCA analyses. Both
 were given in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>. We summarize them but elide some details.<a href="#section-6.4.1-6" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-7">One analysis (Theorem 1) <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> shows that if the KDF is modelled as a RO,
