@@ -2,7 +2,7 @@
 <html lang="en" class="Internet-Draft">
 <head>
 <meta charset="utf-8">
-<meta content="Common,Latin" name="scripts">
+<meta content="Common,Greek,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
 <title>Hybrid PQ/T Key Encapsulation Mechanisms</title>
 <meta content="Deirdre Connolly" name="author">
@@ -1722,7 +1722,7 @@ input byte string.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-4.4-4">The fixed sizes are for both security and simplicity.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.4-5">Any KDF that utilizes <code>HKDF</code> <span>[<a href="#HKDF" class="cite xref">HKDF</a>]</span> must fully specify HKDF's salt, IKM,
+<p id="section-4.4-5">Any KDF that utilizes <code>HKDF</code> <span>[<a href="#HKDF" class="cite xref">HKDF</a>]</span> <span class="bcp14">MUST</span> fully specify HKDF's salt, IKM,
 info, and L arguments.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
 <p id="section-4.4-6">The security requirements for KDFs used with the frameworks in this document
 are laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a>.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
@@ -2482,7 +2482,12 @@ the oracle inputs, and the remainder of the proof goes through unmodified.<a hre
 <p id="section-6.4.1-5">We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
 used in <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> meets the split-key pseudorandomness property used in
-<span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>'s analysis.<a href="#section-6.4.1-5" class="pilcrow">¶</a></p>
+<span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>'s analysis: this is shown in <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>, Lemma 6, where a
+pseudorandom skPRF is constructed from any almost-uniform keymixing function
+in the random oracle model by <code>H(g(k1,...,kn), x)</code> , where <code>H</code> is modeled as
+a random oracle and <code>g</code> is ϵ-almost uniform. Example 3 from <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>
+qualifies <code>g(k_1,...,k_n) = k_1 || ... || k_n</code> as ϵ-almost uniform with <code>ϵ =
+1/len(k_1 || ... || k_n)</code>.<a href="#section-6.4.1-5" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-6">Like UG, the CG construction has two complementary IND-CCA analyses. Both
 were given in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>. We summarize them but elide some details.<a href="#section-6.4.1-6" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-7">One analysis (Theorem 1) <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> shows that if the KDF is modelled as a RO,
