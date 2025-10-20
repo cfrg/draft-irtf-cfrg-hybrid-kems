@@ -539,7 +539,7 @@ fixed output lengths:
 
 The fixed sizes are for both security and simplicity.
 
-Any KDF that utilizes `HKDF` {{HKDF}} must fully specify HKDF's salt, IKM,
+Any KDF that utilizes `HKDF` {{HKDF}} MUST fully specify HKDF's salt, IKM,
 info, and L arguments.
 
 The security requirements for KDFs used with the frameworks in this document
