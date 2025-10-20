@@ -363,8 +363,8 @@ Table of Contents
 
 4.3.  Pseudorandom Generators
 
-   A pseudorandom generator (PRG) is a deterministic function G whose
-   outputs are longer than its inputs.  When the input to G is chosen
+   A pseudorandom generator (PRG) is a deterministic function whose
+   outputs are longer than its inputs.  When the input is chosen
    uniformly at random, this induces a certain distribution over the
    possible output.  The output distribution is pseudorandom if it is
    indistinguishable from the uniform distribution.
@@ -490,8 +490,8 @@ Table of Contents
 5.1.1.  Using a Nominal Group
 
    Hybrid KEM frameworks that use a nominal group for the traditional
-   component invoke the DeriveKeyPair, Encap, and Decap functions of PQ
-   KEMs, alongside analogous functions of the nominal group.  The
+   component invoke the DeriveKeyPair, Encaps, and Decaps functions of
+   PQ KEMs, alongside analogous functions of the nominal group.  The
    "encapsulation key" is the receiver's public key group element; the
    "ciphertext" is an ephemeral group element; and the shared secret is
    the secret value resulting from an ephemeral-static Diffie-Hellman
@@ -522,7 +522,7 @@ Table of Contents
 5.1.2.  Using a Traditional KEM
 
    Hybrid KEM frameworks that use a KEM for the traditional component
-   invoke the DeriveKeyPair, Encap, and Decap functions of the
+   invoke the DeriveKeyPair, Encaps, and Decaps functions of the
    traditional and PQ KEMs in parallel.
 
    def expandDecapsKeyK(seed):
@@ -1187,8 +1187,8 @@ def Decaps(dk, ct):
 
    Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1
    but ct_T^0 = ct_T^1.  In this case, there are two relevant sub-cases:
-   either ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to
-   ss_PQ^1 (:= KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal.  If
+   either ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to
+   ss_PQ^1 (:= KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal.  If
    they are not equal, the KDF inputs are again distinct, so a LEAK-
    BIND-K-CT win must collide the KDF.
 
@@ -1239,8 +1239,8 @@ def Decaps(dk, ct):
 
    Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1
    but ct_T^0 = ct_T^1.  In this case, there are two relevant sub-cases:
-   either ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to
-   ss_PQ^1 (:= KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal.  If
+   either ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to
+   ss_PQ^1 (:= KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal.  If
    they are not equal, the KDF inputs are again distinct, so a LEAK-
    BIND-K-CT win must collide the KDF.
 
@@ -1268,10 +1268,10 @@ def Decaps(dk, ct):
    as above we argue that the only nontrivial case is the one where
    ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we can
    directly get a KDF collision from a winning output.  In this case the
-   result of KEM_PQ.Decap for the two PQ KEM keys can either be the same
-   or different.  IF they are different, we again get a KDF collision
-   from a win.  If they are the same, in a similar way as above, we can
-   build a reduction to the LEAK-BIND-K-PK of PQ KEM.
+   result of KEM_PQ.Decaps for the two PQ KEM keys can either be the
+   same or different.  IF they are different, we again get a KDF
+   collision from a win.  If they are the same, in a similar way as
+   above, we can build a reduction to the LEAK-BIND-K-PK of PQ KEM.
 
    Again, we conclude by noting that these cases are exhaustive.
 

@@ -1535,10 +1535,11 @@ all byte strings, with fixed lengths:<a href="#section-4.1-6" class="pilcrow">¶
             <p id="section-4.1-7.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-7.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-7.4">
-            <p id="section-4.1-7.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by Encaps<a href="#section-4.1-7.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-7.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by <code>Encaps</code><a href="#section-4.1-7.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-7.5">
-            <p id="section-4.1-7.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by Encaps or Decaps<a href="#section-4.1-7.5.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-7.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by <code>Encaps</code> or
+<code>Decaps</code><a href="#section-4.1-7.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1677,12 +1678,12 @@ with respect to the strong Diffie-Hellman problem (see <a href="#sdh" class="aut
         <h3 id="name-pseudorandom-generators">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-pseudorandom-generators" class="section-name selfRef">Pseudorandom Generators</a>
         </h3>
-<p id="section-4.3-1">A pseudorandom generator (PRG) is a deterministic function <code>G</code> whose outputs
-are longer than its inputs. When the input to <code>G</code> is chosen uniformly at
-random, this induces a certain distribution over the possible output. The
-output distribution is pseudorandom if it is indistinguishable from the
-uniform distribution.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2">The PRGs used in this document have a simpler form, with fixed
+<p id="section-4.3-1">A pseudorandom generator (PRG) is a deterministic function whose outputs are
+longer than its inputs. When the input is chosen uniformly at random, this
+induces a certain distribution over the possible output. The output
+distribution is pseudorandom if it is indistinguishable from the uniform
+distribution.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">The <code>PRG</code>s used in this document have a simpler form, with fixed
 output lengths:<a href="#section-4.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.3-3.1">
@@ -1694,11 +1695,11 @@ byte string <code>seed</code>.<a href="#section-4.3-3.2.1" class="pilcrow">¶</a
 </li>
         </ul>
 <p id="section-4.3-4">The fixed sizes are for both security and simplicity.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
-<p id="section-4.3-5">PRGs used with the frameworks in this document <span class="bcp14">MUST</span> provide the bit-security
+<p id="section-4.3-5"><code>PRG</code>s used with the frameworks in this document <span class="bcp14">MUST</span> provide the bit-security
 required to source input randomness for PQ/T components from a seed that is
 expanded to a output length, of which a subset is passed to the component key
 generation algorithms.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
-<p id="section-4.3-6">The security requirements for PRGs used with the frameworks in this document
+<p id="section-4.3-6">The security requirements for <code>PRG</code>s used with the frameworks in this document
 are laid out in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a>.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1722,7 +1723,7 @@ input byte string.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-4.4-4">The fixed sizes are for both security and simplicity.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.4-5">Any KDF that utilizes <code>HKDF</code> <span>[<a href="#HKDF" class="cite xref">HKDF</a>]</span> <span class="bcp14">MUST</span> fully specify HKDF's salt, IKM,
+<p id="section-4.4-5">Any KDF that utilizes HKDF <span>[<a href="#HKDF" class="cite xref">HKDF</a>]</span> <span class="bcp14">MUST</span> fully specify HKDF's salt, IKM,
 info, and L arguments.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
 <p id="section-4.4-6">The security requirements for KDFs used with the frameworks in this document
 are laid out in <a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a>.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
@@ -1854,10 +1855,10 @@ we capture in a set of subroutines.<a href="#section-5.1-1" class="pilcrow">¶</
 <a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-using-a-nominal-group" class="section-name selfRef">Using a Nominal Group</a>
           </h4>
 <p id="section-5.1.1-1">Hybrid KEM frameworks that use a nominal group for the traditional component
-invoke the DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside
-analogous functions of the nominal group.  The "encapsulation key" is the
-receiver's public key group element; the "ciphertext" is an ephemeral group
-element; and the shared secret is the secret value resulting from an
+invoke the <code>DeriveKeyPair</code>, <code>Encaps</code>, and <code>Decaps</code> functions of PQ KEMs,
+alongside analogous functions of the nominal group.  The "encapsulation key"
+is the receiver's public key group element; the "ciphertext" is an ephemeral
+group element; and the shared secret is the secret value resulting from an
 ephemeral-static Diffie-Hellman exchange.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1.1-2">
 <pre>
@@ -1892,8 +1893,8 @@ def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
 <a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-using-a-traditional-kem" class="section-name selfRef">Using a Traditional KEM</a>
           </h4>
 <p id="section-5.1.2-1">Hybrid KEM frameworks that use a KEM for the traditional component invoke the
-DeriveKeyPair, Encap, and Decap functions of the traditional and PQ KEMs in
-parallel.<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<code>DeriveKeyPair</code>, <code>Encaps</code>, and <code>Decaps</code> functions of the traditional and PQ
+KEMs in parallel.<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1.2-2">
 <pre>
 def expandDecapsKeyK(seed):
@@ -1921,8 +1922,9 @@ def prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):
           <h4 id="name-combiners">
 <a href="#section-5.1.3" class="section-number selfRef">5.1.3. </a><a href="#name-combiners" class="section-name selfRef">Combiners</a>
           </h4>
-<p id="section-5.1.3-1">A combiner function uses the KDF used in the hybrid KEM to combine the shared
-secrets output by the component algorithms with contextual information.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-1">A combiner function uses the <code>KDF</code> used in the hybrid KEM to combine the
+shared secrets output by the component algorithms with contextual
+information.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.3-2">The two combiner functions defined in this document are as follows:<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1.3-3">
 <pre>
@@ -1969,19 +1971,19 @@ def GenerateKeyPair():
 </div>
 <p id="section-5.2-3">In some deployment environments, it is not possible to instantiate this
 process.  Some implementations of component schemes do not support the
-<code>DeriveKeyPair</code> function, only GenerateKeyPair. Likewise in the nominal group
-case, a (scalar, group element) pair will only be generated when the scalar
-is generated internal to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<code>DeriveKeyPair</code> function, only <code>GenerateKeyPair</code>. Likewise in the nominal
+group case, a (scalar, group element) pair will only be generated when the
+scalar is generated internal to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.2-4">An implementation of a hybrid KEM in such environemnts <span class="bcp14">MAY</span> deviate from the
 above description in the following ways:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-5.1">
-            <p id="section-5.2-5.1.1">DeriveKeyPair is not implemented.<a href="#section-5.2-5.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-5.1.1"><code>DeriveKeyPair</code> is not implemented.<a href="#section-5.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.2">
-            <p id="section-5.2-5.2.1">The decapsulation key returned by GenerateKeyPair and consumed by Decaps is
-a tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or
-pointers/handles to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-5.2.1">The decapsulation key returned by <code>GenerateKeyPair</code> and consumed by
+<code>Decaps</code> is a tuple <code>(dk_PQ, dk_T)</code> of per-constituent decapsulation keys
+(or pointers/handles to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.3">
             <p id="section-5.2-5.3.1">The <code>expandDecapsulationKeyG</code> and <code>expandDecapsulationKeyK</code> functions are
@@ -2288,20 +2290,20 @@ but no assurance at all of X-BIND-K-PK.<a href="#section-6.1.4-3" class="pilcrow
           <h4 id="name-indifferentiability-from-a-">
 <a href="#section-6.1.5" class="section-number selfRef">6.1.5. </a><a href="#name-indifferentiability-from-a-" class="section-name selfRef">Indifferentiability from a Random Oracle</a>
           </h4>
-<p id="section-6.1.5-1">The KDF used with a hybrid KEM <span class="bcp14">MUST</span> be indifferentiable from a random oracle
-(RO) <span>[<a href="#MRH03" class="cite xref">MRH03</a>]</span>, even to a quantum attacker <span>[<a href="#BDFL_10" class="cite xref">BDFL_10</a>]</span> <span>[<a href="#ZHANDRY19" class="cite xref">ZHANDRY19</a>]</span>.  This
-is a conservative choice given a review of the existing security analyses for
-our hybrid KEM constructions: most IND-CCA analyses for the four frameworks
-require only that the KDF is some kind of pseudorandom function, but the
-SDH-based IND-CCA analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and the corresponding analysis
-for UG (forthcoming) relies on the KDF being a RO. Proofs of our target
-binding properties for our hybrid KEMs require the KDF is a
+<p id="section-6.1.5-1">The <code>KDF</code> used with a hybrid KEM <span class="bcp14">MUST</span> be indifferentiable from a random
+oracle (RO) <span>[<a href="#MRH03" class="cite xref">MRH03</a>]</span>, even to a quantum attacker <span>[<a href="#BDFL_10" class="cite xref">BDFL_10</a>]</span> <span>[<a href="#ZHANDRY19" class="cite xref">ZHANDRY19</a>]</span>.
+This is a conservative choice given a review of the existing security
+analyses for our hybrid KEM constructions: most IND-CCA analyses for the four
+frameworks require only that the <code>KDF</code> is some kind of pseudorandom function,
+but the SDH-based IND-CCA analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and the corresponding
+analysis for UG (forthcoming) relies on the <code>KDF</code> being a RO. Proofs of our
+target binding properties for our hybrid KEMs require the <code>KDF</code> is a
 collision-resistant function.<a href="#section-6.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-6.1.5-2">If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
-as applying a (RO-based) pseudorandom function - keyed with the shared
+<p id="section-6.1.5-2">If the <code>KDF</code> is a RO, the key derivation step in the hybrid KEMs can be
+viewed as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span>
-for UK, or the standard-model analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, apply.<a href="#section-6.1.5-2" class="pilcrow">¶</a></p>
+which require the <code>KDF</code> to be a PRF, such as the one given in <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> for
+UK, or the standard-model analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, apply.<a href="#section-6.1.5-2" class="pilcrow">¶</a></p>
 <p id="section-6.1.5-3">Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical <span>[<a href="#BDP_08" class="cite xref">BDP_08</a>]</span> as well as quantum adversaries
 <span>[<a href="#ACM_25" class="cite xref">ACM_25</a>]</span>.<a href="#section-6.1.5-3" class="pilcrow">¶</a></p>
@@ -2315,14 +2317,14 @@ compression function underlying SHA-256 is a random oracle,
 which it is indifferentiably when used prefix-free.<a href="#section-6.1.5-5.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.1.5-5.2">
-              <p id="section-6.1.5-5.2.1">the values of <code>HKDF</code>'s <code>IKM</code> input do not collide with
+              <p id="section-6.1.5-5.2.1">the values of HKDF's <code>IKM</code> input do not collide with
 values of <code>info</code> <code>||</code> <code>0x01</code>. This <span class="bcp14">MUST</span> be enforced by the
-concrete instantiations that use <code>HKDF</code> as its KDF.<a href="#section-6.1.5-5.2.1" class="pilcrow">¶</a></p>
+concrete instantiations that use HKDF as its <code>KDF</code>.<a href="#section-6.1.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-6.1.5-6">The choice of the KDF security level <span class="bcp14">SHOULD</span> be made based on the
-security level provided by the constituent KEMs. The KDF <span class="bcp14">SHOULD</span>
-at least have the security level of the strongest constituent KEM.<a href="#section-6.1.5-6" class="pilcrow">¶</a></p>
+<p id="section-6.1.5-6">The choice of the <code>KDF</code> security level <span class="bcp14">SHOULD</span> be made based on the security
+level provided by the constituent KEMs. The <code>KDF</code> <span class="bcp14">SHOULD</span> at least have the
+security level of the strongest constituent KEM.<a href="#section-6.1.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-prgs">
@@ -2331,17 +2333,17 @@ at least have the security level of the strongest constituent KEM.<a href="#sect
 <a href="#section-6.1.6" class="section-number selfRef">6.1.6. </a><a href="#name-security-requirements-for-p" class="section-name selfRef">Security Requirements for PRGs</a>
           </h4>
 <p id="section-6.1.6-1">The functions used to expand a key seed to multiple key seeds is closer to a
-pseudorandom generator (PRG) in its security requirements <span>[<a href="#AOB_24" class="cite xref">AOB_24</a>]</span>.  A
-secure PRG is an algorithm PRG : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
-such that no polynomial-time adversary can distinguish between PRG(r) (for r
-$← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> <span>[<a href="#Rosulek" class="cite xref">Rosulek</a>]</span>.  The
-uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the PRG.<a href="#section-6.1.6-1" class="pilcrow">¶</a></p>
-<p id="section-6.1.6-2">A PRG is not to be confused with a random (or pseudorandom) <em>number</em>
-generator (RNG): a PRG requires the seed randomness to be chosen uniformly
+pseudorandom generator (<code>PRG</code>) in its security requirements <span>[<a href="#AOB_24" class="cite xref">AOB_24</a>]</span>.  A
+secure PRG is an algorithm <code>PRG</code> : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
+such that no polynomial-time adversary can distinguish between <code>PRG(r)</code> (for
+r $← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> <span>[<a href="#Rosulek" class="cite xref">Rosulek</a>]</span>.
+The uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the <code>PRG</code>.<a href="#section-6.1.6-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.6-2">A <code>PRG</code> is not to be confused with a random (or pseudorandom) <em>number</em>
+generator (RNG): a <code>PRG</code> requires the seed randomness to be chosen uniformly
 and extend it; an RNG takes sources of noisy data and transforms them into
 uniform outputs.<a href="#section-6.1.6-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.6-3">PRGs are related to extendable output functions (XOFs) which can be
-built from random oracles. Examples include SHAKE256.<a href="#section-6.1.6-3" class="pilcrow">¶</a></p>
+<p id="section-6.1.6-3"><code>PRG</code>s are related to extendable output functions (XOFs) which can be built
+from random oracles. Examples include SHAKE256.<a href="#section-6.1.6-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2399,10 +2401,11 @@ security, under different assumptions about the component algorithms:<a href="#s
               </ul>
 </li>
           </ul>
-<p id="section-6.2.1-4">Some IND-CCA analyses do not strictly require the KDF to be indifferentiable
-from a random oracle; they instead only require a kind of PRF assumption on
-the KDF. For simplicity we ignore this here; the security analyses described
-below for our constructions will elaborate on this point when appropriate.<a href="#section-6.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.2.1-4">Some IND-CCA analyses do not strictly require the <code>KDF</code> to be
+indifferentiable from a random oracle; they instead only require a kind of
+PRF assumption on the KDF. For simplicity we ignore this here; the security
+analyses described below for our constructions will elaborate on this point
+when appropriate.<a href="#section-6.2.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="hybrid-binding">
@@ -2628,9 +2631,10 @@ ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
 ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.5.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.5.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
-ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
-KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.5.1-3" class="pilcrow">¶</a></p>
+ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal,
+the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
+KDF.<a href="#section-6.4.2.5.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.5.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
 output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
@@ -2683,8 +2687,8 @@ ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
 ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.6.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.6.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
-ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
 KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.6.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.6.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
@@ -2710,7 +2714,7 @@ condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
-this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
+this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
 reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.6.2-2" class="pilcrow">¶</a></p>
