@@ -1130,7 +1130,7 @@ analysis of CG given in {{XWING}}: it gives a straightforward reduction to the S
 hardness in the underlying group. Notably, since the PQ KEM key and ciphertext are hashed,
 the C2PRI security of the PQ KEM does not appear in the bound.
 
-The second IND-CCA analysis  is a straightforward reduction to the IND-CCA security
+The second IND-CCA analysis is a straightforward reduction to the IND-CCA security
 of the PQ KEM, and the PRF security of the RO when keyed with the PQ KEM's shared secret.
 
 This document's UK construction does not have an IND-CCA analysis; the
