@@ -409,7 +409,7 @@ trivial PRG that simply reads from those bytes:
 - `New(seed)` - Initialize `state` with a copy of `seed`
 - `Read(state, n)` - If there are fewer than `n` bytes in `state`, abort. Split
   off the first `n` bytes of `state` and return them as `out`, and update
-  `state` to remove the first `n` bytes.  
+  `state` to remove the first `n` bytes.
 
 ## Key Encapsulation Mechanisms {#kems}
 
