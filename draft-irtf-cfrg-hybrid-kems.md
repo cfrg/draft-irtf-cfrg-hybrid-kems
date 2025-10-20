@@ -1167,7 +1167,13 @@ are met, these analyses imply that this document's CG construction satisfies
 IND-CCA security.
 
 The CK construction's IND-CCA analysis is based on forthcoming work by the editorial team.
-<!-- PAG: Deirdre, you're gonna have to fill this in a bit; i don't have enough context on this result to do it-->
+
+The CK construction has two complementary IND-CCA analyses: one for when the IND-CCA
+security of the traditional PKE-based KEM holds but the PQ KEM is broken, except for
+the PQ KEM's C2PRI security, and one for where the IND-CCA security of the PQ KEM holds.
+Both are technically novel but are substantially similar to the existing peer-reviewed
+analyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming document by
+the editorial team will describe the analysis of CK in detail.
 
 Therefore all four hybrid KEMs in this document are IND-CCA when
 instantiated with cryptographic components that meet the security
