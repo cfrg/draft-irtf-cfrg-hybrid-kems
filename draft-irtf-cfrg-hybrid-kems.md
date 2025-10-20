@@ -1134,11 +1134,11 @@ The second IND-CCA analysis  is a straightforward reduction to the IND-CCA secur
 of the PQ KEM, and the PRF security of the RO when keyed with the PQ KEM's shared secret.
 <!-- TODO: where, if anywhere, does the split-key PRF requirement come up?-->
 
-This document's UK construction does not have an IND-CCA analysis;
-the GHP paper on which the construction is based gives a slightly
-different version, namely they do not include
-the public encapsulation keys in the KDF. However, we argue that the proof
-goes through with trivial modifications if the public encapsulation keys are
+This document's UK construction does not have an IND-CCA analysis; the
+GHP paper on which the construction is based gives a slightly different
+version, namely they do not include the public encapsulation keys in
+the KDF. However, we argue that the proof goes through with trivial
+modifications if the public encapsulation keys are
 included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces
 to the split-key pseudorandomness of the KDF. (GHP call the KDF a "core"
 function, and denote it as W.) We observe that adding the public
