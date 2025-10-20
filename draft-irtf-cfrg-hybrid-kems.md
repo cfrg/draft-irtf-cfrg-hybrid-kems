@@ -437,8 +437,9 @@ all byte strings, with fixed lengths:
 - `Nseed`: The length in bytes of a key seed
 - `Nek`: The length in bytes of a public encapsulation key
 - `Ndk`: The length in bytes of a secret decapsulation key
-- `Nct`: The length in bytes of a ciphertext produced by Encaps
-- `Nss`: The length in bytes of a shared secret produced by Encaps or Decaps
+- `Nct`: The length in bytes of a ciphertext produced by `Encaps`
+- `Nss`: The length in bytes of a shared secret produced by `Encaps` or
+  `Decaps`
 
 ## Nominal Groups {#groups}
 
@@ -501,13 +502,13 @@ with respect to the strong Diffie-Hellman problem (see {{sdh}}).
 
 ## Pseudorandom Generators {#prgs}
 
-A pseudorandom generator (PRG) is a deterministic function `G` whose outputs
-are longer than its inputs. When the input to `G` is chosen uniformly at
-random, this induces a certain distribution over the possible output. The
-output distribution is pseudorandom if it is indistinguishable from the
-uniform distribution.
+A pseudorandom generator (PRG) is a deterministic function whose outputs are
+longer than its inputs. When the input is chosen uniformly at random, this
+induces a certain distribution over the possible output. The output
+distribution is pseudorandom if it is indistinguishable from the uniform
+distribution.
 
-The PRGs used in this document have a simpler form, with fixed
+The `PRG`s used in this document have a simpler form, with fixed
 output lengths:
 
 - `Nout`: The length in bytes of an output from this PRG.
@@ -516,12 +517,12 @@ output lengths:
 
 The fixed sizes are for both security and simplicity.
 
-PRGs used with the frameworks in this document MUST provide the bit-security
+`PRG`s used with the frameworks in this document MUST provide the bit-security
 required to source input randomness for PQ/T components from a seed that is
 expanded to a output length, of which a subset is passed to the component key
 generation algorithms.
 
-The security requirements for PRGs used with the frameworks in this document
+The security requirements for `PRG`s used with the frameworks in this document
 are laid out in {{security-prgs}}.
 
 ## Key Derivation Functions {#kdfs}
@@ -539,7 +540,7 @@ fixed output lengths:
 
 The fixed sizes are for both security and simplicity.
 
-Any KDF that utilizes `HKDF` {{HKDF}} MUST fully specify HKDF's salt, IKM,
+Any KDF that utilizes HKDF {{HKDF}} MUST fully specify HKDF's salt, IKM,
 info, and L arguments.
 
 The security requirements for KDFs used with the frameworks in this document
@@ -616,10 +617,10 @@ we capture in a set of subroutines.
 ### Using a Nominal Group
 
 Hybrid KEM frameworks that use a nominal group for the traditional component
-invoke the DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside
-analogous functions of the nominal group.  The "encapsulation key" is the
-receiver's public key group element; the "ciphertext" is an ephemeral group
-element; and the shared secret is the secret value resulting from an
+invoke the `DeriveKeyPair`, `Encaps`, and `Decaps` functions of PQ KEMs,
+alongside analogous functions of the nominal group.  The "encapsulation key"
+is the receiver's public key group element; the "ciphertext" is an ephemeral
+group element; and the shared secret is the secret value resulting from an
 ephemeral-static Diffie-Hellman exchange.
 
 ~~~
@@ -649,8 +650,8 @@ def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
 ### Using a Traditional KEM
 
 Hybrid KEM frameworks that use a KEM for the traditional component invoke the
-DeriveKeyPair, Encap, and Decap functions of the traditional and PQ KEMs in
-parallel.
+`DeriveKeyPair`, `Encaps`, and `Decaps` functions of the traditional and PQ
+KEMs in parallel.
 
 ~~~
 def expandDecapsKeyK(seed):
@@ -673,8 +674,9 @@ def prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):
 
 ### Combiners
 
-A combiner function uses the KDF used in the hybrid KEM to combine the shared
-secrets output by the component algorithms with contextual information.
+A combiner function uses the `KDF` used in the hybrid KEM to combine the
+shared secrets output by the component algorithms with contextual
+information.
 
 The two combiner functions defined in this document are as follows:
 
@@ -719,17 +721,17 @@ def GenerateKeyPair():
 
 In some deployment environments, it is not possible to instantiate this
 process.  Some implementations of component schemes do not support the
-`DeriveKeyPair` function, only GenerateKeyPair. Likewise in the nominal group
-case, a (scalar, group element) pair will only be generated when the scalar
-is generated internal to the implementation.
+`DeriveKeyPair` function, only `GenerateKeyPair`. Likewise in the nominal
+group case, a (scalar, group element) pair will only be generated when the
+scalar is generated internal to the implementation.
 
 An implementation of a hybrid KEM in such environemnts MAY deviate from the
 above description in the following ways:
 
-* DeriveKeyPair is not implemented.
-* The decapsulation key returned by GenerateKeyPair and consumed by Decaps is
-  a tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or
-  pointers/handles to keys).
+* `DeriveKeyPair` is not implemented.
+* The decapsulation key returned by `GenerateKeyPair` and consumed by
+  `Decaps` is a tuple `(dk_PQ, dk_T)` of per-constituent decapsulation keys
+  (or pointers/handles to keys).
 * The `expandDecapsulationKeyG` and `expandDecapsulationKeyK` functions are
   replaced by the following, where `decapsToEncaps()` is a function that
   returns the encapsulation key associated with a decapsulation key:
@@ -1004,21 +1006,21 @@ but no assurance at all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
 
-The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
-(RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This
-is a conservative choice given a review of the existing security analyses for
-our hybrid KEM constructions: most IND-CCA analyses for the four frameworks
-require only that the KDF is some kind of pseudorandom function, but the
-SDH-based IND-CCA analysis of CG in {{XWING}}, and the corresponding analysis
-for UG (forthcoming) relies on the KDF being a RO. Proofs of our target
-binding properties for our hybrid KEMs require the KDF is a
+The `KDF` used with a hybrid KEM MUST be indifferentiable from a random
+oracle (RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.
+This is a conservative choice given a review of the existing security
+analyses for our hybrid KEM constructions: most IND-CCA analyses for the four
+frameworks require only that the `KDF` is some kind of pseudorandom function,
+but the SDH-based IND-CCA analysis of CG in {{XWING}}, and the corresponding
+analysis for UG (forthcoming) relies on the `KDF` being a RO. Proofs of our
+target binding properties for our hybrid KEMs require the `KDF` is a
 collision-resistant function.
 
-If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
-as applying a (RO-based) pseudorandom function - keyed with the shared
+If the `KDF` is a RO, the key derivation step in the hybrid KEMs can be
+viewed as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in {{GHP18}}
-for UK, or the standard-model analysis of CG in {{XWING}}, apply.
+which require the `KDF` to be a PRF, such as the one given in {{GHP18}} for
+UK, or the standard-model analysis of CG in {{XWING}}, apply.
 
 Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical {{BDP+08}} as well as quantum adversaries
@@ -1032,30 +1034,30 @@ which for HMAC-SHA-256 has been shown in {{DRS+13}}, assuming the
 compression function underlying SHA-256 is a random oracle,
 which it is indifferentiably when used prefix-free.
 
-- the values of `HKDF`'s `IKM` input do not collide with
+- the values of HKDF's `IKM` input do not collide with
 values of `info` `||` `0x01`. This MUST be enforced by the
-concrete instantiations that use `HKDF` as its KDF.
+concrete instantiations that use HKDF as its `KDF`.
 
-The choice of the KDF security level SHOULD be made based on the
-security level provided by the constituent KEMs. The KDF SHOULD
-at least have the security level of the strongest constituent KEM.
+The choice of the `KDF` security level SHOULD be made based on the security
+level provided by the constituent KEMs. The `KDF` SHOULD at least have the
+security level of the strongest constituent KEM.
 
 ### Security Requirements for PRGs {#security-prgs}
 
 The functions used to expand a key seed to multiple key seeds is closer to a
-pseudorandom generator (PRG) in its security requirements {{AOB+24}}.  A
-secure PRG is an algorithm PRG : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
-such that no polynomial-time adversary can distinguish between PRG(r) (for r
-$← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> {{Rosulek}}.  The
-uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the PRG.
+pseudorandom generator (`PRG`) in its security requirements {{AOB+24}}.  A
+secure PRG is an algorithm `PRG` : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
+such that no polynomial-time adversary can distinguish between `PRG(r)` (for
+r $← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> {{Rosulek}}.
+The uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the `PRG`.
 
-A PRG is not to be confused with a random (or pseudorandom) _number_
-generator (RNG): a PRG requires the seed randomness to be chosen uniformly
+A `PRG` is not to be confused with a random (or pseudorandom) _number_
+generator (RNG): a `PRG` requires the seed randomness to be chosen uniformly
 and extend it; an RNG takes sources of noisy data and transforms them into
 uniform outputs.
 
-PRGs are related to extendable output functions (XOFs) which can be
-built from random oracles. Examples include SHAKE256.
+`PRG`s are related to extendable output functions (XOFs) which can be built
+from random oracles. Examples include SHAKE256.
 
 ## Security Goals for Hybrid KEMs {#security-properties}
 
@@ -1087,10 +1089,11 @@ security, under different assumptions about the component algorithms:
     * `KDF` is indifferentiable from a random oracle
     * `KEM_PQ` is IND-CCA against a quantum attacker
 
-Some IND-CCA analyses do not strictly require the KDF to be indifferentiable
-from a random oracle; they instead only require a kind of PRF assumption on
-the KDF. For simplicity we ignore this here; the security analyses described
-below for our constructions will elaborate on this point when appropriate.
+Some IND-CCA analyses do not strictly require the `KDF` to be
+indifferentiable from a random oracle; they instead only require a kind of
+PRF assumption on the KDF. For simplicity we ignore this here; the security
+analyses described below for our constructions will elaborate on this point
+when appropriate.
 
 ### Binding Properties {#hybrid-binding}
 
@@ -1289,9 +1292,10 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
-ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
-KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
+ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal,
+the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
+KDF.
 
 If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
@@ -1337,8 +1341,8 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
-ss_PQ^0 (:= KEM_PQ.Decap(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decap(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
 KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
 
 If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
@@ -1363,7 +1367,7 @@ condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
-this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
+this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
 reduction to the LEAK-BIND-K-PK of PQ KEM.
