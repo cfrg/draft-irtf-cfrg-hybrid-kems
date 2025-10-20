@@ -736,13 +736,13 @@ above description in the following ways:
   replaced by the following, where `decapsToEncaps()` is a function that
   returns the encapsulation key associated with a decapsulation key:
 
-```
+~~~
 def expandDecapsulationKey(dk):
     (dk_PQ, dkT) = dk # depending on the private key storage format
     ek_PQ = decapsToEncaps(dk_PQ)
     ek_T = decapsToEncaps(dk_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
-```
+~~~
 
 These deviations have both interoperability and security impacts.
 
