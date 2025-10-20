@@ -742,7 +742,7 @@ def expandDecapsulationKey(dk):
 
 These deviations have both interoperability and security impacts.
 
-From an interoperatbility point of view, the use of a second format for the
+From an interoperability point of view, the use of a second format for the
 hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
 incompatibilities in cases where a private key needs to be moved from one system
 to another.
@@ -850,7 +850,7 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
-## CG Framework: C2PRI Combiner with a KEM
+## CK Framework: C2PRI Combiner with a KEM
 
 This framework combines a PQ KEM with a traditional KEM, using the C2PRI
 combiner function.  It should be used in cases where the application wants to
@@ -859,7 +859,7 @@ assumption for the PQ KEM.
 
 ~~~
 def DeriveKeyPair(seed):
-    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
+d    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
     return (concat(ek_PQ, ek_T), seed)
 
 def Encaps(ek):
@@ -951,8 +951,7 @@ including FrodoKEM, HQC, Classic McEliece, and sntrup.
 ### Strong Diffie-Hellman Problem (SDH) {#sdh}
 
 The standard Diffie-Hellman problem is whether an attacker can compute `g^xy`
-given access to `g^x` and `g^y`.  The strong Diffie-Hellman problem additionally
-equips the attacker with an oracle `DH(Y, Z)` that answers whether `Y^x = Z`.
+given access to `g^x` and `g^y` and an oracle `DH(Y, Z)` that answers whether `Y^x = Z`.
 (This is the notion specified in {{XWING}}, not the notion of the same name
 used in the context of bilinear pairings {{Cheon06}}.)
 
@@ -994,21 +993,22 @@ all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
 
-<!-- todo: HQB doesn't need a secure RO, only secure PRF -->
+
 The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
 (RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a
 conservative choice given a review of the existing security analyses for our
-hybrid KEM constructions.  (In short, most IND-CCA analyses require only that
+hybrid KEM constructions: most IND-CCA analyses for the four frameworks require only that
 the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA
-analysis of QSF in {{XWING}} relies on the KDF being a RO. Proofs of our target
+analysis of CG in {{XWING}}, and the corresponding analysis for UG (forthcoming)
+relies on the KDF being a RO. Proofs of our target
 binding properties for our hybrid KEMs require the KDF is a collision-resistant
-function.)
+function.
 
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in GHP {{GHP2018}}
-or the standard-model analysis of QSF in {{XWING}}, apply.
+which require the KDF to be a PRF, such as the one given in GHP {{GHP2018}} for UK,
+or the standard-model analysis of CG in {{XWING}}, apply.
 
 Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical {{BDP+08}} as well as quantum adversaries
@@ -1067,13 +1067,17 @@ More precisely, the hybrid KEM should meet two different notions of IND-CCA
 security, under different assumptions about the component algorithms:
 
 * IND-CCA against a classical attacker all of the following are true:
-    * `KDF` is indifferentiable from a random oracle <!-- todo: GHP, QSH only need PRF security here... -->
+    * `KDF` is indifferentiable from a random oracle 
     * If using `Group_T`: The strong Diffie-Hellman problem is hard in `Group_T`
     * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
     * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->
 * IND-CCA against a quantum attacker if all of the following are true:
-    * `KDF` is indifferentiable from a random oracle <!-- todo: the PQ proofs rely on PRF not RO... -->
+    * `KDF` is indifferentiable from a random oracle 
     * `KEM_PQ` is IND-CCA against a quantum attacker
+
+Some IND-CCA analyses do not strictly require the KDF to be indifferentiable from a random oracle;
+they instead only require a kind of PRF assumption on the KDF. For simplicity we ignore this here;
+the security analyses described below for our constructions will elaborate on this point when appropriate.
 
 ### Binding Properties {#hybrid-binding}
 
@@ -1081,7 +1085,7 @@ The most salient binding properties for a hybrid KEM to be used in Internet
 protocols are LEAK-BIND-K-PK and LEAK-BIND-K-CT.
 
 The LEAK attack model is most appropriate for Internet protocols.  There have
-been attacks in the LEAK model are known {{BJKS24}} {{FG24}}, so a hybrid KEM
+been attacks in the LEAK model {{BJKS24}} {{FG24}}, so a hybrid KEM
 needs to be resilient at least to LEAK attacks (i.e., HON is too weak).
 Internet applications generally assume that private keys are honestly generated,
 so MAL is too strong an attack model to address.
@@ -1114,21 +1118,24 @@ provides the security properties described above.
 
 ### IND-CCA analyses
 
-The QSF construction has two complementary IND-CCA analyses. Both were given
-in {{XWING}}. We summarize them but elide some details.
+The UG construction has two complementary IND-CCA analyses: one for when the SDH problem
+holds but the PQ KEM is broken, and one for the reverse. Both are technically novel but
+are substantially similar to the existing peer-reviewed analyses of the CG {{XWING}} and
+UK {{GHP18}} constructions. A forthcoming document by the editorial team will describe
+the analysis of UG in detail.
 
-One analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,
-IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
-the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)
-{{XWING}} shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
-the PQ-KEM's shared secret, IND-CCA holds.
+The first IND-CCA analysis, based on SDH, is very similar to the corresponding
+analysis of CG given in {{XWING}}: it gives a straightforward reduction to the SDH
+hardness in the underlying group. Notably, since the PQ KEM key and ciphertext are hashed,
+the C2PRI security of the PQ KEM does not appear in the bound.
 
-As long as the aforementioned security requirements of the component parts
-are met, these analyses imply that this document's QSF construction satisfies
-IND-CCA security.
+The second IND-CCA analysis  is a straightforward reduction to the IND-CCA security
+of the PQ KEM, and the PRF security of the RO when keyed with the PQ KEM's shared secret.
+<!-- TODO: where, if anywhere, does the split-key PRF requirement come up?-->
 
-This document's exact GHP construction does not have an IND-CCA analysis;
-the GHP paper gives a slightly different version, namely they do not include
+This document's UK construction does not have an IND-CCA analysis;
+the GHP paper on which the construction is based gives a slightly
+different version, namely they do not include
 the public encapsulation keys in the KDF. However, we argue that the proof
 goes through with trivial modifications if the public encapsulation keys are
 included in the KDF. The relevant step is claim 3 of Theorem 1, which reduces
@@ -1145,17 +1152,34 @@ used in GHP meets the split-key pseudorandomness property used in
 GHP's analysis. <!-- TODO: apparently there is no good citation for this
 foklore, maybe we can explicitly lay it out -->
 
-Therefore both hybrid KEMs in this document are IND-CCA when
+Like UG, the CG construction has two complementary IND-CCA analyses. Both were given
+in {{XWING}}. We summarize them but elide some details.
+
+One analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,
+IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
+the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)
+{{XWING}} shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
+the PQ-KEM's shared secret, IND-CCA holds.
+
+As long as the aforementioned security requirements of the component parts
+are met, these analyses imply that this document's CG construction satisfies
+IND-CCA security.
+
+The CK construction's IND-CCA analysis is based on forthcoming work by the editorial team.
+<!-- PAG: Deirdre, you're gonna have to fill this in a bit; i don't have enough context on this result to do it-->
+
+Therefore all four hybrid KEMs in this document are IND-CCA when
 instantiated with cryptographic components that meet the security
 requirements described above. Any changes to the algorithms, including key
 generation/derivation, are not guaranteed to produce secure results.
 
 ### Binding analyses
 
-There are two hybrid KEM frameworks, and two target binding properties, so
-we need four total analyses. None of these exact results were known; thus the
+There are four hybrid KEM frameworks, and two target binding properties, so
+we need eight total analyses. None of these exact results were known; thus the
 following are new results by the editorial team. We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.
+<!-- TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results about hybrid kem binding; unclear how they compare to ours though.-->
 
 We note that these sketches implicitly ignore the fact that in our hybrid
 KEMs, both key pairs are derived from a common random seed; we instead
@@ -1168,50 +1192,58 @@ indistinguishable. The derivation of component scheme key pairs from the
 common random seed provides further protection against manipulation or
 corruption of keys such that it can contribute to stronger binding properties
 against a MAL adversary, as well as operational benefits in practice, but we
-do not prove that here. <!-- TODO: if we can prove MAL for some of these,
-should we do that here? OTherwise we should link to the QSF MAL-BIND proofs
-in the X-Wing eprint, if we ever get that updated... -->
+do not prove that here. 
 
-#### GHP Binding
+#### UG Binding
 
-##### LEAK-BIND-K-CT of GHP
+##### LEAK-BIND-K-CT of UG
 
-Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-CT.
+<!-- TODO: Port UK proof mutatis mutandis -->
+
+#### LEAK-BIND-K-PK of UG
+
+<!-- TODO: Port UK proof mutatis mutandis -->
+
+#### UK Binding
+
+##### LEAK-BIND-K-CT of UK
+
+Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-CT.
 
 Justification: To win LEAK-BIND-K-CT, given knowledge of two
-honestly-generated GHP secret keys, the adversary must construct two distinct
-GHP ciphertexts that decapsulate to the same (non-bot) key. Since GHP
+honestly-generated UK secret keys, the adversary must construct two distinct
+UK ciphertexts that decapsulate to the same (non-bot) key. Since UK
 includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
 collision in the KDF.
 
-#### LEAK-BIND-K-PK of GHP
+#### LEAK-BIND-K-PK of UK
 
 Claim: If KDF is collision-resistant, then GHP is LEAK-BIND-K-PK.
 
 Justification: As described above, in the LEAK-BIND-K-PK game, to win the
 adversary must construct two ciphertexts that decapsulate to the same non-bot
-key, for distinct GHP public keys. Again, since GHP includes the public keys
+key, for distinct UK public keys. Again, since UK includes the public keys
 in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
 collide the KDF.
 
-#### QSF Binding
+#### CG Binding
 
-The LEAK-BIND proofs for QSF are a bit more subtle than for GHP; the
-main reason for this is QSF's omission of the PQ KEM key and ciphertext from
-the KDF. We will show that QSF still has our target LEAK-BIND properties as
+The LEAK-BIND proofs for CG are a bit more subtle than for UK; the
+main reason for this is CG's omission of the PQ KEM key and ciphertext from
+the KDF. We will show that UK still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
 property. We note that our preliminary results suggest that a different proof
 strategy, which instead directly uses properties of the nominal group, may
 work here; we present the PQ-KEM route for concreteness.
 
-##### LEAK-BIND-K-CT of QSF
+##### LEAK-BIND-K-CT of CG
 
 Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
-QSF is LEAK-BIND-K-CT.
+CG is LEAK-BIND-K-CT.
 
-Justification: To win the adversary must construct two distinct QSF
-ciphertexts that decapsulate to the same non-bot key.  Call the QSF
+Justification: To win the adversary must construct two distinct CG
+ciphertexts that decapsulate to the same non-bot key.  Call the CG
 ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
 ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
 ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
@@ -1226,7 +1258,7 @@ If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
 output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
 reduction does this by generating two nominal-group key pairs and running the
-QSF LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
+CG LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
 lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
@@ -1234,10 +1266,10 @@ game against the PQ KEM.
 
 We conclude by noting these cases are exhaustive.
 
-##### LEAK-BIND-K-PK of QSF
+##### LEAK-BIND-K-PK of CG
 
 Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
-QSF is LEAK-BIND-K-PK.
+CG is LEAK-BIND-K-PK.
 
 Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
@@ -1250,6 +1282,16 @@ from a win. If they are the same, in a similar way as above, we can build a
 reduction to the LEAK-BIND-K-PK of PQ KEM.
 
 Again, we conclude by noting that these cases are exhaustive.
+
+#### CK Binding
+
+##### LEAK-BIND-K-CT of CK
+
+<!-- TODO -->
+
+##### LEAK-BIND-K-PK of CK
+
+<!-- TODO -->
 
 ## Other Considerations
 
