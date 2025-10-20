@@ -1991,13 +1991,15 @@ replaced by the following, where <code>decapsToEncaps()</code> is a function tha
 returns the encapsulation key associated with a decapsulation key:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.2-6"><code>
+<div class="alignLeft art-text artwork" id="section-5.2-6">
+<pre>
 def expandDecapsulationKey(dk):
     (dk_PQ, dkT) = dk # depending on the private key storage format
     ek_PQ = decapsToEncaps(dk_PQ)
     ek_T = decapsToEncaps(dk_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
-</code><a href="#section-5.2-6" class="pilcrow">¶</a></p>
+</pre><a href="#section-5.2-6" class="pilcrow">¶</a>
+</div>
 <p id="section-5.2-7">These deviations have both interoperability and security impacts.<a href="#section-5.2-7" class="pilcrow">¶</a></p>
 <p id="section-5.2-8">From an interoperability point of view, the use of a second format for the
 hybrid KEM decapsulation key (other than the shared seed) introduces the risk
