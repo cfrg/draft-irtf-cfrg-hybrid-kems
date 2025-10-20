@@ -951,9 +951,9 @@ including FrodoKEM, HQC, Classic McEliece, and sntrup.
 ### Strong Diffie-Hellman Problem (SDH) {#sdh}
 
 The standard Diffie-Hellman problem is whether an attacker can compute `g^xy`
-given access to `g^x` and `g^y` and an oracle `DH(Y, Z)` that answers whether `Y^x = Z`.
-(This is the notion specified in {{XWING}}, not the notion of the same name
-used in the context of bilinear pairings {{Cheon06}}.)
+given access to `g^x` and `g^y` and an oracle `DH(Y, Z)` that answers whether
+`Y^x = Z`. (This is the notion specified in {{XWING}}, not the notion of the same
+name used in the context of bilinear pairings {{Cheon06}}.)
 
 When we say that the strong Diffie-Hellman problem is hard in a group, we always
 mean this in the context of classical attackers, without access to quantum
