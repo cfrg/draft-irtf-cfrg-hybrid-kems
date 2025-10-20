@@ -1004,7 +1004,6 @@ but no assurance at all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
 
-
 The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
 (RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This
 is a conservative choice given a review of the existing security analyses for
@@ -1163,8 +1162,12 @@ the oracle inputs, and the remainder of the proof goes through unmodified.
 We reiterate that modulo some low-level technical details, our requirement
 that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF
 used in {{GHP18}} meets the split-key pseudorandomness property used in
-{{GHP18}}'s analysis. <!-- TODO: apparently there is no good citation for this
-foklore, maybe we can explicitly lay it out -->
+{{GHP18}}'s analysis: this is shown in {{GHP18}}, Lemma 6, where a
+pseudorandom skPRF is constructed from any almost-uniform keymixing function
+in the random oracle model by `H(g(k1,...,kn), x)` , where `H` is modeled as
+a random oracle and `g` is ϵ-almost uniform. Example 3 from {{GHP18}}
+qualifies `g(k_1,...,k_n) = k_1 || ... || k_n` as ϵ-almost uniform with `ϵ =
+1/len(k_1 || ... || k_n)`.
 
 Like UG, the CG construction has two complementary IND-CCA analyses. Both
 were given in {{XWING}}. We summarize them but elide some details.
