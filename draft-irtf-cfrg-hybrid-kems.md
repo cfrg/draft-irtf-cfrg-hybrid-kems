@@ -272,21 +272,21 @@ Disallowed?"
 --- abstract
 
 This document defines generic constructions for hybrid Key Encapsulation
-Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a traditional
-cryptographic component. Hybrid KEMs built using these constructions provide
-strong security properties as long as either of the underlying algorithms are
-secure.
+Mechanisms (KEMs) based on combining a post-quantum (PQ) KEM with a
+traditional cryptographic component. Hybrid KEMs built using these
+constructions provide strong security properties as long as either of the
+underlying algorithms are secure.
 
 --- middle
 
 # Introduction {#intro}
 
-Post-quantum (PQ) cryptographic algorithms are based on
-problems that are conjectured to be resistant to attacks possible on a quantum
-computer. Key Encapsulation Mechanisms (KEMs), are a standardized class of
-cryptographic scheme that can be used to build protocols in lieu of
-traditional, quantum-vulnerable variants such as finite field or elliptic
-curve Diffie-Hellman (DH) based protocols.
+Post-quantum (PQ) cryptographic algorithms are based on problems that are
+conjectured to be resistant to attacks possible on a quantum computer. Key
+Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic
+scheme that can be used to build protocols in lieu of traditional,
+quantum-vulnerable variants such as finite field or elliptic curve
+Diffie-Hellman (DH) based protocols.
 
 Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
@@ -311,13 +311,13 @@ provide a small set of techniques to achieve specific security properties
 given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.
 
-We define four generic frameworks as variants of a common overall scheme.  The
-variations are based on (1) what type of cryptographic object is being used for
-the traditional component, and (2) whether the PQ KEM is assumed to have an
-additional property known as Ciphertext Second Preimage Resistance (C2PRI).
-Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the same security
-level with more efficient computations, trading off performance for an
-additional security assumption.
+We define four generic frameworks as variants of a common overall scheme.
+The variations are based on (1) what type of cryptographic object is being
+used for the traditional component, and (2) whether the PQ KEM is assumed to
+have an additional property known as Ciphertext Second Preimage Resistance
+(C2PRI).  Hybrid KEMs built using PQ KEMs that satisfy C2PRI can achieve the
+same security level with more efficient computations, trading off performance
+for an additional security assumption.
 
 The remainder of this document is structured as follows: first, in
 {{cryptographic-deps}} and {{frameworks}}, we define the abstractions on
@@ -484,11 +484,11 @@ comprises a set `G` together with a distinguished basis element `g`, an
       `Exp(Exp(p, x), y) = Exp(p, x * y)`.
 - `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
   byte string `seed`.
-- `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element of
-  the group (e.g., by taking the X coordinate of an elliptic curve point).
+- `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element
+  of the group (e.g., by taking the X coordinate of an elliptic curve point).
 
-We assume that scalars and group elements are represented by byte strings with
-fixed lengths:
+We assume that scalars and group elements are represented by byte strings
+with fixed lengths:
 
 - `Nseed`: The length in bytes of a seed (input to RandomScalar)
 - `Nscalar`: The length in bytes of a scalar
@@ -496,8 +496,8 @@ fixed lengths:
 - `Nss`: The length in bytes of a shared secret produced by
   ElementToSharedSecret
 
-Groups used with the hybrid KEM framework in this document should be secure with
-respect to the strong Diffie-Hellman problem (see {{sdh}}).
+Groups used with the hybrid KEM framework in this document should be secure
+with respect to the strong Diffie-Hellman problem (see {{sdh}}).
 
 ## Pseudorandom Generators {#prgs}
 
@@ -521,29 +521,29 @@ required to source input randomness for PQ/T components from a seed that is
 expanded to a output length, of which a subset is passed to the component key
 generation algorithms.
 
-The security requirements for PRGs used with the frameworks in this document are
-laid out in {{security-prgs}}.
+The security requirements for PRGs used with the frameworks in this document
+are laid out in {{security-prgs}}.
 
 ## Key Derivation Functions {#kdfs}
 
 A Key Derivation Function (KDF) is a function that produces
 keying material based on an input secret and other information.
 
-While KDFs in the literature can typically consume and produce byte strings of
-arbitrary length, the KDFs used in this document have a simpler form, with fixed
-output lengths:
+While KDFs in the literature can typically consume and produce byte strings
+of arbitrary length, the KDFs used in this document have a simpler form, with
+fixed output lengths:
 
 - `Nout`: The length in bytes of an output from this KDF.
-- `KDF(input) -> output`: Produce a byte string of length `Nout` from an input
-  byte string.
+- `KDF(input) -> output`: Produce a byte string of length `Nout` from an
+  input byte string.
 
 The fixed sizes are for both security and simplicity.
 
-Any KDF that utilizes `HKDF` {{HKDF}} must fully specify HKDF's salt, IKM, info,
-and L arguments.
+Any KDF that utilizes `HKDF` {{HKDF}} must fully specify HKDF's salt, IKM,
+info, and L arguments.
 
-The security requirements for KDFs used with the frameworks in this document are
-laid out in {{security-kdfs}}.
+The security requirements for KDFs used with the frameworks in this document
+are laid out in {{security-kdfs}}.
 
 # Hybrid KEM Frameworks {#frameworks}
 
@@ -556,8 +556,8 @@ The four frameworks vary along two axes:
 1. Whether traditional component is a nominal group or a KEM
 2. Whether to rely on the C2PRI property for the post-quantum component
 
-The choice of which framework to use when building a hybrid KEM will depend on
-the application's needs along these two axes.
+The choice of which framework to use when building a hybrid KEM will depend
+on the application's needs along these two axes.
 
 | Name    | PQ C2PRI? | T component   |
 |:========|:==========|:==============|
@@ -567,8 +567,8 @@ the application's needs along these two axes.
 | CK      | Yes       | KEM           |
 {: #variants title="Hybrid KEM frameworks" }
 
-Instantiating one of these frameworks creates a hybrid KEM `KEM_H` based on the following constituent
-components:
+Instantiating one of these frameworks creates a hybrid KEM `KEM_H` based on
+the following constituent components:
 
 * A traditional component that is either a nominal group or a KEM:
     * `Group_T`: A nominal group
@@ -604,25 +604,25 @@ KEM_H.Nseed = max(KEM_PQ.Nseed, (KEM_T.Nseed or Group_T.Nseed))
 KEM_H.Nss = min(KEM_PQ.Nss, (KEM_T.Nss or Group_T.Nss))
 ~~~
 
-Since we use the seed as the decapsulation key, `Ndk = Nseed`.  For legacy cases
-where it is not possible to derive per-component decapsulation keys from a
-common seed, see {{key-generation}}.
+Since we use the seed as the decapsulation key, `Ndk = Nseed`.  For legacy
+cases where it is not possible to derive per-component decapsulation keys
+from a common seed, see {{key-generation}}.
 
 ## Subroutines
 
-The four hybrid KEM frameworks share a substantial amount of structure, which we
-capture in a set of subroutines.
+The four hybrid KEM frameworks share a substantial amount of structure, which
+we capture in a set of subroutines.
 
 ### Using a Nominal Group
 
-Hybrid KEM frameworks that use a nominal group for the traditional component invoke the
-DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside analogous
-functions of the nominal group.  The "encapsulation key" is the receiver's
-public key group element; the "ciphertext" is an ephemeral group element; and
-the shared secret is the secret value resulting from an ephemeral-static
-Diffie-Hellman exchange.
+Hybrid KEM frameworks that use a nominal group for the traditional component
+invoke the DeriveKeyPair, Encap, and Decap functions of PQ KEMs, alongside
+analogous functions of the nominal group.  The "encapsulation key" is the
+receiver's public key group element; the "ciphertext" is an ephemeral group
+element; and the shared secret is the secret value resulting from an
+ephemeral-static Diffie-Hellman exchange.
 
-~~~ pseudocode
+~~~
 def expandDecapsKeyG(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
@@ -652,7 +652,7 @@ Hybrid KEM frameworks that use a KEM for the traditional component invoke the
 DeriveKeyPair, Encap, and Decap functions of the traditional and PQ KEMs in
 parallel.
 
-~~~ pseudocode
+~~~
 def expandDecapsKeyK(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
@@ -687,18 +687,20 @@ def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
 ~~~
 
 Note that while the names of the inputs are suggestive of the shared secret,
-ciphertext, and encapsulation key outputs of a KEM, the inputs to this function
-in the hybrid KEM framework are not necessarily the output of a secure KEM. In
-particular, when the framework is instantiated with a nominal group, the
-"ciphertext" component is an ephemeral group element, and the "encapsulation
-key" is the group element that functions as the recipient's public key.
+ciphertext, and encapsulation key outputs of a KEM, the inputs to this
+function in the hybrid KEM framework are not necessarily the output of a
+secure KEM. In particular, when the framework is instantiated with a nominal
+group, the "ciphertext" component is an ephemeral group element, and the
+"encapsulation key" is the group element that functions as the recipient's
+public key.
 
 The choice of combiner brings with it certain assumptions
 under which the resulting hybrid KEM is secure.
 
-The `UniversalCombiner` combiner explicitly computes over shared secrets, ciphertexts, and
-encapsulation keys from both components.  This allows the resulting hybrid KEM
-to be secure as long as either component is secure, with no further assumptions on the components.
+The `UniversalCombiner` combiner explicitly computes over shared secrets,
+ciphertexts, and encapsulation keys from both components.  This allows the
+resulting hybrid KEM to be secure as long as either component is secure, with
+no further assumptions on the components.
 
 The `C2PRICombiner` combiner does not compute over the ciphertext or
 encapsulation key from the PQ component. The resulting hybrid KEM will
@@ -715,22 +717,22 @@ def GenerateKeyPair():
     return DeriveKeyPair(seed)
 ~~~
 
-In some deployment environments, it is not possible to instantiate this process.
-Some implementations of component schemes do not support the `DeriveKeyPair`
-function, only GenerateKeyPair. Likewise in the nominal group case, a (scalar,
-group element) pair will only be generated when the scalar is generated internal
-to the implementation.
+In some deployment environments, it is not possible to instantiate this
+process.  Some implementations of component schemes do not support the
+`DeriveKeyPair` function, only GenerateKeyPair. Likewise in the nominal group
+case, a (scalar, group element) pair will only be generated when the scalar
+is generated internal to the implementation.
 
 An implementation of a hybrid KEM in such environemnts MAY deviate from the
 above description in the following ways:
 
 * DeriveKeyPair is not implemented.
-* The decapsulation key returned by GenerateKeyPair and consumed by Decaps is a
-  tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or pointers/handles
-  to keys).
+* The decapsulation key returned by GenerateKeyPair and consumed by Decaps is
+  a tuple (dk_PQ, dk_T) of per-constituent decapsulation keys (or
+  pointers/handles to keys).
 * The `expandDecapsulationKeyG` and `expandDecapsulationKeyK` functions are
-  replaced by the following, where `decapsToEncaps()` is a function that returns
-  the encapsulation key associated with a decapsulation key:
+  replaced by the following, where `decapsToEncaps()` is a function that
+  returns the encapsulation key associated with a decapsulation key:
 
 ```
 def expandDecapsulationKey(dk):
@@ -743,41 +745,43 @@ def expandDecapsulationKey(dk):
 These deviations have both interoperability and security impacts.
 
 From an interoperability point of view, the use of a second format for the
-hybrid KEM decapsulation key (other than the shared seed) introduces the risk of
-incompatibilities in cases where a private key needs to be moved from one system
-to another.
+hybrid KEM decapsulation key (other than the shared seed) introduces the risk
+of incompatibilities in cases where a private key needs to be moved from one
+system to another.
 
 Separate key generation / handling also reduces binding properties from
 MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
 address a variety of attack scenarios, including LEAK scenarios in which an
-attacker has passive access to the decapsulation key and MAL scenarios in which
-an attacker can cause the victim to use a crafted decapsulation key. The above
-hybrid KEM framework assures binding properties in the face of a LEAK attacker,
-irrespective of how key generation is done. The additional provided by the
-default "shared seed" key generation upgrades this to protection against a MAL
-attacker.
+attacker has passive access to the decapsulation key and MAL scenarios in
+which an attacker can cause the victim to use a crafted decapsulation
+key. The above hybrid KEM framework assures binding properties in the face of
+a LEAK attacker, irrespective of how key generation is done. The additional
+provided by the default "shared seed" key generation upgrades this to
+protection against a MAL attacker.
 
-Allowing for separate private key generation and handling also introduces a risk
-of inappropriate key reuse and cross-protocol attacks.  A given key pair MUST
-never be used in both a hybrid KEM and with a non-hybrid algorithm. A pair of
-key pairs generated for a hybrid algorithm MUST only be used with that hybrid
-algorithm, not separately with their component algorithms.  Likewise, key pairs
-generated outside of the context of a hybrid KEM MUST NOT be used with a hybrid
-KEM.  The "shared seed" style of key generation prevents such reuse, because the
-per-component private keys are derived internally to the hybrid KEM.
+Allowing for separate private key generation and handling also introduces a
+risk of inappropriate key reuse and cross-protocol attacks.  A given key pair
+MUST never be used in both a hybrid KEM and with a non-hybrid algorithm. A
+pair of key pairs generated for a hybrid algorithm MUST only be used with
+that hybrid algorithm, not separately with their component algorithms.
+Likewise, key pairs generated outside of the context of a hybrid KEM MUST NOT
+be used with a hybrid KEM.  The "shared seed" style of key generation
+prevents such reuse, because the per-component private keys are derived
+internally to the hybrid KEM.
 
 As a result, this alternative style of key generation should only be used in
 environments where implementations of component algorithms do not allow
-decapsulation keys to be imported or exported.  In scenarios where separate key
-generation is used and decapsulation keys can be imported/exported, additional
-measures should be put in place to mitigate the key reuse risks noted above.
+decapsulation keys to be imported or exported.  In scenarios where separate
+key generation is used and decapsulation keys can be imported/exported,
+additional measures should be put in place to mitigate the key reuse risks
+noted above.
 
 ## UG Framework: Universal Combiner with a Nominal Group
 
 This framework combines a PQ KEM with a nominal group, using the universal
 combiner function.  It should be used in cases where the application wants to
-use a nominal group for the traditional component, and does not want to rely on
-the C2PRI assumption for the PQ KEM.
+use a nominal group for the traditional component, and does not want to rely
+on the C2PRI assumption for the PQ KEM.
 
 ~~~
 def DeriveKeyPair(seed):
@@ -802,8 +806,8 @@ def Decaps(dk, ct):
 
 This framework combines a PQ KEM with a traditional KEM, using the universal
 combiner function.  It should be used in cases where the application wants to
-use a KEM for the traditional component, and does not want to rely on the C2PRI
-assumption for the PQ KEM.
+use a KEM for the traditional component, and does not want to rely on the
+C2PRI assumption for the PQ KEM.
 
 ~~~
 def DeriveKeyPair(seed):
@@ -826,10 +830,10 @@ def Decaps(dk, ct):
 
 ## CG Framework: C2PRI Combiner with a Nominal Group
 
-This framework combines a PQ KEM with a nominal group, using the C2PRI combiner
-function.  It should be used in cases where the application wants to use a
-nominal group for the traditional component, and is comfortable relying on the
-C2PRI assumption for the PQ KEM.
+This framework combines a PQ KEM with a nominal group, using the C2PRI
+combiner function.  It should be used in cases where the application wants to
+use a nominal group for the traditional component, and is comfortable relying
+on the C2PRI assumption for the PQ KEM.
 
 ~~~
 def DeriveKeyPair(seed):
@@ -854,8 +858,8 @@ def Decaps(dk, ct):
 
 This framework combines a PQ KEM with a traditional KEM, using the C2PRI
 combiner function.  It should be used in cases where the application wants to
-use a KEM for the traditional component, and is comfortable relying on the C2PRI
-assumption for the PQ KEM.
+use a KEM for the traditional component, and is comfortable relying on the
+C2PRI assumption for the PQ KEM.
 
 ~~~
 def DeriveKeyPair(seed):
@@ -878,10 +882,11 @@ def Decaps(dk, ct):
 
 # Security Considerations {#security}
 
-Hybrid KEMs provide security by combining two or more schemes so that security
-is preserved if all but one scheme is broken. Informally, these hybrid KEMs are
-secure if the `KDF` is secure, and either the traditional component is secure,
-or the post-quantum KEM is secure: this is the 'hybrid' property.
+Hybrid KEMs provide security by combining two or more schemes so that
+security is preserved if all but one scheme is broken. Informally, these
+hybrid KEMs are secure if the `KDF` is secure, and either the traditional
+component is secure, or the post-quantum KEM is secure: this is the 'hybrid'
+property.
 
 In this section, we review the important security properties for hybrid KEMs,
 and discuss how these security properties are provided by hybrid KEMs
@@ -889,8 +894,9 @@ constructed according to the framework in this document.
 
 ## Security Properties for Component Algortihms
 
-In order to precisely define our security objectives for a hybrid KEM, we need
-to describe some properties that we will require from the component algorithms.
+In order to precisely define our security objectives for a hybrid KEM, we
+need to describe some properties that we will require from the component
+algorithms.
 
 ### Indistinguishability under Chosen Ciphertext Attack (IND-CCA)
 
@@ -901,16 +907,16 @@ encryption.
 
 For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
 obtained by running `Encaps()` with an honestly-generated public key, can
-distinguish whether it is given the "real" secret output from `Encaps()`, or a
-random string unrelated to the `Encaps()` call that created that
+distinguish whether it is given the "real" secret output from `Encaps()`, or
+a random string unrelated to the `Encaps()` call that created that
 ciphertext. (Readers should note that this definition is slightly different
 than the corresponding definitions for public-key encryption {{BHK09}}.)
 
-Whether a given KEM provides IND-CCA depends on whether the attacker is assumed
-to have access to quantum computing capabilities or not (assuming the scheme
-is without bugs and the implementation is correct).  Post-quantum KEMs are
-intended to provide IND-CCA security against such an attacker.  Traditional KEMs
-are not.
+Whether a given KEM provides IND-CCA depends on whether the attacker is
+assumed to have access to quantum computing capabilities or not (assuming the
+scheme is without bugs and the implementation is correct).  Post-quantum KEMs
+are intended to provide IND-CCA security against such an attacker.
+Traditional KEMs are not.
 
 IND-CCA is the standard security notion for KEMs; most PQ KEMs were
 explicitly designed to achieve this type of security against both a
@@ -920,9 +926,9 @@ For traditional algorithms, things are less clear.  The DHKEM construction in
 {{?RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but "raw"
 ephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the
 ciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure {{ISO18033-2}},
-and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM, but
-"classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}}) is not
-even IND-CCA secure as a public-key encryption algorithm.
+and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM,
+but "classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}})
+is not even IND-CCA secure as a public-key encryption algorithm.
 
 ### Ciphertext Second-Preimage Resistence (C2PRI)
 
@@ -936,34 +942,35 @@ the encapsulation key `ek`).
 
 A related notion in the literature is chosen-ciphertext resistance (CCR)
 {{CDM23}}. C2PRI targets preimage-resistance, whereas CCR targets
-collision-resistance, much like the analogous properties for hash functions.  In
-the language of the binding properties discussed in {{binding-properties}}, CCR
-is equivalent to the property LEAK-BIND-K,PK-CT.
+collision-resistance, much like the analogous properties for hash functions.
+In the language of the binding properties discussed in
+{{binding-properties}}, CCR is equivalent to the property LEAK-BIND-K,PK-CT.
 
-C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires the
-attacker to match a specific, honestly generated ciphertext, as opposed to
-finding an arbitrary pair.
+C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires
+the attacker to match a specific, honestly generated ciphertext, as opposed
+to finding an arbitrary pair.
 
 Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to have this
-property in {{XWING}}, and {{CHH+25}} proves C2PRI for several other algorithms,
-including FrodoKEM, HQC, Classic McEliece, and sntrup.
+property in {{XWING}}, and {{CHH+25}} proves C2PRI for several other
+algorithms, including FrodoKEM, HQC, Classic McEliece, and sntrup.
 
 ### Strong Diffie-Hellman Problem (SDH) {#sdh}
 
 The standard Diffie-Hellman problem is whether an attacker can compute `g^xy`
 given access to `g^x` and `g^y` and an oracle `DH(Y, Z)` that answers whether
-`Y^x = Z`. (This is the notion specified in {{XWING}}, not the notion of the same
-name used in the context of bilinear pairings {{Cheon06}}.)
+`Y^x = Z`. (This is the notion specified in {{XWING}}, not the notion of the
+same name used in the context of bilinear pairings {{Cheon06}}.)
 
-When we say that the strong Diffie-Hellman problem is hard in a group, we always
-mean this in the context of classical attackers, without access to quantum
-computers.  An attacker with access to a quantum computer that can execute Shor's algorithm
-for a group can efficiently solve the discrete log problem in that group, which
-implies the ability to solve the strong Diffie-Hellman problem.
+When we say that the strong Diffie-Hellman problem is hard in a group, we
+always mean this in the context of classical attackers, without access to
+quantum computers.  An attacker with access to a quantum computer that can
+execute Shor's algorithm for a group can efficiently solve the discrete log
+problem in that group, which implies the ability to solve the strong
+Diffie-Hellman problem.
 
-As shown in {{ABH+21}}, this problem is hard in prime-order groups such as the
-NIST elliptic curve groups P-256, P-384, and P-521, as well as in the Montgomery
-curves Curve25519 and Curve448.
+As shown in {{ABH+21}}, this problem is hard in prime-order groups such as
+the NIST elliptic curve groups P-256, P-384, and P-521, as well as in the
+Montgomery curves Curve25519 and Curve448.
 
 ### Binding Properties {#binding-properties}
 
@@ -973,42 +980,42 @@ useful framework of definitions for these binding properties. Binding for
 KEMs is related to other properties for KEMs and public-key encryption, such
 as robustness {{GMP22}} {{ABN10}}, and collision-freeness {{MOHASSEL10}}.
 
-The framework given by {{CDM23}} refers to these properties with labels of the
-form X-BIND-P-Q.  The first element X is the model for how the attacker can
-access the decapsulation key: HON for the case where the attacker never
+The framework given by {{CDM23}} refers to these properties with labels of
+the form X-BIND-P-Q.  The first element X is the model for how the attacker
+can access the decapsulation key: HON for the case where the attacker never
 accesses the decapsulation key, LEAK for the case where the attacker has
-access to the honestly-generated decapsulation key, or MAL for the case
-where the attacker can choose or manipulate the keys used by the victim.
-P,Q means that given the value P, it is hard to produce another Q that
-causes Decaps to succeed. For example, LEAK-BIND-K-PK means that for a
-given shared secret (K), there is a unique encapsulation key (PK) that
-could have produced it, even if all of the secrets involved are given to
-the adversary after the encapsulation operation is completed (LEAK).
+access to the honestly-generated decapsulation key, or MAL for the case where
+the attacker can choose or manipulate the keys used by the victim.  P,Q means
+that given the value P, it is hard to produce another Q that causes Decaps to
+succeed. For example, LEAK-BIND-K-PK means that for a given shared secret
+(K), there is a unique encapsulation key (PK) that could have produced it,
+even if all of the secrets involved are given to the adversary after the
+encapsulation operation is completed (LEAK).
 
 There is quite a bit of diversity in the binding properties provided by KEMs.
-Table 5 of {{CDM23}} shows the binding properties of a few KEMs.  For example:
-DHKEM provides MAL-level binding for several properties. ML-KEM provides only
-LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT, but no assurance at
-all of X-BIND-K-PK.
+Table 5 of {{CDM23}} shows the binding properties of a few KEMs.  For
+example: DHKEM provides MAL-level binding for several properties. ML-KEM
+provides only LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT,
+but no assurance at all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
 
 
 The KDF used with a hybrid KEM MUST be indifferentiable from a random oracle
-(RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This is a
-conservative choice given a review of the existing security analyses for our
-hybrid KEM constructions: most IND-CCA analyses for the four frameworks require
-only that the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA
-analysis of CG in {{XWING}}, and the corresponding analysis for UG (forthcoming)
-relies on the KDF being a RO. Proofs of our target
-binding properties for our hybrid KEMs require the KDF is a collision-resistant
-function.
+(RO) {{MRH03}}, even to a quantum attacker {{BDFL+10}} {{ZHANDRY19}}.  This
+is a conservative choice given a review of the existing security analyses for
+our hybrid KEM constructions: most IND-CCA analyses for the four frameworks
+require only that the KDF is some kind of pseudorandom function, but the
+SDH-based IND-CCA analysis of CG in {{XWING}}, and the corresponding analysis
+for UG (forthcoming) relies on the KDF being a RO. Proofs of our target
+binding properties for our hybrid KEMs require the KDF is a
+collision-resistant function.
 
 If the KDF is a RO, the key derivation step in the hybrid KEMs can be viewed
 as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
-which require the KDF to be a PRF, such as the one given in GHP {{GHP2018}} for UK,
-or the standard-model analysis of CG in {{XWING}}, apply.
+which require the KDF to be a PRF, such as the one given in GHP {{GHP2018}}
+for UK, or the standard-model analysis of CG in {{XWING}}, apply.
 
 Sponge-based constructions such as SHA-3 have been shown to be
 indifferentiable against classical {{BDP+08}} as well as quantum adversaries
@@ -1050,27 +1057,29 @@ built from random oracles. Examples include SHAKE256.
 ## Security Goals for Hybrid KEMs {#security-properties}
 
 The security notions for hybrid KEMs are largely the same as for other
-algorithms, but they are contingent on the security properties of the component
-algorithms.  In this section we discuss the intended security properties for
-hybrid KEMs and the requirements that the component algorithms must meet in
-order for those properties to hold.
+algorithms, but they are contingent on the security properties of the
+component algorithms.  In this section we discuss the intended security
+properties for hybrid KEMs and the requirements that the component algorithms
+must meet in order for those properties to hold.
 
 ### IND-CCA Security {#hybrid-ind-cca}
 
-The idea of a hybrid KEM is that it should maintain its security if only one of
-the two component KEMs is secure.  For a PQ/T hybrid KEM, this means that the
-hybrid KEM should be secure against a quantum attacker if the T component is
-broken, and secure against at least a classical attacker if the PQ component is
-broken.
+The idea of a hybrid KEM is that it should maintain its security if only one
+of the two component KEMs is secure.  For a PQ/T hybrid KEM, this means that
+the hybrid KEM should be secure against a quantum attacker if the T component
+is broken, and secure against at least a classical attacker if the PQ
+component is broken.
 
 More precisely, the hybrid KEM should meet two different notions of IND-CCA
 security, under different assumptions about the component algorithms:
 
 * IND-CCA against a classical attacker all of the following are true:
     * `KDF` is indifferentiable from a random oracle
-    * If using `Group_T`: The strong Diffie-Hellman problem is hard in `Group_T`
+    * If using `Group_T`: The strong Diffie-Hellman problem is hard in
+      `Group_T`
     * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
-    * If using `PQImplicit`: `KEM_PQ` is C2PRI <!-- todo: rename -->
+    * If using `C2PRICombiner`: `KEM_PQ` is C2PRI
+
 * IND-CCA against a quantum attacker if all of the following are true:
     * `KDF` is indifferentiable from a random oracle
     * `KEM_PQ` is IND-CCA against a quantum attacker
@@ -1320,8 +1329,8 @@ same KDF. This domain separation is achieved by using prefix-free sets of
 `label` values. Recall that a set is prefix-free if no element is a prefix of
 another within the set.
 
-Length differentiation is sometimes used to achieve domain separation but as a
-technique it is brittle and prone to misuse {{BDG2020}} in practice so we
+Length differentiation is sometimes used to achieve domain separation but as
+a technique it is brittle and prone to misuse {{BDG2020}} in practice so we
 favor the use of an explicit post-fix label.
 
 ### Fixed-length
