@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-19T01:14:13.086127+00:00",
+  "timestamp": "2025-10-21T01:08:34.920422+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -940,7 +940,7 @@
       "id": "I_kwDOMmhxws69xXZY",
       "title": "KDF security properties",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/56",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "pag-crypto",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -951,8 +951,8 @@
       ],
       "body": "The current writeup is unclear about the security requirements for the KDF: it says both that they must be PRFs and random oracles. I think I know why this ambiguity exists - the X-Wing paper's analyses of QSF have different requirements on the KDF depending on whether security is proved from the strong DH problem or the CCA2 security of the KEM. (The SDH proof requires the ROM - in a nontrivial way - and the CCA2 proof only requires PRF.) \n\nSince (modulo some details) having the KDF modelled as a RO is stronger than treating it as a PRF, i think it would be conservative as a starting point to just require the KDF to be indifferentiable from a RO. However, I think we'll probably get some pushback on this from the CFRG.",
       "createdAt": "2025-06-27T19:07:29Z",
-      "updatedAt": "2025-07-25T08:16:45Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T22:20:49Z",
+      "closedAt": "2025-10-20T22:20:49Z",
       "comments": [
         {
           "author": "dconnolly",
@@ -974,6 +974,13 @@
           "body": "@dconnolly Concerning the todo [here](https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/blob/6183080e4c32287080e8de6b9ba16cac6bf547c3/draft-irtf-cfrg-hybrid-kems.md?plain=1#L922), i.e.\n\n> We reiterate that modulo some low-level technical details, our requirement\n> that the KDF is indifferentiable from an RO implies that, in the ROM, the KDF\n> used in GHP and PRE meets the split-key pseudorandomness property used in\n> GHP's analysis.\n> TODO: apparently there is no good citation for this foklore, maybe we can explicitly lay it out\n\nI guess, Lemma 6 in combination with Example 3 in GHP18 (https://eprint.iacr.org/2018/024) is exactly what you are looking for.\n\nIn Lemma 6 they construct\n\n> a pseudorandom skPRF from any almost-uniform keymixing function in the random oracle model\n\nby `H(g(k1,...,kn), x) `, where `H` is modeled as a random oracle and `g` is $\\epsilon$-almost uniform. Example 3 qualifies `g(k1,...,kn) = k1 || ... || kn` as $\\epsilon$-almost uniform (with $\\epsilon = 1/ \\mathrm{len} (k_1 \\mathrm{||} \\ldots \\mathrm{||} k_n)$. ",
           "createdAt": "2025-07-25T06:49:03Z",
           "updatedAt": "2025-07-25T08:16:45Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you @fluppe2 !",
+          "createdAt": "2025-10-20T21:52:36Z",
+          "updatedAt": "2025-10-20T21:52:36Z"
         }
       ]
     },
@@ -1020,7 +1027,7 @@
       "id": "I_kwDOMmhxws6_g-0p",
       "title": "Describe multi-user security and how each framework achieves it",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/64",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -1029,9 +1036,17 @@
       ],
       "body": "",
       "createdAt": "2025-07-08T16:16:28Z",
-      "updatedAt": "2025-07-15T22:42:27Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-10-20T22:58:38Z",
+      "closedAt": "2025-10-20T22:58:38Z",
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussing among the authors, it doesn't seem like this is a critical property for KEMs, and it is probably implied by the binding properties anyway",
+          "createdAt": "2025-10-20T22:58:38Z",
+          "updatedAt": "2025-10-20T22:58:38Z"
+        }
+      ]
     },
     {
       "number": 66,
@@ -1125,7 +1140,7 @@
       "id": "I_kwDOMmhxws7L01up",
       "title": "Should external keygen be considered a different algorithm?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/77",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -1134,8 +1149,8 @@
       ],
       "body": "In #73, we allow for two different styles of key generation: the default \"shared seed\" approach, and an \"external keygen\" approach that basically just invokes whatever keygen the component algorithms provide.  In the shared seed approach, the decapsulation key is `seed`; in the \"external keygen\" approach, the decapsulation key is `(dk_PQ, dk_T)`.\n\nConsider two implementations of a hybrid KEM that differ **only in terms of keygen** -- they use the same component algorithms, same constants, etc.  Should these implementations be considered to be different things?\n\nIn the scope of this document, this question primarily comes down to labels -- should these two cases have different domain separation labels?\n\nIn favor of different:\n* The two keygen processes result in different security properties.  MAL-BIND vs. LEAK-BIND\n* Since the decapsulation key formats are different, so it's not clear what private key format an implementation of the algorithm should accept\n\nIn favor of same:\n* The two \"algorithms\" are identical when it comes to the part that matters for interop, i.e., the encapsulation logic.\n* Which key generation the decapsulator uses is invisible to the encapsulator.  Any claim about is an unenforceable promise.  The encapsulator shouldn't have to care.",
       "createdAt": "2025-09-15T21:46:50Z",
-      "updatedAt": "2025-09-29T19:28:25Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T22:49:59Z",
+      "closedAt": "2025-10-20T22:49:59Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -1263,7 +1278,7 @@
       "id": "I_kwDOMmhxws7MErJv",
       "title": "Appendix to describe pre-hashing?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/80",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -1272,8 +1287,8 @@
       ],
       "body": "In scenarios where encapsulation keys and ciphertexts are reused for multiple decapsulation operations, it can be improve the performance of decapsulation operations to have a combiner that pre-hashes these values and a stateful algorithm that caches the pre-hashed values.  This was the basis for the Chempat and PRE hybrid KEMs that have been discussed.\n\nFeedback at the CFRG meeting at IETF 123 and subsequent mailing list discussion indicated that these use cases are not a priority for the CFRG community, and thus that the additional complexity of pre-hashing doesn't make sense for the main body of the document.  There was also concern that the introduction of extra hashes took us further from the constructions that have been validated in the literature, though it was proposed on the mailing list that there might be easy indifferentiability arguments to connect the pre-hashed variants with their non-pre-hashed analogues.\n\nIf the latter argument could be fleshed out and made precise, we could add an appendix to the document that describes variants of the main hybrid KEM framework that provide pre-hashing, which applications could use if the key/ciphertext reuse cases are important to them.  I would propose the following outline for the content of this section\n\n* Review of use cases in which pre-hashing can make a performance difference\n* Combinator functions:\n    * Pre-hash CT: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), ek_PQ, ek_T, label))`\n    * Pre-hash PK: `KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, H(ek_PQ, ek_T), label))`\n    * Pre-hash both: `KDF(concat(ss_PQ, ss_T, H(ct_PQ, ct_T), H(ek_PQ, ek_T), label))`\n* Security analysis\n    * Requirements for the pre-hashing function H\n    * Indifferentiability arguments for the security of the pre-hashed constructions\n    * Label MUST be different from non-pre-hashed variant with the same constituents\n\nBut we should only do this if enough folks are interested to merit it.",
       "createdAt": "2025-09-16T21:16:18Z",
-      "updatedAt": "2025-09-29T19:28:13Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T21:43:10Z",
+      "closedAt": "2025-10-20T21:43:10Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -1281,6 +1296,13 @@
           "body": "Interim 2025-09: No, we should not actually specify it.  At most, we could mention it in our \u201cpaths not taken\u201d section.",
           "createdAt": "2025-09-29T19:27:18Z",
           "updatedAt": "2025-09-29T19:27:18Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We currently do not mention it at all nor other paths not taken\n",
+          "createdAt": "2025-10-20T21:42:27Z",
+          "updatedAt": "2025-10-20T21:42:27Z"
         }
       ]
     },
@@ -1329,15 +1351,15 @@
       "id": "I_kwDOMmhxws7OlUpx",
       "title": "Names:  GK, GM, KK, KM",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/83",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Isn't X the same as K; so wouldn't GK, GM, KK, KM make more sense?",
       "createdAt": "2025-09-29T17:16:39Z",
-      "updatedAt": "2025-09-29T19:26:34Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T22:21:27Z",
+      "closedAt": "2025-10-20T22:21:27Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -1345,6 +1367,13 @@
           "body": "I don't see how \"X is the same as K\" follows.  And \"KK\" has some unfortunate resonances.",
           "createdAt": "2025-09-29T19:26:33Z",
           "updatedAt": "2025-09-29T19:26:33Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think moot for now",
+          "createdAt": "2025-10-20T22:21:27Z",
+          "updatedAt": "2025-10-20T22:21:27Z"
         }
       ]
     },
@@ -1369,16 +1398,31 @@
       "id": "I_kwDOMmhxws7SA1lq",
       "title": "Be consistent about backticks",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/86",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Right now, we are not consistent about which words go in `verbatim` backtics.  The current document is mixed (`Encaps()`, but not `DeriveKeyPair`).  We should be consistent here.\n\nMy usual policy is to reserve backticks for words that start lower-case (so `derive_key_pair` but not `DeriveKeyPair`), since there's more risk of ambiguity there.  But I would be open to verbatim-izing more things if folks prefer.",
       "createdAt": "2025-10-16T20:35:45Z",
-      "updatedAt": "2025-10-16T20:35:45Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-10-20T22:37:48Z",
+      "closedAt": "2025-10-20T22:37:48Z",
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yeah I traditionally `backtick` any function names ",
+          "createdAt": "2025-10-20T21:37:52Z",
+          "updatedAt": "2025-10-20T21:37:52Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Feel free to implement it either way, I don't really care.",
+          "createdAt": "2025-10-20T21:49:58Z",
+          "updatedAt": "2025-10-20T21:49:58Z"
+        }
+      ]
     },
     {
       "number": 87,
@@ -1408,7 +1452,7 @@
       "labels": [],
       "body": "`Encaps()` returns the secret output first, `(ss, ct)`.  `DeriveKeyPair` should do the same thing.",
       "createdAt": "2025-10-16T20:48:31Z",
-      "updatedAt": "2025-10-16T20:55:22Z",
+      "updatedAt": "2025-10-20T21:36:37Z",
       "closedAt": null,
       "comments": [
         {
@@ -1424,6 +1468,13 @@
           "body": "Along similar lines, maybe suffix the subruotines with `_KEM` and `_Group` instead of `K`/`G`.",
           "createdAt": "2025-10-16T20:55:22Z",
           "updatedAt": "2025-10-16T20:55:22Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I favor (dk, ek)",
+          "createdAt": "2025-10-20T21:36:37Z",
+          "updatedAt": "2025-10-20T21:36:37Z"
         }
       ]
     }
@@ -5789,21 +5840,21 @@
       "id": "PR_kwDOMmhxws6cJHRy",
       "title": "Add appendix with QSF BIND proof sketches written  by Bas Westerbaan",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/51",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "@bwesterb \r\n\r\nResolves https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/52",
       "createdAt": "2025-06-26T00:20:25Z",
-      "updatedAt": "2025-06-26T00:22:14Z",
+      "updatedAt": "2025-10-20T21:45:11Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "bbd7ed2497a7ead6c0a3a7f9dc735995fa56f283",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "sketch-of-qsf-bind-proofs",
       "headRefOid": "97b93ab05bfe4211178e4a039018fb2917279ba3",
-      "closedAt": null,
+      "closedAt": "2025-10-20T21:45:11Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -8579,6 +8630,548 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 91,
+      "id": "PR_kwDOMmhxws6uiErp",
+      "title": "Use PRGs instead of seeds",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/91",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR replaces seeds with PRGs as inputs to randomized algorithms.  For the most part, this is just saying the same thing: Either you pass a seed full of bytes you just drew from a PRG or you hand the PRG and let the seed reading be done interior to the function.\r\n\r\nThe PRG approach has the advantage that if the entropy demands of the function are not known up front, then the function can read a variable amount from the PRG.  The case in point for this is [rejection sampling for NIST curve keygen](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/30#pullrequestreview-3353961597).  This approach thus solves some issues at the [concrete hybrid KEM](https://github.com/hpkewg/hpke-pq/issues/30) and [HPKE](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/issues/22) levels.\r\n\r\nThe PRG also makes it easier to discuss derandomized versions of key generation and encapsulation.  You just define a trivial PRG that reads an existing string of random bytes.  This is the mirror image of what FIPS 203 does with KeyGen/Encaps vs. KeyGen_Internal/Encaps_Internal, choosing the PRG as the primary interface because some things need variable randomness.",
+      "createdAt": "2025-10-19T23:19:12Z",
+      "updatedAt": "2025-10-21T00:51:29Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "2a4fa5eb1d3840d2b1b7fa1ed0b272ab78be9061",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "generate-prg",
+      "headRefOid": "9e0763608e9fa9d6fd411358965dde69fbc7f4d3",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@dconnolly Thanks for the feedback.  Do you have a preferred alternative approach in mind for solving for the \"NIST curves need variable amounts of entropy\" problem?  The alternatives that came to mind seemed worse to me, namely (a) making seeds larger by an integer factor, or (b) having a PRG internal to the curve implementation.",
+          "createdAt": "2025-10-20T18:11:02Z",
+          "updatedAt": "2025-10-20T18:11:02Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7H-qNj",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T05:54:42Z",
+          "updatedAt": "2025-10-20T05:54:42Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "There's a small inconsistency here between `state` (used here) and `prg` (used elsewhere).  Would it make sense to `s/state/prg` here?",
+              "createdAt": "2025-10-20T05:54:42Z",
+              "updatedAt": "2025-10-20T05:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7H-snV",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "rohanmahy",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T06:02:08Z",
+          "updatedAt": "2025-10-20T06:02:09Z",
+          "comments": [
+            {
+              "originalPosition": 214,
+              "body": "```suggestion\r\nThe GenerateKeyPair methods in the frameworks below describe \"shared seed\" key\r\n```",
+              "createdAt": "2025-10-20T06:02:09Z",
+              "updatedAt": "2025-10-20T06:02:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7H-tFv",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "rohanmahy",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T06:03:34Z",
+          "updatedAt": "2025-10-20T06:03:35Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "This sentence is a mouthful. I attempted to rework it.\r\n```suggestion\r\nPRGs used with the frameworks in this document MUST provide sufficient bit-security to provide input randomness for both PQ/T components from a seed that is\r\nexpanded to the target output length. A subset of the output length is passed to each of the component key\r\ngeneration algorithms.\r\n```",
+              "createdAt": "2025-10-20T06:03:35Z",
+              "updatedAt": "2025-10-20T06:03:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7H_Oyj",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T07:09:28Z",
+          "updatedAt": "2025-10-20T07:09:29Z",
+          "comments": [
+            {
+              "originalPosition": 246,
+              "body": "```suggestion\r\n    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nct, ct)\r\n```",
+              "createdAt": "2025-10-20T07:09:29Z",
+              "updatedAt": "2025-10-20T07:09:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7H_O7n",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T07:09:45Z",
+          "updatedAt": "2025-10-20T07:09:46Z",
+          "comments": [
+            {
+              "originalPosition": 272,
+              "body": "```suggestion\r\n    (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nct, ct)\r\n```",
+              "createdAt": "2025-10-20T07:09:45Z",
+              "updatedAt": "2025-10-20T07:09:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IHndN",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T18:05:25Z",
+          "updatedAt": "2025-10-20T18:05:26Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "I'd be careful with new APIs introduced now, the PRGs used in our concrete instances don't use this API (SHAKE), they just have a one shot invocation; who needs a multi-step API? @bifurcation ",
+              "createdAt": "2025-10-20T18:05:26Z",
+              "updatedAt": "2025-10-20T18:05:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IHoZt",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T18:07:08Z",
+          "updatedAt": "2025-10-20T18:07:08Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "Don't love this, I would be very annoyed to wrap a SHAKE function in a stateful representation to match this spec ",
+              "createdAt": "2025-10-20T18:07:08Z",
+              "updatedAt": "2025-10-20T18:07:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IHoxz",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I don't think this API helps implementers (including the concrete instances we are doing in the other document)",
+          "createdAt": "2025-10-20T18:07:50Z",
+          "updatedAt": "2025-10-20T18:07:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws7ILNVo",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "sophieschmieg",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-21T00:19:44Z",
+          "updatedAt": "2025-10-21T00:19:45Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "this is incorrect. A PRG does not necessarily produce more output than inputs.",
+              "createdAt": "2025-10-21T00:19:44Z",
+              "updatedAt": "2025-10-21T00:51:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7ILQcX",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-21T00:30:34Z",
+          "updatedAt": "2025-10-21T00:30:34Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "The citation in the doc is to https://eprint.iacr.org/2024/843.pdf, which basically says \"a function whose outputs are indistinguishable from uniform given a uniform input\".  I can't speak to how standard this is.",
+              "createdAt": "2025-10-21T00:30:34Z",
+              "updatedAt": "2025-10-21T00:30:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7ILRa_",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "sophieschmieg",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-21T00:34:14Z",
+          "updatedAt": "2025-10-21T00:34:14Z",
+          "comments": [
+            {
+              "originalPosition": 168,
+              "body": "TrivialPRG is not defined, from what I can tell. I think it might be a projection to the first or second half of the seed, depending on the call, but I only get that assumption from reading the old version.",
+              "createdAt": "2025-10-21T00:34:14Z",
+              "updatedAt": "2025-10-21T00:34:15Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 92,
+      "id": "PR_kwDOMmhxws6uqYHE",
+      "title": "new security analysis subsection to reflect changes elsewhere",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/92",
+      "state": "MERGED",
+      "author": "pag-crypto",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "started sketching out changes to security analysis. added some todo notes for things we need to fill in. provided brief summary of ind-cca proofs for UG. Changed hybrid KEM names throughout doc to reflect new naming conventions.",
+      "createdAt": "2025-10-20T15:59:40Z",
+      "updatedAt": "2025-10-20T19:17:56Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "2a4fa5eb1d3840d2b1b7fa1ed0b272ab78be9061",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "ug-sec-analysis",
+      "headRefOid": "0c5842ab8db66b57d0ae4cedc76063e9cb954456",
+      "closedAt": "2025-10-20T19:17:55Z",
+      "mergedAt": "2025-10-20T19:17:55Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "c5f30bb8416529a74d8a7083fb65043b9b396378"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7IHrci",
+          "commit": {
+            "abbreviatedOid": "e32fe74"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T18:11:05Z",
+          "updatedAt": "2025-10-20T18:11:05Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\n    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)\n```",
+              "createdAt": "2025-10-20T18:11:05Z",
+              "updatedAt": "2025-10-20T18:11:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IHznZ",
+          "commit": {
+            "abbreviatedOid": "9d60ad3"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T18:25:47Z",
+          "updatedAt": "2025-10-20T18:57:29Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\ngiven access to `g^x` and `g^y` and an oracle `DH(Y, Z)` that answers whether\n`Y^x = Z`. (This is the notion specified in {{XWING}}, not the notion of the same\nname used in the context of bilinear pairings {{Cheon06}}.)\n```",
+              "createdAt": "2025-10-20T18:25:47Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\nhybrid KEM constructions: most IND-CCA analyses for the four frameworks require\nonly that the KDF is some kind of pseudorandom function, but the SDH-based IND-CCA\n```",
+              "createdAt": "2025-10-20T18:27:11Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 45,
+              "body": "```suggestion\nanalysis of CG in {{XWING}}, and the corresponding analysis for UG (forthcoming)\nrelies on the KDF being a RO. Proofs of our target binding properties for our\nhybrid KEMs require the KDF is a collision-resistant function.\n```",
+              "createdAt": "2025-10-20T18:27:54Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\nsecrets output by the constituent KEMs - to the other inputs. Thus, analyses\nwhich require the KDF to be a PRF, such as the one given in GHP {{GHP2018}}\nfor UK, or the standard-model analysis of CG in {{XWING}}, apply.\n```",
+              "createdAt": "2025-10-20T18:28:19Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 73,
+              "body": "```suggestion\nSome IND-CCA analyses do not strictly require the KDF to be indifferentiable\nfrom a random oracle; they instead only require a kind of PRF assumption on\nthe KDF. For simplicity we ignore this here; the security analyses described\nbelow for our constructions will elaborate on this point when appropriate.\n```",
+              "createdAt": "2025-10-20T18:29:11Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 96,
+              "body": "```suggestion\nThe UG construction has two complementary IND-CCA analyses: one for when the\nSDH problem holds but the PQ KEM is broken, and one for the reverse. Both are\ntechnically novel but are substantially similar to the existing peer-reviewed\nanalyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming\ndocument by the editorial team will describe the analysis of UG in detail.\n```",
+              "createdAt": "2025-10-20T18:31:02Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 106,
+              "body": "```suggestion\nThe first IND-CCA analysis, based on SDH, is very similar to the corresponding\nanalysis of CG given in {{XWING}}: it gives a straightforward reduction to the\nSDH hardness in the underlying group. Notably, since the PQ KEM key and ciphertext are\nhashed, the C2PRI security of the PQ KEM does not appear in the bound.\n```",
+              "createdAt": "2025-10-20T18:33:59Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 111,
+              "body": "```suggestion\nThe second IND-CCA analysis is a straightforward reduction to the IND-CCA security\n```",
+              "createdAt": "2025-10-20T18:34:09Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 113,
+              "body": "```suggestion\n<!-- TODO: where, if anywhere, does the split-key PRF requirement come up?-->\n\nThis was originally trying to just prove the PQ side from non-ROM assumptions and the GHP2018 paper used split-key PRF to do so; I think we're ignoring that now and just copying the X-Wing argument but with more KEM_1 data included in the preimage (ciphertext, public key)\n```",
+              "createdAt": "2025-10-20T18:36:21Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 113,
+              "body": "```suggestion\n```",
+              "createdAt": "2025-10-20T18:36:32Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 121,
+              "body": "```suggestion\nThis document's UK construction does not have an IND-CCA analysis; the\nGHP paper on which the construction is based gives a slightly different\nversion, namely they do not include the public encapsulation keys in\nthe KDF. However, we argue that the proof goes through with trivial\nmodifications if the public encapsulation keys are\n```",
+              "createdAt": "2025-10-20T18:47:04Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 135,
+              "body": "```suggestion\nLike UG, the CG construction has two complementary IND-CCA analyses. Both were\ngiven in {{XWING}}. We summarize them but elide some details.\n\nOne analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,\nIND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in\nthe nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)\n{{XWING}} shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on\nthe PQ-KEM's shared secret, IND-CCA holds.\n```",
+              "createdAt": "2025-10-20T18:47:32Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            },
+            {
+              "originalPosition": 142,
+              "body": "```suggestion\nThe CK construction's IND-CCA analysis is based on forthcoming work by the editorial team.\n\nThe CK construction has two complementary IND-CCA analyses: one for when the IND-CCA\nsecurity of the traditional PKE-based KEM holds but the PQ KEM is broken, except for\nthe PQ KEM's C2PRI security, and one for where the IND-CCA security of the PQ KEM holds.\nBoth are technically novel but are substantially similar to the existing peer-reviewed\nanalyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming document by\nthe editorial team will describe the analysis of CK in detail.\n```",
+              "createdAt": "2025-10-20T18:55:33Z",
+              "updatedAt": "2025-10-20T18:57:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IISsV",
+          "commit": {
+            "abbreviatedOid": "1360da8"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T19:13:07Z",
+          "updatedAt": "2025-10-20T19:13:07Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 93,
+      "id": "PR_kwDOMmhxws6utuX4",
+      "title": "Fix copy/paste errors",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/93",
+      "state": "MERGED",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-10-20T21:20:17Z",
+      "updatedAt": "2025-10-20T21:21:04Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "c5f30bb8416529a74d8a7083fb65043b9b396378",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "copy-paste-errors",
+      "headRefOid": "70bcae9fad9cef8acf6b33d7fd49d2a950bd10d8",
+      "closedAt": "2025-10-20T21:21:02Z",
+      "mergedAt": "2025-10-20T21:21:02Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "3ab36d52a461511a363400a8cf4779bc1a264fbd"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 94,
+      "id": "PR_kwDOMmhxws6ut3A0",
+      "title": "Fill out the rest of the BIND proofs for CK and UG",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/94",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #51 ",
+      "createdAt": "2025-10-20T21:35:59Z",
+      "updatedAt": "2025-10-20T21:45:12Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "3ab36d52a461511a363400a8cf4779bc1a264fbd",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "proofs",
+      "headRefOid": "8dca2c1c964e135da59d715784e44dd649486de0",
+      "closedAt": "2025-10-20T21:45:10Z",
+      "mergedAt": "2025-10-20T21:45:10Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "dbce8daf774565d2059f9e00a680843e81734791"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 95,
+      "id": "PR_kwDOMmhxws6uuO6r",
+      "title": "Todos",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/95",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/56",
+      "createdAt": "2025-10-20T22:20:02Z",
+      "updatedAt": "2025-10-20T22:20:50Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "dbce8daf774565d2059f9e00a680843e81734791",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "todos",
+      "headRefOid": "b036962acbe1afe96d3eb8485babe6eaa4331ae3",
+      "closedAt": "2025-10-20T22:20:48Z",
+      "mergedAt": "2025-10-20T22:20:48Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "4a780d39cfb78e71e3e00c286e2cd1903de15cbe"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 96,
+      "id": "PR_kwDOMmhxws6uuWJm",
+      "title": "Backticks",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/96",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #86",
+      "createdAt": "2025-10-20T22:36:10Z",
+      "updatedAt": "2025-10-20T22:37:48Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "4a780d39cfb78e71e3e00c286e2cd1903de15cbe",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "backticks",
+      "headRefOid": "05faa7dd78e8e8ae253d049fd853c1464aeb0299",
+      "closedAt": "2025-10-20T22:37:47Z",
+      "mergedAt": "2025-10-20T22:37:47Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "25bd5cb5c981f356c0ed3e9ee1e13ade2c4b9d45"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 97,
+      "id": "PR_kwDOMmhxws6uubq8",
+      "title": "Tildas not backticks",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/97",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-10-20T22:48:58Z",
+      "updatedAt": "2025-10-20T22:49:42Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "25bd5cb5c981f356c0ed3e9ee1e13ade2c4b9d45",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "tildas-not-backticks",
+      "headRefOid": "cdd6c3b61dad6a93862091009e130aa8ee83d0b3",
+      "closedAt": "2025-10-20T22:49:41Z",
+      "mergedAt": "2025-10-20T22:49:41Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "a4e98394e028e4051e4747c1b846353a9fc72053"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
