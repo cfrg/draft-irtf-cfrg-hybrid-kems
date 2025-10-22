@@ -434,7 +434,7 @@ We also make use of internal algorithms such as:
 We assume that the values produced and consumed by the above functions are
 all byte strings, with fixed lengths:
 
-- `Nseed`: The length in bytes of a key seed
+- `Nseed`: The minimum length in bytes of a key seed
 - `Nek`: The length in bytes of a public encapsulation key
 - `Ndk`: The length in bytes of a secret decapsulation key
 - `Nct`: The length in bytes of a ciphertext produced by `Encaps`
@@ -491,7 +491,7 @@ comprises a set `G` together with a distinguished basis element `g`, an
 We assume that scalars and group elements are represented by byte strings
 with fixed lengths:
 
-- `Nseed`: The length in bytes of a seed (input to RandomScalar)
+- `Nseed`: The minimum length in bytes of a seed (input to RandomScalar)
 - `Nscalar`: The length in bytes of a scalar
 - `Nelem`: The length in bytes of a serialized group element
 - `Nss`: The length in bytes of a shared secret produced by
@@ -502,20 +502,14 @@ with respect to the strong Diffie-Hellman problem (see {{sdh}}).
 
 ## Pseudorandom Generators {#prgs}
 
-A pseudorandom generator (PRG) is a deterministic function whose outputs are
-longer than its inputs. When the input is chosen uniformly at random, this
-induces a certain distribution over the possible output. The output
-distribution is pseudorandom if it is indistinguishable from the uniform
-distribution.
-
-The `PRG`s used in this document have a simpler form, with fixed
-output lengths:
+A pseudorandom generator (PRG) is a deterministic function whose output
+distribution is indisinguishable from the uniform distribution when provided
+with uniformly random inputs. The `PRG`s used in this document have fixed output
+lengths:
 
 - `Nout`: The length in bytes of an output from this PRG.
 - `PRG(seed) -> output`: Produce a byte string of length `Nout` from an input
-  byte string `seed`.
-
-The fixed sizes are for both security and simplicity.
+  byte string `seed` of arbitrary length.
 
 `PRG`s used with the frameworks in this document MUST provide the bit-security
 required to source input randomness for PQ/T components from a seed that is
