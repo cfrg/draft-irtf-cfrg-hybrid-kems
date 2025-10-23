@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-21T01:08:34.920422+00:00",
+  "timestamp": "2025-10-23T01:07:38.254814+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -8643,7 +8643,7 @@
       "labels": [],
       "body": "This PR replaces seeds with PRGs as inputs to randomized algorithms.  For the most part, this is just saying the same thing: Either you pass a seed full of bytes you just drew from a PRG or you hand the PRG and let the seed reading be done interior to the function.\r\n\r\nThe PRG approach has the advantage that if the entropy demands of the function are not known up front, then the function can read a variable amount from the PRG.  The case in point for this is [rejection sampling for NIST curve keygen](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/30#pullrequestreview-3353961597).  This approach thus solves some issues at the [concrete hybrid KEM](https://github.com/hpkewg/hpke-pq/issues/30) and [HPKE](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/issues/22) levels.\r\n\r\nThe PRG also makes it easier to discuss derandomized versions of key generation and encapsulation.  You just define a trivial PRG that reads an existing string of random bytes.  This is the mirror image of what FIPS 203 does with KeyGen/Encaps vs. KeyGen_Internal/Encaps_Internal, choosing the PRG as the primary interface because some things need variable randomness.",
       "createdAt": "2025-10-19T23:19:12Z",
-      "updatedAt": "2025-10-21T00:51:29Z",
+      "updatedAt": "2025-10-21T14:51:38Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "2a4fa5eb1d3840d2b1b7fa1ed0b272ab78be9061",
@@ -8661,6 +8661,48 @@
           "body": "@dconnolly Thanks for the feedback.  Do you have a preferred alternative approach in mind for solving for the \"NIST curves need variable amounts of entropy\" problem?  The alternatives that came to mind seemed worse to me, namely (a) making seeds larger by an integer factor, or (b) having a PRG internal to the curve implementation.",
           "createdAt": "2025-10-20T18:11:02Z",
           "updatedAt": "2025-10-20T18:11:02Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@dconnolly and I talked some offline.  There was some concern that this proposal would upset the proofs by changing the nature of the PRG thing we rely on, and I made the claim that this change is just changing the API to the PRG, not the claims we rely on about the statistics of the PRG.  To try to make this clearer, I this up in a series of smaller steps:\r\n\r\nhttps://gist.github.com/bifurcation/0386e43c846bbdff42fa544266dc1ffc\r\n\r\nWhat I'm trying to illustrate here is that at each of these stages, the pseudo-random data are generated in exactly the same way, and the subroutines get access to exactly the same data.  The only thing that changes is how the data is managed, and the fact that the `expandDecapsKey` ends up not knowing exactly how much data it needs to generate up front.\r\n\r\nIf folks are still concerned that this cause some impact to the proofs, I would be curious at which stage I lose you, i.e., which of these smaller changes is the one that puts us over the line between OK and not OK.",
+          "createdAt": "2025-10-21T04:48:37Z",
+          "updatedAt": "2025-10-21T04:48:37Z"
+        },
+        {
+          "author": "ThadThompson",
+          "authorAssociation": "NONE",
+          "body": "I'm a fan of the direction. \r\n\r\nHaving two key generation functions in HPKE felt awkward, especially when the pseudocode for Encap didn't also provide a way to inject a seed for the ephemeral keys. Having it in the appendix now helps, but it seems cleaner to have a single function and pass in the randomness function.\r\n\r\nIs there a reason it's named specifically as a 'PRG' and not just an opaque 'random' function, good for at least N bytes of entropy? Surely a working implementation would want to pass in the system rand function without worrying about the specific source under the hood.\r\n\r\nThen outside the main flow of the framework you could say \"for deterministic keys, proofs or testing you need a DRBG/PRG for the 'random' function and you're going to use SHAKE-256\".",
+          "createdAt": "2025-10-21T05:28:09Z",
+          "updatedAt": "2025-10-21T05:28:09Z"
+        },
+        {
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "body": "I suggested the switch from wide reduction to rejection sampling for P-256 because HPKE already has P-256 rejection sampling, and having both is two set of APIs to carry and test on the elliptic curve layer.\r\n\r\nI think using the PRG we already have makes a lot more sense than unnecessarily calling SHAKE twice in a row.\r\n\r\nThis might be easier and more reassuring to see with abstractions and document splits peeled off. Note that the RandomScalar \"API\" is only an API between the two documents (a split which I am finding very painful for both analysis and implementation), not an API that's exposed to anyone.\r\n\r\nThe P-256 hybrid keygen as of a few days ago was\r\n\r\n```\r\ns = SHAKE-256(seed)\r\npq = ML-KEM-Keygen(read(s, 64))\r\nt = read(r, 48) % N\r\n```\r\n\r\nThe P-256 hybrid keygen in the current draft is\r\n\r\n```\r\ns = SHAKE-256(seed)\r\npq = ML-KEM-Keygen(read(s, 64))\r\nss = SHAKE-256(read(s, 32))\r\nt = read(ss, 32)\r\nwhile t >= N: t = read(ss, 32)\r\n```\r\n\r\nThe P-256 hybrid keygen I _think_ is being proposed (although tbh it's not clear to me, again because we are looking at a PR for half the algorithm) is\r\n\r\n```\r\ns = SHAKE-256(seed)\r\npq = ML-KEM-Keygen(read(s, 64))\r\nt = read(s, 32)\r\nwhile t >= N: t = read(s, 32)\r\n```\r\n\r\nI can't imagine the third scheme being less secure or harder to prove than the first, and it avoids a whole SHAKE-256 on keygen, which is not insignificant. The story for Encaps is similar.\r\n\r\nIf you have a single-shot SHAKE API (which is kinda weird), we can help you by mentioning in the document that P-256 will never need more than four samples, so you never read more than 192 bytes from SHAKE-256, and that P-384 will never need more than one, so you never read more than 112 bytes from SHAKE-256.",
+          "createdAt": "2025-10-21T07:37:27Z",
+          "updatedAt": "2025-10-21T07:55:38Z"
+        },
+        {
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "body": "Here's an alternative wording for the same design, if folks don't like passing a PRG state between documents. we make no changes to draft-irtf-cfrg-hybrid-kems, and instead make the following changes to draft-irtf-cfrg-concrete-hybrid-kems:\r\n\r\n1. Change Nseed for P-256 to 128 (and keep Nseed for P-384 at 48)\r\n2. Define max_rejects as 3 for P-256, and 0 for P-384\r\n    * Each rejection has [< 2\u207b\u00b3\u00b2](https://www.wolframalpha.com/input?i=log2%281+-+115792089210356248762697446949407573529996955224135760342422259061068512044369+%2F+2%5E256%29) probability for P-256, and [< 2\u207b\u00b9\u2079\u2074](https://www.wolframalpha.com/input?i=log2%281+-+39402006196394479212279040100143613805079739270465446667946905279627659399113263569398956308152294913554433653942643+%2F+2%5E384%29) for P-384, so this puts the chance of failure to \"never\" and \"above the security level\" (for people who believe in that)\r\n4. Update RandomScalar to\r\n\r\n```\r\ndef RandomScalar(seed):\r\n  rejects = 0\r\n  sk = seed[:Nscalar]\r\n  while sk == 0 || sk >= order:\r\n    rejects += 1\r\n    if rejects > max_rejects: fail\r\n    sk = seed[Nscalar * rejects : Nscalar * rejects + Nscalar]\r\n  return (sk, pk(sk))\r\n```\r\n\r\nIf you squint, you will notice this is the same on the wire as the third option above, and can be implemented the same way, but avoids any PRG passing, and has built-in guidance for one-shot SHAKE APIs.",
+          "createdAt": "2025-10-21T13:33:07Z",
+          "updatedAt": "2025-10-21T13:33:07Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Here's an alternative wording for the same design, if folks don't like passing a PRG state between documents. we make no changes to draft-irtf-cfrg-hybrid-kems, and instead make the following changes to draft-irtf-cfrg-concrete-hybrid-kems:\n> \n> 1. Change Nseed for P-256 to 128 (and keep Nseed for P-384 at 48)\n> 2. Define max_rejects as 3 for P-256, and 0 for P-384\n>     * Each rejection has [< 2\u207b\u00b3\u00b2](https://www.wolframalpha.com/input?i=log2%281+-+115792089210356248762697446949407573529996955224135760342422259061068512044369+%2F+2%5E256%29) probability for P-256, and [< 2\u207b\u00b9\u2079\u2074](https://www.wolframalpha.com/input?i=log2%281+-+39402006196394479212279040100143613805079739270465446667946905279627659399113263569398956308152294913554433653942643+%2F+2%5E384%29) for P-384, so this puts the chance of failure to \"never\" and \"above the security level\" (for people who believe in that)\n> 4. Update RandomScalar to\n> \n> ```\n> def RandomScalar(seed):\n>   rejects = 0\n>   sk = seed[:Nscalar]\n>   while sk == 0 || sk >= order:\n>     rejects += 1\n>     if rejects > max_rejects: fail\n>     sk = seed[Nscalar * rejects : Nscalar * rejects + Nscalar]\n>   return (sk, pk(sk))\n> ```\n> \n> If you squint, you will notice this is the same on the wire as the third option above, and can be implemented the same way, but avoids any PRG passing, and has built-in guidance for one-shot SHAKE APIs.\n\nI support this, cheers",
+          "createdAt": "2025-10-21T13:39:19Z",
+          "updatedAt": "2025-10-21T13:39:19Z"
+        },
+        {
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "body": "Sent it as a PR at https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/33.",
+          "createdAt": "2025-10-21T14:51:38Z",
+          "updatedAt": "2025-10-21T14:51:38Z"
         }
       ],
       "reviews": [
@@ -8874,6 +8916,46 @@
               "body": "TrivialPRG is not defined, from what I can tell. I think it might be a projection to the first or second half of the seed, depending on the call, but I only get that assumption from reading the old version.",
               "createdAt": "2025-10-21T00:34:14Z",
               "updatedAt": "2025-10-21T00:34:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IMj2T",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-21T04:42:04Z",
+          "updatedAt": "2025-10-21T04:42:04Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "Implementations seem decidedly split on this.  For example, [Go](https://pkg.go.dev/golang.org/x/crypto/sha3#ShakeHash) and [Rust Crypto](https://docs.rs/sha3/latest/sha3/#examples) implement reader interfaces, [Python](https://docs.python.org/3/library/hashlib.html#hashlib.shake_256) and [OpenSSL](https://docs.openssl.org/3.5/man7/EVP_MD-SHAKE/) implement one-shot interfaces.  And of course, basically every DRBG in the universe (which also meets this definition of PRG) has a reader interface.\r\n\r\nClearly you can emulate one-shot with a reader.  You can emulate a reader with one-shot at the cost of storage and/or recomputation.\r\n\r\nDo we have an example of a non-SHAKE PRG that always uses a single-shot interface?",
+              "createdAt": "2025-10-21T04:42:04Z",
+              "updatedAt": "2025-10-21T04:43:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7IOc8W",
+          "commit": {
+            "abbreviatedOid": "9e07636"
+          },
+          "author": "FiloSottile",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-21T07:52:36Z",
+          "updatedAt": "2025-10-21T07:52:36Z",
+          "comments": [
+            {
+              "originalPosition": 165,
+              "body": "I am not following how this is described. This PR is changing GenerateKeyPair to take a PRG, read from it a seed to pass to expandDecapsKeyG, which then goes back to a PRG somehow\r\n\r\n```\r\ndef GenerateKeyPair(prg):\r\n    seed = prg.read(Nseed)\r\n    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)\r\n    return (concat(ek_PQ, ek_T), seed)\r\n\r\ndef expandDecapsKeyG(seed):\r\n    prg = TrivialPRG.new(seed)\r\n\r\n    (ek_PQ, dk_PQ) = KEM_PQ.GenerateKeyPair(prg)\r\n    dk_T = Group_T.RandomScalar(prg)\r\n    ek_T = Group_T.Exp(Group_T.g, dk_T)\r\n\r\n    return (ek_PQ, ek_T, dk_PQ, dk_T)\r\n```\r\n\r\nwhile I expected we'd only be changing RandomScalar to take a PRG based on the discussion:\r\n\r\n```\r\ndef GenerateKeyPair():\r\n    seed = random(Nseed)\r\n    return DeriveKeyPair(seed)\r\n\r\ndef DeriveKeyPair(seed):\r\n    (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)\r\n    return (concat(ek_PQ, ek_T), seed)\r\n\r\ndef expandDecapsKeyG(seed):\r\n    prg = PRG.New(seed)\r\n\r\n    (ek_PQ, dk_PQ) = KEM_PQ.GenerateKeyPair(prg.Read(KEM_PQ.Nseed))\r\n    dk_T = Group_T.RandomScalar(prg) # uses prg for rejection sampling for P-256, just a read for X25519\r\n    ek_T = Group_T.Exp(Group_T.g, dk_T)\r\n\r\n    return (ek_PQ, ek_T, dk_PQ, dk_T)\r\n```\r\n\r\nI think that would be a much smaller change in how the process is described, that still gets us to rejection sampling while avoiding the nested PRGs.",
+              "createdAt": "2025-10-21T07:52:36Z",
+              "updatedAt": "2025-10-21T07:55:04Z"
             }
           ]
         }
