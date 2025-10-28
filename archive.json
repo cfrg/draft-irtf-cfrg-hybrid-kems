@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-23T01:07:38.254814+00:00",
+  "timestamp": "2025-10-28T01:06:20.759519+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -8636,21 +8636,21 @@
       "id": "PR_kwDOMmhxws6uiErp",
       "title": "Use PRGs instead of seeds",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/91",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR replaces seeds with PRGs as inputs to randomized algorithms.  For the most part, this is just saying the same thing: Either you pass a seed full of bytes you just drew from a PRG or you hand the PRG and let the seed reading be done interior to the function.\r\n\r\nThe PRG approach has the advantage that if the entropy demands of the function are not known up front, then the function can read a variable amount from the PRG.  The case in point for this is [rejection sampling for NIST curve keygen](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/30#pullrequestreview-3353961597).  This approach thus solves some issues at the [concrete hybrid KEM](https://github.com/hpkewg/hpke-pq/issues/30) and [HPKE](https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/issues/22) levels.\r\n\r\nThe PRG also makes it easier to discuss derandomized versions of key generation and encapsulation.  You just define a trivial PRG that reads an existing string of random bytes.  This is the mirror image of what FIPS 203 does with KeyGen/Encaps vs. KeyGen_Internal/Encaps_Internal, choosing the PRG as the primary interface because some things need variable randomness.",
       "createdAt": "2025-10-19T23:19:12Z",
-      "updatedAt": "2025-10-21T14:51:38Z",
+      "updatedAt": "2025-10-27T20:11:12Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "2a4fa5eb1d3840d2b1b7fa1ed0b272ab78be9061",
       "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "generate-prg",
       "headRefOid": "9e0763608e9fa9d6fd411358965dde69fbc7f4d3",
-      "closedAt": null,
+      "closedAt": "2025-10-27T20:11:12Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -8703,6 +8703,13 @@
           "body": "Sent it as a PR at https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/33.",
           "createdAt": "2025-10-21T14:51:38Z",
           "updatedAt": "2025-10-21T14:51:38Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sounds like there is more energy for the \"long seeds\" approach (https://github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/pull/33/files) than this one.",
+          "createdAt": "2025-10-27T20:11:12Z",
+          "updatedAt": "2025-10-27T20:11:12Z"
         }
       ],
       "reviews": [
