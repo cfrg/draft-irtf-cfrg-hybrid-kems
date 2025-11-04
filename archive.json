@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-28T01:06:20.759519+00:00",
+  "timestamp": "2025-11-04T01:09:21.997169+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1452,7 +1452,7 @@
       "labels": [],
       "body": "`Encaps()` returns the secret output first, `(ss, ct)`.  `DeriveKeyPair` should do the same thing.",
       "createdAt": "2025-10-16T20:48:31Z",
-      "updatedAt": "2025-10-20T21:36:37Z",
+      "updatedAt": "2025-11-02T21:15:09Z",
       "closedAt": null,
       "comments": [
         {
@@ -1475,6 +1475,13 @@
           "body": "I favor (dk, ek)",
           "createdAt": "2025-10-20T21:36:37Z",
           "updatedAt": "2025-10-20T21:36:37Z"
+        },
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we resolved this\n",
+          "createdAt": "2025-11-02T21:15:09Z",
+          "updatedAt": "2025-11-02T21:15:09Z"
         }
       ]
     }
