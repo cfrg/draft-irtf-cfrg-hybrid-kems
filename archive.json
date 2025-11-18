@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-04T01:09:21.997169+00:00",
+  "timestamp": "2025-11-18T01:10:12.300317+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -9268,6 +9268,59 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 98,
+      "id": "PR_kwDOMmhxws6ztOPq",
+      "title": "Clarify RandomScalar seed MUST be uniformly random",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/98",
+      "state": "OPEN",
+      "author": "FiloSottile",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-11-16T11:15:11Z",
+      "updatedAt": "2025-11-17T04:44:32Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "a4e98394e028e4051e4747c1b846353a9fc72053",
+      "headRepository": "FiloSottile/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "patch-1",
+      "headRefOid": "644eac7ad699eaf69a340eedcfc35da89859c10b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7O1xgj",
+          "commit": {
+            "abbreviatedOid": "644eac7"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-11-16T13:45:34Z",
+          "updatedAt": "2025-11-16T13:45:34Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOMmhxws7O4sae",
+          "commit": {
+            "abbreviatedOid": "644eac7"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-11-17T04:44:32Z",
+          "updatedAt": "2025-11-17T04:44:32Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
