@@ -484,7 +484,7 @@ comprises a set `G` together with a distinguished basis element `g`, an
     * `Exp` must respect multiplication in its scalar argument `x`, so that
       `Exp(Exp(p, x), y) = Exp(p, x * y)`.
 - `RandomScalar(seed) -> k`: Produce a uniform pseudo-random scalar from the
-  byte string `seed`.
+  uniformly pseudo-random byte string `seed`.
 - `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element
   of the group (e.g., by taking the X coordinate of an elliptic curve point).
 
