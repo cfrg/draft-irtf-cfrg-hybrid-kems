@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 23 April 2026                                             Cisco
+Expires: 21 June 2026                                              Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                         20 October 2025
+                                                        18 December 2025
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2026.
+   This Internet-Draft will expire on 21 June 2026.
 
 Copyright Notice
 
@@ -339,7 +339,7 @@ Table of Contents
          that Exp(Exp(p, x), y) = Exp(p, x * y).
 
    *  RandomScalar(seed) -> k: Produce a uniform pseudo-random scalar
-      from the byte string seed.
+      from the uniformly pseudo-random byte string seed.
 
    *  ElementToSharedSecret(P) -> ss: Extract a shared secret from an
       element of the group (e.g., by taking the X coordinate of an
