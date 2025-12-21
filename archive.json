@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-18T01:10:12.300317+00:00",
+  "timestamp": "2025-12-21T01:19:09.385587+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -9274,24 +9274,26 @@
       "id": "PR_kwDOMmhxws6ztOPq",
       "title": "Clarify RandomScalar seed MUST be uniformly random",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/98",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "FiloSottile",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-11-16T11:15:11Z",
-      "updatedAt": "2025-11-17T04:44:32Z",
+      "updatedAt": "2025-12-18T15:09:53Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "a4e98394e028e4051e4747c1b846353a9fc72053",
       "headRepository": "FiloSottile/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "patch-1",
       "headRefOid": "644eac7ad699eaf69a340eedcfc35da89859c10b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-12-18T15:09:53Z",
+      "mergedAt": "2025-12-18T15:09:53Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "300d1acd0477376b44094ced82da3ff76fca027f"
+      },
       "comments": [],
       "reviews": [
         {
