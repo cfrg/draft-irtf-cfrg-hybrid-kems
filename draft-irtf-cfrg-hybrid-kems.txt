@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 21 June 2026                                              Cisco
+Expires: 31 July 2026                                              Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                        18 December 2025
+                                                         27 January 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,11 +48,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 June 2026.
+   This Internet-Draft will expire on 31 July 2026.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -887,9 +887,9 @@ def Decaps(dk, ct):
    IND-CCA analyses for the four frameworks require only that the KDF is
    some kind of pseudorandom function, but the SDH-based IND-CCA
    analysis of CG in [XWING], and the corresponding analysis for UG
-   (forthcoming) relies on the KDF being a RO.  Proofs of our target
-   binding properties for our hybrid KEMs require the KDF is a
-   collision-resistant function.
+   [CG26] relies on the KDF being a RO.  Proofs of our target binding
+   properties for our hybrid KEMs require the KDF is a collision-
+   resistant function.
 
    If the KDF is a RO, the key derivation step in the hybrid KEMs can be
    viewed as applying a (RO-based) pseudorandom function - keyed with
@@ -1026,10 +1026,10 @@ def Decaps(dk, ct):
    when the SDH problem holds but the PQ KEM is broken, and one for the
    reverse.  Both are technically novel but are substantially similar to
    the existing peer-reviewed analyses of the CG [XWING] and UK [GHP18]
-   constructions.  A forthcoming document by the editorial team will
-   describe the analysis of UG in detail.
+   constructions.  [CG26] by the editorial team describes the analysis
+   of UG in detail.
 
-   The first IND-CCA analysis, based on SDH, is very similar to the
+   The first IND-CCA analysis, based on SDH, is similar to the
    corresponding analysis of CG given in [XWING]: it gives a
    straightforward reduction to the SDH hardness in the underlying
    group.  Notably, since the PQ KEM key and ciphertext are hashed, the
@@ -1465,6 +1465,9 @@ def Decaps(dk, ct):
               the KEMs: Stronger Security Notions for KEMs and automated
               analysis of KEM-based protocols", 2023,
               <https://eprint.iacr.org/2023/1933.pdf>.
+
+   [CG26]     "StarFortress: Hybrid Post-Quantum KEMs From SDH and IND-
+              CCA", 2026, <https://eprint.iacr.org/2026/125>.
 
    [Cheon06]  Cheon, J. H., "Security Analysis of the Strong Diffie-
               Hellman Problem", 2006.
