@@ -151,6 +151,10 @@ Disallowed?"
         ins: N. Medinger
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
+  CG26:
+    title: "StarFortress: Hybrid Post-Quantum KEMs From SDH and IND-CCA"
+    target: https://eprint.iacr.org/2026/125
+    date: 2026
   CHH+25:
     title: "Starfighters — on the general applicability of X-Wing"
     target: https://eprint.iacr.org/2025/1397
@@ -1012,7 +1016,7 @@ This is a conservative choice given a review of the existing security
 analyses for our hybrid KEM constructions: most IND-CCA analyses for the four
 frameworks require only that the `KDF` is some kind of pseudorandom function,
 but the SDH-based IND-CCA analysis of CG in {{XWING}}, and the corresponding
-analysis for UG (forthcoming) relies on the `KDF` being a RO. Proofs of our
+analysis for UG {{CG26}} relies on the `KDF` being a RO. Proofs of our
 target binding properties for our hybrid KEMs require the `KDF` is a
 collision-resistant function.
 
@@ -1137,10 +1141,10 @@ provides the security properties described above.
 The UG construction has two complementary IND-CCA analyses: one for when the
 SDH problem holds but the PQ KEM is broken, and one for the reverse. Both are
 technically novel but are substantially similar to the existing peer-reviewed
-analyses of the CG {{XWING}} and UK {{GHP18}} constructions. A forthcoming
-document by the editorial team will describe the analysis of UG in detail.
+analyses of the CG {{XWING}} and UK {{GHP18}} constructions. {{CG26}} by the
+editorial team describes the analysis of UG in detail.
 
-The first IND-CCA analysis, based on SDH, is very similar to the
+The first IND-CCA analysis, based on SDH, is similar to the
 corresponding analysis of CG given in {{XWING}}: it gives a straightforward
 reduction to the SDH hardness in the underlying group. Notably, since the PQ
 KEM key and ciphertext are hashed, the C2PRI security of the PQ KEM does not
