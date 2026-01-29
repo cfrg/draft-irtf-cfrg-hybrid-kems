@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-12-21T01:19:09.385587+00:00",
+  "timestamp": "2026-01-29T01:28:09.849709+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -9323,6 +9323,34 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 99,
+      "id": "PR_kwDOMmhxws6_rCAK",
+      "title": "Cite UG proofs on eprint",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/99",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-01-27T18:30:50Z",
+      "updatedAt": "2026-01-27T18:42:31Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "300d1acd0477376b44094ced82da3ff76fca027f",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "cite-ug-proofs",
+      "headRefOid": "895c60451091c9516a33d7481e982dc175fdeb4e",
+      "closedAt": "2026-01-27T18:42:29Z",
+      "mergedAt": "2026-01-27T18:42:29Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
