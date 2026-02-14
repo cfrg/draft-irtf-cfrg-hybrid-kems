@@ -429,10 +429,11 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
-Note that `Decaps` always returns a shared secret and never returns
-an error.  Component KEMs that use implicit rejection (such as
-ML-KEM) produce a deterministic pseudorandom output on invalid
-ciphertexts, which propagates through the combiner's KDF.
+In this document, `Decaps` is modeled as always returning a
+shared secret and never returning an error.  Component KEMs
+that use implicit rejection (such as ML-KEM) produce a
+deterministic pseudorandom output on invalid ciphertexts,
+which propagates through the combiner's KDF.
 
 We also make use of internal algorithms such as:
 
@@ -1039,10 +1040,9 @@ HKDF has been shown to be indifferentiable from a random oracle under
 specific constraints {{LBB20}}:
 
 - that HMAC is indifferentiable from a random oracle,
-which for HMAC-SHA-256 has been shown in {{DRS+13}}, assuming the
-compression function underlying SHA-256 is a random oracle,
-which it is indifferentiable from a random oracle when
-used prefix-free.
+which for HMAC-SHA-256 has been shown in {{DRS+13}} when
+the compression function underlying SHA-256 is modeled as
+a random oracle.
 
 - the values of HKDF's `IKM` input do not collide with
 values of `info` `||` `0x01`. This MUST be enforced by the
@@ -1213,8 +1213,9 @@ are not guaranteed to produce secure results.
 
 There are four hybrid KEM frameworks, and two target binding properties, so
 we need eight total analyses.  The CG and CK binding analyses additionally
-require the corresponding LEAK-BIND property of `KEM_PQ`.  None of these exact results
-were known; thus the following are new results by the editorial team. We include informal
+require the corresponding LEAK-BIND property of `KEM_PQ`.
+None of these exact results were known; thus the following
+are results by the editorial team.  We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.  <!--
 TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results
 about hybrid kem binding; unclear how they compare to ours though.-->
