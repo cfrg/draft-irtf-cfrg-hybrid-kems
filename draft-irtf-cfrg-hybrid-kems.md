@@ -1036,7 +1036,8 @@ specific constraints {{LBB20}}:
 - that HMAC is indifferentiable from a random oracle,
 which for HMAC-SHA-256 has been shown in {{DRS+13}}, assuming the
 compression function underlying SHA-256 is a random oracle,
-which it is indifferentiably when used prefix-free.
+which it is indifferentiable from a random oracle when
+used prefix-free.
 
 - the values of HKDF's `IKM` input do not collide with
 values of `info` `||` `0x01`. This MUST be enforced by the
@@ -1152,7 +1153,7 @@ The second IND-CCA analysis is a straightforward reduction to the IND-CCA
 security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
 KEM's shared secret.
 
-This document's UK construction does not have an IND-CCA analysis; the
+This document's UK construction does not have a dedicated IND-CCA analysis; the
 {{GHP18}} paper on which the construction is based gives a slightly different
 version, namely they do not include the public encapsulation keys in the
 KDF. However, we argue that the proof goes through with trivial modifications
@@ -1295,7 +1296,7 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal,
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal,
 the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
 KDF.
 
@@ -1344,7 +1345,7 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal, the
 KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
 
 If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
