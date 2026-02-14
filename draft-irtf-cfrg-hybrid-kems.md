@@ -422,9 +422,9 @@ A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
 - `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
   input a seed `seed` and generates a public encapsulation key `ek` and a
   secret decapsulation key `dk`, each of which are byte strings.
-- `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
+- `Encaps(ek) -> (ss, ct)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
-  a ciphertext `ct` and shared secret `ss`.
+  a shared secret `ss` and ciphertext `ct`.
 - `Decaps(dk, ct) -> ss`: A deterministic decapsulation algorithm, which
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
@@ -1477,10 +1477,10 @@ When verifying the behavior of a KEM implementation (e.g., by generating or
 verifying test vectors), it is useful for the implementation to expose a
 "derandomized" version of the `Encaps` algorithm:
 
-- `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
+- `EncapsDerand(ek, randomness) -> (shared_secret, ct)`: A deterministic
    encapsulation algorithm, which takes as input a public encapsulation key
-   `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
-   secret `shared_secret`.
+   `ek` and randomness `randomness`, and outputs a shared secret
+   `shared_secret` and ciphertext `ct`.
 
 An implementation that exposes `EncapsDerand` must also define a required
 amount of randomness:
