@@ -686,10 +686,10 @@ The two combiner functions defined in this document are as follows:
 
 ~~~
 def UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    return KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
 
 def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
+    return KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
 ~~~
 
 Note that while the names of the inputs are suggestive of the shared secret,
@@ -736,13 +736,13 @@ above description in the following ways:
 * The decapsulation key returned by `GenerateKeyPair` and consumed by
   `Decaps` is a tuple `(dk_PQ, dk_T)` of per-constituent decapsulation keys
   (or pointers/handles to keys).
-* The `expandDecapsulationKeyG` and `expandDecapsulationKeyK` functions are
+* The `expandDecapsKeyG` and `expandDecapsKeyK` functions are
   replaced by the following, where `decapsToEncaps()` is a function that
   returns the encapsulation key associated with a decapsulation key:
 
 ~~~
-def expandDecapsulationKey(dk):
-    (dk_PQ, dkT) = dk # depending on the private key storage format
+def expandDecapsKey(dk):
+    (dk_PQ, dk_T) = dk # depending on the private key storage format
     ek_PQ = decapsToEncaps(dk_PQ)
     ek_T = decapsToEncaps(dk_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
@@ -1323,7 +1323,7 @@ condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
-this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
+this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
 reduction to the LEAK-BIND-K-PK of PQ KEM.
