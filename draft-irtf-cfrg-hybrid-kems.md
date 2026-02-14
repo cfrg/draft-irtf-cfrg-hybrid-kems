@@ -416,12 +416,12 @@ hybrid KEM to be secure are discussed in {{security}}.
 
 A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
 
-- `GenerateKeyPair() -> (ek, dk)`: A randomized algorithm that generates a
-  public encapsulation key `ek` and a secret decapsulation key `dk`, each of
+- `GenerateKeyPair() -> (dk, ek)`: A randomized algorithm that generates a
+  secret decapsulation key `dk` and a public encapsulation key `ek`, each of
   which are byte strings.
-- `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
-  input a seed `seed` and generates a public encapsulation key `ek` and a
-  secret decapsulation key `dk`, each of which are byte strings.
+- `DeriveKeyPair(seed) -> (dk, ek)`: A deterministic algorithm that takes as
+  input a seed `seed` and generates a secret decapsulation key `dk` and a
+  public encapsulation key `ek`, each of which are byte strings.
 - `Encaps(ek) -> (ss, ct)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
   a shared secret `ss` and ciphertext `ct`.
@@ -431,7 +431,7 @@ A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
 
 We also make use of internal algorithms such as:
 
-- `expandDecapsulationKey(dk) -> (ek, dk)`: A deterministic algorithm that
+- `expandDecapsulationKey(dk) -> (dk, ek)`: A deterministic algorithm that
   takes as input a decapsulation key `dk` and generates keypair intermediate
   values for computation.
 
@@ -632,7 +632,7 @@ def expandDecapsKeyG(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
 
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (dk_PQ, ek_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
     dk_T = Group_T.RandomScalar(seed_T)
     ek_T = Group_T.Exp(Group_T.g, dk_T)
 
@@ -661,8 +661,8 @@ KEMs in parallel.
 def expandDecapsKeyK(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (dk_PQ, ek_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (dk_T, ek_T) = KEM_T.DeriveKeyPair(seed_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
 def prepareEncapsK(ek_PQ, ek_T):
@@ -792,7 +792,7 @@ on the C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
@@ -819,7 +819,7 @@ C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
@@ -846,7 +846,7 @@ on the C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
@@ -873,7 +873,7 @@ C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
