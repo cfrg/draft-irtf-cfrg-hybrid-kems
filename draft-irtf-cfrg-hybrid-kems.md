@@ -1126,10 +1126,8 @@ apply in their settings.
 
 ## Security Non-goals for Hybrid KEMs {#non-goals}
 
-Security properties that were considered and not included in these designs:
-
-Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
-or binding {{GMP22}}, {{CDM23}}.
+Security properties not targeted by these designs are listed in
+{{out-of-scope}}.
 
 ## Security Analysis
 
@@ -1452,16 +1450,17 @@ Template:
 
 The registry should initially be empty.
 
-# Out of Scope
+# Out of Scope {#out-of-scope}
 
-Considerations that were considered and not included in these designs:
+Security properties and design considerations that were considered
+and not included in these designs:
 
 Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
-or binding {{GMP22}}, {{CDM23}}
+or binding {{GMP22}}, {{CDM23}}.
 
 ## More than Two Component KEMs
 
-Design team decided to restrict the space to only two components, a
+This document restricts the scope to two components: a
 post-quantum and a traditional KEM.
 
 ## Parameterized Output Length
