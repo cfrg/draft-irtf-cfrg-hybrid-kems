@@ -429,6 +429,11 @@ A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
+Note that `Decaps` always returns a shared secret and never returns
+an error.  Component KEMs that use implicit rejection (such as
+ML-KEM) produce a deterministic pseudorandom output on invalid
+ciphertexts, which propagates through the combiner's KDF.
+
 We also make use of internal algorithms such as:
 
 - `expandDecapsulationKey(dk) -> (ek, dk)`: A deterministic algorithm that
@@ -1207,8 +1212,9 @@ are not guaranteed to produce secure results.
 ### Binding analyses
 
 There are four hybrid KEM frameworks, and two target binding properties, so
-we need eight total analyses. None of these exact results were known; thus
-the following are new results by the editorial team. We include informal
+we need eight total analyses.  The CG and CK binding analyses additionally
+require the corresponding LEAK-BIND property of `KEM_PQ`.  None of these exact results
+were known; thus the following are new results by the editorial team. We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.  <!--
 TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results
 about hybrid kem binding; unclear how they compare to ours though.-->
