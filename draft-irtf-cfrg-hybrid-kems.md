@@ -24,21 +24,9 @@ author:
     email: paulgrubbs12@gmail.com
 
 
-normative:
+informative:
   FIPS202: DOI.10.6028/NIST.FIPS.202
   FIPS203: DOI.10.6028/NIST.FIPS.203
-
-informative:
-  ABR01:
-    title: "The Oracle Diffie-Hellman Assumptions and an Analysis of DHIES"
-    date: Jan, 2001
-    author:
-      -
-        ins: Michel Abdalla
-      -
-        ins: Mihir Bellare
-      -
-        ins: Phillip Rogaway
   ABH+21:
     title: "Analysing the HPKE standard."
     date: April, 2021
@@ -63,14 +51,6 @@ informative:
     title: "The Sponge is Quantum Indifferentiable"
     date: 2025
     target: https://eprint.iacr.org/2025/731.pdf
-  ANSIX9.62:
-    title: "Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"
-    date: Nov, 2005
-    seriesinfo:
-      "ANS": X9.62-2005
-    author:
-      -
-        org: ANS
   AOB+24:
     title: "Formally verifying Kyber Episode V: Machine-checked IND-CCA security and correctness of ML-KEM in EasyCrypt"
     date: 2024
@@ -104,10 +84,6 @@ informative:
     title: "On the Indifferentiability of the Sponge Construction"
     target: https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf
     date: 2008
-  BDP+11:
-    title: "Cryptographic sponge functions"
-    target: https://keccak.team/files/CSF-0.1.pdf
-    date: 2011
   BHK09:
     title: "Subtleties in the Definition of IND-CCA: When and How Should Challenge-Decryption be
 Disallowed?"
@@ -163,7 +139,6 @@ Disallowed?"
     title: "To Hash or Not to Hash Again? (In)differentiability Results for H^2 and HMAC"
     target: https://eprint.iacr.org/2013/382.pdf
     date: 2013
-  FIPS186: DOI.10.6028/NIST.FIPS.186-5 #https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
   FG24:
     title: "Security Analysis of Signal's PQXDH Handshake"
     date: 2024
@@ -187,17 +162,6 @@ Disallowed?"
         name: V. Maram
       -
         name: K.G. Paterson
-  I-D.driscoll-pqt-hybrid-terminology:
-  KSMW2024:
-    target: https://eprint.iacr.org/2024/1233
-    title: "Binding Security of Implicitly-Rejecting KEMs and Application to BIKE and HQC"
-    author:
-      -
-        ins: J. Kraemer
-      -
-        ins: P. Struck
-      -
-        ins: M. Weishaupl
   LBB20:
     title: "A Mechanised Cryptographic Proof of the WireGuard Virtual Private Network Protocol"
     date: 2019
@@ -240,18 +204,10 @@ Disallowed?"
     -
       ins: J. Schwenk
     date: 2020-09
-  RS92:
-    title: "Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack."
-    date: 1992
-    target: https://link.springer.com/chapter/10.1007/3-540-46766-1_35
   Rosulek:
     title: "The Joy of Cryptography"
     date: 2021
     target: https://joyofcryptography.com/pdf/book.pdf
-  RSS11:
-    title: "Careful with Composition: Limitations of Indifferentiability and Universal Composability"
-    date: 2011
-    target: https://eprint.iacr.org/2011/339.pdf
   SCHMIEG2024:
     title: "Unbindable Kemmy Schmidt: ML-KEM is neither MAL-BIND-K-CT nor MAL-BIND-K-PK"
     target: https://eprint.iacr.org/2024/523.pdf
@@ -260,10 +216,6 @@ Disallowed?"
       -
         ins: S. Schmieg
         name: Sophie Schmieg
-  SEC1:
-    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
-    target: https://secg.org/sec1-v2.pdf
-    date: 2009
   XWING:
     title: "X-Wing: The Hybrid KEM You’ve Been Looking For"
     target: https://eprint.iacr.org/2024/039.pdf
@@ -960,7 +912,7 @@ C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires
 the attacker to match a specific, honestly generated ciphertext, as opposed
 to finding an arbitrary pair.
 
-Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to have this
+Several PQ KEMs have been shown to have C2PRI.  ML-KEM {{FIPS203}} was shown to have this
 property in {{XWING}}, and {{CHH+25}} proves C2PRI for several other
 algorithms, including FrodoKEM, HQC, Classic McEliece, and sntrup.
 
@@ -1005,7 +957,7 @@ encapsulation operation is completed (LEAK).
 There is quite a bit of diversity in the binding properties provided by KEMs.
 Table 5 of {{CDM23}} shows the binding properties of a few KEMs.  For
 example: DHKEM provides MAL-level binding for several properties. ML-KEM
-provides only LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT,
+provides only LEAK-level binding {{SCHMIEG2024}}. Classic McEliece provides MAL-BIND-K-CT,
 but no assurance at all of X-BIND-K-PK.
 
 ### Indifferentiability from a Random Oracle {#security-kdfs}
@@ -1026,7 +978,7 @@ secrets output by the constituent KEMs - to the other inputs. Thus, analyses
 which require the `KDF` to be a PRF, such as the one given in {{GHP18}} for
 UK, or the standard-model analysis of CG in {{XWING}}, apply.
 
-Sponge-based constructions such as SHA-3 have been shown to be
+Sponge-based constructions such as SHA-3 {{FIPS202}} have been shown to be
 indifferentiable against classical {{BDP+08}} as well as quantum adversaries
 {{ACM+25}}.
 
@@ -1406,9 +1358,9 @@ material of variable length and processing it using hash functions may result
 in a timing side channel. In broad terms, when the secret is longer, the hash
 function may need to process more blocks internally. In some unfortunate
 circumstances, this has led to timing attacks, e.g. the Lucky Thirteen
-[LUCKY13] and Raccoon [RACCOON] attacks.
+{{LUCKY13}} and Raccoon {{RACCOON}} attacks.
 
-Furthermore, [AVIRAM] identified a risk of using variable-length secrets when
+Furthermore, {{AVIRAM}} identified a risk of using variable-length secrets when
 the hash function used in the key derivation function is no longer
 collision-resistant.
 
