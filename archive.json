@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-29T01:28:09.849709+00:00",
+  "timestamp": "2026-02-15T01:49:02.178067+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -1484,6 +1484,22 @@
           "updatedAt": "2025-11-02T21:15:09Z"
         }
       ]
+    },
+    {
+      "number": 103,
+      "id": "I_kwDOMmhxws7q9kdp",
+      "title": "StarFortress (CG26) proof coverage for UG security claims",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/103",
+      "state": "OPEN",
+      "author": "grittygrease",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "## Context\n\nThe hybrid KEM draft's Security Considerations (Section 6)\nreferences formal IND-CCA analyses for each of its four hybrid\nKEM frameworks. For UG (the \"Universal Group\" framework\ncombining a nominal-group DH shared secret with a PQ KEM shared\nsecret via the UniversalCombiner), the cited proof is\nStarFortress by Connolly and Grubbs (ePrint 2026/125, cited as\n[CG26]).\n\nThis issue summarizes what CG26 covers, where its scope does\nnot directly match the draft's UG specification, and what\nchanges would close the remaining gaps. The core proofs\n(Theorems 1 and 2) appear technically sound.\n\n## What CG26 covers (for IND-CCA)\n\n- **ROM / SDH-based analysis (Theorem 1):** UG is IND-CCA\n  secure assuming SDH for the nominal group and modeling the\n  KDF as a random oracle. This argument does not require\n  C2PRI-style assumptions on the PQ KEM.\n\n- **Standard-model fallback (Theorem 2):** UG is IND-CCA\n  secure assuming the PQ KEM is IND-CCA and the KDF behaves\n  as a PRF when keyed by the PQ shared secret k1. This is a\n  weaker assumption on H than the ROM in Theorem 1, but for\n  concrete instantiations like HKDF-SHA256, verifying PRF\n  security under k1 requires checking that k1 has sufficient\n  min-entropy (CG26 Section 5).\n\n- **HKDF side-conditions stated:** CG26 calls out the HKDF\n  `IKM != info || 0x01` side-condition (citing the WireGuard\n  mechanized proof [LBB19]) as needed for HKDF\n  indifferentiability.\n\n**Scope notes:**\n\n- CG26 analyzes UG with independently generated component keys\n  (its KeyGen samples the component keys independently). It\n  does not model the draft's default shared-seed PRG-based key\n  derivation.\n\n- Both results are single-user. CG26 does not provide\n  multi-user or multi-target reductions, though [GHS25]\n  provides multi-challenge reductions that could close that\n  gap. The draft does not currently claim tight multi-user\n  bounds (#64, closed).\n\n- CG26 does not discuss small-order point handling for X25519\n  (the Dec oracle computes `k_2 <- exp(c_2, sk_2)` without\n  validating `c_2`), but the nominal group abstraction from\n  [ABH+21] accounts for this. CG26 treats `label` as a fixed\n  constant and does not analyze cross-instantiation collisions,\n  but these are handled by the IANA label registry (#81,\n  closed, resolved by #82). Neither requires draft changes.\n\n## Where CG26 does not (yet) cover the draft's UG specification\n\n1. **Shared-seed key generation is not modeled by CG26's\n   KeyGen.** The draft's default KeyGen derives both component\n   key pairs from a single seed via a PRG (Section 5.2), with\n   separate PRG security requirements in Section 6.1.6. CG26's\n   proofs assume independently generated component keys. The\n   standard bridging argument (replace PRG output with truly\n   random coins via a hybrid, then apply CG26) is\n   straightforward, but it is not written down in CG26 or in\n   the draft. Section 6.4.2 (Binding analyses) already\n   acknowledges the independent-keys simplification for its\n   binding sketches. Section 6.4.1 should have an analogous\n   caveat for IND-CCA. #77 (closed) explored whether\n   shared-seed vs external keygen should be treated as\n   different algorithms.\n\n2. **Concrete HKDF side-condition is not instantiated.** The\n   draft requires enforcing the HKDF non-collision\n   side-condition (Section 6.1.5), and CG26 states it, but\n   neither verifies it for any concrete UG encoding or\n   parameter set. For typical choices (X25519 + ML-KEM-768),\n   length separation is expected to make collision structurally\n   impossible (IKM ~64 bytes vs info >1000 bytes), but this is\n   encoding- and parameter-set-dependent. This is latent today\n   (no parameter sets), but should be checked or forced\n   structurally once parameter sets are added. #56 (closed)\n   discussed KDF property requirements.\n\n3. **Binding proofs remain informal.** The draft's UG binding\n   discussion is explicitly informal and deferred to a\n   \"forthcoming paper\" (Section 6.4.2). CG26 Section 4.3\n   remarks the UK argument should transfer \"basically\n   unmodified\" but does not provide a formal proof. #77\n   (closed) ties binding properties to keygen choices.\n\n## Suggested changes to the draft\n\n- Add a sentence in Section 6.4.1 clarifying CG26's IND-CCA\n  proofs assume independently generated component keys, and\n  that the draft's shared-seed keygen relies on the PRG\n  requirements in Section 6.1.6.\n\n- When concrete parameter sets are added, explicitly verify or\n  structurally enforce the HKDF `IKM != info || 0x01`\n  side-condition (per Section 6.1.5). An encoding rule that\n  prevents collision for any conforming parameter set is\n  preferable to per-instantiation verification.\n\n- Rather than waiting for the forthcoming paper, make Section\n  6.4.2 self-contained: name the specific assumption the\n  binding sketches rely on (KDF collision resistance) and note\n  that CG26 Section 4.3 provides supporting but not formal\n  analysis. Update with a citation when a rigorous proof is\n  published.\n\n## Suggested changes to CG26\n\nThese are informational suggestions for the CG26 authors\n(Connolly and Grubbs), not actionable items for the draft.\n\n- **Verify the HKDF non-collision constraint for UG (item 2\n  above).** CG26 Section 5 states the `IKM != info || 0x01`\n  side-condition but does not check it for UG's input split.\n  For typical choices (X25519 + ML-KEM-768), length separation\n  makes collision structurally impossible (IKM ~64 bytes vs\n  info >1000 bytes), but this is encoding- and parameter-set-\n  dependent and worth stating explicitly in the paper.\n\n- **Prove binding properties formally (item 3 above).** CG26\n  Section 4.3 asserts LEAK-BIND-K-PK and LEAK-BIND-K-CT for\n  UG follow from the UK proofs \"basically unmodified\" but gives\n  no formal proof. Even a short appendix reducing UG binding to\n  UK binding would close this gap.\n\n- **Clarify \u03b5h vs \u03b5u in Theorem 2.** Definition 6 samples\n  `ske <- \u03b5h` (honest exponent distribution) in Enc, but\n  Theorem 2's Game G0 (Figure 10, line 7) samples `ske <- \u03b5u`\n  (uniform). This is either a typo in Figure 10, an implicit\n  assumption that \u03b5h and \u03b5u are close enough for the intended\n  instantiations, or a missing Delta_N-style term in the\n  bound. The practical impact is minimal for X25519 and\n  ML-KEM-768, but either the bound is slightly looser than\n  stated or the proof covers a slightly different construction\n  than Definition 6 specifies.\n\n## References\n\n- StarFortress: https://eprint.iacr.org/2026/125\n- [GHS25] multi-challenge reductions: https://eprint.iacr.org/2025/343\n- Related closed issues: #56 (KDF properties), #64 (multi-user),\n  #77 (external keygen), #81 (label registry)\n",
+      "createdAt": "2026-02-14T18:17:14Z",
+      "updatedAt": "2026-02-14T18:20:01Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -9349,6 +9365,84 @@
       "mergeCommit": {
         "oid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 100,
+      "id": "PR_kwDOMmhxws7DzvHD",
+      "title": "Fix pseudocode bugs, naming consistency, and return order",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/100",
+      "state": "OPEN",
+      "author": "grittygrease",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "## Summary\n\nThis PR fixes pseudocode errors, naming inconsistencies, and aligns the Encaps return order with FIPS 203 and the draft's own internal usage.\n\n### Commit 1: Fix pseudocode bugs, typos, and proof text errors\n\n- **`ex_PQ` undefined variable**: All four `UniversalCombiner` calls in UG/UK Encaps/Decaps referenced `ex_PQ` instead of `ek_PQ`. This variable is not defined anywhere in the document.\n- **Extra closing parens**: All eight combiner calls had `Label))` with an unmatched `)`.\n- **`Decap`/`Encap` vs `Decaps`/`Encaps`**: The subroutines `prepareDecapsG`, `prepareEncapsK`, and `prepareDecapsK` used `Decap`/`Encap` instead of `Decaps`/`Encaps` as defined in the KEM API.\n- **CK Encaps split error**: CK Encaps used `Group_T.Nelem` instead of `KEM_T.Nek`. CK uses a traditional KEM, not a nominal group.\n- **C2PRI definition**: `Decaps(dk, ct)` should be `Decaps(dk, ct')` \u2014 the original defines a vacuously true property instead of second-preimage resistance.\n- **UK/CG copy-paste error**: CG Binding section intro said \"We will show that UK still has...\" \u2014 should be \"CG\".\n- **CK binding proof**: \"nominal-group key pairs\" should be \"traditional KEM key pairs\" since CK uses `KEM_T`.\n- **Missing word**: \"The additional provided by\" -> \"The additional protection provided by\"\n- **Typos**: Resistence, Algortihms, environemnts, \"the the\"\n- **Grammar**: \"KEMs)\" -> \"KEM)\", spurious comma\n- **Heading levels**: LEAK-BIND-K-PK of UG and UK sections were `####` instead of `#####` (should match sibling K-CT sections)\n\n### Commit 2: Fix naming consistency\n\n- Add missing `return` statements to `UniversalCombiner` and `C2PRICombiner` functions\n- Align prose references `expandDecapsulationKeyG/K` with actual function names `expandDecapsKeyG/K`\n- Fix `dkT` -> `dk_T` for consistent underscore naming\n- Fix `KEM_PQ.Decap` -> `KEM_PQ.Decaps` in CG LEAK-BIND-K-PK proof text\n\n### Commit 3: Fix Encaps/EncapsDerand return order\n\nFIPS 203 Section 7.2 specifies `ML-KEM.Encaps` returns `(K, c)` with the shared secret first. The draft's own subroutines already used `(ss, ct)` order internally. This commit aligns the API definitions to `(ss, ct)` and fixes the CK Encaps `split()` call to use `KEM_T.Nek` instead of `Group_T.Nelem`.\n",
+      "createdAt": "2026-02-14T18:16:49Z",
+      "updatedAt": "2026-02-14T18:54:52Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
+      "headRepository": "grittygrease/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "fix/pseudocode",
+      "headRefOid": "ad8c998e542e7a507bd09c4a92ffba780bd496fa",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 101,
+      "id": "PR_kwDOMmhxws7DzvIv",
+      "title": "Fix references: remove unused, fix broken citations, add missing",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/101",
+      "state": "OPEN",
+      "author": "grittygrease",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "## Summary\n\nThis PR cleans up the reference section: fixes broken kramdown citations, removes genuinely unused references, adds missing inline citations, and corrects the normative/informative classification.\n\n### Changes\n\n- **Fix broken citations**: `[LUCKY13]`, `[RACCOON]`, `[AVIRAM]` used bare bracket syntax instead of kramdown `{{REF}}`. These rendered as literal text rather than hyperlinked references.\n\n- **Move FIPS202/FIPS203 from normative to informative**: The draft defines generic frameworks that can be instantiated with any KEM/KDF meeting the security requirements. SHA-3 and ML-KEM are examples, not mandatory. They are informative per RFC convention.\n\n- **Add inline citations**: `ML-KEM {{FIPS203}}` where ML-KEM is first discussed in the C2PRI section, `SHA-3 {{FIPS202}}` in the indifferentiability section, and `{{SCHMIEG2024}}` to back the claim that ML-KEM provides only LEAK-level binding.\n\n- **Remove 9 unused references**: ABR01, ANSIX9.62, BDP+11, FIPS186, I-D.driscoll-pqt-hybrid-terminology, KSMW2024, RS92, RSS11, SEC1. Verified each is not cited in the draft body.\n",
+      "createdAt": "2026-02-14T18:16:58Z",
+      "updatedAt": "2026-02-14T18:16:59Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
+      "headRepository": "grittygrease/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "fix/references",
+      "headRefOid": "a1a39e9dadcc027258b939b20821cb2f9d1e9a8b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 102,
+      "id": "PR_kwDOMmhxws7DzvLW",
+      "title": "Fix security text: deduplicate non-goals, proof corrections, spec clarity",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/102",
+      "state": "OPEN",
+      "author": "grittygrease",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "## Summary\n\nThis PR fixes editorial issues in the Security Considerations and Out of Scope sections, corrects proof text errors, and adds two clarifying statements about KEM semantics.\n\n### Commit 1: Deduplicate non-goals text, fix Out of Scope prose\n\nThe Security Non-goals section (Section 8.3) duplicated the list from the Out of Scope section. Replace the duplicate with a cross-reference using a new `{#out-of-scope}` anchor. Also fix the Out of Scope section:\n- \"Considerations that were considered\" -> clearer phrasing\n- Add missing period after `{{CDM23}}`\n- \"Design team decided to restrict\" -> \"This document restricts\"\n\n### Commit 2: Fix proof text: grammar, missing parens, UK IND-CCA qualifier\n\n- **HKDF indifferentiability**: Rewrote the HMAC-SHA-256 bullet to remove the incorrect prefix-free qualifier (which applies to plain Merkle-Damgard, not HMAC) and cite DRS+13 precisely: HMAC-SHA-256 is indifferentiable from a RO when the compression function underlying SHA-256 is modeled as a RO\n- **Missing closing paren**: In both the CG and CK LEAK-BIND-K-CT proofs, `ss_PQ^1 (:= KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1),` was missing the outer `)` that closes the `:=` group. The matching `ss_PQ^0` expression has `))`.\n- **UK qualifier**: \"does not have an IND-CCA analysis\" -> \"does not have a dedicated IND-CCA analysis\". The next sentence explains that GHP18's proof adapts with trivial modifications.\n\n### Commit 3: Add implicit rejection note, LEAK-BIND requirement for CG/CK binding\n\n- **Implicit rejection**: Add a note after the Decaps API definition clarifying that Decaps is *modeled* as always returning a shared secret (not a universal API claim). Component KEMs with implicit rejection (e.g., ML-KEM) produce a deterministic pseudorandom output on invalid ciphertexts.\n- **LEAK-BIND requirement**: State that the CG and CK binding analyses additionally require the corresponding LEAK-BIND property of `KEM_PQ`. This matches the language already used in the CG Binding section introduction and makes the precondition visible at the top of the binding analyses section.\n\n### Commit 4: Fix HKDF indifferentiability claim, tighten Decaps modeling note\n\n- **HKDF rewrite**: Remove incorrect prefix-free qualifier from HMAC-SHA-256 indifferentiability claim. DRS+13's result requires only that the compression function is modeled as a RO; prefix-free applies to plain Merkle-Damgard, not HMAC.\n- **Decaps note**: \"Note that Decaps always returns\" -> \"In this document, Decaps is modeled as always returning\" to avoid implying a universal API constraint.\n- **Binding language**: \"new results by the editorial team\" -> \"results by the editorial team\"\n- **Line wrapping**: Rewrap affected lines to 72 chars.\n",
+      "createdAt": "2026-02-14T18:17:06Z",
+      "updatedAt": "2026-02-14T18:17:07Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
+      "headRepository": "grittygrease/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "fix/security-editorial",
+      "headRefOid": "c76e8e78045cc253d7c7313259529e524cd6624c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
