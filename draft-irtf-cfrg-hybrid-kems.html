@@ -1516,32 +1516,37 @@ takes as input a secret decapsulation key <code>dk</code> and ciphertext <code>c
 outputs a shared secret <code>ss</code>.<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.1-4">We also make use of internal algorithms such as:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">In this document, <code>Decaps</code> is modeled as always returning a
+shared secret and never returning an error.  Component KEMs
+that use implicit rejection (such as ML-KEM) produce a
+deterministic pseudorandom output on invalid ciphertexts,
+which propagates through the combiner's KDF.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.1-5">We also make use of internal algorithms such as:<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.1-5.1">
-            <p id="section-4.1-5.1.1"><code>expandDecapsulationKey(dk) -&gt; (dk, ek)</code>: A deterministic algorithm that
+<li class="normal" id="section-4.1-6.1">
+            <p id="section-4.1-6.1.1"><code>expandDecapsulationKey(dk) -&gt; (dk, ek)</code>: A deterministic algorithm that
 takes as input a decapsulation key <code>dk</code> and generates keypair intermediate
-values for computation.<a href="#section-4.1-5.1.1" class="pilcrow">¶</a></p>
+values for computation.<a href="#section-4.1-6.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.1-6">We assume that the values produced and consumed by the above functions are
-all byte strings, with fixed lengths:<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+<p id="section-4.1-7">We assume that the values produced and consumed by the above functions are
+all byte strings, with fixed lengths:<a href="#section-4.1-7" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.1-7.1">
-            <p id="section-4.1-7.1.1"><code>Nseed</code>: The length in bytes of a key seed<a href="#section-4.1-7.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.1-8.1">
+            <p id="section-4.1-8.1.1"><code>Nseed</code>: The length in bytes of a key seed<a href="#section-4.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-7.2">
-            <p id="section-4.1-7.2.1"><code>Nek</code>: The length in bytes of a public encapsulation key<a href="#section-4.1-7.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-8.2">
+            <p id="section-4.1-8.2.1"><code>Nek</code>: The length in bytes of a public encapsulation key<a href="#section-4.1-8.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-7.3">
-            <p id="section-4.1-7.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-7.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-8.3">
+            <p id="section-4.1-8.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-8.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-7.4">
-            <p id="section-4.1-7.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by <code>Encaps</code><a href="#section-4.1-7.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-8.4">
+            <p id="section-4.1-8.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by <code>Encaps</code><a href="#section-4.1-8.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-7.5">
-            <p id="section-4.1-7.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by <code>Encaps</code> or
-<code>Decaps</code><a href="#section-4.1-7.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-8.5">
+            <p id="section-4.1-8.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by <code>Encaps</code> or
+<code>Decaps</code><a href="#section-4.1-8.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2316,9 +2321,9 @@ specific constraints <span>[<a href="#LBB20" class="cite xref">LBB20</a>]</span>
 <ul class="normal">
 <li class="normal" id="section-6.1.5-5.1">
               <p id="section-6.1.5-5.1.1">that HMAC is indifferentiable from a random oracle,
-which for HMAC-SHA-256 has been shown in <span>[<a href="#DRS_13" class="cite xref">DRS_13</a>]</span>, assuming the
-compression function underlying SHA-256 is a random oracle,
-which it is indifferentiably when used prefix-free.<a href="#section-6.1.5-5.1.1" class="pilcrow">¶</a></p>
+which for HMAC-SHA-256 has been shown in <span>[<a href="#DRS_13" class="cite xref">DRS_13</a>]</span> when
+the compression function underlying SHA-256 is a random oracle,
+which is a regular assumption in the literature.<a href="#section-6.1.5-5.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.1.5-5.2">
               <p id="section-6.1.5-5.2.1">the values of HKDF's <code>IKM</code> input do not collide with
@@ -2445,9 +2450,8 @@ apply in their settings.<a href="#section-6.2.2-4" class="pilcrow">¶</a></p>
         <h3 id="name-security-non-goals-for-hybr">
 <a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-security-non-goals-for-hybr" class="section-name selfRef">Security Non-goals for Hybrid KEMs</a>
         </h3>
-<p id="section-6.3-1">Security properties that were considered and not included in these designs:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
-<p id="section-6.3-2">Anonymity <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, Deniability, Obfuscation, other forms of key-robustness
-or binding <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-1">Security properties not targeted by these designs are listed in
+<a href="#out-of-scope" class="auto internal xref">Section 8</a>.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-analysis">
@@ -2475,7 +2479,7 @@ appear in the bound.<a href="#section-6.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-3">The second IND-CCA analysis is a straightforward reduction to the IND-CCA
 security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
 KEM's shared secret.<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-4">This document's UK construction does not have an IND-CCA analysis; the
+<p id="section-6.4.1-4">This document's UK construction does not have a dedicated IND-CCA analysis; the
 <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> paper on which the construction is based gives a slightly different
 version, namely they do not include the public encapsulation keys in the
 KDF. However, we argue that the proof goes through with trivial modifications
@@ -2524,8 +2528,10 @@ are not guaranteed to produce secure results.<a href="#section-6.4.1-10" class="
 <a href="#section-6.4.2" class="section-number selfRef">6.4.2. </a><a href="#name-binding-analyses" class="section-name selfRef">Binding analyses</a>
           </h4>
 <p id="section-6.4.2-1">There are four hybrid KEM frameworks, and two target binding properties, so
-we need eight total analyses. None of these exact results were known; thus
-the following are new results by the editorial team. We include informal
+we need eight total analyses.  The CG and CK binding analyses additionally
+require the corresponding LEAK-BIND property of <code>KEM_PQ</code>.
+None of these exact results were known; thus the following
+are results by the editorial team.  We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.<a href="#section-6.4.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2-2">We note that these sketches implicitly ignore the fact that in our hybrid
 KEMs, both key pairs are derived from a common random seed; we instead
@@ -2634,7 +2640,7 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a 
 <p id="section-6.4.2.3.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal,
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal,
 the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
 KDF.<a href="#section-6.4.2.3.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.3.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
@@ -2690,7 +2696,7 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a 
 <p id="section-6.4.2.4.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal, the
 KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.4.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.4.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
@@ -2831,15 +2837,16 @@ KEM.<a href="#section-7-3.8.1" class="pilcrow">¶</a></p>
       <h2 id="name-out-of-scope">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-out-of-scope" class="section-name selfRef">Out of Scope</a>
       </h2>
-<p id="section-8-1">Considerations that were considered and not included in these designs:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">Security properties and design considerations that were considered
+and not included in these designs:<a href="#section-8-1" class="pilcrow">¶</a></p>
 <p id="section-8-2">Anonymity <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, Deniability, Obfuscation, other forms of key-robustness
-or binding <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span><a href="#section-8-2" class="pilcrow">¶</a></p>
+or binding <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>.<a href="#section-8-2" class="pilcrow">¶</a></p>
 <div id="more-than-two-component-kems">
 <section id="section-8.1">
         <h3 id="name-more-than-two-component-kem">
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-more-than-two-component-kem" class="section-name selfRef">More than Two Component KEMs</a>
         </h3>
-<p id="section-8.1-1">Design team decided to restrict the space to only two components, a
+<p id="section-8.1-1">This document restricts the scope to two components: a
 post-quantum and a traditional KEM.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2849,7 +2856,20 @@ post-quantum and a traditional KEM.<a href="#section-8.1-1" class="pilcrow">¶</
 <a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-parameterized-output-length" class="section-name selfRef">Parameterized Output Length</a>
         </h3>
 <p id="section-8.2-1">Not analyzed as part of any security proofs in the literature, and a
-complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+Security properties and design considerations that were considered
+and not included in these designs:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.2-2.1">
+            <p id="section-8.2-2.1.1">Anonymity <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, Deniability, Obfuscation, other forms of key-robustness
+or binding <span>[<a href="#GMP22" class="cite xref">GMP22</a>]</span>, <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span><a href="#section-8.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.2-2.2">
+            <p id="section-8.2-2.2.1">More than two components: this document restricts the scope to two components: a post-quantum component and a traditional component.<a href="#section-8.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.2-2.3">
+            <p id="section-8.2-2.3.1">Parameterized output length: not analyzed as part of any security proofs in the literature, and a complication deemed unnecessary.<a href="#section-8.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
 </section>
 </div>
 </section>
