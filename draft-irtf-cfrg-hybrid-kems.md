@@ -385,6 +385,12 @@ A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
+In this document, `Decaps` is modeled as always returning a
+shared secret and never returning an error.  Component KEMs
+that use implicit rejection (such as ML-KEM) produce a
+deterministic pseudorandom output on invalid ciphertexts,
+which propagates through the combiner's KDF.
+
 We also make use of internal algorithms such as:
 
 - `expandDecapsulationKey(dk) -> (dk, ek)`: A deterministic algorithm that
@@ -990,9 +996,9 @@ HKDF has been shown to be indifferentiable from a random oracle under
 specific constraints {{LBB20}}:
 
 - that HMAC is indifferentiable from a random oracle,
-which for HMAC-SHA-256 has been shown in {{DRS+13}}, assuming the
-compression function underlying SHA-256 is a random oracle,
-which it is indifferentiably when used prefix-free.
+which for HMAC-SHA-256 has been shown in {{DRS+13}} when
+the compression function underlying SHA-256 is a random oracle,
+which is a regular assumption in the literature.
 
 - the values of HKDF's `IKM` input do not collide with
 values of `info` `||` `0x01`. This MUST be enforced by the
@@ -1082,10 +1088,8 @@ apply in their settings.
 
 ## Security Non-goals for Hybrid KEMs {#non-goals}
 
-Security properties that were considered and not included in these designs:
-
-Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
-or binding {{GMP22}}, {{CDM23}}.
+Security properties not targeted by these designs are listed in
+{{out-of-scope}}.
 
 ## Security Analysis
 
@@ -1110,7 +1114,7 @@ The second IND-CCA analysis is a straightforward reduction to the IND-CCA
 security of the PQ KEM, and the PRF security of the RO when keyed with the PQ
 KEM's shared secret.
 
-This document's UK construction does not have an IND-CCA analysis; the
+This document's UK construction does not have a dedicated IND-CCA analysis; the
 {{GHP18}} paper on which the construction is based gives a slightly different
 version, namely they do not include the public encapsulation keys in the
 KDF. However, we argue that the proof goes through with trivial modifications
@@ -1161,8 +1165,10 @@ are not guaranteed to produce secure results.
 ### Binding analyses
 
 There are four hybrid KEM frameworks, and two target binding properties, so
-we need eight total analyses. None of these exact results were known; thus
-the following are new results by the editorial team. We include informal
+we need eight total analyses.  The CG and CK binding analyses additionally
+require the corresponding LEAK-BIND property of `KEM_PQ`.
+None of these exact results were known; thus the following
+are results by the editorial team.  We include informal
 justifications here and defer rigorous proofs to a forthcoming paper.  <!--
 TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results
 about hybrid kem binding; unclear how they compare to ours though.-->
@@ -1250,7 +1256,7 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal,
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal,
 the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
 KDF.
 
@@ -1299,7 +1305,7 @@ ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.
 Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal, the
 KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
 
 If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
@@ -1405,22 +1411,31 @@ Template:
 
 The registry should initially be empty.
 
-# Out of Scope
+# Out of Scope {#out-of-scope}
 
-Considerations that were considered and not included in these designs:
+Security properties and design considerations that were considered
+and not included in these designs:
 
 Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
-or binding {{GMP22}}, {{CDM23}}
+or binding {{GMP22}}, {{CDM23}}.
 
 ## More than Two Component KEMs
 
-Design team decided to restrict the space to only two components, a
+This document restricts the scope to two components: a
 post-quantum and a traditional KEM.
 
 ## Parameterized Output Length
 
 Not analyzed as part of any security proofs in the literature, and a
-complication deemed unnecessary.
+Security properties and design considerations that were considered
+and not included in these designs:
+
+- Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
+or binding {{GMP22}}, {{CDM23}}
+
+- More than two components: this document restricts the scope to two components: a post-quantum component and a traditional component.
+
+- Parameterized output length: not analyzed as part of any security proofs in the literature, and a complication deemed unnecessary.
 
 --- back
 
