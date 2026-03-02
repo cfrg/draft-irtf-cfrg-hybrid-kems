@@ -687,7 +687,7 @@ def GenerateKeyPair():
 
 def DecapsToEncaps(dk):
     # The dk is always in seed format
-    (_dk, ek) = DeriveKeyPair(dk)
+    (_, ek) = DeriveKeyPair(dk)
     return ek
 ~~~
 
