@@ -291,7 +291,7 @@ underlying algorithms are secure.
 
 Post-quantum (PQ) cryptographic algorithms are based on problems that are
 conjectured to be resistant to attacks possible on a quantum computer. Key
-Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic
+Encapsulation Mechanisms (KEMs) are a standardized class of cryptographic
 scheme that can be used to build protocols in lieu of traditional,
 quantum-vulnerable variants such as finite field or elliptic curve
 Diffie-Hellman (DH) based protocols.
@@ -378,7 +378,7 @@ using a right arrow to separate inputs from outputs: f : inputs → outputs.
 
 # Cryptographic Dependencies {#cryptographic-deps}
 
-The generic hybrid PQ/T KEM frameworks we define depend on the the following
+The generic hybrid PQ/T KEM frameworks we define depend on the following
 cryptographic primitives:
 
 - Key Encapsulation Mechanisms ({{kems}})
@@ -418,24 +418,24 @@ hybrid KEM to be secure are discussed in {{security}}.
     ss        ==        ss
 ~~~
 
-A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:
+A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
 
-- `GenerateKeyPair() -> (ek, dk)`: A randomized algorithm that generates a
-  public encapsulation key `ek` and a secret decapsulation key `dk`, each of
+- `GenerateKeyPair() -> (dk, ek)`: A randomized algorithm that generates a
+  secret decapsulation key `dk` and a public encapsulation key `ek`, each of
   which are byte strings.
-- `DeriveKeyPair(seed) -> (ek, dk)`: A deterministic algorithm that takes as
-  input a seed `seed` and generates a public encapsulation key `ek` and a
-  secret decapsulation key `dk`, each of which are byte strings.
-- `Encaps(ek) -> (ct, ss)`: A probabilistic encapsulation
+- `DeriveKeyPair(seed) -> (dk, ek)`: A deterministic algorithm that takes as
+  input a seed `seed` and generates a secret decapsulation key `dk` and a
+  public encapsulation key `ek`, each of which are byte strings.
+- `Encaps(ek) -> (ss, ct)`: A probabilistic encapsulation
   algorithm, which takes as input a public encapsulation key `ek` and outputs
-  a ciphertext `ct` and shared secret `ss`.
+  a shared secret `ss` and ciphertext `ct`.
 - `Decaps(dk, ct) -> ss`: A deterministic decapsulation algorithm, which
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
 We also make use of internal algorithms such as:
 
-- `expandDecapsulationKey(dk) -> (ek, dk)`: A deterministic algorithm that
+- `expandDecapsulationKey(dk) -> (dk, ek)`: A deterministic algorithm that
   takes as input a decapsulation key `dk` and generates keypair intermediate
   values for computation.
 
@@ -636,7 +636,7 @@ def expandDecapsKeyG(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
 
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (dk_PQ, ek_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
     dk_T = Group_T.RandomScalar(seed_T)
     ek_T = Group_T.Exp(Group_T.g, dk_T)
 
@@ -650,7 +650,7 @@ def prepareEncapsG(ek_PQ, ek_T):
     return (ss_PQ, ss_T, ct_PQ, ct_T)
 
 def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_PQ = KEM_PQ.Decaps(dk_PQ, ct_PQ)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     return (ss_PQ, ss_T)
 ~~~
@@ -665,18 +665,18 @@ KEMs in parallel.
 def expandDecapsKeyK(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (dk_PQ, ek_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (dk_T, ek_T) = KEM_T.DeriveKeyPair(seed_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
 def prepareEncapsK(ek_PQ, ek_T):
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    (ss_T, ct_T) = KEM_T.Encap(ek_T)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encaps(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encaps(ek_T)
     return (ss_PQ, ss_T, ct_PQ, ct_T)
 
 def prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
+    ss_PQ = KEM_PQ.Decaps(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decaps(dk_T, ct_T)
     return (ss_PQ, ss_T)
 ~~~
 
@@ -690,10 +690,10 @@ The two combiner functions defined in this document are as follows:
 
 ~~~
 def UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    return KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
 
 def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
+    return KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
 ~~~
 
 Note that while the names of the inputs are suggestive of the shared secret,
@@ -733,20 +733,20 @@ process.  Some implementations of component schemes do not support the
 group case, a (scalar, group element) pair will only be generated when the
 scalar is generated internal to the implementation.
 
-An implementation of a hybrid KEM in such environemnts MAY deviate from the
+An implementation of a hybrid KEM in such environments MAY deviate from the
 above description in the following ways:
 
 * `DeriveKeyPair` is not implemented.
 * The decapsulation key returned by `GenerateKeyPair` and consumed by
   `Decaps` is a tuple `(dk_PQ, dk_T)` of per-constituent decapsulation keys
   (or pointers/handles to keys).
-* The `expandDecapsulationKeyG` and `expandDecapsulationKeyK` functions are
+* The `expandDecapsKeyG` and `expandDecapsKeyK` functions are
   replaced by the following, where `decapsToEncaps()` is a function that
   returns the encapsulation key associated with a decapsulation key:
 
 ~~~
-def expandDecapsulationKey(dk):
-    (dk_PQ, dkT) = dk # depending on the private key storage format
+def expandDecapsKey(dk):
+    (dk_PQ, dk_T) = dk # depending on the private key storage format
     ek_PQ = decapsToEncaps(dk_PQ)
     ek_T = decapsToEncaps(dk_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
@@ -766,7 +766,7 @@ attacker has passive access to the decapsulation key and MAL scenarios in
 which an attacker can cause the victim to use a crafted decapsulation
 key. The above hybrid KEM framework assures binding properties in the face of
 a LEAK attacker, irrespective of how key generation is done. The additional
-provided by the default "shared seed" key generation upgrades this to
+protection provided by the default "shared seed" key generation upgrades this to
 protection against a MAL attacker.
 
 Allowing for separate private key generation and handling also introduces a
@@ -796,12 +796,12 @@ on the C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -809,7 +809,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
     (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     return ss_H
 ~~~
 
@@ -823,12 +823,12 @@ C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -836,7 +836,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
     (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     return ss_H
 ~~~
 
@@ -850,12 +850,12 @@ on the C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -863,7 +863,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
     (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     return ss_H
 ~~~
 
@@ -877,12 +877,12 @@ C2PRI assumption for the PQ KEM.
 ~~~
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -890,7 +890,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
     (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     return ss_H
 ~~~
 
@@ -906,7 +906,7 @@ In this section, we review the important security properties for hybrid KEMs,
 and discuss how these security properties are provided by hybrid KEMs
 constructed according to the framework in this document.
 
-## Security Properties for Component Algortihms
+## Security Properties for Component Algorithms
 
 In order to precisely define our security objectives for a hybrid KEM, we
 need to describe some properties that we will require from the component
@@ -944,14 +944,14 @@ and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM,
 but "classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}})
 is not even IND-CCA secure as a public-key encryption algorithm.
 
-### Ciphertext Second-Preimage Resistence (C2PRI)
+### Ciphertext Second-Preimage Resistance (C2PRI)
 
-Ciphertext Second-Preimage Resistence (C2PRI) is the property that given an
+Ciphertext Second-Preimage Resistance (C2PRI) is the property that given an
 honestly generated ciphertext, it is difficult for an attacker to generate a
 different ciphertext that decapsulates to the same shared secret.  In other
 words, if an honest party computes `(ss, ct) = Encaps(ek)`, then it is
 infeasible for an attacker to find another ciphertext `ct'` such that
-`Decaps(dk, ct) == ss` (where `dk` is the decapsulation key corresponding to
+`Decaps(dk, ct') == ss` (where `dk` is the decapsulation key corresponding to
 the encapsulation key `ek`).
 
 A related notion in the literature is chosen-ciphertext resistance (CCR)
@@ -1241,7 +1241,7 @@ includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
 collision in the KDF.
 
-#### LEAK-BIND-K-PK of UG
+##### LEAK-BIND-K-PK of UG
 
 Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-PK.
 
@@ -1264,7 +1264,7 @@ includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
 collision in the KDF.
 
-#### LEAK-BIND-K-PK of UK
+##### LEAK-BIND-K-PK of UK
 
 Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-PK.
 
@@ -1278,7 +1278,7 @@ collide the KDF.
 
 The LEAK-BIND proofs for CG are a bit more subtle than for UK; the
 main reason for this is CG's omission of the PQ KEM key and ciphertext from
-the KDF. We will show that UK still has our target LEAK-BIND properties as
+the KDF. We will show that CG still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
 property. We note that our preliminary results suggest that a different proof
 strategy, which instead directly uses properties of the nominal group, may
@@ -1324,7 +1324,7 @@ condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
-this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
+this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
 reduction to the LEAK-BIND-K-PK of PQ KEM.
@@ -1353,7 +1353,7 @@ KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.
 If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
 output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
-reduction does this by generating two nominal-group key pairs and running the
+reduction does this by generating two traditional KEM key pairs and running the
 CK LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
@@ -1478,10 +1478,10 @@ When verifying the behavior of a KEM implementation (e.g., by generating or
 verifying test vectors), it is useful for the implementation to expose a
 "derandomized" version of the `Encaps` algorithm:
 
-- `EncapsDerand(ek, randomness) -> (ct, shared_secret)`: A deterministic
+- `EncapsDerand(ek, randomness) -> (shared_secret, ct)`: A deterministic
    encapsulation algorithm, which takes as input a public encapsulation key
-   `ek` and randomness `randomness`, and outputs a ciphertext `ct` and shared
-   secret `shared_secret`.
+   `ek` and randomness `randomness`, and outputs a shared secret
+   `shared_secret` and ciphertext `ct`.
 
 An implementation that exposes `EncapsDerand` must also define a required
 amount of randomness:
