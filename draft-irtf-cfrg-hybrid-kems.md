@@ -1041,8 +1041,8 @@ specific constraints {{LBB20}}:
 
 - that HMAC is indifferentiable from a random oracle,
 which for HMAC-SHA-256 has been shown in {{DRS+13}} when
-the compression function underlying SHA-256 is modeled as
-a random oracle.
+the compression function underlying SHA-256 is a random oracle,
+which is a regular assumption in the literature.
 
 - the values of HKDF's `IKM` input do not collide with
 values of `info` `||` `0x01`. This MUST be enforced by the
