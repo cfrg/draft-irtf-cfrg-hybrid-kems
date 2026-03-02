@@ -2236,7 +2236,7 @@ In the language of the binding properties discussed in
 <p id="section-6.1.2-3">C2PRI is a weaker property than CCR / LEAK-BIND-K,PK-CT because it requires
 the attacker to match a specific, honestly generated ciphertext, as opposed
 to finding an arbitrary pair.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-4">Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to have this
+<p id="section-6.1.2-4">Several PQ KEMs have been shown to have C2PRI.  ML-KEM <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span> was shown to have this
 property in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and <span>[<a href="#CHH_25" class="cite xref">CHH_25</a>]</span> proves C2PRI for several other
 algorithms, including FrodoKEM, HQC, Classic McEliece, and sntrup.<a href="#section-6.1.2-4" class="pilcrow">¶</a></p>
 </section>
@@ -2285,7 +2285,7 @@ encapsulation operation is completed (LEAK).<a href="#section-6.1.4-2" class="pi
 <p id="section-6.1.4-3">There is quite a bit of diversity in the binding properties provided by KEMs.
 Table 5 of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> shows the binding properties of a few KEMs.  For
 example: DHKEM provides MAL-level binding for several properties. ML-KEM
-provides only LEAK-level binding. Classic McEliece provides MAL-BIND-K-CT,
+provides only LEAK-level binding <span>[<a href="#SCHMIEG2024" class="cite xref">SCHMIEG2024</a>]</span>. Classic McEliece provides MAL-BIND-K-CT,
 but no assurance at all of X-BIND-K-PK.<a href="#section-6.1.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2308,7 +2308,7 @@ viewed as applying a (RO-based) pseudorandom function - keyed with the shared
 secrets output by the constituent KEMs - to the other inputs. Thus, analyses
 which require the <code>KDF</code> to be a PRF, such as the one given in <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> for
 UK, or the standard-model analysis of CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, apply.<a href="#section-6.1.5-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.5-3">Sponge-based constructions such as SHA-3 have been shown to be
+<p id="section-6.1.5-3">Sponge-based constructions such as SHA-3 <span>[<a href="#FIPS202" class="cite xref">FIPS202</a>]</span> have been shown to be
 indifferentiable against classical <span>[<a href="#BDP_08" class="cite xref">BDP_08</a>]</span> as well as quantum adversaries
 <span>[<a href="#ACM_25" class="cite xref">ACM_25</a>]</span>.<a href="#section-6.1.5-3" class="pilcrow">¶</a></p>
 <p id="section-6.1.5-4">HKDF has been shown to be indifferentiable from a random oracle under
@@ -2865,14 +2865,6 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
 <a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
-<dt id="FIPS202">[FIPS202]</dt>
-        <dd>
-<span class="refTitle">"SHA-3 standard :: permutation-based hash and extendable-output functions"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.202</span>, <time datetime="2015" class="refDate">2015</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.202">https://doi.org/10.6028/nist.fips.202</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="FIPS203">[FIPS203]</dt>
-        <dd>
-<span class="refTitle">"Module-lattice-based key-encapsulation mechanism standard"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.203</span>, <time datetime="2024-08" class="refDate">August 2024</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.203">https://doi.org/10.6028/nist.fips.203</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
@@ -2902,17 +2894,9 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
         <dd>
 <span class="refTitle">"Robust Encryption"</span>, <time datetime="2010" class="refDate">2010</time>, <span>&lt;<a href="https://eprint.iacr.org/2008/440.pdf">https://eprint.iacr.org/2008/440.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="ABR01">[ABR01]</dt>
-        <dd>
-<span class="refAuthor">Michel Abdalla</span>, <span class="refAuthor">Mihir Bellare</span>, and <span class="refAuthor">Phillip Rogaway</span>, <span class="refTitle">"The Oracle Diffie-Hellman Assumptions and an Analysis of DHIES"</span>, <time datetime="2001-01" class="refDate">January 2001</time>. </dd>
-<dd class="break"></dd>
 <dt id="ACM_25">[ACM_25]</dt>
         <dd>
 <span class="refTitle">"The Sponge is Quantum Indifferentiable"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://eprint.iacr.org/2025/731.pdf">https://eprint.iacr.org/2025/731.pdf</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="ANSIX9.62">[ANSIX9.62]</dt>
-        <dd>
-<span class="refAuthor">ANS</span>, <span class="refTitle">"Public Key Cryptography for the Financial Services Industry: the Elliptic Curve Digital Signature Algorithm (ECDSA)"</span>, <span class="seriesInfo">ANS X9.62-2005</span>, <time datetime="2005-11" class="refDate">November 2005</time>. </dd>
 <dd class="break"></dd>
 <dt id="AOB_24">[AOB_24]</dt>
         <dd>
@@ -2933,10 +2917,6 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
 <dt id="BDP_08">[BDP_08]</dt>
         <dd>
 <span class="refTitle">"On the Indifferentiability of the Sponge Construction"</span>, <time datetime="2008" class="refDate">2008</time>, <span>&lt;<a href="https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf">https://www.iacr.org/archive/eurocrypt2008/49650180/49650180.pdf</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="BDP_11">[BDP_11]</dt>
-        <dd>
-<span class="refTitle">"Cryptographic sponge functions"</span>, <time datetime="2011" class="refDate">2011</time>, <span>&lt;<a href="https://keccak.team/files/CSF-0.1.pdf">https://keccak.team/files/CSF-0.1.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="BHK09">[BHK09]</dt>
         <dd>
@@ -2974,9 +2954,13 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
         <dd>
 <span class="refTitle">"Security Analysis of Signal's PQXDH Handshake"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://link.springer.com/chapter/10.1007/978-3-031-91823-0_5">https://link.springer.com/chapter/10.1007/978-3-031-91823-0_5</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="FIPS186">[FIPS186]</dt>
+<dt id="FIPS202">[FIPS202]</dt>
         <dd>
-<span class="refTitle">"Digital Signature Standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-5</span>, <time datetime="2023-02" class="refDate">February 2023</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-5">https://doi.org/10.6028/nist.fips.186-5</a>&gt;</span>. </dd>
+<span class="refTitle">"SHA-3 standard :: permutation-based hash and extendable-output functions"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.202</span>, <time datetime="2015" class="refDate">2015</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.202">https://doi.org/10.6028/nist.fips.202</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS203">[FIPS203]</dt>
+        <dd>
+<span class="refTitle">"Module-lattice-based key-encapsulation mechanism standard"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.203</span>, <time datetime="2024-08" class="refDate">August 2024</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.203">https://doi.org/10.6028/nist.fips.203</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="GHP18">[GHP18]</dt>
         <dd>
@@ -2990,10 +2974,6 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"</span>, <span class="seriesInfo">RFC 5869</span>, <span class="seriesInfo">DOI 10.17487/RFC5869</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5869">https://www.rfc-editor.org/rfc/rfc5869</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="I-D.driscoll-pqt-hybrid-terminology">[I-D.driscoll-pqt-hybrid-terminology]</dt>
-        <dd>
-<span class="refAuthor">D, F.</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-driscoll-pqt-hybrid-terminology-02</span>, <time datetime="2023-03-07" class="refDate">7 March 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-hybrid-terminology-02">https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-hybrid-terminology-02</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="I-D.ietf-pquip-pqt-hybrid-terminology">[I-D.ietf-pquip-pqt-hybrid-terminology]</dt>
         <dd>
 <span class="refAuthor">D, F.</span>, <span class="refAuthor">P, M.</span>, and <span class="refAuthor">B. Hale</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-pquip-pqt-hybrid-terminology-06</span>, <time datetime="2025-01-10" class="refDate">10 January 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqt-hybrid-terminology-06">https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqt-hybrid-terminology-06</a>&gt;</span>. </dd>
@@ -3001,10 +2981,6 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
 <dt id="ISO18033-2">[ISO18033-2]</dt>
         <dd>
 <span class="refTitle">"Information technology -- Security techniques -- Encryption algorithms -- Part 2: Asymmetric ciphers"</span>, <time datetime="2006" class="refDate">2006</time>, <span>&lt;<a href="https://www.iso.org/standard/37971.html">https://www.iso.org/standard/37971.html</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="KSMW2024">[KSMW2024]</dt>
-        <dd>
-<span class="refAuthor">Kraemer, J.</span>, <span class="refAuthor">Struck, P.</span>, and <span class="refAuthor">M. Weishaupl</span>, <span class="refTitle">"Binding Security of Implicitly-Rejecting KEMs and Application to BIKE and HQC"</span>, <span>n.d.</span>, <span>&lt;<a href="https://eprint.iacr.org/2024/1233">https://eprint.iacr.org/2024/1233</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="LBB20">[LBB20]</dt>
         <dd>
@@ -3038,21 +3014,9 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
         <dd>
 <span class="refTitle">"The Joy of Cryptography"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://joyofcryptography.com/pdf/book.pdf">https://joyofcryptography.com/pdf/book.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RS92">[RS92]</dt>
-        <dd>
-<span class="refTitle">"Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack."</span>, <time datetime="1992" class="refDate">1992</time>, <span>&lt;<a href="https://link.springer.com/chapter/10.1007/3-540-46766-1_35">https://link.springer.com/chapter/10.1007/3-540-46766-1_35</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RSS11">[RSS11]</dt>
-        <dd>
-<span class="refTitle">"Careful with Composition: Limitations of Indifferentiability and Universal Composability"</span>, <time datetime="2011" class="refDate">2011</time>, <span>&lt;<a href="https://eprint.iacr.org/2011/339.pdf">https://eprint.iacr.org/2011/339.pdf</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="SCHMIEG2024">[SCHMIEG2024]</dt>
         <dd>
 <span class="refAuthor">Schmieg, S.</span>, <span class="refTitle">"Unbindable Kemmy Schmidt: ML-KEM is neither MAL-BIND-K-CT nor MAL-BIND-K-PK"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://eprint.iacr.org/2024/523.pdf">https://eprint.iacr.org/2024/523.pdf</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="SEC1">[SEC1]</dt>
-        <dd>
-<span class="refTitle">"Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://secg.org/sec1-v2.pdf">https://secg.org/sec1-v2.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="XWING">[XWING]</dt>
         <dd>

@@ -824,10 +824,10 @@ def Decaps(dk, ct):
    requires the attacker to match a specific, honestly generated
    ciphertext, as opposed to finding an arbitrary pair.
 
-   Several PQ KEMs have been shown to have C2PRI.  ML-KEM was shown to
-   have this property in [XWING], and [CHH_25] proves C2PRI for several
-   other algorithms, including FrodoKEM, HQC, Classic McEliece, and
-   sntrup.
+   Several PQ KEMs have been shown to have C2PRI.  ML-KEM [FIPS203] was
+   shown to have this property in [XWING], and [CHH_25] proves C2PRI for
+   several other algorithms, including FrodoKEM, HQC, Classic McEliece,
+   and sntrup.
 
 6.1.3.  Strong Diffie-Hellman Problem (SDH)
 
@@ -873,9 +873,9 @@ def Decaps(dk, ct):
    There is quite a bit of diversity in the binding properties provided
    by KEMs.  Table 5 of [CDM23] shows the binding properties of a few
    KEMs.  For example: DHKEM provides MAL-level binding for several
-   properties.  ML-KEM provides only LEAK-level binding.  Classic
-   McEliece provides MAL-BIND-K-CT, but no assurance at all of X-BIND-
-   K-PK.
+   properties.  ML-KEM provides only LEAK-level binding [SCHMIEG2024].
+   Classic McEliece provides MAL-BIND-K-CT, but no assurance at all of
+   X-BIND-K-PK.
 
 6.1.5.  Indifferentiability from a Random Oracle
 
@@ -897,8 +897,8 @@ def Decaps(dk, ct):
    the one given in [GHP18] for UK, or the standard-model analysis of CG
    in [XWING], apply.
 
-   Sponge-based constructions such as SHA-3 have been shown to be
-   indifferentiable against classical [BDP_08] as well as quantum
+   Sponge-based constructions such as SHA-3 [FIPS202] have been shown to
+   be indifferentiable against classical [BDP_08] as well as quantum
    adversaries [ACM_25].
 
    HKDF has been shown to be indifferentiable from a random oracle under
@@ -1378,16 +1378,6 @@ def Decaps(dk, ct):
 
 9.1.  Normative References
 
-   [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
-              output functions", National Institute of Standards and
-              Technology (U.S.), DOI 10.6028/nist.fips.202, 2015,
-              <https://doi.org/10.6028/nist.fips.202>.
-
-   [FIPS203]  "Module-lattice-based key-encapsulation mechanism
-              standard", National Institute of Standards and Technology
-              (U.S.), DOI 10.6028/nist.fips.203, August 2024,
-              <https://doi.org/10.6028/nist.fips.203>.
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -1411,17 +1401,8 @@ def Decaps(dk, ct):
    [ABN10]    "Robust Encryption", 2010,
               <https://eprint.iacr.org/2008/440.pdf>.
 
-   [ABR01]    Michel Abdalla, Mihir Bellare, and Phillip Rogaway, "The
-              Oracle Diffie-Hellman Assumptions and an Analysis of
-              DHIES", January 2001.
-
    [ACM_25]   "The Sponge is Quantum Indifferentiable", 2025,
               <https://eprint.iacr.org/2025/731.pdf>.
-
-   [ANSIX9.62]
-              ANS, "Public Key Cryptography for the Financial Services
-              Industry: the Elliptic Curve Digital Signature Algorithm
-              (ECDSA)", ANS X9.62-2005, November 2005.
 
    [AOB_24]   "Formally verifying Kyber Episode V: Machine-checked IND-
               CCA security and correctness of ML-KEM in EasyCrypt",
@@ -1443,9 +1424,6 @@ def Decaps(dk, ct):
    [BDP_08]   "On the Indifferentiability of the Sponge Construction",
               2008, <https://www.iacr.org/archive/
               eurocrypt2008/49650180/49650180.pdf>.
-
-   [BDP_11]   "Cryptographic sponge functions", 2011,
-              <https://keccak.team/files/CSF-0.1.pdf>.
 
    [BHK09]    Bellare, M., Hofheinz, D., and E. Kiltz, "Subtleties in
               the Definition of IND-CCA: When and How Should Challenge-
@@ -1482,10 +1460,15 @@ def Decaps(dk, ct):
               <https://link.springer.com/
               chapter/10.1007/978-3-031-91823-0_5>.
 
-   [FIPS186]  "Digital Signature Standard (DSS)", National Institute of
-              Standards and Technology (U.S.),
-              DOI 10.6028/nist.fips.186-5, February 2023,
-              <https://doi.org/10.6028/nist.fips.186-5>.
+   [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
+              output functions", National Institute of Standards and
+              Technology (U.S.), DOI 10.6028/nist.fips.202, 2015,
+              <https://doi.org/10.6028/nist.fips.202>.
+
+   [FIPS203]  "Module-lattice-based key-encapsulation mechanism
+              standard", National Institute of Standards and Technology
+              (U.S.), DOI 10.6028/nist.fips.203, August 2024,
+              <https://doi.org/10.6028/nist.fips.203>.
 
    [GHP18]    Giacon, F., Heuer, F., and B. Poettering, "KEM Combiners",
               2018, <https://eprint.iacr.org/2018/024.pdf>.
@@ -1499,13 +1482,6 @@ def Decaps(dk, ct):
               DOI 10.17487/RFC5869, May 2010,
               <https://www.rfc-editor.org/rfc/rfc5869>.
 
-   [I-D.driscoll-pqt-hybrid-terminology]
-              D, F., "Terminology for Post-Quantum Traditional Hybrid
-              Schemes", Work in Progress, Internet-Draft, draft-
-              driscoll-pqt-hybrid-terminology-02, 7 March 2023,
-              <https://datatracker.ietf.org/doc/html/draft-driscoll-pqt-
-              hybrid-terminology-02>.
-
    [I-D.ietf-pquip-pqt-hybrid-terminology]
               D, F., P, M., and B. Hale, "Terminology for Post-Quantum
               Traditional Hybrid Schemes", Work in Progress, Internet-
@@ -1517,10 +1493,6 @@ def Decaps(dk, ct):
               "Information technology -- Security techniques --
               Encryption algorithms -- Part 2: Asymmetric ciphers",
               2006, <https://www.iso.org/standard/37971.html>.
-
-   [KSMW2024] Kraemer, J., Struck, P., and M. Weishaupl, "Binding
-              Security of Implicitly-Rejecting KEMs and Application to
-              BIKE and HQC", n.d., <https://eprint.iacr.org/2024/1233>.
 
    [LBB20]    "A Mechanised Cryptographic Proof of the WireGuard Virtual
               Private Network Protocol", 2019,
@@ -1558,23 +1530,10 @@ def Decaps(dk, ct):
    [Rosulek]  "The Joy of Cryptography", 2021,
               <https://joyofcryptography.com/pdf/book.pdf>.
 
-   [RS92]     "Non-Interactive Zero-Knowledge Proof of Knowledge and
-              Chosen Ciphertext Attack.", 1992,
-              <https://link.springer.com/
-              chapter/10.1007/3-540-46766-1_35>.
-
-   [RSS11]    "Careful with Composition: Limitations of
-              Indifferentiability and Universal Composability", 2011,
-              <https://eprint.iacr.org/2011/339.pdf>.
-
    [SCHMIEG2024]
               Schmieg, S., "Unbindable Kemmy Schmidt: ML-KEM is neither
               MAL-BIND-K-CT nor MAL-BIND-K-PK", 2024,
               <https://eprint.iacr.org/2024/523.pdf>.
-
-   [SEC1]     "Elliptic Curve Cryptography, Standards for Efficient
-              Cryptography Group, ver. 2", 2009,
-              <https://secg.org/sec1-v2.pdf>.
 
    [XWING]    "X-Wing: The Hybrid KEM You’ve Been Looking For", 2024,
               <https://eprint.iacr.org/2024/039.pdf>.
