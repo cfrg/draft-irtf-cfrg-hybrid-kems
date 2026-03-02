@@ -1474,7 +1474,15 @@ post-quantum and a traditional KEM.
 ## Parameterized Output Length
 
 Not analyzed as part of any security proofs in the literature, and a
-complication deemed unnecessary.
+Security properties and design considerations that were considered
+and not included in these designs:
+
+- Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness
+or binding {{GMP22}}, {{CDM23}}
+
+- More than two components: this document restricts the scope to two components: a post-quantum component and a traditional component.
+
+- Parameterized output length: not analyzed as part of any security proofs in the literature, and a complication deemed unnecessary.
 
 --- back
 
