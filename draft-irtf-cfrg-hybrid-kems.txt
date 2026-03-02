@@ -102,8 +102,6 @@ Table of Contents
        6.5.2.  Fixed-length
    7.  IANA Considerations
    8.  Out of Scope
-     8.1.  More than Two Component KEMs
-     8.2.  Parameterized Output Length
    9.  References
      9.1.  Normative References
      9.2.  Informative References
@@ -1365,28 +1363,15 @@ def Decaps(dk, ct):
    Security properties and design considerations that were considered
    and not included in these designs:
 
-   Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
-   robustness or binding [GMP22], [CDM23].
-
-8.1.  More than Two Component KEMs
-
-   This document restricts the scope to two components: a post-quantum
-   and a traditional KEM.
-
-8.2.  Parameterized Output Length
-
-   Not analyzed as part of any security proofs in the literature, and a
-   Security properties and design considerations that were considered
-   and not included in these designs:
-
-   *  Anonymity [GMP22], Deniability, Obfuscation, other forms of key-
+   *  Anonymity [GMP22], deniability, obfuscation, other forms of key-
       robustness or binding [GMP22], [CDM23]
 
    *  More than two components: this document restricts the scope to two
-      components: a post-quantum component and a traditional component.
+      components: one post-quantum component and one traditional
+      component
 
    *  Parameterized output length: not analyzed as part of any security
-      proofs in the literature, and a complication deemed unnecessary.
+      proofs in the literature, and a complication deemed unnecessary
 
 9.  References
 
