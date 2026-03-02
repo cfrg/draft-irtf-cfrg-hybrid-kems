@@ -170,7 +170,7 @@ underlying algorithms are secure.
   font-weight: 400;
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
   font-family: 'Oxygen Mono';
@@ -178,7 +178,8 @@ underlying algorithms are secure.
   font-weight: 400;
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 }
 
 @font-face {
@@ -1049,11 +1050,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">hybrid-kems</td>
-<td class="right">January 2026</td>
+<td class="right">March 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 31 July 2026</td>
+<td class="center">Expires 3 September 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-01-27" class="published">27 January 2026</time>
+<time datetime="2026-03-02" class="published">2 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-07-31">31 July 2026</time></dd>
+<dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1128,7 +1129,7 @@ underlying algorithms are secure.<a href="#section-abstract-1" class="pilcrow">�
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 31 July 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 3 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2504,19 +2505,17 @@ the PQ-KEM's shared secret, IND-CCA holds.<a href="#section-6.4.1-7" class="pilc
 <p id="section-6.4.1-8">As long as the aforementioned security requirements of the component parts
 are met, these analyses imply that this document's CG construction satisfies
 IND-CCA security.<a href="#section-6.4.1-8" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-9">The CK construction's IND-CCA analysis is based on forthcoming work by the
-editorial team.<a href="#section-6.4.1-9" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-10">The CK construction has two complementary IND-CCA analyses: one for when the
+<p id="section-6.4.1-9">The CK construction has two complementary IND-CCA analyses: one for when the
 IND-CCA security of the traditional PKE-based KEM holds but the PQ KEM is
 broken, except for the PQ KEM's C2PRI security, and one for where the IND-CCA
 security of the PQ KEM holds.  Both are technically novel but are
 substantially similar to the existing peer-reviewed analyses of the CG
-<span>[<a href="#XWING" class="cite xref">XWING</a>]</span> and UK <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> constructions. A forthcoming document by the
-editorial team will describe the analysis of CK in detail.<a href="#section-6.4.1-10" class="pilcrow">¶</a></p>
-<p id="section-6.4.1-11">Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
+<span>[<a href="#XWING" class="cite xref">XWING</a>]</span> and UK <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> constructions. <span>[<a href="#COS_26" class="cite xref">COS_26</a>]</span> by the editorial team
+and collaborators describes the analysis of UG in detail.<a href="#section-6.4.1-9" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-10">Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
 with cryptographic components that meet the security requirements described
 above. Any changes to the algorithms, including key generation/derivation,
-are not guaranteed to produce secure results.<a href="#section-6.4.1-11" class="pilcrow">¶</a></p>
+are not guaranteed to produce secure results.<a href="#section-6.4.1-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="binding-analyses">
@@ -2962,6 +2961,10 @@ complication deemed unnecessary.<a href="#section-8.2-1" class="pilcrow">¶</a><
 <dt id="CHH_25">[CHH_25]</dt>
         <dd>
 <span class="refTitle">"Starfighters — on the general applicability of X-Wing"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://eprint.iacr.org/2025/1397">https://eprint.iacr.org/2025/1397</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="COS_26">[COS_26]</dt>
+        <dd>
+<span class="refTitle">"StarHunters— Secure Hybrid Post-Quantum KEMs From IND-CCA2 PKEs"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://eprint.iacr.org/xxxx/108115">https://eprint.iacr.org/xxxx/108115</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="DRS_13">[DRS_13]</dt>
         <dd>

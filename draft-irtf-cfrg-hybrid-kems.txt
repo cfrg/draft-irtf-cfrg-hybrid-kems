@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 31 July 2026                                              Cisco
+Expires: 3 September 2026                                          Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                         27 January 2026
+                                                            2 March 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 July 2026.
+   This Internet-Draft will expire on 3 September 2026.
 
 Copyright Notice
 
@@ -1078,17 +1078,14 @@ def Decaps(dk, ct):
    parts are met, these analyses imply that this document's CG
    construction satisfies IND-CCA security.
 
-   The CK construction's IND-CCA analysis is based on forthcoming work
-   by the editorial team.
-
    The CK construction has two complementary IND-CCA analyses: one for
    when the IND-CCA security of the traditional PKE-based KEM holds but
    the PQ KEM is broken, except for the PQ KEM's C2PRI security, and one
    for where the IND-CCA security of the PQ KEM holds.  Both are
    technically novel but are substantially similar to the existing peer-
-   reviewed analyses of the CG [XWING] and UK [GHP18] constructions.  A
-   forthcoming document by the editorial team will describe the analysis
-   of CK in detail.
+   reviewed analyses of the CG [XWING] and UK [GHP18] constructions.
+   [COS_26] by the editorial team and collaborators describes the
+   analysis of UG in detail.
 
    Therefore all four hybrid KEMs in this document are IND-CCA when
    instantiated with cryptographic components that meet the security
@@ -1474,6 +1471,9 @@ def Decaps(dk, ct):
 
    [CHH_25]   "Starfighters — on the general applicability of X-Wing",
               2025, <https://eprint.iacr.org/2025/1397>.
+
+   [COS_26]   "StarHunters— Secure Hybrid Post-Quantum KEMs From IND-
+              CCA2 PKEs", 2026, <https://eprint.iacr.org/xxxx/108115>.
 
    [DRS_13]   "To Hash or Not to Hash Again? (In)differentiability
               Results for H^2 and HMAC", 2013,
