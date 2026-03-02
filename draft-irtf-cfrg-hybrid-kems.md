@@ -677,12 +677,18 @@ component is secure and the PQ component also satisfies the C2PRI property.
 
 ## Key Generation
 
-All four frameworks share a common key generation function:
+All four frameworks share a common key generation function, and a function to
+compute the encapsulation key that corresponds to a decapsulation key:
 
 ~~~
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
+
+def DecapsToEncaps(dk):
+    # The dk is always in seed format
+    (_dk, ek) = DeriveKeyPair(dk)
+    return ek
 ~~~
 
 In some deployment environments, it is not possible to instantiate this
