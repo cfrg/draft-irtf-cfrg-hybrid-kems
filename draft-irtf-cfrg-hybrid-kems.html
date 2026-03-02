@@ -1219,13 +1219,13 @@ underlying algorithms are secure.<a href="#section-abstract-1" class="pilcrow">�
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-security-properties-for-com" class="internal xref">Security Properties for Component Algortihms</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-security-properties-for-com" class="internal xref">Security Properties for Component Algorithms</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
                     <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-indistinguishability-under-" class="internal xref">Indistinguishability under Chosen Ciphertext Attack (IND-CCA)</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
-                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-ciphertext-second-preimage-" class="internal xref">Ciphertext Second-Preimage Resistence (C2PRI)</a></p>
+                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-ciphertext-second-preimage-" class="internal xref">Ciphertext Second-Preimage Resistance (C2PRI)</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.3">
                     <p id="section-toc.1-1.6.2.1.2.3.1"><a href="#section-6.1.3" class="auto internal xref">6.1.3</a>.  <a href="#name-strong-diffie-hellman-probl" class="internal xref">Strong Diffie-Hellman Problem (SDH)</a></p>
@@ -1324,7 +1324,7 @@ underlying algorithms are secure.<a href="#section-abstract-1" class="pilcrow">�
       </h2>
 <p id="section-1-1">Post-quantum (PQ) cryptographic algorithms are based on problems that are
 conjectured to be resistant to attacks possible on a quantum computer. Key
-Encapsulation Mechanisms (KEMs), are a standardized class of cryptographic
+Encapsulation Mechanisms (KEMs) are a standardized class of cryptographic
 scheme that can be used to build protocols in lieu of traditional,
 quantum-vulnerable variants such as finite field or elliptic curve
 Diffie-Hellman (DH) based protocols.<a href="#section-1-1" class="pilcrow">¶</a></p>
@@ -1422,7 +1422,7 @@ using a right arrow to separate inputs from outputs: f : inputs → outputs.<a h
       <h2 id="name-cryptographic-dependencies">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-cryptographic-dependencies" class="section-name selfRef">Cryptographic Dependencies</a>
       </h2>
-<p id="section-4-1">The generic hybrid PQ/T KEM frameworks we define depend on the the following
+<p id="section-4-1">The generic hybrid PQ/T KEM frameworks we define depend on the following
 cryptographic primitives:<a href="#section-4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-2.1">
@@ -1493,22 +1493,22 @@ hybrid KEM to be secure are discussed in <a href="#security" class="auto interna
             </svg><a href="#section-4.1-1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<p id="section-4.1-2">A Key Encapsulation Mechanism (KEMs) comprises the following algorithms:<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">A Key Encapsulation Mechanism (KEM) comprises the following algorithms:<a href="#section-4.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-3.1">
-            <p id="section-4.1-3.1.1"><code>GenerateKeyPair() -&gt; (ek, dk)</code>: A randomized algorithm that generates a
-public encapsulation key <code>ek</code> and a secret decapsulation key <code>dk</code>, each of
+            <p id="section-4.1-3.1.1"><code>GenerateKeyPair() -&gt; (dk, ek)</code>: A randomized algorithm that generates a
+secret decapsulation key <code>dk</code> and a public encapsulation key <code>ek</code>, each of
 which are byte strings.<a href="#section-4.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-3.2">
-            <p id="section-4.1-3.2.1"><code>DeriveKeyPair(seed) -&gt; (ek, dk)</code>: A deterministic algorithm that takes as
-input a seed <code>seed</code> and generates a public encapsulation key <code>ek</code> and a
-secret decapsulation key <code>dk</code>, each of which are byte strings.<a href="#section-4.1-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-3.2.1"><code>DeriveKeyPair(seed) -&gt; (dk, ek)</code>: A deterministic algorithm that takes as
+input a seed <code>seed</code> and generates a secret decapsulation key <code>dk</code> and a
+public encapsulation key <code>ek</code>, each of which are byte strings.<a href="#section-4.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-3.3">
-            <p id="section-4.1-3.3.1"><code>Encaps(ek) -&gt; (ct, ss)</code>: A probabilistic encapsulation
+            <p id="section-4.1-3.3.1"><code>Encaps(ek) -&gt; (ss, ct)</code>: A probabilistic encapsulation
 algorithm, which takes as input a public encapsulation key <code>ek</code> and outputs
-a ciphertext <code>ct</code> and shared secret <code>ss</code>.<a href="#section-4.1-3.3.1" class="pilcrow">¶</a></p>
+a shared secret <code>ss</code> and ciphertext <code>ct</code>.<a href="#section-4.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-3.4">
             <p id="section-4.1-3.4.1"><code>Decaps(dk, ct) -&gt; ss</code>: A deterministic decapsulation algorithm, which
@@ -1519,7 +1519,7 @@ outputs a shared secret <code>ss</code>.<a href="#section-4.1-3.4.1" class="pilc
 <p id="section-4.1-4">We also make use of internal algorithms such as:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-5.1">
-            <p id="section-4.1-5.1.1"><code>expandDecapsulationKey(dk) -&gt; (ek, dk)</code>: A deterministic algorithm that
+            <p id="section-4.1-5.1.1"><code>expandDecapsulationKey(dk) -&gt; (dk, ek)</code>: A deterministic algorithm that
 takes as input a decapsulation key <code>dk</code> and generates keypair intermediate
 values for computation.<a href="#section-4.1-5.1.1" class="pilcrow">¶</a></p>
 </li>
@@ -1868,7 +1868,7 @@ def expandDecapsKeyG(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, Group_T.Nseed, seed_full)
 
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (dk_PQ, ek_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
     dk_T = Group_T.RandomScalar(seed_T)
     ek_T = Group_T.Exp(Group_T.g, dk_T)
 
@@ -1882,7 +1882,7 @@ def prepareEncapsG(ek_PQ, ek_T):
     return (ss_PQ, ss_T, ct_PQ, ct_T)
 
 def prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T):
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
+    ss_PQ = KEM_PQ.Decaps(dk_PQ, ct_PQ)
     ss_T = Group_T.ElementToSharedSecret(Group_T.Exp(ct_T, dk_T))
     return (ss_PQ, ss_T)
 </pre><a href="#section-5.1.1-2" class="pilcrow">¶</a>
@@ -1902,18 +1902,18 @@ KEMs in parallel.<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
 def expandDecapsKeyK(seed):
     seed_full = PRG(seed)
     (seed_PQ, seed_T) = split(KEM_PQ.Nseed, KEM_T.Nseed, seed_full)
-    (ek_PQ, dk_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
-    (ek_T, dk_T) = KEM_T.DeriveKeyPair(seed_T)
+    (dk_PQ, ek_PQ) = KEM_PQ.DeriveKeyPair(seed_PQ)
+    (dk_T, ek_T) = KEM_T.DeriveKeyPair(seed_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 
 def prepareEncapsK(ek_PQ, ek_T):
-    (ss_PQ, ct_PQ) = KEM_PQ.Encap(ek_PQ)
-    (ss_T, ct_T) = KEM_T.Encap(ek_T)
+    (ss_PQ, ct_PQ) = KEM_PQ.Encaps(ek_PQ)
+    (ss_T, ct_T) = KEM_T.Encaps(ek_T)
     return (ss_PQ, ss_T, ct_PQ, ct_T)
 
 def prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T):
-    ss_PQ = KEM_PQ.Decap(dk_PQ, ct_PQ)
-    ss_T = KEM_T.Decap(dk_T, ct_T)
+    ss_PQ = KEM_PQ.Decaps(dk_PQ, ct_PQ)
+    ss_T = KEM_T.Decaps(dk_T, ct_T)
     return (ss_PQ, ss_T)
 </pre><a href="#section-5.1.2-2" class="pilcrow">¶</a>
 </div>
@@ -1931,10 +1931,10 @@ information.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1.3-3">
 <pre>
 def UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
+    return KDF(concat(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, label))
 
 def C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, label):
-    KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
+    return KDF(concat(ss_PQ, ss_T, ct_T, ek_T, label))
 </pre><a href="#section-5.1.3-3" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.3-4">Note that while the names of the inputs are suggestive of the shared secret,
@@ -1976,7 +1976,7 @@ process.  Some implementations of component schemes do not support the
 <code>DeriveKeyPair</code> function, only <code>GenerateKeyPair</code>. Likewise in the nominal
 group case, a (scalar, group element) pair will only be generated when the
 scalar is generated internal to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
-<p id="section-5.2-4">An implementation of a hybrid KEM in such environemnts <span class="bcp14">MAY</span> deviate from the
+<p id="section-5.2-4">An implementation of a hybrid KEM in such environments <span class="bcp14">MAY</span> deviate from the
 above description in the following ways:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-5.1">
@@ -1988,15 +1988,15 @@ above description in the following ways:<a href="#section-5.2-4" class="pilcrow"
 (or pointers/handles to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.3">
-            <p id="section-5.2-5.3.1">The <code>expandDecapsulationKeyG</code> and <code>expandDecapsulationKeyK</code> functions are
+            <p id="section-5.2-5.3.1">The <code>expandDecapsKeyG</code> and <code>expandDecapsKeyK</code> functions are
 replaced by the following, where <code>decapsToEncaps()</code> is a function that
 returns the encapsulation key associated with a decapsulation key:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div class="alignLeft art-text artwork" id="section-5.2-6">
 <pre>
-def expandDecapsulationKey(dk):
-    (dk_PQ, dkT) = dk # depending on the private key storage format
+def expandDecapsKey(dk):
+    (dk_PQ, dk_T) = dk # depending on the private key storage format
     ek_PQ = decapsToEncaps(dk_PQ)
     ek_T = decapsToEncaps(dk_T)
     return (ek_PQ, ek_T, dk_PQ, dk_T)
@@ -2014,7 +2014,7 @@ attacker has passive access to the decapsulation key and MAL scenarios in
 which an attacker can cause the victim to use a crafted decapsulation
 key. The above hybrid KEM framework assures binding properties in the face of
 a LEAK attacker, irrespective of how key generation is done. The additional
-provided by the default "shared seed" key generation upgrades this to
+protection provided by the default "shared seed" key generation upgrades this to
 protection against a MAL attacker.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
 <p id="section-5.2-10">Allowing for separate private key generation and handling also introduces a
 risk of inappropriate key reuse and cross-protocol attacks.  A given key pair
@@ -2046,12 +2046,12 @@ on the C2PRI assumption for the PQ KEM.<a href="#section-5.3-1" class="pilcrow">
 <pre>
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -2059,7 +2059,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
     (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     return ss_H
 </pre><a href="#section-5.3-2" class="pilcrow">¶</a>
 </div>
@@ -2078,12 +2078,12 @@ C2PRI assumption for the PQ KEM.<a href="#section-5.4-1" class="pilcrow">¶</a><
 <pre>
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -2091,7 +2091,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
     (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ex_PQ, ek_T, Label))
+    ss_H = UniversalCombiner(ss_PQ, ss_T, ct_PQ, ct_T, ek_PQ, ek_T, Label)
     return ss_H
 </pre><a href="#section-5.4-2" class="pilcrow">¶</a>
 </div>
@@ -2110,12 +2110,12 @@ on the C2PRI assumption for the PQ KEM.<a href="#section-5.5-1" class="pilcrow">
 <pre>
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
     (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsG(ek_PQ, ek_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -2123,7 +2123,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, Group_T.Nelem, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyG(dk)
     (ss_PQ, ss_T) = prepareDecapsG(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     return ss_H
 </pre><a href="#section-5.5-2" class="pilcrow">¶</a>
 </div>
@@ -2142,12 +2142,12 @@ C2PRI assumption for the PQ KEM.<a href="#section-5.6-1" class="pilcrow">¶</a><
 <pre>
 def DeriveKeyPair(seed):
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(seed)
-    return (concat(ek_PQ, ek_T), seed)
+    return (seed, concat(ek_PQ, ek_T))
 
 def Encaps(ek):
-    (ek_PQ, ek_T) = split(KEM_PQ.Nek, Group_T.Nelem, ek)
+    (ek_PQ, ek_T) = split(KEM_PQ.Nek, KEM_T.Nek, ek)
     (ss_PQ, ss_T, ct_PQ, ct_T) = prepareEncapsK(ek_PQ, ek_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     ct_H = concat(ct_PQ, ct_T)
     return (ss_H, ct_H)
 
@@ -2155,7 +2155,7 @@ def Decaps(dk, ct):
     (ct_PQ, ct_T) = split(KEM_PQ.Nct, KEM_T.Nct, ct)
     (ek_PQ, ek_T, dk_PQ, dk_T) = expandDecapsKeyK(dk)
     (ss_PQ, ss_T) = prepareDecapsK(ct_PQ, ct_T, dk_PQ, dk_T)
-    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label))
+    ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
     return ss_H
 </pre><a href="#section-5.6-2" class="pilcrow">¶</a>
 </div>
@@ -2176,10 +2176,10 @@ property.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <p id="section-6-2">In this section, we review the important security properties for hybrid KEMs,
 and discuss how these security properties are provided by hybrid KEMs
 constructed according to the framework in this document.<a href="#section-6-2" class="pilcrow">¶</a></p>
-<div id="security-properties-for-component-algortihms">
+<div id="security-properties-for-component-algorithms">
 <section id="section-6.1">
         <h3 id="name-security-properties-for-com">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-security-properties-for-com" class="section-name selfRef">Security Properties for Component Algortihms</a>
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-security-properties-for-com" class="section-name selfRef">Security Properties for Component Algorithms</a>
         </h3>
 <p id="section-6.1-1">In order to precisely define our security objectives for a hybrid KEM, we
 need to describe some properties that we will require from the component
@@ -2216,17 +2216,17 @@ but "classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in <span>[<a href="#
 is not even IND-CCA secure as a public-key encryption algorithm.<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="ciphertext-second-preimage-resistence-c2pri">
+<div id="ciphertext-second-preimage-resistance-c2pri">
 <section id="section-6.1.2">
           <h4 id="name-ciphertext-second-preimage-">
-<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-ciphertext-second-preimage-" class="section-name selfRef">Ciphertext Second-Preimage Resistence (C2PRI)</a>
+<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-ciphertext-second-preimage-" class="section-name selfRef">Ciphertext Second-Preimage Resistance (C2PRI)</a>
           </h4>
-<p id="section-6.1.2-1">Ciphertext Second-Preimage Resistence (C2PRI) is the property that given an
+<p id="section-6.1.2-1">Ciphertext Second-Preimage Resistance (C2PRI) is the property that given an
 honestly generated ciphertext, it is difficult for an attacker to generate a
 different ciphertext that decapsulates to the same shared secret.  In other
 words, if an honest party computes <code>(ss, ct) = Encaps(ek)</code>, then it is
 infeasible for an attacker to find another ciphertext <code>ct'</code> such that
-<code>Decaps(dk, ct) == ss</code> (where <code>dk</code> is the decapsulation key corresponding to
+<code>Decaps(dk, ct') == ss</code> (where <code>dk</code> is the decapsulation key corresponding to
 the encapsulation key <code>ek</code>).<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.2-2">A related notion in the literature is chosen-ciphertext resistance (CCR)
 <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>. C2PRI targets preimage-resistance, whereas CCR targets
@@ -2558,86 +2558,86 @@ ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
 collision in the KDF.<a href="#section-6.4.2.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-</section>
-</div>
 <div id="leak-bind-k-pk-of-ug">
-<section id="section-6.4.2.2">
-            <h5 id="name-leak-bind-k-pk-of-ug">
-<a href="#section-6.4.2.2" class="section-number selfRef">6.4.2.2. </a><a href="#name-leak-bind-k-pk-of-ug" class="section-name selfRef">LEAK-BIND-K-PK of UG</a>
-            </h5>
-<p id="section-6.4.2.2-1">Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-PK.<a href="#section-6.4.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.2-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
+<section id="section-6.4.2.1.2">
+              <h6 id="name-leak-bind-k-pk-of-ug">
+<a href="#section-6.4.2.1.2" class="section-number selfRef">6.4.2.1.2. </a><a href="#name-leak-bind-k-pk-of-ug" class="section-name selfRef">LEAK-BIND-K-PK of UG</a>
+              </h6>
+<p id="section-6.4.2.1.2-1">Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-PK.<a href="#section-6.4.2.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.1.2-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
 adversary must construct two ciphertexts that decapsulate to the same non-bot
 key, for distinct UG public keys. Again, since UG includes the public keys
 in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
-collide the KDF.<a href="#section-6.4.2.2-2" class="pilcrow">¶</a></p>
+collide the KDF.<a href="#section-6.4.2.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="uk-binding">
-<section id="section-6.4.2.3">
+<section id="section-6.4.2.2">
             <h5 id="name-uk-binding">
-<a href="#section-6.4.2.3" class="section-number selfRef">6.4.2.3. </a><a href="#name-uk-binding" class="section-name selfRef">UK Binding</a>
+<a href="#section-6.4.2.2" class="section-number selfRef">6.4.2.2. </a><a href="#name-uk-binding" class="section-name selfRef">UK Binding</a>
             </h5>
 <div id="leak-bind-k-ct-of-uk">
-<section id="section-6.4.2.3.1">
+<section id="section-6.4.2.2.1">
               <h6 id="name-leak-bind-k-ct-of-uk">
-<a href="#section-6.4.2.3.1" class="section-number selfRef">6.4.2.3.1. </a><a href="#name-leak-bind-k-ct-of-uk" class="section-name selfRef">LEAK-BIND-K-CT of UK</a>
+<a href="#section-6.4.2.2.1" class="section-number selfRef">6.4.2.2.1. </a><a href="#name-leak-bind-k-ct-of-uk" class="section-name selfRef">LEAK-BIND-K-CT of UK</a>
               </h6>
-<p id="section-6.4.2.3.1-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-CT.<a href="#section-6.4.2.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.3.1-2">Justification: To win LEAK-BIND-K-CT, given knowledge of two
+<p id="section-6.4.2.2.1-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-CT.<a href="#section-6.4.2.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.2.1-2">Justification: To win LEAK-BIND-K-CT, given knowledge of two
 honestly-generated UK secret keys, the adversary must construct two distinct
 UK ciphertexts that decapsulate to the same (non-bot) key. Since UK
 includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
-collision in the KDF.<a href="#section-6.4.2.3.1-2" class="pilcrow">¶</a></p>
-</section>
-</div>
+collision in the KDF.<a href="#section-6.4.2.2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="leak-bind-k-pk-of-uk">
-<section id="section-6.4.2.4">
-            <h5 id="name-leak-bind-k-pk-of-uk">
-<a href="#section-6.4.2.4" class="section-number selfRef">6.4.2.4. </a><a href="#name-leak-bind-k-pk-of-uk" class="section-name selfRef">LEAK-BIND-K-PK of UK</a>
-            </h5>
-<p id="section-6.4.2.4-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-PK.<a href="#section-6.4.2.4-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.4-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
+<section id="section-6.4.2.2.2">
+              <h6 id="name-leak-bind-k-pk-of-uk">
+<a href="#section-6.4.2.2.2" class="section-number selfRef">6.4.2.2.2. </a><a href="#name-leak-bind-k-pk-of-uk" class="section-name selfRef">LEAK-BIND-K-PK of UK</a>
+              </h6>
+<p id="section-6.4.2.2.2-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-PK.<a href="#section-6.4.2.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.2.2-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
 adversary must construct two ciphertexts that decapsulate to the same non-bot
 key, for distinct UK public keys. Again, since UK includes the public keys
 in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
-collide the KDF.<a href="#section-6.4.2.4-2" class="pilcrow">¶</a></p>
+collide the KDF.<a href="#section-6.4.2.2.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="cg-binding">
-<section id="section-6.4.2.5">
+<section id="section-6.4.2.3">
             <h5 id="name-cg-binding">
-<a href="#section-6.4.2.5" class="section-number selfRef">6.4.2.5. </a><a href="#name-cg-binding" class="section-name selfRef">CG Binding</a>
+<a href="#section-6.4.2.3" class="section-number selfRef">6.4.2.3. </a><a href="#name-cg-binding" class="section-name selfRef">CG Binding</a>
             </h5>
-<p id="section-6.4.2.5-1">The LEAK-BIND proofs for CG are a bit more subtle than for UK; the
+<p id="section-6.4.2.3-1">The LEAK-BIND proofs for CG are a bit more subtle than for UK; the
 main reason for this is CG's omission of the PQ KEM key and ciphertext from
-the KDF. We will show that UK still has our target LEAK-BIND properties as
+the KDF. We will show that CG still has our target LEAK-BIND properties as
 long as the underlying PQ-KEM also has the corresponding LEAK-BIND
 property. We note that our preliminary results suggest that a different proof
 strategy, which instead directly uses properties of the nominal group, may
-work here; we present the PQ-KEM route for concreteness.<a href="#section-6.4.2.5-1" class="pilcrow">¶</a></p>
+work here; we present the PQ-KEM route for concreteness.<a href="#section-6.4.2.3-1" class="pilcrow">¶</a></p>
 <div id="leak-bind-k-ct-of-cg">
-<section id="section-6.4.2.5.1">
+<section id="section-6.4.2.3.1">
               <h6 id="name-leak-bind-k-ct-of-cg">
-<a href="#section-6.4.2.5.1" class="section-number selfRef">6.4.2.5.1. </a><a href="#name-leak-bind-k-ct-of-cg" class="section-name selfRef">LEAK-BIND-K-CT of CG</a>
+<a href="#section-6.4.2.3.1" class="section-number selfRef">6.4.2.3.1. </a><a href="#name-leak-bind-k-ct-of-cg" class="section-name selfRef">LEAK-BIND-K-CT of CG</a>
               </h6>
-<p id="section-6.4.2.5.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
-CG is LEAK-BIND-K-CT.<a href="#section-6.4.2.5.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.5.1-2">Justification: To win the adversary must construct two distinct CG
+<p id="section-6.4.2.3.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
+CG is LEAK-BIND-K-CT.<a href="#section-6.4.2.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.1-2">Justification: To win the adversary must construct two distinct CG
 ciphertexts that decapsulate to the same non-bot key.  Call the CG
 ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
 ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
-ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.5.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.5.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
 ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
 ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
 KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal,
 the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
-KDF.<a href="#section-6.4.2.5.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.5.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
+KDF.<a href="#section-6.4.2.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
 output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
 reduction does this by generating two nominal-group key pairs and running the
@@ -2645,73 +2645,18 @@ CG LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
 lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
-game against the PQ KEM.<a href="#section-6.4.2.5.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.5.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.4.2.5.1-5" class="pilcrow">¶</a></p>
+game against the PQ KEM.<a href="#section-6.4.2.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.4.2.3.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="leak-bind-k-pk-of-cg">
-<section id="section-6.4.2.5.2">
+<section id="section-6.4.2.3.2">
               <h6 id="name-leak-bind-k-pk-of-cg">
-<a href="#section-6.4.2.5.2" class="section-number selfRef">6.4.2.5.2. </a><a href="#name-leak-bind-k-pk-of-cg" class="section-name selfRef">LEAK-BIND-K-PK of CG</a>
+<a href="#section-6.4.2.3.2" class="section-number selfRef">6.4.2.3.2. </a><a href="#name-leak-bind-k-pk-of-cg" class="section-name selfRef">LEAK-BIND-K-PK of CG</a>
               </h6>
-<p id="section-6.4.2.5.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
-CG is LEAK-BIND-K-PK.<a href="#section-6.4.2.5.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.5.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
-condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
-(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
-nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
-the other case we can directly get a KDF collision from a winning output. In
-this case the result of KEM_PQ.Decap for the two PQ KEM keys can either be
-the same or different. IF they are different, we again get a KDF collision
-from a win. If they are the same, in a similar way as above, we can build a
-reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.5.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.5.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.4.2.5.2-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="ck-binding">
-<section id="section-6.4.2.6">
-            <h5 id="name-ck-binding">
-<a href="#section-6.4.2.6" class="section-number selfRef">6.4.2.6. </a><a href="#name-ck-binding" class="section-name selfRef">CK Binding</a>
-            </h5>
-<div id="leak-bind-k-ct-of-ck">
-<section id="section-6.4.2.6.1">
-              <h6 id="name-leak-bind-k-ct-of-ck">
-<a href="#section-6.4.2.6.1" class="section-number selfRef">6.4.2.6.1. </a><a href="#name-leak-bind-k-ct-of-ck" class="section-name selfRef">LEAK-BIND-K-CT of CK</a>
-              </h6>
-<p id="section-6.4.2.6.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
-CK is LEAK-BIND-K-CT.<a href="#section-6.4.2.6.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.6.1-2">Justification: To win the adversary must construct two distinct CK
-ciphertexts that decapsulate to the same non-bot key.  Call the CK
-ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
-ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
-ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.6.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.6.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
-ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
-ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
-KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
-KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.6.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.6.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
-of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
-output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
-reduction does this by generating two nominal-group key pairs and running the
-CK LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
-KEM ciphertexts output by the adversary. The probability that the adversary
-wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
-lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
-game against the PQ KEM.<a href="#section-6.4.2.6.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.6.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.4.2.6.1-5" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="leak-bind-k-pk-of-ck">
-<section id="section-6.4.2.6.2">
-              <h6 id="name-leak-bind-k-pk-of-ck">
-<a href="#section-6.4.2.6.2" class="section-number selfRef">6.4.2.6.2. </a><a href="#name-leak-bind-k-pk-of-ck" class="section-name selfRef">LEAK-BIND-K-PK of CK</a>
-              </h6>
-<p id="section-6.4.2.6.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
-CK is LEAK-BIND-K-PK.<a href="#section-6.4.2.6.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.6.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
+<p id="section-6.4.2.3.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+CG is LEAK-BIND-K-PK.<a href="#section-6.4.2.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
 (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
 nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
@@ -2719,8 +2664,63 @@ the other case we can directly get a KDF collision from a winning output. In
 this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
-reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.6.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2.6.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.4.2.6.2-3" class="pilcrow">¶</a></p>
+reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.3.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.4.2.3.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="ck-binding">
+<section id="section-6.4.2.4">
+            <h5 id="name-ck-binding">
+<a href="#section-6.4.2.4" class="section-number selfRef">6.4.2.4. </a><a href="#name-ck-binding" class="section-name selfRef">CK Binding</a>
+            </h5>
+<div id="leak-bind-k-ct-of-ck">
+<section id="section-6.4.2.4.1">
+              <h6 id="name-leak-bind-k-ct-of-ck">
+<a href="#section-6.4.2.4.1" class="section-number selfRef">6.4.2.4.1. </a><a href="#name-leak-bind-k-ct-of-ck" class="section-name selfRef">LEAK-BIND-K-CT of CK</a>
+              </h6>
+<p id="section-6.4.2.4.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
+CK is LEAK-BIND-K-CT.<a href="#section-6.4.2.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4.1-2">Justification: To win the adversary must construct two distinct CK
+ciphertexts that decapsulate to the same non-bot key.  Call the CK
+ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
+ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
+ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4.1-3">Thus we can restrict attention to the case where ct_PQ^0 != ct_PQ^1 but
+ct_T^0 = ct_T^1. In this case, there are two relevant sub-cases: either
+ss_PQ^0 (:= KEM_PQ.Decaps(dk_PQ^0, ct_PQ^0)) is not equal to ss_PQ^1 (:=
+KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1), or they are equal. If they are not equal, the
+KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.4.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
+of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
+output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
+reduction does this by generating two traditional KEM key pairs and running the
+CK LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
+KEM ciphertexts output by the adversary. The probability that the adversary
+wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
+lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
+game against the PQ KEM.<a href="#section-6.4.2.4.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4.1-5">We conclude by noting these cases are exhaustive.<a href="#section-6.4.2.4.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="leak-bind-k-pk-of-ck">
+<section id="section-6.4.2.4.2">
+              <h6 id="name-leak-bind-k-pk-of-ck">
+<a href="#section-6.4.2.4.2" class="section-number selfRef">6.4.2.4.2. </a><a href="#name-leak-bind-k-pk-of-ck" class="section-name selfRef">LEAK-BIND-K-PK of CK</a>
+              </h6>
+<p id="section-6.4.2.4.2-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-PK, then
+CK is LEAK-BIND-K-PK.<a href="#section-6.4.2.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4.2-2">Justification: Similar to the above, we proceed by a case analysis on the win
+condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
+(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
+nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
+the other case we can directly get a KDF collision from a winning output. In
+this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
+the same or different. IF they are different, we again get a KDF collision
+from a win. If they are the same, in a similar way as above, we can build a
+reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2.4.2-3">Again, we conclude by noting that these cases are exhaustive.<a href="#section-6.4.2.4.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3077,10 +3077,10 @@ verifying test vectors), it is useful for the implementation to expose a
 "derandomized" version of the <code>Encaps</code> algorithm:<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-A-2.1">
-          <p id="appendix-A-2.1.1"><code>EncapsDerand(ek, randomness) -&gt; (ct, shared_secret)</code>: A deterministic
+          <p id="appendix-A-2.1.1"><code>EncapsDerand(ek, randomness) -&gt; (shared_secret, ct)</code>: A deterministic
  encapsulation algorithm, which takes as input a public encapsulation key
- <code>ek</code> and randomness <code>randomness</code>, and outputs a ciphertext <code>ct</code> and shared
- secret <code>shared_secret</code>.<a href="#appendix-A-2.1.1" class="pilcrow">¶</a></p>
+ <code>ek</code> and randomness <code>randomness</code>, and outputs a shared secret
+ <code>shared_secret</code> and ciphertext <code>ct</code>.<a href="#appendix-A-2.1.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="appendix-A-3">An implementation that exposes <code>EncapsDerand</code> must also define a required
