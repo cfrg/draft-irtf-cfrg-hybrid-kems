@@ -596,7 +596,7 @@ Table of Contents
 
    def DecapsToEncaps(dk):
        # The dk is always in seed format
-       (_dk, ek) = DeriveKeyPair(dk)
+       (_, ek) = DeriveKeyPair(dk)
        return ek
 
    In some deployment environments, it is not possible to instantiate
