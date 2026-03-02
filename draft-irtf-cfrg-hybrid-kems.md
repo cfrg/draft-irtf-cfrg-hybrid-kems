@@ -155,6 +155,10 @@ Disallowed?"
     title: "StarFortress: Hybrid Post-Quantum KEMs From SDH and IND-CCA"
     target: https://eprint.iacr.org/2026/125
     date: 2026
+  COS+26:
+    title: "StarHunters— Secure Hybrid Post-Quantum KEMs From IND-CCA2 PKEs"
+    target: https://eprint.iacr.org/xxxx/108115
+    date: 2026
   CHH+25:
     title: "Starfighters — on the general applicability of X-Wing"
     target: https://eprint.iacr.org/2025/1397
@@ -1189,16 +1193,13 @@ As long as the aforementioned security requirements of the component parts
 are met, these analyses imply that this document's CG construction satisfies
 IND-CCA security.
 
-The CK construction's IND-CCA analysis is based on forthcoming work by the
-editorial team.
-
 The CK construction has two complementary IND-CCA analyses: one for when the
 IND-CCA security of the traditional PKE-based KEM holds but the PQ KEM is
 broken, except for the PQ KEM's C2PRI security, and one for where the IND-CCA
 security of the PQ KEM holds.  Both are technically novel but are
 substantially similar to the existing peer-reviewed analyses of the CG
-{{XWING}} and UK {{GHP18}} constructions. A forthcoming document by the
-editorial team will describe the analysis of CK in detail.
+{{XWING}} and UK {{GHP18}} constructions. {{COS+26}} by the editorial team
+and collaborators describes the analysis of UG in detail.
 
 Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
 with cryptographic components that meet the security requirements described
