@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-02-17T01:43:34.011387+00:00",
+  "timestamp": "2026-03-03T01:45:20.655023+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -212,7 +212,7 @@
       "id": "I_kwDOMmhxws6y1iX9",
       "title": "Flesh out the 'out of scope' details more",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/13",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "dconnolly",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -223,8 +223,8 @@
       ],
       "body": "",
       "createdAt": "2025-04-16T18:10:07Z",
-      "updatedAt": "2025-05-29T21:56:34Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-02T20:39:19Z",
+      "closedAt": "2026-03-02T20:39:19Z",
       "comments": []
     },
     {
@@ -765,7 +765,7 @@
       ],
       "body": "In the current draft, none of the constructions seem to handle the case where a KEM can \"explicitly\" fail during decapsulation - that is, output some failure indicator instead of a syntactically-valid shared secret. If the constructions only work for implicit-rejection KEMs, we should probably make this clear in the draft to remove a potential future footgun. (Apologies if this was covered somewhere and I missed it..)",
       "createdAt": "2025-06-24T16:51:38Z",
-      "updatedAt": "2025-09-29T19:29:14Z",
+      "updatedAt": "2026-03-02T20:48:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -802,6 +802,13 @@
           "body": "Interim 2025-09: Hybrid KEMs should only pass on any failures from the component KEMs.  Basically: \u201cwrite pseudocode as if things are infallible, write advisory text about failures\u201d. Where the advisory text would be something like \"if one KEM fails, fail the hybrid, but don't reveal anything other than failure\".  We should not do the strong form of \"implicit\", which would be something like, \"if a KEM explicitly fails, generate a random SS for it\"\n",
           "createdAt": "2025-09-29T19:29:06Z",
           "updatedAt": "2025-09-29T19:29:06Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This seems adequately covered by the new text in #102 ",
+          "createdAt": "2026-03-02T20:48:14Z",
+          "updatedAt": "2026-03-02T20:48:14Z"
         }
       ]
     },
@@ -1382,16 +1389,24 @@
       "id": "I_kwDOMmhxws7Pm4th",
       "title": "Comments from Chris Patton",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/84",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://mailarchive.ietf.org/arch/msg/cfrg/SsuoZgdaZGqUwS1Sn6Q6L7QzqvY/\n\n- I ended up combining the PRG and KDF APIs into a single trait that was more convenient for defining the KEMs.\n- I ended up combining Nseed, Nss, and Nout into one variable. I suspect most of the time these will all always be the same, though perhaps not for larger than usual elliptic curves.\n- Rather than rederive the encapsulation key during decapsulation, I just stored the encapsulation key in the decapsulation key. My guess is that implementations would do this most of the time.\n- Section 3: It seems like `GenerateKeyPair()` is there just for convenience. I would get rid of it and just explain that `DeriveKeyPair()` needs a (pseudo)random input.\n- Section 3: The draft uses `random()` for samping random bytes strings and the more academic $x \\getsr \\bits^n$ for sampling bit strings. I would go with just one of these.\n- Section 4.2: `DeriveScalar(seed)` would be more consistent than `RandomScalar(seed)`.\n- Section 4.3: The first paragraph calls the function `G`, but the rest of the document uses `PRG`.\n- nit: I like `Combine()` as the name for the combiner function rather than `Combine()`. This aligns grammatically better with the rest of the API in the doc.\n- nit: Perhaps drop \"PQ\" from \"PQImplicit\". I understand \"explicit\" to mean \"explicitly hash the PQ ciphertext and encapsulation key\", in which case \"PQ\" is a little redundant.",
       "createdAt": "2025-10-04T02:29:31Z",
-      "updatedAt": "2025-10-04T02:29:31Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-03-02T20:47:50Z",
+      "closedAt": "2026-03-02T20:47:50Z",
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think these are obsolete at this point.",
+          "createdAt": "2026-03-02T20:47:50Z",
+          "updatedAt": "2026-03-02T20:47:50Z"
+        }
+      ]
     },
     {
       "number": 86,
@@ -1429,31 +1444,39 @@
       "id": "I_kwDOMmhxws7SA5tr",
       "title": "Naming of combiners",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/87",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "In #85, the two combiner functions are Universal and C2PRI.  Are there other names that would be better?\n\n* Basic / C2PRI\n* \"Any PQ KEM\" / \"Only C2PRI PQ KEM\" (would need to figure out how to make into labels)\n",
       "createdAt": "2025-10-16T20:41:43Z",
-      "updatedAt": "2025-10-16T20:41:43Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-03-02T20:42:41Z",
+      "closedAt": "2026-03-02T20:42:41Z",
+      "comments": [
+        {
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "body": "went with\nUniversal/C2PRI x KEM/Group, resulting in:\n\nUK (classic GHP style)\nUG (relying directly on SDH security of the group, like X-Wing, with less hashing than DHKEM)\nCK (two KEMs, one must also be C2PRI)\nCG (QSF/X-Wing style)",
+          "createdAt": "2026-03-02T20:42:35Z",
+          "updatedAt": "2026-03-02T20:42:35Z"
+        }
+      ]
     },
     {
       "number": 88,
       "id": "I_kwDOMmhxws7SA9xu",
       "title": "DeriveKeyPair: (ek, dk) or (dk, ek)?",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/issues/88",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "`Encaps()` returns the secret output first, `(ss, ct)`.  `DeriveKeyPair` should do the same thing.",
       "createdAt": "2025-10-16T20:48:31Z",
-      "updatedAt": "2025-11-02T21:15:09Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-02T20:38:09Z",
+      "closedAt": "2026-03-02T20:38:09Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -9376,78 +9399,289 @@
       "id": "PR_kwDOMmhxws7DzvHD",
       "title": "Fix pseudocode bugs, naming consistency, and return order",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/100",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "grittygrease",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "## Summary\n\nThis PR fixes pseudocode errors, naming inconsistencies, and aligns the Encaps return order with FIPS 203 and the draft's own internal usage.\n\n### Commit 1: Fix pseudocode bugs, typos, and proof text errors\n\n- **`ex_PQ` undefined variable**: All four `UniversalCombiner` calls in UG/UK Encaps/Decaps referenced `ex_PQ` instead of `ek_PQ`. This variable is not defined anywhere in the document.\n- **Extra closing parens**: All eight combiner calls had `Label))` with an unmatched `)`.\n- **`Decap`/`Encap` vs `Decaps`/`Encaps`**: The subroutines `prepareDecapsG`, `prepareEncapsK`, and `prepareDecapsK` used `Decap`/`Encap` instead of `Decaps`/`Encaps` as defined in the KEM API.\n- **CK Encaps split error**: CK Encaps used `Group_T.Nelem` instead of `KEM_T.Nek`. CK uses a traditional KEM, not a nominal group.\n- **C2PRI definition**: `Decaps(dk, ct)` should be `Decaps(dk, ct')` \u2014 the original defines a vacuously true property instead of second-preimage resistance.\n- **UK/CG copy-paste error**: CG Binding section intro said \"We will show that UK still has...\" \u2014 should be \"CG\".\n- **CK binding proof**: \"nominal-group key pairs\" should be \"traditional KEM key pairs\" since CK uses `KEM_T`.\n- **Missing word**: \"The additional provided by\" -> \"The additional protection provided by\"\n- **Typos**: Resistence, Algortihms, environemnts, \"the the\"\n- **Grammar**: \"KEMs)\" -> \"KEM)\", spurious comma\n- **Heading levels**: LEAK-BIND-K-PK of UG and UK sections were `####` instead of `#####` (should match sibling K-CT sections)\n\n### Commit 2: Fix naming consistency\n\n- Add missing `return` statements to `UniversalCombiner` and `C2PRICombiner` functions\n- Align prose references `expandDecapsulationKeyG/K` with actual function names `expandDecapsKeyG/K`\n- Fix `dkT` -> `dk_T` for consistent underscore naming\n- Fix `KEM_PQ.Decap` -> `KEM_PQ.Decaps` in CG LEAK-BIND-K-PK proof text\n\n### Commit 3: Fix Encaps/EncapsDerand return order\n\nFIPS 203 Section 7.2 specifies `ML-KEM.Encaps` returns `(K, c)` with the shared secret first. The draft's own subroutines already used `(ss, ct)` order internally. This commit aligns the API definitions to `(ss, ct)` and fixes the CK Encaps `split()` call to use `KEM_T.Nek` instead of `Group_T.Nelem`.\n",
       "createdAt": "2026-02-14T18:16:49Z",
-      "updatedAt": "2026-02-14T18:54:52Z",
+      "updatedAt": "2026-03-02T20:42:42Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
       "headRepository": "grittygrease/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "fix/pseudocode",
       "headRefOid": "ad8c998e542e7a507bd09c4a92ffba780bd496fa",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-02T20:42:42Z",
+      "mergedAt": "2026-03-02T20:42:42Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "cfcd9fd34382684646a312cacfdbda6f1b668505"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7nLorw",
+          "commit": {
+            "abbreviatedOid": "ad8c998"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-03-02T20:42:34Z",
+          "updatedAt": "2026-03-02T20:42:34Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 101,
       "id": "PR_kwDOMmhxws7DzvIv",
       "title": "Fix references: remove unused, fix broken citations, add missing",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/101",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "grittygrease",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "## Summary\n\nThis PR cleans up the reference section: fixes broken kramdown citations, removes genuinely unused references, adds missing inline citations, and corrects the normative/informative classification.\n\n### Changes\n\n- **Fix broken citations**: `[LUCKY13]`, `[RACCOON]`, `[AVIRAM]` used bare bracket syntax instead of kramdown `{{REF}}`. These rendered as literal text rather than hyperlinked references.\n\n- **Move FIPS202/FIPS203 from normative to informative**: The draft defines generic frameworks that can be instantiated with any KEM/KDF meeting the security requirements. SHA-3 and ML-KEM are examples, not mandatory. They are informative per RFC convention.\n\n- **Add inline citations**: `ML-KEM {{FIPS203}}` where ML-KEM is first discussed in the C2PRI section, `SHA-3 {{FIPS202}}` in the indifferentiability section, and `{{SCHMIEG2024}}` to back the claim that ML-KEM provides only LEAK-level binding.\n\n- **Remove 9 unused references**: ABR01, ANSIX9.62, BDP+11, FIPS186, I-D.driscoll-pqt-hybrid-terminology, KSMW2024, RS92, RSS11, SEC1. Verified each is not cited in the draft body.\n",
       "createdAt": "2026-02-14T18:16:58Z",
-      "updatedAt": "2026-02-14T18:16:59Z",
+      "updatedAt": "2026-03-02T20:44:17Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
       "headRepository": "grittygrease/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "fix/references",
       "headRefOid": "a1a39e9dadcc027258b939b20821cb2f9d1e9a8b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-02T20:44:16Z",
+      "mergedAt": "2026-03-02T20:44:16Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "82bbc5a65395b82005ddad1589975c2af8c3d1fb"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7nLqNN",
+          "commit": {
+            "abbreviatedOid": "a1a39e9"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-03-02T20:44:11Z",
+          "updatedAt": "2026-03-02T20:44:11Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 102,
       "id": "PR_kwDOMmhxws7DzvLW",
       "title": "Fix security text: deduplicate non-goals, proof corrections, spec clarity",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/102",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "grittygrease",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "## Summary\n\nThis PR fixes editorial issues in the Security Considerations and Out of Scope sections, corrects proof text errors, and adds two clarifying statements about KEM semantics.\n\n### Commit 1: Deduplicate non-goals text, fix Out of Scope prose\n\nThe Security Non-goals section (Section 8.3) duplicated the list from the Out of Scope section. Replace the duplicate with a cross-reference using a new `{#out-of-scope}` anchor. Also fix the Out of Scope section:\n- \"Considerations that were considered\" -> clearer phrasing\n- Add missing period after `{{CDM23}}`\n- \"Design team decided to restrict\" -> \"This document restricts\"\n\n### Commit 2: Fix proof text: grammar, missing parens, UK IND-CCA qualifier\n\n- **HKDF indifferentiability**: Rewrote the HMAC-SHA-256 bullet to remove the incorrect prefix-free qualifier (which applies to plain Merkle-Damgard, not HMAC) and cite DRS+13 precisely: HMAC-SHA-256 is indifferentiable from a RO when the compression function underlying SHA-256 is modeled as a RO\n- **Missing closing paren**: In both the CG and CK LEAK-BIND-K-CT proofs, `ss_PQ^1 (:= KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1),` was missing the outer `)` that closes the `:=` group. The matching `ss_PQ^0` expression has `))`.\n- **UK qualifier**: \"does not have an IND-CCA analysis\" -> \"does not have a dedicated IND-CCA analysis\". The next sentence explains that GHP18's proof adapts with trivial modifications.\n\n### Commit 3: Add implicit rejection note, LEAK-BIND requirement for CG/CK binding\n\n- **Implicit rejection**: Add a note after the Decaps API definition clarifying that Decaps is *modeled* as always returning a shared secret (not a universal API claim). Component KEMs with implicit rejection (e.g., ML-KEM) produce a deterministic pseudorandom output on invalid ciphertexts.\n- **LEAK-BIND requirement**: State that the CG and CK binding analyses additionally require the corresponding LEAK-BIND property of `KEM_PQ`. This matches the language already used in the CG Binding section introduction and makes the precondition visible at the top of the binding analyses section.\n\n### Commit 4: Fix HKDF indifferentiability claim, tighten Decaps modeling note\n\n- **HKDF rewrite**: Remove incorrect prefix-free qualifier from HMAC-SHA-256 indifferentiability claim. DRS+13's result requires only that the compression function is modeled as a RO; prefix-free applies to plain Merkle-Damgard, not HMAC.\n- **Decaps note**: \"Note that Decaps always returns\" -> \"In this document, Decaps is modeled as always returning\" to avoid implying a universal API constraint.\n- **Binding language**: \"new results by the editorial team\" -> \"results by the editorial team\"\n- **Line wrapping**: Rewrap affected lines to 72 chars.\n",
       "createdAt": "2026-02-14T18:17:06Z",
-      "updatedAt": "2026-02-14T18:17:07Z",
+      "updatedAt": "2026-03-02T23:17:11Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
       "baseRefName": "main",
       "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
       "headRepository": "grittygrease/draft-irtf-cfrg-hybrid-kems",
       "headRefName": "fix/security-editorial",
-      "headRefOid": "c76e8e78045cc253d7c7313259529e524cd6624c",
+      "headRefOid": "19879a3fe2533939736494a1e61381424cd4d23a",
+      "closedAt": "2026-03-02T23:17:11Z",
+      "mergedAt": "2026-03-02T23:17:11Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "9ec66cbd651bb37d203b2f0e57061c48fdb6d729"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7nLtBd",
+          "commit": {
+            "abbreviatedOid": "c76e8e7"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-03-02T20:47:09Z",
+          "updatedAt": "2026-03-02T20:47:13Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "I think this section could be tightened up a little, e.g., by making bullets and removing the subsection divisions.  I can handle in a follow-on.",
+              "createdAt": "2026-03-02T20:47:09Z",
+              "updatedAt": "2026-03-02T20:47:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7nM-E4",
+          "commit": {
+            "abbreviatedOid": "c76e8e7"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T22:07:02Z",
+          "updatedAt": "2026-03-02T22:07:02Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "```suggestion\nwhich for HMAC-SHA-256 has been shown in {{DRS+13}} when\nthe compression function underlying SHA-256 is a random oracle,\nwhich is a regular assumption in the literature.\n```",
+              "createdAt": "2026-03-02T22:07:02Z",
+              "updatedAt": "2026-03-02T22:07:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7nNIif",
+          "commit": {
+            "abbreviatedOid": "7454fb7"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T22:16:56Z",
+          "updatedAt": "2026-03-02T22:16:56Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\nSecurity properties and design considerations that were considered\nand not included in these designs:\n\n- Anonymity {{GMP22}}, Deniability, Obfuscation, other forms of key-robustness\nor binding {{GMP22}}, {{CDM23}}\n\n- More than two components: this document restricts the scope to two components: a post-quantum component and a traditional component.\n\n- Parameterized output length: not analyzed as part of any security proofs in the literature, and a complication deemed unnecessary.\n```",
+              "createdAt": "2026-03-02T22:16:56Z",
+              "updatedAt": "2026-03-02T22:16:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOMmhxws7nOUu7",
+          "commit": {
+            "abbreviatedOid": "19879a3"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-03-02T23:17:01Z",
+          "updatedAt": "2026-03-02T23:17:01Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 104,
+      "id": "PR_kwDOMmhxws7HbT3s",
+      "title": "Cite CK analysis on eprint with holding paper id for now",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/104",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-03-02T20:11:33Z",
+      "updatedAt": "2026-03-02T20:18:41Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "3a9b85e8f677bc380576a4ee8d305b4a100d751c",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "cite-ck-proofs",
+      "headRefOid": "403b25ad5bd713ce3ce05e2edbc0dc80b9016114",
+      "closedAt": "2026-03-02T20:18:39Z",
+      "mergedAt": "2026-03-02T20:18:39Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "d99b76949b3bdc60689176dc4c8fb6fc3832d3be"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 105,
+      "id": "PR_kwDOMmhxws7Hdxs4",
+      "title": "Reformat out-of-scope",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/105",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-03-02T23:24:28Z",
+      "updatedAt": "2026-03-02T23:25:12Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "9ec66cbd651bb37d203b2f0e57061c48fdb6d729",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "dconnolly-patch-2",
+      "headRefOid": "64dea9a5d304ae42608345159c4d5deac8efa515",
+      "closedAt": "2026-03-02T23:25:10Z",
+      "mergedAt": "2026-03-02T23:25:10Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "0ff4754e319e515733f3bb2c5ea73964f978dad7"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 106,
+      "id": "PR_kwDOMmhxws7Hdzju",
+      "title": "Add DecapsToEncaps",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/106",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes https://github.com/hpkewg/hpke-pq/issues/45",
+      "createdAt": "2026-03-02T23:27:16Z",
+      "updatedAt": "2026-03-02T23:28:52Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "0ff4754e319e515733f3bb2c5ea73964f978dad7",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "add-decaps-to-encaps-derivation",
+      "headRefOid": "1511cf57919e356ac6d7406c860cc74bf66fb0b7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOMmhxws7nOgsM",
+          "commit": {
+            "abbreviatedOid": "4e34bbd"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T23:27:48Z",
+          "updatedAt": "2026-03-02T23:27:48Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\n    (_, ek) = DeriveKeyPair(dk)\n```",
+              "createdAt": "2026-03-02T23:27:48Z",
+              "updatedAt": "2026-03-02T23:27:48Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
