@@ -133,7 +133,7 @@ Disallowed?"
     date: 2026
   COS+26:
     title: "StarHunters— Secure Hybrid Post-Quantum KEMs From IND-CCA2 PKEs"
-    target: https://eprint.iacr.org/xxxx/108115
+    target: https://eprint.iacr.org/2026/427
     date: 2026
   CHH+25:
     title: "Starfighters — on the general applicability of X-Wing"
