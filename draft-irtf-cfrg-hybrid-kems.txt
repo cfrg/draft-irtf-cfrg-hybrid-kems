@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 3 September 2026                                          Cisco
+Expires: 7 September 2026                                          Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                            2 March 2026
+                                                            6 March 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 September 2026.
+   This Internet-Draft will expire on 7 September 2026.
 
 Copyright Notice
 
@@ -1449,7 +1449,7 @@ def Decaps(dk, ct):
               2025, <https://eprint.iacr.org/2025/1397>.
 
    [COS_26]   "StarHunters— Secure Hybrid Post-Quantum KEMs From IND-
-              CCA2 PKEs", 2026, <https://eprint.iacr.org/xxxx/108115>.
+              CCA2 PKEs", 2026, <https://eprint.iacr.org/2026/427>.
 
    [DRS_13]   "To Hash or Not to Hash Again? (In)differentiability
               Results for H^2 and HMAC", 2013,
