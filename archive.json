@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-03-03T01:45:20.655023+00:00",
+  "timestamp": "2026-03-08T01:43:20.150355+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hybrid-kems",
   "labels": [
     {
@@ -9682,6 +9682,34 @@
           ]
         }
       ]
+    },
+    {
+      "number": 107,
+      "id": "PR_kwDOMmhxws7Iafs9",
+      "title": "Update eprint link for CK proofs",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hybrid-kems/pull/107",
+      "state": "MERGED",
+      "author": "dconnolly",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-03-06T06:25:38Z",
+      "updatedAt": "2026-03-06T06:30:56Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "baseRefName": "main",
+      "baseRefOid": "0ff4754e319e515733f3bb2c5ea73964f978dad7",
+      "headRepository": "cfrg/draft-irtf-cfrg-hybrid-kems",
+      "headRefName": "update-eprint",
+      "headRefOid": "e4aac2f8156c5f1b08b51745956416c6504f2568",
+      "closedAt": "2026-03-06T06:30:54Z",
+      "mergedAt": "2026-03-06T06:30:54Z",
+      "mergedBy": "dconnolly",
+      "mergeCommit": {
+        "oid": "cf3d885cc3faea8d61b1686ee6be635ac44fe402"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
