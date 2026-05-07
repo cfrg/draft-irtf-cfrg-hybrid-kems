@@ -127,10 +127,7 @@ Disallowed?"
         ins: N. Medinger
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
-  CG26:
-    title: "StarFortress: Hybrid Post-Quantum KEMs From SDH and IND-CCA"
-    target: https://eprint.iacr.org/2026/125
-    date: 2026
+  CG26: DOI.10.62056/ahmp-49p1.
   COS+26:
     title: "StarHunters— Secure Hybrid Post-Quantum KEMs From IND-CCA2 PKEs"
     target: https://eprint.iacr.org/2026/427
@@ -1001,8 +998,13 @@ the compression function underlying SHA-256 is a random oracle,
 which is a regular assumption in the literature.
 
 - the values of HKDF's `IKM` input do not collide with
-values of `info` `||` `0x01`. This MUST be enforced by the
+values of `info || 0x01`. This MUST be enforced by the
 concrete instantiations that use HKDF as its `KDF`.
+
+Using HKDF as a KDF in the sense defined in this document requires mapping the
+single `input` defined here to the `IKM`, `salt`, and `info` inputs required by
+HKDF.  Concrete instantiations MUST define this mapping in such a way that no
+`input` value will ever map to colliding `IKM` and `info` values.
 
 The choice of the `KDF` security level SHOULD be made based on the security
 level provided by the constituent KEMs. The `KDF` SHOULD at least have the
@@ -1162,6 +1164,19 @@ with cryptographic components that meet the security requirements described
 above. Any changes to the algorithms, including key generation/derivation,
 are not guaranteed to produce secure results.
 
+The IND-CCA analyses of UG in {{CG26}}, CG in {{XWING}}, and CK in {{COS_26}}
+all model component key generation as sampling the two component key pairs
+independently, whereas the default key generation in this document derives both
+component key pairs from a single seed via the PRG ({{key-generation}}). This
+apparent mismatch is resolved by a standard hybrid argument: by the PRG security
+required in {{security-prgs}}, the joint distribution of component key pairs derived
+from a single seed is computationally indistinguishable from the joint
+distribution of independently generated component key pairs. Thus, any IND-CCA
+adversary against the shared-seed scheme implies an IND-CCA adversary against
+the independent-keys scheme with at most an additive PRG-distinguishing term in
+the bound. The same observation underlies the binding sketches in Section
+{{binding-analyses}}.
+
 ### Binding analyses
 
 There are four hybrid KEM frameworks, and two target binding properties, so
@@ -1185,6 +1200,15 @@ common random seed provides further protection against manipulation or
 corruption of keys such that it can contribute to stronger binding properties
 against a MAL adversary, as well as operational benefits in practice, but we
 do not prove that here.
+
+The paper that establishes the IND-CCA security of the UG construction
+({{CG26}}) does not also include a proof of its binding properties.
+Instead, {{CG26}} Section 4.3 observes that the binding arguments for UK
+transfer to UG essentially unmodified, since both constructions include the
+relevant ciphertexts and encapsulation keys in the KDF input; we make that
+argument concrete in the sketches below. The sketches rely on collision
+resistance of the KDF ({{security-kdfs}}), and for CG and CK, additionally on the
+corresponding LEAK-BIND property of the PQ KEM.
 
 #### UG Binding
 
