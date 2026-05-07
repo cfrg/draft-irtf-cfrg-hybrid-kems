@@ -15,21 +15,21 @@ traditional cryptographic component. Hybrid KEMs built using these
 constructions provide strong security properties as long as either of the
 underlying algorithms are secure. 
     " name="description">
-<meta content="xml2rfc 3.31.0" name="generator">
+<meta content="xml2rfc 3.33.0" name="generator">
 <meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.31.0
-    Python 3.12.12
+  xml2rfc 3.33.0
+    Python 3.12.13
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.0.2
-    platformdirs 4.5.1
+    platformdirs 4.9.6
     pycountry 24.6.1
     PyYAML 6.0.3
-    requests 2.32.5
-    wcwidth 0.3.0
+    requests 2.33.1
+    wcwidth 0.7.0
 -->
 <link href="draft-irtf-cfrg-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1050,11 +1050,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">hybrid-kems</td>
-<td class="right">March 2026</td>
+<td class="right">May 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 7 September 2026</td>
+<td class="center">Expires 8 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1067,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-03-06" class="published">6 March 2026</time>
+<time datetime="2026-05-07" class="published">7 May 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-09-07">7 September 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-08">8 November 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1129,7 +1129,7 @@ underlying algorithms are secure.<a href="#section-abstract-1" class="pilcrow">�
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 7 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 8 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1960,12 +1960,18 @@ component is secure and the PQ component also satisfies the C2PRI property.<a hr
         <h3 id="name-key-generation">
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-key-generation" class="section-name selfRef">Key Generation</a>
         </h3>
-<p id="section-5.2-1">All four frameworks share a common key generation function:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">All four frameworks share a common key generation function, and a function to
+compute the encapsulation key that corresponds to a decapsulation key:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.2-2">
 <pre>
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
+
+def DecapsToEncaps(dk):
+    # The dk is always in seed format
+    (_, ek) = DeriveKeyPair(dk)
+    return ek
 </pre><a href="#section-5.2-2" class="pilcrow">¶</a>
 </div>
 <p id="section-5.2-3">In some deployment environments, it is not possible to instantiate this
@@ -2319,13 +2325,17 @@ which is a regular assumption in the literature.<a href="#section-6.1.5-5.1.1" c
 </li>
             <li class="normal" id="section-6.1.5-5.2">
               <p id="section-6.1.5-5.2.1">the values of HKDF's <code>IKM</code> input do not collide with
-values of <code>info</code> <code>||</code> <code>0x01</code>. This <span class="bcp14">MUST</span> be enforced by the
+values of <code>info || 0x01</code>. This <span class="bcp14">MUST</span> be enforced by the
 concrete instantiations that use HKDF as its <code>KDF</code>.<a href="#section-6.1.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-6.1.5-6">The choice of the <code>KDF</code> security level <span class="bcp14">SHOULD</span> be made based on the security
+<p id="section-6.1.5-6">Using HKDF as a KDF in the sense defined in this document requires mapping the
+single <code>input</code> defined here to the <code>IKM</code>, <code>salt</code>, and <code>info</code> inputs required by
+HKDF.  Concrete instantiations <span class="bcp14">MUST</span> define this mapping in such a way that no
+<code>input</code> value will ever map to colliding <code>IKM</code> and <code>info</code> values.<a href="#section-6.1.5-6" class="pilcrow">¶</a></p>
+<p id="section-6.1.5-7">The choice of the <code>KDF</code> security level <span class="bcp14">SHOULD</span> be made based on the security
 level provided by the constituent KEMs. The <code>KDF</code> <span class="bcp14">SHOULD</span> at least have the
-security level of the strongest constituent KEM.<a href="#section-6.1.5-6" class="pilcrow">¶</a></p>
+security level of the strongest constituent KEM.<a href="#section-6.1.5-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-prgs">
@@ -2512,6 +2522,18 @@ and collaborators describes the analysis of UG in detail.<a href="#section-6.4.1
 with cryptographic components that meet the security requirements described
 above. Any changes to the algorithms, including key generation/derivation,
 are not guaranteed to produce secure results.<a href="#section-6.4.1-10" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-11">The IND-CCA analyses of UG in <span>[<a href="#CG26" class="cite xref">CG26</a>]</span>, CG in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, and CK in <span>[<a href="#COS_26" class="cite xref">COS_26</a>]</span>
+all model component key generation as sampling the two component key pairs
+independently, whereas the default key generation in this document derives both
+component key pairs from a single seed via the PRG (<a href="#key-generation" class="auto internal xref">Section 5.2</a>). This
+apparent mismatch is resolved by a standard hybrid argument: by the PRG security
+required in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a>, the joint distribution of component key pairs derived
+from a single seed is computationally indistinguishable from the joint
+distribution of independently generated component key pairs. Thus, any IND-CCA
+adversary against the shared-seed scheme implies an IND-CCA adversary against
+the independent-keys scheme with at most an additive PRG-distinguishing term in
+the bound. The same observation underlies the binding sketches in Section
+<a href="#binding-analyses" class="auto internal xref">Section 6.4.2</a>.<a href="#section-6.4.1-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="binding-analyses">
@@ -2537,6 +2559,14 @@ common random seed provides further protection against manipulation or
 corruption of keys such that it can contribute to stronger binding properties
 against a MAL adversary, as well as operational benefits in practice, but we
 do not prove that here.<a href="#section-6.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.2-3">The paper that establishes the IND-CCA security of the UG construction
+(<span>[<a href="#CG26" class="cite xref">CG26</a>]</span>) does not also include a proof of its binding properties.
+Instead, <span>[<a href="#CG26" class="cite xref">CG26</a>]</span> Section 4.3 observes that the binding arguments for UK
+transfer to UG essentially unmodified, since both constructions include the
+relevant ciphertexts and encapsulation keys in the KDF input; we make that
+argument concrete in the sketches below. The sketches rely on collision
+resistance of the KDF (<a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a>), and for CG and CK, additionally on the
+corresponding LEAK-BIND property of the PQ KEM.<a href="#section-6.4.2-3" class="pilcrow">¶</a></p>
 <div id="ug-binding">
 <section id="section-6.4.2.1">
             <h5 id="name-ug-binding">
@@ -2925,7 +2955,7 @@ proofs in the literature, and a complication deemed unnecessary<a href="#section
 <dd class="break"></dd>
 <dt id="CG26">[CG26]</dt>
         <dd>
-<span class="refTitle">"StarFortress: Hybrid Post-Quantum KEMs From SDH and IND-CCA"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://eprint.iacr.org/2026/125">https://eprint.iacr.org/2026/125</a>&gt;</span>. </dd>
+<span class="refTitle">"*** BROKEN REFERENCE ***"</span>. </dd>
 <dd class="break"></dd>
 <dt id="Cheon06">[Cheon06]</dt>
         <dd>
