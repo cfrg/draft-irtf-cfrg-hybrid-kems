@@ -127,7 +127,7 @@ Disallowed?"
         ins: N. Medinger
         name: Niklas Medinger
         org: CISPA Helmholtz Center for Information Security
-  CG26: DOI.10.62056/ahmp-49p1.
+  CG26: DOI.10.62056/ahmp-49p1
   COS+26:
     title: "StarHunters— Secure Hybrid Post-Quantum KEMs From IND-CCA2 PKEs"
     target: https://eprint.iacr.org/2026/427
@@ -1163,7 +1163,7 @@ broken, except for the PQ KEM's C2PRI security, and one for where the IND-CCA
 security of the PQ KEM holds.  Both are technically novel but are
 substantially similar to the existing peer-reviewed analyses of the CG
 {{XWING}} and UK {{GHP18}} constructions. {{COS+26}} by the editorial team
-and collaborators describes the analysis of UG in detail.
+and collaborators describes the analysis of CK in detail.
 
 Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
 with cryptographic components that meet the security requirements described
