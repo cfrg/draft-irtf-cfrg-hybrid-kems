@@ -1960,12 +1960,18 @@ component is secure and the PQ component also satisfies the C2PRI property.<a hr
         <h3 id="name-key-generation">
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-key-generation" class="section-name selfRef">Key Generation</a>
         </h3>
-<p id="section-5.2-1">All four frameworks share a common key generation function:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">All four frameworks share a common key generation function, and a function to
+compute the encapsulation key that corresponds to a decapsulation key:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.2-2">
 <pre>
 def GenerateKeyPair():
     seed = random(Nseed)
     return DeriveKeyPair(seed)
+
+def DecapsToEncaps(dk):
+    # The dk is always in seed format
+    (_, ek) = DeriveKeyPair(dk)
+    return ek
 </pre><a href="#section-5.2-2" class="pilcrow">¶</a>
 </div>
 <p id="section-5.2-3">In some deployment environments, it is not possible to instantiate this
