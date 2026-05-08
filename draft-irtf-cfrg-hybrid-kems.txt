@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 8 November 2026                                           Cisco
+Expires: 9 November 2026                                           Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                              7 May 2026
+                                                              8 May 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 November 2026.
+   This Internet-Draft will expire on 9 November 2026.
 
 Copyright Notice
 
@@ -1098,7 +1098,7 @@ def Decaps(dk, ct):
    technically novel but are substantially similar to the existing peer-
    reviewed analyses of the CG [XWING] and UK [GHP18] constructions.
    [COS_26] by the editorial team and collaborators describes the
-   analysis of UG in detail.
+   analysis of CK in detail.
 
    Therefore all four hybrid KEMs in this document are IND-CCA when
    instantiated with cryptographic components that meet the security
@@ -1476,7 +1476,11 @@ def Decaps(dk, ct):
               analysis of KEM-based protocols", 2023,
               <https://eprint.iacr.org/2023/1933.pdf>.
 
-   [CG26]     "*** BROKEN REFERENCE ***".
+   [CG26]     Connolly, D. and P. Grubbs, "StarFortress:: Hybrid KEMs
+              with Diffie-Hellman Inlining", International Association
+              for Cryptologic Research, IACR Communications in
+              Cryptology vol. 3, no. 1, DOI 10.62056/ahmp-49p1, May
+              2026, <https://doi.org/10.62056/ahmp-49p1>.
 
    [Cheon06]  Cheon, J. H., "Security Analysis of the Strong Diffie-
               Hellman Problem", 2006.
