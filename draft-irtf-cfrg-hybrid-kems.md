@@ -386,17 +386,13 @@ A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
-In this document, `Decaps` is modeled as always returning an
-output and never returning an error.  Component KEMs
-that use implicit rejection (such as ML-KEM) produce a
-deterministic pseudorandom output on invalid inputs,
-which propagates through the combiner's KDF.
-
-We also make use of internal algorithms such as:
-
-- `expandDecapsulationKey(dk) -> (dk, ek)`: A deterministic algorithm that
-  takes as input a decapsulation key `dk` and recovers the values needed for
-  decapsulation, including the corresponding encapsulation key `ek`.
+In the notation above, `Decaps` is written as if it always returns an output
+`ss`; this is an artifact of the Python-like pseudocode used in this document.
+In the event of a decapsulation failure, `Decaps` MAY instead return an error.
+This allows the KEM interface to represent both implicitly rejecting KEMs --
+such as ML-KEM, which produce a deterministic pseudorandom output on invalid
+ciphertexts -- and explicitly rejecting KEMs, which return an error.  The
+security analyses in {{security}} take this variation into account.
 
 We assume that the values produced and consumed by the above functions are
 all byte strings, with fixed lengths:
@@ -468,19 +464,11 @@ occurs only with negligible probability.
 For some groups (for example P-256 and ristretto255), there exist byte
 strings of the correct length that do not decode to a valid group element.
 When `Exp` is given such an invalid element, it returns an error rather than a
-shared secret.  Because `KEM_H.Decaps` is required to always return a value
-(see {{kems}}), a hybrid KEM whose nominal group can fail in this way MUST,
-when `Group_T.Exp` returns an error during decapsulation, substitute a
-deterministic pseudorandom shared secret in place of `ss_T` -- derived from
-the decapsulation key and the ciphertext -- so that the combiner's `KDF` still
-runs and `Decaps` returns a value.  This mirrors the implicit-rejection
-behavior of PQ KEMs such as ML-KEM.
-
-[[ RLB: I do NOT like this.  It seems safer programming-wise to error out as
-opposed to implicitly rejecting. And safe crypto-wise since this is operating on
-public data.  If we are going to implicit rejection, we need to define what the
-deterministic pseudorandom shared secret is, e.g., by wrapping the `Exp` from
-the bare group with one that swaps in the right `ss_T` on failure. ]]
+shared secret.  A hybrid KEM whose nominal group can fail in this way is an
+instance of an explicitly rejecting KEM (see {{kems}}): when `Group_T.Exp`
+returns an error during decapsulation, the hybrid `KEM_H.Decaps` returns an
+error.  This operates only on public data (the ciphertext), so failing
+explicitly rather than substituting a pseudorandom shared secret is safe.
 
 We assume that scalars and group elements are represented by byte strings
 with fixed lengths:
@@ -570,11 +558,8 @@ on the application's needs along these two axes.
 Instantiating one of these frameworks creates a hybrid KEM `KEM_H` based on
 the following constituent components:
 
-* A traditional component that is either a nominal group or a KEM.  We write
-  `Comp_T` to refer to this traditional component when the discussion applies
-  regardless of which of the two it is:
-    * `Group_T`: A nominal group
-    * `KEM_T`: A traditional KEM
+* A traditional component that is either a nominal group `Group_T` or a KEM
+  `KEM_T` (referred to as `Comp_T` when the distinction doesn't matter).
 * `KEM_PQ`: A post-quantum KEM
 * `PRG`: A PRG producing byte strings of length `KEM_PQ.Nseed +
   Comp_T.Nseed` (`PRG.Nout == KEM_PQ.Nseed + Comp_T.Nseed`)
@@ -1274,13 +1259,13 @@ adversary may set the second key pair equal to the first, so the analyses also
 cover the case of a single key pair (two distinct ciphertexts that decapsulate
 to the same key under one decapsulation key); the KDF-collision arguments
 cover both cases.  Second, we write `reject` for the abstract
-decapsulation-failure symbol used in {{CDM23}}.  Recall that in this document
-`Decaps` is modeled as always returning a value rather than `reject`
-({{kems}}); a component KEM that uses implicit rejection produces a
-deterministic pseudorandom output in place of `reject`.  Because that output
-is itself carried into the KDF, the collision arguments below apply uniformly
-whether or not a decapsulation "succeeds", so the restriction to non-`reject`
-keys does not weaken the conclusions.
+decapsulation-failure symbol used in {{CDM23}}.  As noted in {{kems}}, a
+`Decaps` in this document may return `reject` (for an explicitly rejecting
+KEM) or, for an implicitly rejecting KEM, return a deterministic pseudorandom
+output in place of `reject`.  The LEAK-BIND games are won only by a collision
+on non-`reject` keys -- that is, both decapsulations must succeed -- so the
+collision arguments below, which rely on distinct ciphertexts or public keys
+producing distinct KDF inputs, are unaffected by how rejection is signaled.
 
 #### UG Binding
 
