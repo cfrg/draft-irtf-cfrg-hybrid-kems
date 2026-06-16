@@ -303,16 +303,17 @@ post-quantum component and "T" to the traditional component.
 
 Hexadecimal values `0x...` represent byte strings (not integers).
 
-A set is denoted by listing values in braces: `{a,b,c}`.
-
-A vector of set elements of length `n` is denoted with exponentiation,
-such as for the `n`-bit value: {0,1}<sup>n</sup>.
-
-Drawing uniformly at random from an `n`-bit vector into a value `x`
-is denoted: x $← {0,1}<sup>n</sup>.
+We write `x $← {0,1}`<sup>n</sup> to denote drawing `x` uniformly at random
+from the set of `n`-bit strings, denoted {0,1}<sup>n</sup>.
 
 A function `f` that maps from one domain to another is denoted
 using a right arrow to separate inputs from outputs: f : inputs → outputs.
+
+Constants and algorithms belonging to a particular component are written
+using dot notation, e.g., `KEM_PQ.Nseed` for the seed length of the PQ KEM or
+`Group_T.Exp` for the exponentiation map of the traditional group. The same
+symbol (such as `Nseed` or `Nout`) may name the analogous quantity for
+different components; the component prefix disambiguates these uses.
 
 The following functions are used throughout this document:
 
@@ -385,17 +386,17 @@ A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
-In this document, `Decaps` is modeled as always returning a
-shared secret and never returning an error.  Component KEMs
+In this document, `Decaps` is modeled as always returning an
+output and never returning an error.  Component KEMs
 that use implicit rejection (such as ML-KEM) produce a
-deterministic pseudorandom output on invalid ciphertexts,
+deterministic pseudorandom output on invalid inputs,
 which propagates through the combiner's KDF.
 
 We also make use of internal algorithms such as:
 
 - `expandDecapsulationKey(dk) -> (dk, ek)`: A deterministic algorithm that
-  takes as input a decapsulation key `dk` and generates keypair intermediate
-  values for computation.
+  takes as input a decapsulation key `dk` and recovers the values needed for
+  decapsulation, including the corresponding encapsulation key `ek`.
 
 We assume that the values produced and consumed by the above functions are
 all byte strings, with fixed lengths:
@@ -512,10 +513,11 @@ output lengths:
 
 The fixed sizes are for both security and simplicity.
 
-`PRG`s used with the frameworks in this document MUST provide the bit-security
-required to source input randomness for PQ/T components from a seed that is
-expanded to an output length, of which a subset is passed to the component key
-generation algorithms.
+A `PRG` used with the frameworks in this document MUST be a secure
+pseudorandom generator (as defined in {{security-prgs}}) at the security level
+required by the component algorithms it feeds.  It expands a single seed into a
+longer output, of which a subset is passed to each component's key-generation
+algorithm.
 
 The security requirements for `PRG`s used with the frameworks in this document
 are laid out in {{security-prgs}}.
@@ -568,7 +570,9 @@ on the application's needs along these two axes.
 Instantiating one of these frameworks creates a hybrid KEM `KEM_H` based on
 the following constituent components:
 
-* A traditional component that is either a nominal group or a KEM:
+* A traditional component that is either a nominal group or a KEM.  We write
+  `Comp_T` to refer to this traditional component when the discussion applies
+  regardless of which of the two it is:
     * `Group_T`: A nominal group
     * `KEM_T`: A traditional KEM
 * `KEM_PQ`: A post-quantum KEM
