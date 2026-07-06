@@ -178,10 +178,10 @@ Table of Contents
 
 3.  Notation
 
-   This document is consistent with all terminology defined in
-   [RFC9794].  In particular, this document defines PQ/T Hybrid KEMs,
-   where "PQ" refers to the post-quantum component and "T" to the
-   traditional component.
+   This document is consistent with terminology defined in [RFC9794].
+   In particular, this document defines PQ/T Hybrid KEMs, where "PQ"
+   refers to the post-quantum component and "T" to the traditional
+   component.
 
    Hexadecimal values 0x... represent byte strings (not integers).
 
