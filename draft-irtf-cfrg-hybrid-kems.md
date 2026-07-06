@@ -254,8 +254,7 @@ even if one of the two constituent KEMs is compromised, for whatever reason
 that compromise might occur. If the PQ KEM is
 broken, then the hybrid KEM should continue to provide security against
 non-quantum attackers by virtue of its traditional KEM component. If the
-traditional KEM is broken -- whether by a quantum computer running Shor's
-algorithm or by some classical cryptanalytic advance -- then the hybrid KEM
+traditional KEM is broken -- whether by a quantum computer running a polynomial-time attack or by some classical cryptanalytic advance -- then the hybrid KEM
 should continue to resist quantum attacks by virtue of its PQ KEM component.
 The advent of quantum computing lends particular urgency to the latter case,
 but the hybrid construction guards against the failure of either component
