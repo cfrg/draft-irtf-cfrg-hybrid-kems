@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 18 December 2026                                          Cisco
+Expires: 7 January 2027                                            Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                            16 June 2026
+                                                             6 July 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 December 2026.
+   This Internet-Draft will expire on 7 January 2027.
 
 Copyright Notice
 
@@ -128,12 +128,12 @@ Table of Contents
    the PQ KEM is broken, then the hybrid KEM should continue to provide
    security against non-quantum attackers by virtue of its traditional
    KEM component.  If the traditional KEM is broken -- whether by a
-   quantum computer running Shor's algorithm or by some classical
-   cryptanalytic advance -- then the hybrid KEM should continue to
-   resist quantum attacks by virtue of its PQ KEM component.  The advent
-   of quantum computing lends particular urgency to the latter case, but
-   the hybrid construction guards against the failure of either
-   component regardless of the cause.
+   quantum computer running a polynomial-time attack or by some
+   classical cryptanalytic advance -- then the hybrid KEM should
+   continue to resist quantum attacks by virtue of its PQ KEM component.
+   The advent of quantum computing lends particular urgency to the
+   latter case, but the hybrid construction guards against the failure
+   of either component regardless of the cause.
 
    In addition to guarding against algorithm weaknesses, this property
    also guards against flaws in implementations, such as timing attacks.
