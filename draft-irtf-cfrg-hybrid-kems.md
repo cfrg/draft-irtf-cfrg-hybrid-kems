@@ -729,7 +729,7 @@ above description in the following ways:
   ek_H = (ek_PQ, ek_T)
   ~~~
 
-  Each element may be a key or a pointer/handle to a key.  Carrying the
+  Each element can be a key or a pointer/handle to a key.  Carrying the
   component encapsulation keys explicitly avoids relying on the ability to
   recompute an encapsulation key from a decapsulation key, which is not
   supported by all KEM algorithms or implementations (for example, some
