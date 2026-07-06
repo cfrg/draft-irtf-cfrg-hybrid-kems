@@ -643,7 +643,7 @@ Table of Contents
       dk_H = (dk_PQ, ek_PQ, dk_T, ek_T)
       ek_H = (ek_PQ, ek_T)
 
-      Each element may be a key or a pointer/handle to a key.  Carrying
+      Each element can be a key or a pointer/handle to a key.  Carrying
       the component encapsulation keys explicitly avoids relying on the
       ability to recompute an encapsulation key from a decapsulation
       key, which is not supported by all KEM algorithms or
