@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 9 November 2026                                           Cisco
+Expires: 7 January 2027                                            Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                              8 May 2026
+                                                             6 July 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 November 2026.
+   This Internet-Draft will expire on 7 January 2027.
 
 Copyright Notice
 
@@ -122,13 +122,18 @@ Table of Contents
    that PQ algorithms currently believed to be secure will be broken.
    Hybrid constructions that combine both PQ and traditional algorithms
    can help moderate this risk while still providing security against
-   quantum attack.  If constructed properly, a hybrid KEM will retain
+   quantum attacks.  If constructed properly, a hybrid KEM will retain
    certain security properties even if one of the two constituent KEMs
-   is compromised.  If the PQ KEM is broken, then the hybrid KEM should
-   continue to provide security against non-quantum attackers by virtue
-   of its traditional KEM component.  If the traditional KEM is broken
-   by a quantum computer, then the hybrid KEM should continue to resist
-   quantum attack by virtue of its PQ KEM component.
+   is compromised, for whatever reason that compromise might occur.  If
+   the PQ KEM is broken, then the hybrid KEM should continue to provide
+   security against non-quantum attackers by virtue of its traditional
+   KEM component.  If the traditional KEM is broken -- whether by a
+   quantum computer running a polynomial-time attack or by some
+   classical cryptanalytic advance -- then the hybrid KEM should
+   continue to resist quantum attacks by virtue of its PQ KEM component.
+   The advent of quantum computing lends particular urgency to the
+   latter case, but the hybrid construction guards against the failure
+   of either component regardless of the cause.
 
    In addition to guarding against algorithm weaknesses, this property
    also guards against flaws in implementations, such as timing attacks.
@@ -138,7 +143,7 @@ Table of Contents
 
    In this document, we define generic frameworks for constructing
    hybrid KEMs from a PQ KEM and a traditional algorithm.  The aim of
-   this document is provide a small set of techniques to achieve
+   this document is to provide a small set of techniques to achieve
    specific security properties given conforming component algorithms,
    which should make these techniques suitable for a broad variety of
    use cases.
@@ -173,42 +178,42 @@ Table of Contents
 
 3.  Notation
 
-   This document is consistent with all terminology defined in
-   [I-D.ietf-pquip-pqt-hybrid-terminology].
+   This document is consistent with terminology defined in [RFC9794].
+   In particular, this document defines PQ/T Hybrid KEMs, where "PQ"
+   refers to the post-quantum component and "T" to the traditional
+   component.
 
-   The following terms are used throughout this document:
+   Hexadecimal values 0x... represent byte strings (not integers).
+
+   We write x $← {0,1}^n to denote drawing x uniformly at random from
+   the set of n-bit strings, denoted {0,1}^n.
+
+   A function f that maps from one domain to another is denoted using a
+   right arrow to separate inputs from outputs: f : inputs → outputs.
+
+   Constants and algorithms belonging to a particular component are
+   written using dot notation, e.g., KEM_PQ.Nseed for the seed length of
+   the PQ KEM or Group_T.Exp for the exponentiation map of the
+   traditional group.  The same symbol (such as Nseed or Nout) may name
+   the analogous quantity for different components; the component prefix
+   disambiguates these uses.
+
+   The following functions are used throughout this document:
 
    *  random(n): return a pseudorandom byte string of length n bytes
       produced by a cryptographically-secure random number generator.
 
-   *  concat(x0, ..., xN): Concatenation of byte strings.  concat(0x01,
-      0x0203, 0x040506) = 0x010203040506.
+   *  concat(x0, ..., xN): Concatenation of byte strings.  For example,
+      concat(0x01, 0x0203, 0x040506) = 0x010203040506.
 
    *  split(N1, N2, x): Split a byte string x of length N1 + N2 into its
       first N1 bytes and its last N2 bytes.  This function is the
       inverse of concat(x1, x2) when x1 is N1 bytes long and x2 is N2
       bytes long.  It is an error to call this function with a byte
       string that does not have length N1 + N2.  Since this function
-      operates over secret data x, it MUST be constant-time for a given
-      N1 and N2.
-
-   When x is a byte string, we use the notation x[..i] and x[i..] to
-   denote the slice of bytes in x starting from the beginning of x and
-   leading up to index i, including the i-th byte, and the slice the
-   bytes in x starting from index i to the end of x, respectively.  For
-   example, if x = [0, 1, 2, 3, 4], then x[..2] = [0, 1] and x[2..] =
-   [2, 3, 4].
-
-   A set is denoted by listing values in braces: {a,b,c}.
-
-   A vector of set elements of length n is denoted with exponentiation,
-   such as for the n-bit value: {0,1}^n.
-
-   Drawing uniformly at random from an n-bit vector into a value x is
-   denoted: x $← {0,1}^n.
-
-   A function f that maps from one domain to another is denoted using a
-   right arrow to separate inputs from outputs: f : inputs → outputs.
+      operates over secret data x, it MUST be constant-time with regard
+      to the contents of the bytes in x, for given non-secret lengths N1
+      and N2.
 
 4.  Cryptographic Dependencies
 
@@ -273,17 +278,14 @@ Table of Contents
       which takes as input a secret decapsulation key dk and ciphertext
       ct and outputs a shared secret ss.
 
-   In this document, Decaps is modeled as always returning a shared
-   secret and never returning an error.  Component KEMs that use
-   implicit rejection (such as ML-KEM) produce a deterministic
-   pseudorandom output on invalid ciphertexts, which propagates through
-   the combiner's KDF.
-
-   We also make use of internal algorithms such as:
-
-   *  expandDecapsulationKey(dk) -> (dk, ek): A deterministic algorithm
-      that takes as input a decapsulation key dk and generates keypair
-      intermediate values for computation.
+   In the notation above, Decaps is written as if it always returns an
+   output ss; this is an artifact of the Python-like pseudocode used in
+   this document.  In the event of a decapsulation failure, Decaps MAY
+   instead return an error.  This allows the KEM interface to represent
+   both implicitly rejecting KEMs -- such as ML-KEM, which produce a
+   deterministic pseudorandom output on invalid ciphertexts -- and
+   explicitly rejecting KEMs, which return an error.  The security
+   analyses in Section 6 take this variation into account.
 
    We assume that the values produced and consumed by the above
    functions are all byte strings, with fixed lengths:
@@ -328,26 +330,48 @@ Table of Contents
                 V                              V
               pkAB ========================= pkBA
 
-   Nominal groups are an abstract model of elliptic curve groups, over
-   which we instantiate Diffie-Hellman key agreement [ABH_21].  A
-   nominal group comprises a set G together with a distinguished basis
-   element g, an "exponentiation" map, and some auxiliary functions:
+   Nominal groups are an abstract model of the groups over which we
+   instantiate Diffie-Hellman key agreement [ABH_21].  In practice they
+   are instantiated with elliptic curve groups, but the model applies to
+   other groups as well.  A nominal group comprises a set G together
+   with a distinguished basis element g, an "exponentiation" map, and
+   some auxiliary functions:
 
    *  Exp(p, x) -> q: An algorithm that produces an element q of G from
       an element p and an integer x.
 
       -  The integers x are called "scalars" to distinguish them from
-         group elements.
+         group elements.  The nominal group G is assumed to comprise a
+         finite number of elements r; scalars are integers modulo r, and
+         all operations on scalars are implicitly performed modulo r.
 
       -  Exp must respect multiplication in its scalar argument x, so
          that Exp(Exp(p, x), y) = Exp(p, x * y).
 
-   *  RandomScalar(seed) -> k: Produce a uniform pseudo-random scalar
-      from the uniformly pseudo-random byte string seed.
+   *  RandomScalar(seed) -> k: Produce a uniform pseudorandom scalar
+      from the uniformly pseudorandom byte string seed.
 
    *  ElementToSharedSecret(P) -> ss: Extract a shared secret from an
       element of the group (e.g., by taking the X coordinate of an
       elliptic curve point).
+
+   A scalar value of zero MUST NOT be used as a private key: it does not
+   correspond to a meaningful Diffie-Hellman exchange and, for some
+   curves such as P-256, is explicitly forbidden by the relevant
+   standards and would yield a point-at-infinity encoding that departs
+   from the fixed-size model used here.  RandomScalar MUST NOT return a
+   zero scalar; for the groups of interest this occurs only with
+   negligible probability.
+
+   For some groups (for example P-256 and ristretto255), there exist
+   byte strings of the correct length that do not decode to a valid
+   group element.  When Exp is given such an invalid element, it returns
+   an error rather than a shared secret.  A hybrid KEM whose nominal
+   group can fail in this way is an instance of an explicitly rejecting
+   KEM (see Section 4.1): when Group_T.Exp returns an error during
+   decapsulation, the hybrid KEM_H.Decaps returns an error.  This
+   operates only on public data (the ciphertext), so failing explicitly
+   rather than substituting a pseudorandom shared secret is safe.
 
    We assume that scalars and group elements are represented by byte
    strings with fixed lengths:
@@ -370,23 +394,26 @@ Table of Contents
    A pseudorandom generator (PRG) is a deterministic function whose
    outputs are longer than its inputs.  When the input is chosen
    uniformly at random, this induces a certain distribution over the
-   possible output.  The output distribution is pseudorandom if it is
+   possible outputs.  The output distribution is pseudorandom if it is
    indistinguishable from the uniform distribution.
 
    The PRGs used in this document have a simpler form, with fixed output
    lengths:
 
-   *  Nout: The length in bytes of an output from this PRG.
+   *  Nout: The length in bytes of an output from this PRG.  Where it is
+      necessary to distinguish it from the output length of other
+      components (such as the KDF), it is written PRG.Nout.
 
    *  PRG(seed) -> output: Produce a byte string of length Nout from an
       input byte string seed.
 
    The fixed sizes are for both security and simplicity.
 
-   PRGs used with the frameworks in this document MUST provide the bit-
-   security required to source input randomness for PQ/T components from
-   a seed that is expanded to a output length, of which a subset is
-   passed to the component key generation algorithms.
+   A PRG used with the frameworks in this document MUST be a secure
+   pseudorandom generator (as defined in Section 6.1.6) at the security
+   level required by the component algorithms it feeds.  It expands a
+   single seed into a longer output, of which a subset is passed to each
+   component's key-generation algorithm.
 
    The security requirements for PRGs used with the frameworks in this
    document are laid out in Section 6.1.6.
@@ -400,7 +427,9 @@ Table of Contents
    strings of arbitrary length, the KDFs used in this document have a
    simpler form, with fixed output lengths:
 
-   *  Nout: The length in bytes of an output from this KDF.
+   *  Nout: The length in bytes of an output from this KDF.  Where it is
+      necessary to distinguish it from the output length of other
+      components (such as the PRG), it is written KDF.Nout.
 
    *  KDF(input) -> output: Produce a byte string of length Nout from an
       input byte string.
@@ -446,11 +475,9 @@ Table of Contents
    Instantiating one of these frameworks creates a hybrid KEM KEM_H
    based on the following constituent components:
 
-   *  A traditional component that is either a nominal group or a KEM:
-
-      -  Group_T: A nominal group
-
-      -  KEM_T: A traditional KEM
+   *  A traditional component that is either a nominal group Group_T or
+      a KEM KEM_T (referred to as Comp_T when the distinction doesn't
+      matter).
 
    *  KEM_PQ: A post-quantum KEM
 
@@ -601,7 +628,7 @@ Table of Contents
    this process.  Some implementations of component schemes do not
    support the DeriveKeyPair function, only GenerateKeyPair.  Likewise
    in the nominal group case, a (scalar, group element) pair will only
-   be generated when the scalar is generated internal to the
+   be generated when the scalar is generated internally to the
    implementation.
 
    An implementation of a hybrid KEM in such environments MAY deviate
@@ -609,18 +636,25 @@ Table of Contents
 
    *  DeriveKeyPair is not implemented.
 
-   *  The decapsulation key returned by GenerateKeyPair and consumed by
-      Decaps is a tuple (dk_PQ, dk_T) of per-constituent decapsulation
-      keys (or pointers/handles to keys).
+   *  GenerateKeyPair returns a decapsulation key that carries both the
+      decapsulation and encapsulation keys of each component, rather
+      than a shared seed:
+
+      dk_H = (dk_PQ, ek_PQ, dk_T, ek_T)
+      ek_H = (ek_PQ, ek_T)
+
+      Each element can be a key or a pointer/handle to a key.  Carrying
+      the component encapsulation keys explicitly avoids relying on the
+      ability to recompute an encapsulation key from a decapsulation
+      key, which is not supported by all KEM algorithms or
+      implementations (for example, some hardware modules do not expose
+      such a function).
 
    *  The expandDecapsKeyG and expandDecapsKeyK functions are replaced
-      by the following, where decapsToEncaps() is a function that
-      returns the encapsulation key associated with a decapsulation key:
+      by the following, which simply extracts the stored components:
 
    def expandDecapsKey(dk):
-       (dk_PQ, dk_T) = dk # depending on the private key storage format
-       ek_PQ = decapsToEncaps(dk_PQ)
-       ek_T = decapsToEncaps(dk_T)
+       (dk_PQ, ek_PQ, dk_T, ek_T) = dk
        return (ek_PQ, ek_T, dk_PQ, dk_T)
 
    These deviations have both interoperability and security impacts.
@@ -643,9 +677,9 @@ Table of Contents
 
    Allowing for separate private key generation and handling also
    introduces a risk of inappropriate key reuse and cross-protocol
-   attacks.  A given key pair MUST never be used in both a hybrid KEM
-   and with a non-hybrid algorithm.  A pair of key pairs generated for a
-   hybrid algorithm MUST only be used with that hybrid algorithm, not
+   attacks.  A given key pair MUST NOT be used in both a hybrid KEM and
+   a non-hybrid algorithm.  A pair of key pairs generated for a hybrid
+   algorithm MUST only be used with that hybrid algorithm, not
    separately with their component algorithms.  Likewise, key pairs
    generated outside of the context of a hybrid KEM MUST NOT be used
    with a hybrid KEM.  The "shared seed" style of key generation
@@ -842,11 +876,11 @@ def Decaps(dk, ct):
 
 6.1.3.  Strong Diffie-Hellman Problem (SDH)
 
-   The standard Diffie-Hellman problem is whether an attacker can
-   compute g^xy given access to g^x and g^y and an oracle DH(Y, Z) that
-   answers whether Y^x = Z.  (This is the notion specified in [XWING],
-   not the notion of the same name used in the context of bilinear
-   pairings [Cheon06].)
+   The strong Diffie-Hellman problem is whether an attacker can compute
+   g^xy given access to g^x and g^y and an oracle DH(Y, Z) that answers
+   whether Y^x = Z.  (This is the notion specified in [XWING], not the
+   notion of the same name used in the context of bilinear pairings
+   [Cheon06].)
 
    When we say that the strong Diffie-Hellman problem is hard in a
    group, we always mean this in the context of classical attackers,
@@ -874,12 +908,14 @@ def Decaps(dk, ct):
    attacker never accesses the decapsulation key, LEAK for the case
    where the attacker has access to the honestly-generated decapsulation
    key, or MAL for the case where the attacker can choose or manipulate
-   the keys used by the victim.  P,Q means that given the value P, it is
+   the keys used by the victim.  P-Q means that given the value P, it is
    hard to produce another Q that causes Decaps to succeed.  For
-   example, LEAK-BIND-K-PK means that for a given shared secret (K),
-   there is a unique encapsulation key (PK) that could have produced it,
-   even if all of the secrets involved are given to the adversary after
-   the encapsulation operation is completed (LEAK).
+   example, LEAK-BIND-K-PK means that for a given shared secret (K)
+   obtained using an encapsulation key (PK), it is computationally
+   infeasible to find a distinct encapsulation key (PK') that could have
+   produced the same shared secret, even if all of the secrets involved
+   are given to the adversary after the encapsulation operation is
+   completed (LEAK).
 
    There is quite a bit of diversity in the binding properties provided
    by KEMs.  Table 5 of [CDM23] shows the binding properties of a few
@@ -920,9 +956,14 @@ def Decaps(dk, ct):
       function underlying SHA-256 is a random oracle, which is a regular
       assumption in the literature.
 
-   *  the values of HKDF's IKM input do not collide with values of
-      info || 0x01.  This MUST be enforced by the concrete
-      instantiations that use HKDF as its KDF.
+   *  the input domains used by HKDF's internal HMAC calls are disjoint.
+      Following Lemma 6 of [LBB20], it suffices that the domains for
+      IKM, for info || 0x01, and for m || info || i (for i >= 2, where m
+      is an HMAC output) are pairwise disjoint.  In general this is
+      easily achieved by considerations of length alone: it suffices
+      that len(IKM) differs from len(info) + 1 and from len(info) + 1 +
+      len(HMAC output).  This MUST be enforced by the concrete
+      instantiations that use HKDF as a KDF.
 
    Using HKDF as a KDF in the sense defined in this document requires
    mapping the single input defined here to the IKM, salt, and info
@@ -971,7 +1012,7 @@ def Decaps(dk, ct):
    IND-CCA security, under different assumptions about the component
    algorithms:
 
-   *  IND-CCA against a classical attacker all of the following are
+   *  IND-CCA against a classical attacker if all of the following are
       true:
 
       -  KDF is indifferentiable from a random oracle
@@ -1094,7 +1135,7 @@ def Decaps(dk, ct):
    The CK construction has two complementary IND-CCA analyses: one for
    when the IND-CCA security of the traditional PKE-based KEM holds but
    the PQ KEM is broken, except for the PQ KEM's C2PRI security, and one
-   for where the IND-CCA security of the PQ KEM holds.  Both are
+   for when the IND-CCA security of the PQ KEM holds.  Both are
    technically novel but are substantially similar to the existing peer-
    reviewed analyses of the CG [XWING] and UK [GHP18] constructions.
    [COS_26] by the editorial team and collaborators describes the
@@ -1153,6 +1194,23 @@ def Decaps(dk, ct):
    (Section 6.1.5), and for CG and CK, additionally on the corresponding
    LEAK-BIND property of the PQ KEM.
 
+   Two points of notation apply throughout the sketches below.  First,
+   we describe the LEAK-BIND games in terms of two honestly-generated
+   key pairs, following the formalization of [CDM23] (Figure 5).  In
+   that game the adversary may set the second key pair equal to the
+   first, so the analyses also cover the case of a single key pair (two
+   distinct ciphertexts that decapsulate to the same key under one
+   decapsulation key); the KDF-collision arguments cover both cases.
+   Second, we write reject for the abstract decapsulation-failure symbol
+   used in [CDM23].  As noted in Section 4.1, a Decaps in this document
+   may return reject (for an explicitly rejecting KEM) or, for an
+   implicitly rejecting KEM, return a deterministic pseudorandom output
+   in place of reject.  The LEAK-BIND games are won only by a collision
+   on non-reject keys -- that is, both decapsulations must succeed -- so
+   the collision arguments below, which rely on distinct ciphertexts or
+   public keys producing distinct KDF inputs, are unaffected by how
+   rejection is signaled.
+
 6.4.2.1.  UG Binding
 
 6.4.2.1.1.  LEAK-BIND-K-CT of UG
@@ -1161,10 +1219,14 @@ def Decaps(dk, ct):
 
    Justification: To win LEAK-BIND-K-CT, given knowledge of two
    honestly-generated UG secret keys, the adversary must construct two
-   distinct UG ciphertexts that decapsulate to the same (non-bot) key.
-   Since UG includes the ciphertexts in the key derivation, the
+   distinct UG ciphertexts that decapsulate to the same (non-reject)
+   key.  Since UG includes the ciphertexts in the key derivation, the
    condition that the ciphertexts are distinct directly implies that a
-   LEAK-BIND-K-CT win gives a collision in the KDF.
+   LEAK-BIND-K-CT win gives a collision in the KDF.  This argument also
+   covers the case where both ciphertexts are decapsulated under a
+   single decapsulation key: in the game of [CDM23] (Figure 5) the
+   adversary may set the two key pairs equal, and distinct ciphertexts
+   still produce distinct KDF inputs.
 
 6.4.2.1.2.  LEAK-BIND-K-PK of UG
 
@@ -1172,7 +1234,7 @@ def Decaps(dk, ct):
 
    Justification: As described above, in the LEAK-BIND-K-PK game, to win
    the adversary must construct two ciphertexts that decapsulate to the
-   same non-bot key, for distinct UG public keys.  Again, since UG
+   same non-reject key, for distinct UG public keys.  Again, since UG
    includes the public keys in the KDF, the distinctness condition
    implies a LEAK-BIND-K-PK win must collide the KDF.
 
@@ -1184,10 +1246,14 @@ def Decaps(dk, ct):
 
    Justification: To win LEAK-BIND-K-CT, given knowledge of two
    honestly-generated UK secret keys, the adversary must construct two
-   distinct UK ciphertexts that decapsulate to the same (non-bot) key.
-   Since UK includes the ciphertexts in the key derivation, the
+   distinct UK ciphertexts that decapsulate to the same (non-reject)
+   key.  Since UK includes the ciphertexts in the key derivation, the
    condition that the ciphertexts are distinct directly implies that a
-   LEAK-BIND-K-CT win gives a collision in the KDF.
+   LEAK-BIND-K-CT win gives a collision in the KDF.  This argument also
+   covers the case where both ciphertexts are decapsulated under a
+   single decapsulation key: in the game of [CDM23] (Figure 5) the
+   adversary may set the two key pairs equal, and distinct ciphertexts
+   still produce distinct KDF inputs.
 
 6.4.2.2.2.  LEAK-BIND-K-PK of UK
 
@@ -1195,7 +1261,7 @@ def Decaps(dk, ct):
 
    Justification: As described above, in the LEAK-BIND-K-PK game, to win
    the adversary must construct two ciphertexts that decapsulate to the
-   same non-bot key, for distinct UK public keys.  Again, since UK
+   same non-reject key, for distinct UK public keys.  Again, since UK
    includes the public keys in the KDF, the distinctness condition
    implies a LEAK-BIND-K-PK win must collide the KDF.
 
@@ -1216,7 +1282,7 @@ def Decaps(dk, ct):
    K-CT, then CG is LEAK-BIND-K-CT.
 
    Justification: To win the adversary must construct two distinct CG
-   ciphertexts that decapsulate to the same non-bot key.  Call the CG
+   ciphertexts that decapsulate to the same non-reject key.  Call the CG
    ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
    ct_T^1).  Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1,
    ct_T^1).  Since ct_T is included in the KDF, if ct_T^0 != ct_T^1, a
@@ -1232,9 +1298,12 @@ def Decaps(dk, ct):
    If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT
    security of the PQ KEM.  The reduction is given two PQ KEM key pairs
    as input and must output two distinct PQ KEM ciphertexts that
-   decapsulate to the same key.  The reduction does this by generating
-   two nominal-group key pairs and running the CG LEAK-BIND-K-CT
-   adversary on all keys.  Then the reduction outputs the PQ KEM
+   decapsulate to the same key.  Per the LEAK-BIND-K-CT game of [CDM23]
+   (Figure 5), these two ciphertexts may be decapsulated under either
+   the same key pair or the two distinct key pairs, at the adversary's
+   choice; the reduction covers both cases.  The reduction does this by
+   generating two nominal-group key pairs and running the CG LEAK-BIND-
+   K-CT adversary on all keys.  Then the reduction outputs the PQ KEM
    ciphertexts output by the adversary.  The probability that the
    adversary wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and
    ct_T^0 = ct_T^1 is a lower bound on the probability of the reduction
@@ -1268,7 +1337,7 @@ def Decaps(dk, ct):
    K-CT, then CK is LEAK-BIND-K-CT.
 
    Justification: To win the adversary must construct two distinct CK
-   ciphertexts that decapsulate to the same non-bot key.  Call the CK
+   ciphertexts that decapsulate to the same non-reject key.  Call the CK
    ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
    ct_T^1).  Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1,
    ct_T^1).  Since ct_T is included in the KDF, if ct_T^0 != ct_T^1, a
@@ -1284,10 +1353,13 @@ def Decaps(dk, ct):
    If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT
    security of the PQ KEM.  The reduction is given two PQ KEM key pairs
    as input and must output two distinct PQ KEM ciphertexts that
-   decapsulate to the same key.  The reduction does this by generating
-   two traditional KEM key pairs and running the CK LEAK-BIND-K-CT
-   adversary on all keys.  Then the reduction outputs the PQ KEM
-   ciphertexts output by the adversary.  The probability that the
+   decapsulate to the same key.  Per the LEAK-BIND-K-CT game of [CDM23]
+   (Figure 5), these two ciphertexts may be decapsulated under either
+   the same key pair or the two distinct key pairs, at the adversary's
+   choice; the reduction covers both cases.  The reduction does this by
+   generating two traditional KEM key pairs and running the CK LEAK-
+   BIND-K-CT adversary on all keys.  Then the reduction outputs the PQ
+   KEM ciphertexts output by the adversary.  The probability that the
    adversary wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and
    ct_T^0 = ct_T^1 is a lower bound on the probability of the reduction
    winning the LEAK-BIND-K-CT game against the PQ KEM.
@@ -1327,8 +1399,8 @@ def Decaps(dk, ct):
    intentionally duplicating the 'label' per concrete instance with
    fixed parameters.  This justifies modeling them as independent
    functions even if instantiated by the same KDF.  This domain
-   separation is achieved by using prefix-free sets of label values.
-   Recall that a set is prefix-free if no element is a prefix of another
+   separation is achieved by using suffix-free sets of label values.
+   Recall that a set is suffix-free if no element is a suffix of another
    within the set.
 
    Length differentiation is sometimes used to achieve domain separation
@@ -1381,7 +1453,7 @@ def Decaps(dk, ct):
    *  KDF: The name of the Key Derivation Function used in the hybrid
       KEM.
 
-   *  PRG: The name of the Pseudo-Random Generator used in the hybrid
+   *  PRG: The name of the Pseudorandom Generator used in the hybrid
       KEM.
 
    *  Nseed: An integer representing the size of a seed for this hybrid
@@ -1392,6 +1464,12 @@ def Decaps(dk, ct):
 
    *  Reference (optional): The document where this hybrid KEM is
       defined
+
+   To preserve the domain separation described in Section 6.5.1, the set
+   of registered Label values MUST be suffix-free: no registered Label
+   may be a suffix of another.  A registration request whose Label is a
+   suffix of an already-registered Label, or of which an already-
+   registered Label is a suffix, MUST be rejected.
 
    The registry should initially be empty.
 
@@ -1521,13 +1599,6 @@ def Decaps(dk, ct):
               DOI 10.17487/RFC5869, May 2010,
               <https://www.rfc-editor.org/rfc/rfc5869>.
 
-   [I-D.ietf-pquip-pqt-hybrid-terminology]
-              D, F., P, M., and B. Hale, "Terminology for Post-Quantum
-              Traditional Hybrid Schemes", Work in Progress, Internet-
-              Draft, draft-ietf-pquip-pqt-hybrid-terminology-06, 10
-              January 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-pquip-pqt-hybrid-terminology-06>.
-
    [ISO18033-2]
               "Information technology -- Security techniques --
               Encryption algorithms -- Part 2: Asymmetric ciphers",
@@ -1565,6 +1636,11 @@ def Decaps(dk, ct):
    [RFC9180]  Barnes, R., Bhargavan, K., Lipp, B., and C. Wood, "Hybrid
               Public Key Encryption", RFC 9180, DOI 10.17487/RFC9180,
               February 2022, <https://www.rfc-editor.org/rfc/rfc9180>.
+
+   [RFC9794]  Driscoll, F., Parsons, M., and B. Hale, "Terminology for
+              Post-Quantum Traditional Hybrid Schemes", RFC 9794,
+              DOI 10.17487/RFC9794, June 2025,
+              <https://www.rfc-editor.org/rfc/rfc9794>.
 
    [Rosulek]  "The Joy of Cryptography", 2021,
               <https://joyofcryptography.com/pdf/book.pdf>.

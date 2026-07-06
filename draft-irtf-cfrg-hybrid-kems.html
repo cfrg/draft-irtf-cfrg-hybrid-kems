@@ -15,21 +15,22 @@ traditional cryptographic component. Hybrid KEMs built using these
 constructions provide strong security properties as long as either of the
 underlying algorithms are secure. 
     " name="description">
-<meta content="xml2rfc 3.33.0" name="generator">
+<meta content="xml2rfc 3.34.0" name="generator">
 <meta content="draft-irtf-cfrg-hybrid-kems-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.33.0
-    Python 3.12.13
-    ConfigArgParse 1.7
+  xml2rfc 3.34.0
+    Python 3.14.5
+    ConfigArgParse 1.7.5
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 6.0.2
-    platformdirs 4.9.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.7.0
+    wcwidth 0.8.2
 -->
 <link href="draft-irtf-cfrg-hybrid-kems.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -296,16 +297,19 @@ h1, h2, h3, h4, h5, h6 {
   font-size-adjust: 0.5;
   color: var(--title-color);
 }
-h1#title {
-  font-size: 32px;
-  line-height: 40px;
-  clear: both;
-}
-h1#title, h1#rfcnum {
-  margin: 1.5em 0 0.2em;
-}
-h1#rfcnum + h1#title {
-  margin: 0.2em 0;
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
 }
 
 h1, h2, h3 {
@@ -325,10 +329,10 @@ h4, h5, h6 {
 #abstract+p {
   font-size: 18px;
   line-height: 24px;
-}
-#abstract+p code, #abstract+p samp, #abstract+p tt {
-  font-size: 16px;
-  line-height: 0;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
 }
 
 p {
@@ -339,59 +343,59 @@ p {
 div {
   margin: 0;
 }
-.alignRight.art-text {
-  background-color: var(--highlight-color);
-  border: 1px solid var(--line-color);
-  border-radius: 3px;
-  padding: 0.5em 1em 0;
-  margin-bottom: 0.5em;
-}
-.alignRight.art-text pre {
-  padding: 0;
-  width: auto;
-}
 .alignRight {
   margin: 1em 0;
-}
-.alignRight > *:first-child {
-  border: none;
-  margin: 0;
-  float: right;
-  clear: both;
-}
-.alignRight > *:nth-child(2) {
-  clear: both;
-  display: block;
-  border: none;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
 }
 svg {
   display: block;
-}
-/* font-family isn't space-separated, but =~ will have to do */
-svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
-  font-family: var(--font-mono);
-}
-.alignCenter.art-text {
-  background-color: var(--highlight-color);
-  border: 1px solid var(--line-color);
-  border-radius: 3px;
-  padding: 0.5em 1em 0;
-  margin-bottom: 0.5em;
-}
-.alignCenter.art-text pre {
-  padding: 0;
-  width: auto;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
 }
 .alignCenter {
   margin: 1em 0;
-}
-.alignCenter > *:first-child {
-  border: none;
-  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
-     support flexbox yet.
-  */
-  display: table;
-  margin: 0 auto;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
 }
 
 /* lists */
@@ -429,26 +433,25 @@ dl {
     --indent: 5ch;
     & > dt {
       min-width: calc(var(--indent) - 2ch);
+      float: none;
     }
-  }
-  &.olPercent > dt {
-    float: none;
   }
 
   dl > dd > & {
     margin-top: 0.5em;
     margin-bottom: 0;
   }
-}
-dl:not(.dlNewline) > dt {
-  float: left;
-  margin-right: 2ch;
-  min-width: 8ch;
-}
-dl > dd {
-  margin-bottom: .8em;
-  margin-left: var(--indent) !important; /* stupid element overrides */
-  min-height: 2ex;
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
 }
 :is(dl.compact, .dlCompact) > dd {
   margin-bottom: 0;
@@ -464,20 +467,22 @@ dl > dd {
 }
 
 /* links */
-a, a[href].selfRef:hover {
+a {
   text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
 }
-a[href] {
-  color: var(--link-color);
-}
-a[href].selfRef, .iref + a[href].internal {
+.iref + a[href].internal {
   color: var(--text-color);
-}
-a[href]:hover {
-  text-decoration: underline;
-}
-a[href].selfRef:hover {
-  background-color: var(--highlight-color);
 }
 a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
   white-space: nowrap;
@@ -513,9 +518,9 @@ img {
 figure {
   margin: 0.5em 0;
   padding: 0;
-}
-figure blockquote {
-  margin: 0.8em 0.4em 0.4em;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
 }
 figcaption, caption {
   font-style: italic;
@@ -525,17 +530,19 @@ figcaption, caption {
 }
 @media screen {
   /* Auto-collapse boilerplate. */
-  :is(#status-of-memo, #copyright) p {
-    margin: -2px 0;
-    max-height: 0;
-    transition: max-height 2s ease, margin 0.5s ease 0.5s;
-    overflow: hidden;
-  }
-  :is(#status-of-memo, #copyright):hover p,
-  :is(#status-of-memo, #copyright) h2:target ~ p {
-    margin: 0.5em 0;
-    max-height: 500px;
-    overflow: auto;
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
   }
   pre, svg {
     display: inline-block;
@@ -585,25 +592,17 @@ table {
   max-width: 100%;
   margin: 0 0 1em;
   border-collapse: collapse;
-}
-table.right {
-  margin-left: auto;
-}
-table.center {
-  margin-left: auto;
-  margin-right: auto;
-}
-table.left {
-  margin-right: auto;
-}
-table .text-left {
-  text-align: left;
-}
-table .text-center {
-  text-align: center;
-}
-table .text-right {
-  text-align: right;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
 }
 
 thead, tbody {
@@ -623,13 +622,6 @@ th {
 :is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
   background-color: var(--highlight-color);
 }
-table caption {
-  margin: 0;
-  padding: 3px 0 3px 1em;
-}
-table p {
-  margin: 0;
-}
 
 /* pilcrow */
 a.pilcrow {
@@ -640,18 +632,16 @@ a.pilcrow {
     color: var(--pilcrow-weak);
     &:hover { text-decoration: none; }
   }
-}
-@media not print {
-  :hover > a.pilcrow, a.pilcrow:focus {
-    opacity: 1;
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
   }
-  a.pilcrow[href]:hover {
-    color: var(--pilcrow-strong);
-    background-color: transparent;
-  }
-}
-@media print {
-  a.pilcrow {
+  @media print {
     display: none;
   }
 }
@@ -710,9 +700,9 @@ sub, sup {
   font-size: 0.9em;
   font-style: italic;
   margin-top: 2em;
-}
-.docInfo .prepared {
-  float: right;
+  & .prepared {
+    float: right;
+  }
 }
 
 /* table of contents */
@@ -802,23 +792,27 @@ hr.addr {
   max-width: calc(100% - 16px);
 }
 @media (min-width: 500px) {
-  #authors-addresses > section {
-    column-count: 2;
-    column-gap: 20px;
-  }
-  #authors-addresses > section > h2 {
-    column-span: all;
-  }
-  /* hack for break-inside: avoid-column */
-  #authors-addresses address {
-    display: inline-block;
-    break-inside: avoid-column;
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
   }
 }
 
 /* Comments */
-.rfcEditorRemove p:first-of-type {
-  font-style: italic;
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
 }
 .cref {
   background-color: rgba(249, 232, 105, 0.3);
@@ -829,19 +823,21 @@ hr.addr {
 }
 
 @media screen {
-  #toc nav {
-    font-family: var(--font-title);
-    font-weight: 360;
-    & > ul { margin-bottom: 2em; }
-    & ul {
-      margin: 0 0 0 4px;
-      & :is(p, li) {
-        margin: 2px 0;
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
       }
     }
-  }
-  #toc a.toplink {
-    float: right;
+    & a.toplink {
+      float: right;
+    }
   }
 }
 @media not screen {
@@ -862,54 +858,54 @@ hr.addr {
     margin: 0;
     border-bottom: 1px solid #ccc;
     opacity: 0.6;
-  }
-  #toc h2 {
-    margin: 0;
-    padding: 2px 0 2px 6px;
-    padding-right: 1em;
-    font-size: 18px;
-    line-height: 24px;
-    min-width: 190px;
-    text-align: right;
-    background-color: #444;
-    color: white;
-    cursor: pointer;
-    &::before { /* css hamburger */
-      float: right;
-      position: relative;
-      width: 1em;
-      height: 1px;
-      left: -164px;
-      margin: 8px 0 0 0;
-      background: white none repeat scroll 0 0;
-      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
-      content: "";
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
     }
-  }
-  #toc nav {
-    display: none;
-    background-color: var(--background-color);
-    padding: 0.5em 1em 1em;
-    overflow: auto;
-    overscroll-behavior: contain;
-    height: calc(100vh - 48px);
-    border-left: 1px solid #ddd;
-  }
-  #toc.active {
-    opacity: 1;
-    & nav { display: block; }
-  }
-  /* Make the collapsed ToC header render white on gray also when it's a link */
-  #toc h2 a,
-  #toc h2 a:is(:link, :focus, :hover),
-  #toc a.toplink,
-  #toc a.toplink:hover {
-    color: white;
-    background-color: #444;
-    text-decoration: none;
-  }
-  #toc a.toplink {
-    margin: 2px 0.5em 0;
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
   }
 }
 
@@ -928,26 +924,26 @@ hr.addr {
     margin: 0;
     padding: 0;
     z-index: 1;
-  }
-  #toc h2 {
-    margin: 0;
-    padding: 0.25em 1em 1em 0;
-  }
-  #toc nav {
-    display: block;
-    height: calc(90vh - 84px);
-    bottom: 0;
-    padding: 0.5em 0 2em;
-    overflow: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
   }
   img { /* future proofing */
     max-width: 100%;
     height: auto;
-  }
-  #toc a.toplink {
-    margin: 8px 0.5em 0;
   }
 }
 
@@ -963,12 +959,13 @@ hr.addr {
   #n-copyright-notice {
     border-bottom: none;
   }
-  #toc, #n-introduction {
-    page-break-before: always;
-  }
   #toc {
+    page-break-before: always;
     border-top: none;
     padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
   }
   figure, pre, .vcard {
     page-break-inside: avoid;
@@ -1030,17 +1027,19 @@ hr.addr {
 }
 
 /* SVG Trick: a prefix match works because only black and white are allowed */
-svg :is([stroke="black"], [stroke^="#000"]) {
-  stroke: var(--text-color);
-}
-svg :is([stroke="white"], [stroke^="#fff"]) {
-  stroke: var(--background-color);
-}
-svg :is([fill="black"], [fill^="#000"], :not([fill])) {
-  fill: var(--text-color);
-}
-svg :is([fill="white"], [fill^="#fff"]) {
-  fill: var(--background-color);
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
 }
 </style>
 
@@ -1050,11 +1049,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">hybrid-kems</td>
-<td class="right">May 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Connolly, et al.</td>
-<td class="center">Expires 9 November 2026</td>
+<td class="center">Expires 7 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1067,12 +1066,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-hybrid-kems-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-08" class="published">8 May 2026</time>
+<time datetime="2026-07-06" class="published">6 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-09">9 November 2026</time></dd>
+<dd class="expires"><time datetime="2027-01-07">7 January 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1129,7 +1128,7 @@ underlying algorithms are secure.<a href="#section-abstract-1" class="pilcrow">�
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 9 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 7 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1323,20 +1322,25 @@ Diffie-Hellman (DH) based protocols.<a href="#section-1-1" class="pilcrow">¶</a
 <p id="section-1-2">Given the novelty of PQ algorithms, however, there is some concern that PQ
 algorithms currently believed to be secure will be broken.  Hybrid
 constructions that combine both PQ and traditional algorithms can help
-moderate this risk while still providing security against quantum attack.  If
+moderate this risk while still providing security against quantum attacks.  If
 constructed properly, a hybrid KEM will retain certain security properties
-even if one of the two constituent KEMs is compromised. If the PQ KEM is
+even if one of the two constituent KEMs is compromised, for whatever reason
+that compromise might occur. If the PQ KEM is
 broken, then the hybrid KEM should continue to provide security against
 non-quantum attackers by virtue of its traditional KEM component. If the
-traditional KEM is broken by a quantum computer, then the hybrid KEM should
-continue to resist quantum attack by virtue of its PQ KEM component.<a href="#section-1-2" class="pilcrow">¶</a></p>
+traditional KEM is broken -- whether by a quantum computer running a
+polynomial-time attack or by some classical cryptanalytic advance -- then
+the hybrid KEM should continue to resist quantum attacks by virtue of
+its PQ KEM component. The advent of quantum computing lends particular
+urgency to the latter case, but the hybrid construction guards against
+the failure of either component regardless of the cause.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">In addition to guarding against algorithm weaknesses, this property also
 guards against flaws in implementations, such as timing attacks.  Hybrid KEMs
 can also facilitate faster deployment of PQ security by allowing applications
 to incorporate PQ algorithms while still meeting compliance requirements
 based on traditional algorithms.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">In this document, we define generic frameworks for constructing hybrid KEMs
-from a PQ KEM and a traditional algorithm.  The aim of this document is
+from a PQ KEM and a traditional algorithm.  The aim of this document is to
 provide a small set of techniques to achieve specific security properties
 given conforming component algorithms, which should make these techniques
 suitable for a broad variety of use cases.<a href="#section-1-4" class="pilcrow">¶</a></p>
@@ -1374,39 +1378,39 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-notation">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-notation" class="section-name selfRef">Notation</a>
       </h2>
-<p id="section-3-1">This document is consistent with all terminology defined in
-<span>[<a href="#I-D.ietf-pquip-pqt-hybrid-terminology" class="cite xref">I-D.ietf-pquip-pqt-hybrid-terminology</a>]</span>.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">The following terms are used throughout this document:<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-1">This document is consistent with terminology defined in <span>[<a href="#RFC9794" class="cite xref">RFC9794</a>]</span>.  In
+particular, this document defines PQ/T Hybrid KEMs, where "PQ" refers to the
+post-quantum component and "T" to the traditional component.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Hexadecimal values <code>0x...</code> represent byte strings (not integers).<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">We write <code>x $← {0,1}</code><sup>n</sup> to denote drawing <code>x</code> uniformly at random
+from the set of <code>n</code>-bit strings, denoted {0,1}<sup>n</sup>.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">A function <code>f</code> that maps from one domain to another is denoted
+using a right arrow to separate inputs from outputs: f : inputs → outputs.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">Constants and algorithms belonging to a particular component are written
+using dot notation, e.g., <code>KEM_PQ.Nseed</code> for the seed length of the PQ KEM or
+<code>Group_T.Exp</code> for the exponentiation map of the traditional group. The same
+symbol (such as <code>Nseed</code> or <code>Nout</code>) may name the analogous quantity for
+different components; the component prefix disambiguates these uses.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">The following functions are used throughout this document:<a href="#section-3-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3-3.1">
-          <p id="section-3-3.1.1"><code>random(n)</code>: return a pseudorandom byte string of length <code>n</code> bytes produced
-by a cryptographically-secure random number generator.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-3-7.1">
+          <p id="section-3-7.1.1"><code>random(n)</code>: return a pseudorandom byte string of length <code>n</code> bytes produced
+by a cryptographically-secure random number generator.<a href="#section-3-7.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-3-3.2">
-          <p id="section-3-3.2.1"><code>concat(x0, ..., xN)</code>: Concatenation of byte strings.  <code>concat(0x01,
-0x0203, 0x040506) = 0x010203040506</code>.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-3-7.2">
+          <p id="section-3-7.2.1"><code>concat(x0, ..., xN)</code>: Concatenation of byte strings. For example,
+<code>concat(0x01, 0x0203, 0x040506) = 0x010203040506</code>.<a href="#section-3-7.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-3-3.3">
-          <p id="section-3-3.3.1"><code>split(N1, N2, x)</code>: Split a byte string <code>x</code> of length <code>N1 + N2</code> into its
+        <li class="normal" id="section-3-7.3">
+          <p id="section-3-7.3.1"><code>split(N1, N2, x)</code>: Split a byte string <code>x</code> of length <code>N1 + N2</code> into its
 first <code>N1</code> bytes and its last <code>N2</code> bytes.  This function is the inverse of
 <code>concat(x1, x2)</code> when <code>x1</code> is <code>N1</code> bytes long and <code>x2</code> is <code>N2</code> bytes
 long. It is an error to call this function with a byte string that does not
 have length <code>N1 + N2</code>. Since this function operates over secret data <code>x</code>,
-it <span class="bcp14">MUST</span> be constant-time for a given <code>N1</code> and <code>N2</code>.<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
+it <span class="bcp14">MUST</span> be constant-time with regard to the contents of the bytes in <code>x</code>,
+for given non-secret lengths <code>N1</code> and <code>N2</code>.<a href="#section-3-7.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-3-4">When <code>x</code> is a byte string, we use the notation <code>x[..i]</code> and <code>x[i..]</code> to
-denote the slice of bytes in <code>x</code> starting from the beginning of <code>x</code> and
-leading up to index <code>i</code>, including the <code>i</code>-th byte, and the slice the bytes
-in <code>x</code> starting from index <code>i</code> to the end of <code>x</code>, respectively. For example,
-if <code>x = [0, 1, 2, 3, 4]</code>, then <code>x[..2] = [0, 1]</code> and <code>x[2..] = [2, 3, 4]</code>.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">A set is denoted by listing values in braces: <code>{a,b,c}</code>.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">A vector of set elements of length <code>n</code> is denoted with exponentiation,
-such as for the <code>n</code>-bit value: {0,1}<sup>n</sup>.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">Drawing uniformly at random from an <code>n</code>-bit vector into a value <code>x</code>
-is denoted: x $← {0,1}<sup>n</sup>.<a href="#section-3-7" class="pilcrow">¶</a></p>
-<p id="section-3-8">A function <code>f</code> that maps from one domain to another is denoted
-using a right arrow to separate inputs from outputs: f : inputs → outputs.<a href="#section-3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cryptographic-deps">
@@ -1508,37 +1512,31 @@ takes as input a secret decapsulation key <code>dk</code> and ciphertext <code>c
 outputs a shared secret <code>ss</code>.<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.1-4">In this document, <code>Decaps</code> is modeled as always returning a
-shared secret and never returning an error.  Component KEMs
-that use implicit rejection (such as ML-KEM) produce a
-deterministic pseudorandom output on invalid ciphertexts,
-which propagates through the combiner's KDF.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
-<p id="section-4.1-5">We also make use of internal algorithms such as:<a href="#section-4.1-5" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">In the notation above, <code>Decaps</code> is written as if it always returns an output
+<code>ss</code>; this is an artifact of the Python-like pseudocode used in this document.
+In the event of a decapsulation failure, <code>Decaps</code> <span class="bcp14">MAY</span> instead return an error.
+This allows the KEM interface to represent both implicitly rejecting KEMs --
+such as ML-KEM, which produce a deterministic pseudorandom output on invalid
+ciphertexts -- and explicitly rejecting KEMs, which return an error.  The
+security analyses in <a href="#security" class="auto internal xref">Section 6</a> take this variation into account.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.1-5">We assume that the values produced and consumed by the above functions are
+all byte strings, with fixed lengths:<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-6.1">
-            <p id="section-4.1-6.1.1"><code>expandDecapsulationKey(dk) -&gt; (dk, ek)</code>: A deterministic algorithm that
-takes as input a decapsulation key <code>dk</code> and generates keypair intermediate
-values for computation.<a href="#section-4.1-6.1.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-6.1.1"><code>Nseed</code>: The length in bytes of a key seed<a href="#section-4.1-6.1.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
-<p id="section-4.1-7">We assume that the values produced and consumed by the above functions are
-all byte strings, with fixed lengths:<a href="#section-4.1-7" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.1-8.1">
-            <p id="section-4.1-8.1.1"><code>Nseed</code>: The length in bytes of a key seed<a href="#section-4.1-8.1.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-6.2">
+            <p id="section-4.1-6.2.1"><code>Nek</code>: The length in bytes of a public encapsulation key<a href="#section-4.1-6.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-8.2">
-            <p id="section-4.1-8.2.1"><code>Nek</code>: The length in bytes of a public encapsulation key<a href="#section-4.1-8.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-6.3">
+            <p id="section-4.1-6.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-8.3">
-            <p id="section-4.1-8.3.1"><code>Ndk</code>: The length in bytes of a secret decapsulation key<a href="#section-4.1-8.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-6.4">
+            <p id="section-4.1-6.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by <code>Encaps</code><a href="#section-4.1-6.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-8.4">
-            <p id="section-4.1-8.4.1"><code>Nct</code>: The length in bytes of a ciphertext produced by <code>Encaps</code><a href="#section-4.1-8.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-4.1-8.5">
-            <p id="section-4.1-8.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by <code>Encaps</code> or
-<code>Decaps</code><a href="#section-4.1-8.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.1-6.5">
+            <p id="section-4.1-6.5.1"><code>Nss</code>: The length in bytes of a shared secret produced by <code>Encaps</code> or
+<code>Decaps</code><a href="#section-4.1-6.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1623,10 +1621,11 @@ all byte strings, with fixed lengths:<a href="#section-4.1-7" class="pilcrow">¶
             </svg><a href="#section-4.2-1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<p id="section-4.2-2">Nominal groups are an abstract model of elliptic curve groups, over which we
-instantiate Diffie-Hellman key agreement <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>.  A nominal group
-comprises a set <code>G</code> together with a distinguished basis element <code>g</code>, an
-"exponentiation" map, and some auxiliary functions:<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">Nominal groups are an abstract model of the groups over which we instantiate
+Diffie-Hellman key agreement <span>[<a href="#ABH_21" class="cite xref">ABH_21</a>]</span>.  In practice they are instantiated
+with elliptic curve groups, but the model applies to other groups as well.  A
+nominal group comprises a set <code>G</code> together with a distinguished basis element
+<code>g</code>, an "exponentiation" map, and some auxiliary functions:<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.2-3.1">
             <p id="section-4.2-3.1.1"><code>Exp(p, x) -&gt; q</code>: An algorithm that produces an element <code>q</code> of <code>G</code> from an
@@ -1634,7 +1633,9 @@ element <code>p</code> and an integer <code>x</code>.<a href="#section-4.2-3.1.1
 <ul class="normal">
 <li class="normal" id="section-4.2-3.1.2.1">
                 <p id="section-4.2-3.1.2.1.1">The integers <code>x</code> are called "scalars" to distinguish them from group
-elements.<a href="#section-4.2-3.1.2.1.1" class="pilcrow">¶</a></p>
+elements.  The nominal group <code>G</code> is assumed to comprise a finite number
+of elements <code>r</code>; scalars are integers modulo <code>r</code>, and all operations on
+scalars are implicitly performed modulo <code>r</code>.<a href="#section-4.2-3.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-4.2-3.1.2.2">
                 <p id="section-4.2-3.1.2.2.1"><code>Exp</code> must respect multiplication in its scalar argument <code>x</code>, so that
@@ -1643,33 +1644,47 @@ elements.<a href="#section-4.2-3.1.2.1.1" class="pilcrow">¶</a></p>
             </ul>
 </li>
           <li class="normal" id="section-4.2-3.2">
-            <p id="section-4.2-3.2.1"><code>RandomScalar(seed) -&gt; k</code>: Produce a uniform pseudo-random scalar from the
-uniformly pseudo-random byte string <code>seed</code>.<a href="#section-4.2-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.2-3.2.1"><code>RandomScalar(seed) -&gt; k</code>: Produce a uniform pseudorandom scalar from the
+uniformly pseudorandom byte string <code>seed</code>.<a href="#section-4.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.2-3.3">
             <p id="section-4.2-3.3.1"><code>ElementToSharedSecret(P) -&gt; ss</code>: Extract a shared secret from an element
 of the group (e.g., by taking the X coordinate of an elliptic curve point).<a href="#section-4.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.2-4">We assume that scalars and group elements are represented by byte strings
-with fixed lengths:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">A scalar value of zero <span class="bcp14">MUST NOT</span> be used as a private key: it does not
+correspond to a meaningful Diffie-Hellman exchange and, for some curves such
+as P-256, is explicitly forbidden by the relevant standards and would yield a
+point-at-infinity encoding that departs from the fixed-size model used here.
+<code>RandomScalar</code> <span class="bcp14">MUST NOT</span> return a zero scalar; for the groups of interest this
+occurs only with negligible probability.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-5">For some groups (for example P-256 and ristretto255), there exist byte
+strings of the correct length that do not decode to a valid group element.
+When <code>Exp</code> is given such an invalid element, it returns an error rather than a
+shared secret.  A hybrid KEM whose nominal group can fail in this way is an
+instance of an explicitly rejecting KEM (see <a href="#kems" class="auto internal xref">Section 4.1</a>): when <code>Group_T.Exp</code>
+returns an error during decapsulation, the hybrid <code>KEM_H.Decaps</code> returns an
+error.  This operates only on public data (the ciphertext), so failing
+explicitly rather than substituting a pseudorandom shared secret is safe.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">We assume that scalars and group elements are represented by byte strings
+with fixed lengths:<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2-5.1">
-            <p id="section-4.2-5.1.1"><code>Nseed</code>: The length in bytes of a seed (input to RandomScalar)<a href="#section-4.2-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2-7.1">
+            <p id="section-4.2-7.1.1"><code>Nseed</code>: The length in bytes of a seed (input to RandomScalar)<a href="#section-4.2-7.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-5.2">
-            <p id="section-4.2-5.2.1"><code>Nscalar</code>: The length in bytes of a scalar<a href="#section-4.2-5.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.2-7.2">
+            <p id="section-4.2-7.2.1"><code>Nscalar</code>: The length in bytes of a scalar<a href="#section-4.2-7.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-5.3">
-            <p id="section-4.2-5.3.1"><code>Nelem</code>: The length in bytes of a serialized group element<a href="#section-4.2-5.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.2-7.3">
+            <p id="section-4.2-7.3.1"><code>Nelem</code>: The length in bytes of a serialized group element<a href="#section-4.2-7.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-5.4">
-            <p id="section-4.2-5.4.1"><code>Nss</code>: The length in bytes of a shared secret produced by
-ElementToSharedSecret<a href="#section-4.2-5.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-4.2-7.4">
+            <p id="section-4.2-7.4.1"><code>Nss</code>: The length in bytes of a shared secret produced by
+ElementToSharedSecret<a href="#section-4.2-7.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.2-6">Groups used with the hybrid KEM framework in this document should be secure
-with respect to the strong Diffie-Hellman problem (see <a href="#sdh" class="auto internal xref">Section 6.1.3</a>).<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-8">Groups used with the hybrid KEM framework in this document should be secure
+with respect to the strong Diffie-Hellman problem (see <a href="#sdh" class="auto internal xref">Section 6.1.3</a>).<a href="#section-4.2-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="prgs">
@@ -1679,14 +1694,16 @@ with respect to the strong Diffie-Hellman problem (see <a href="#sdh" class="aut
         </h3>
 <p id="section-4.3-1">A pseudorandom generator (PRG) is a deterministic function whose outputs are
 longer than its inputs. When the input is chosen uniformly at random, this
-induces a certain distribution over the possible output. The output
+induces a certain distribution over the possible outputs. The output
 distribution is pseudorandom if it is indistinguishable from the uniform
 distribution.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.3-2">The <code>PRG</code>s used in this document have a simpler form, with fixed
 output lengths:<a href="#section-4.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.3-3.1">
-            <p id="section-4.3-3.1.1"><code>Nout</code>: The length in bytes of an output from this PRG.<a href="#section-4.3-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-4.3-3.1.1"><code>Nout</code>: The length in bytes of an output from this PRG.  Where it is
+necessary to distinguish it from the output length of other components (such
+as the <code>KDF</code>), it is written <code>PRG.Nout</code>.<a href="#section-4.3-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.3-3.2">
             <p id="section-4.3-3.2.1"><code>PRG(seed) -&gt; output</code>: Produce a byte string of length <code>Nout</code> from an input
@@ -1694,10 +1711,11 @@ byte string <code>seed</code>.<a href="#section-4.3-3.2.1" class="pilcrow">¶</a
 </li>
         </ul>
 <p id="section-4.3-4">The fixed sizes are for both security and simplicity.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
-<p id="section-4.3-5"><code>PRG</code>s used with the frameworks in this document <span class="bcp14">MUST</span> provide the bit-security
-required to source input randomness for PQ/T components from a seed that is
-expanded to a output length, of which a subset is passed to the component key
-generation algorithms.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
+<p id="section-4.3-5">A <code>PRG</code> used with the frameworks in this document <span class="bcp14">MUST</span> be a secure
+pseudorandom generator (as defined in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a>) at the security level
+required by the component algorithms it feeds.  It expands a single seed into a
+longer output, of which a subset is passed to each component's key-generation
+algorithm.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
 <p id="section-4.3-6">The security requirements for <code>PRG</code>s used with the frameworks in this document
 are laid out in <a href="#security-prgs" class="auto internal xref">Section 6.1.6</a>.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
@@ -1714,7 +1732,9 @@ of arbitrary length, the KDFs used in this document have a simpler form, with
 fixed output lengths:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.4-3.1">
-            <p id="section-4.4-3.1.1"><code>Nout</code>: The length in bytes of an output from this KDF.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-4.4-3.1.1"><code>Nout</code>: The length in bytes of an output from this KDF.  Where it is
+necessary to distinguish it from the output length of other components (such
+as the <code>PRG</code>), it is written <code>KDF.Nout</code>.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.4-3.2">
             <p id="section-4.4-3.2.1"><code>KDF(input) -&gt; output</code>: Produce a byte string of length <code>Nout</code> from an
@@ -1790,15 +1810,8 @@ on the application's needs along these two axes.<a href="#section-5-4" class="pi
 the following constituent components:<a href="#section-5-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5-7.1">
-          <p id="section-5-7.1.1">A traditional component that is either a nominal group or a KEM:<a href="#section-5-7.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5-7.1.2.1">
-              <p id="section-5-7.1.2.1.1"><code>Group_T</code>: A nominal group<a href="#section-5-7.1.2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-5-7.1.2.2">
-              <p id="section-5-7.1.2.2.1"><code>KEM_T</code>: A traditional KEM<a href="#section-5-7.1.2.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
+          <p id="section-5-7.1.1">A traditional component that is either a nominal group <code>Group_T</code> or a KEM
+<code>KEM_T</code> (referred to as <code>Comp_T</code> when the distinction doesn't matter).<a href="#section-5-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-5-7.2">
           <p id="section-5-7.2.1"><code>KEM_PQ</code>: A post-quantum KEM<a href="#section-5-7.2.1" class="pilcrow">¶</a></p>
@@ -1978,7 +1991,7 @@ def DecapsToEncaps(dk):
 process.  Some implementations of component schemes do not support the
 <code>DeriveKeyPair</code> function, only <code>GenerateKeyPair</code>. Likewise in the nominal
 group case, a (scalar, group element) pair will only be generated when the
-scalar is generated internal to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+scalar is generated internally to the implementation.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.2-4">An implementation of a hybrid KEM in such environments <span class="bcp14">MAY</span> deviate from the
 above description in the following ways:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1986,22 +1999,31 @@ above description in the following ways:<a href="#section-5.2-4" class="pilcrow"
             <p id="section-5.2-5.1.1"><code>DeriveKeyPair</code> is not implemented.<a href="#section-5.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.2">
-            <p id="section-5.2-5.2.1">The decapsulation key returned by <code>GenerateKeyPair</code> and consumed by
-<code>Decaps</code> is a tuple <code>(dk_PQ, dk_T)</code> of per-constituent decapsulation keys
-(or pointers/handles to keys).<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-5.2.1"><code>GenerateKeyPair</code> returns a decapsulation key that carries both the
+decapsulation and encapsulation keys of each component, rather than a shared
+seed:<a href="#section-5.2-5.2.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-5.2.2">
+<pre>
+dk_H = (dk_PQ, ek_PQ, dk_T, ek_T)
+ek_H = (ek_PQ, ek_T)
+</pre><a href="#section-5.2-5.2.2" class="pilcrow">¶</a>
+</div>
+<p id="section-5.2-5.2.3">
+Each element can be a key or a pointer/handle to a key.  Carrying the
+component encapsulation keys explicitly avoids relying on the ability to
+recompute an encapsulation key from a decapsulation key, which is not
+supported by all KEM algorithms or implementations (for example, some
+hardware modules do not expose such a function).<a href="#section-5.2-5.2.3" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-5.3">
-            <p id="section-5.2-5.3.1">The <code>expandDecapsKeyG</code> and <code>expandDecapsKeyK</code> functions are
-replaced by the following, where <code>decapsToEncaps()</code> is a function that
-returns the encapsulation key associated with a decapsulation key:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-5.3.1">The <code>expandDecapsKeyG</code> and <code>expandDecapsKeyK</code> functions are replaced by the
+following, which simply extracts the stored components:<a href="#section-5.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div class="alignLeft art-text artwork" id="section-5.2-6">
 <pre>
 def expandDecapsKey(dk):
-    (dk_PQ, dk_T) = dk # depending on the private key storage format
-    ek_PQ = decapsToEncaps(dk_PQ)
-    ek_T = decapsToEncaps(dk_T)
+    (dk_PQ, ek_PQ, dk_T, ek_T) = dk
     return (ek_PQ, ek_T, dk_PQ, dk_T)
 </pre><a href="#section-5.2-6" class="pilcrow">¶</a>
 </div>
@@ -2021,7 +2043,7 @@ protection provided by the default "shared seed" key generation upgrades this to
 protection against a MAL attacker.<a href="#section-5.2-9" class="pilcrow">¶</a></p>
 <p id="section-5.2-10">Allowing for separate private key generation and handling also introduces a
 risk of inappropriate key reuse and cross-protocol attacks.  A given key pair
-<span class="bcp14">MUST</span> never be used in both a hybrid KEM and with a non-hybrid algorithm. A
+<span class="bcp14">MUST NOT</span> be used in both a hybrid KEM and a non-hybrid algorithm. A
 pair of key pairs generated for a hybrid algorithm <span class="bcp14">MUST</span> only be used with
 that hybrid algorithm, not separately with their component algorithms.
 Likewise, key pairs generated outside of the context of a hybrid KEM <span class="bcp14">MUST NOT</span>
@@ -2249,7 +2271,7 @@ algorithms, including FrodoKEM, HQC, Classic McEliece, and sntrup.<a href="#sect
           <h4 id="name-strong-diffie-hellman-probl">
 <a href="#section-6.1.3" class="section-number selfRef">6.1.3. </a><a href="#name-strong-diffie-hellman-probl" class="section-name selfRef">Strong Diffie-Hellman Problem (SDH)</a>
           </h4>
-<p id="section-6.1.3-1">The standard Diffie-Hellman problem is whether an attacker can compute <code>g^xy</code>
+<p id="section-6.1.3-1">The strong Diffie-Hellman problem is whether an attacker can compute <code>g^xy</code>
 given access to <code>g^x</code> and <code>g^y</code> and an oracle <code>DH(Y, Z)</code> that answers whether
 <code>Y^x = Z</code>. (This is the notion specified in <span>[<a href="#XWING" class="cite xref">XWING</a>]</span>, not the notion of the
 same name used in the context of bilinear pairings <span>[<a href="#Cheon06" class="cite xref">Cheon06</a>]</span>.)<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
@@ -2279,12 +2301,13 @@ the form X-BIND-P-Q.  The first element X is the model for how the attacker
 can access the decapsulation key: HON for the case where the attacker never
 accesses the decapsulation key, LEAK for the case where the attacker has
 access to the honestly-generated decapsulation key, or MAL for the case where
-the attacker can choose or manipulate the keys used by the victim.  P,Q means
+the attacker can choose or manipulate the keys used by the victim.  P-Q means
 that given the value P, it is hard to produce another Q that causes Decaps to
-succeed. For example, LEAK-BIND-K-PK means that for a given shared secret
-(K), there is a unique encapsulation key (PK) that could have produced it,
-even if all of the secrets involved are given to the adversary after the
-encapsulation operation is completed (LEAK).<a href="#section-6.1.4-2" class="pilcrow">¶</a></p>
+succeed. For example, LEAK-BIND-K-PK means that for a given shared secret (K)
+obtained using an encapsulation key (PK), it is computationally infeasible to
+find a distinct encapsulation key (PK') that could have produced the same
+shared secret, even if all of the secrets involved are given to the adversary
+after the encapsulation operation is completed (LEAK).<a href="#section-6.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-6.1.4-3">There is quite a bit of diversity in the binding properties provided by KEMs.
 Table 5 of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> shows the binding properties of a few KEMs.  For
 example: DHKEM provides MAL-level binding for several properties. ML-KEM
@@ -2324,9 +2347,13 @@ the compression function underlying SHA-256 is a random oracle,
 which is a regular assumption in the literature.<a href="#section-6.1.5-5.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.1.5-5.2">
-              <p id="section-6.1.5-5.2.1">the values of HKDF's <code>IKM</code> input do not collide with
-values of <code>info || 0x01</code>. This <span class="bcp14">MUST</span> be enforced by the
-concrete instantiations that use HKDF as its <code>KDF</code>.<a href="#section-6.1.5-5.2.1" class="pilcrow">¶</a></p>
+              <p id="section-6.1.5-5.2.1">the input domains used by HKDF's internal HMAC calls are disjoint.
+Following Lemma 6 of <span>[<a href="#LBB20" class="cite xref">LBB20</a>]</span>, it suffices that the domains for <code>IKM</code>, for
+<code>info || 0x01</code>, and for <code>m || info || i</code> (for <code>i &gt;= 2</code>, where <code>m</code> is an HMAC
+output) are pairwise disjoint.  In general this is easily achieved by
+considerations of length alone: it suffices that <code>len(IKM)</code> differs from
+<code>len(info) + 1</code> and from <code>len(info) + 1 + len(HMAC output)</code>. This <span class="bcp14">MUST</span> be
+enforced by the concrete instantiations that use HKDF as a <code>KDF</code>.<a href="#section-6.1.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-6.1.5-6">Using HKDF as a KDF in the sense defined in this document requires mapping the
@@ -2383,7 +2410,7 @@ component is broken.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
 security, under different assumptions about the component algorithms:<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.2.1-3.1">
-              <p id="section-6.2.1-3.1.1">IND-CCA against a classical attacker all of the following are true:<a href="#section-6.2.1-3.1.1" class="pilcrow">¶</a></p>
+              <p id="section-6.2.1-3.1.1">IND-CCA against a classical attacker if all of the following are true:<a href="#section-6.2.1-3.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.2.1-3.1.2.1">
                   <p id="section-6.2.1-3.1.2.1.1"><code>KDF</code> is indifferentiable from a random oracle<a href="#section-6.2.1-3.1.2.1.1" class="pilcrow">¶</a></p>
@@ -2513,7 +2540,7 @@ are met, these analyses imply that this document's CG construction satisfies
 IND-CCA security.<a href="#section-6.4.1-8" class="pilcrow">¶</a></p>
 <p id="section-6.4.1-9">The CK construction has two complementary IND-CCA analyses: one for when the
 IND-CCA security of the traditional PKE-based KEM holds but the PQ KEM is
-broken, except for the PQ KEM's C2PRI security, and one for where the IND-CCA
+broken, except for the PQ KEM's C2PRI security, and one for when the IND-CCA
 security of the PQ KEM holds.  Both are technically novel but are
 substantially similar to the existing peer-reviewed analyses of the CG
 <span>[<a href="#XWING" class="cite xref">XWING</a>]</span> and UK <span>[<a href="#GHP18" class="cite xref">GHP18</a>]</span> constructions. <span>[<a href="#COS_26" class="cite xref">COS_26</a>]</span> by the editorial team
@@ -2567,6 +2594,20 @@ relevant ciphertexts and encapsulation keys in the KDF input; we make that
 argument concrete in the sketches below. The sketches rely on collision
 resistance of the KDF (<a href="#security-kdfs" class="auto internal xref">Section 6.1.5</a>), and for CG and CK, additionally on the
 corresponding LEAK-BIND property of the PQ KEM.<a href="#section-6.4.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.2-4">Two points of notation apply throughout the sketches below.  First, we
+describe the LEAK-BIND games in terms of two honestly-generated key pairs,
+following the formalization of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> (Figure 5).  In that game the
+adversary may set the second key pair equal to the first, so the analyses also
+cover the case of a single key pair (two distinct ciphertexts that decapsulate
+to the same key under one decapsulation key); the KDF-collision arguments
+cover both cases.  Second, we write <code>reject</code> for the abstract
+decapsulation-failure symbol used in <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span>.  As noted in <a href="#kems" class="auto internal xref">Section 4.1</a>, a
+<code>Decaps</code> in this document may return <code>reject</code> (for an explicitly rejecting
+KEM) or, for an implicitly rejecting KEM, return a deterministic pseudorandom
+output in place of <code>reject</code>.  The LEAK-BIND games are won only by a collision
+on non-<code>reject</code> keys -- that is, both decapsulations must succeed -- so the
+collision arguments below, which rely on distinct ciphertexts or public keys
+producing distinct KDF inputs, are unaffected by how rejection is signaled.<a href="#section-6.4.2-4" class="pilcrow">¶</a></p>
 <div id="ug-binding">
 <section id="section-6.4.2.1">
             <h5 id="name-ug-binding">
@@ -2580,10 +2621,13 @@ corresponding LEAK-BIND property of the PQ KEM.<a href="#section-6.4.2-3" class=
 <p id="section-6.4.2.1.1-1">Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-CT.<a href="#section-6.4.2.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.1.1-2">Justification: To win LEAK-BIND-K-CT, given knowledge of two
 honestly-generated UG secret keys, the adversary must construct two distinct
-UG ciphertexts that decapsulate to the same (non-bot) key. Since UG
+UG ciphertexts that decapsulate to the same (non-<code>reject</code>) key. Since UG
 includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
-collision in the KDF.<a href="#section-6.4.2.1.1-2" class="pilcrow">¶</a></p>
+collision in the KDF.  This argument also covers the case where both
+ciphertexts are decapsulated under a single decapsulation key: in the game of
+<span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> (Figure 5) the adversary may set the two key pairs equal, and
+distinct ciphertexts still produce distinct KDF inputs.<a href="#section-6.4.2.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="leak-bind-k-pk-of-ug">
@@ -2593,7 +2637,7 @@ collision in the KDF.<a href="#section-6.4.2.1.1-2" class="pilcrow">¶</a></p>
               </h6>
 <p id="section-6.4.2.1.2-1">Claim: If KDF is collision-resistant, then UG is LEAK-BIND-K-PK.<a href="#section-6.4.2.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.1.2-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
-adversary must construct two ciphertexts that decapsulate to the same non-bot
+adversary must construct two ciphertexts that decapsulate to the same non-<code>reject</code>
 key, for distinct UG public keys. Again, since UG includes the public keys
 in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
 collide the KDF.<a href="#section-6.4.2.1.2-2" class="pilcrow">¶</a></p>
@@ -2614,10 +2658,13 @@ collide the KDF.<a href="#section-6.4.2.1.2-2" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.2.1-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-CT.<a href="#section-6.4.2.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.2.1-2">Justification: To win LEAK-BIND-K-CT, given knowledge of two
 honestly-generated UK secret keys, the adversary must construct two distinct
-UK ciphertexts that decapsulate to the same (non-bot) key. Since UK
+UK ciphertexts that decapsulate to the same (non-<code>reject</code>) key. Since UK
 includes the ciphertexts in the key derivation, the condition that the
 ciphertexts are distinct directly implies that a LEAK-BIND-K-CT win gives a
-collision in the KDF.<a href="#section-6.4.2.2.1-2" class="pilcrow">¶</a></p>
+collision in the KDF.  This argument also covers the case where both
+ciphertexts are decapsulated under a single decapsulation key: in the game of
+<span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> (Figure 5) the adversary may set the two key pairs equal, and
+distinct ciphertexts still produce distinct KDF inputs.<a href="#section-6.4.2.2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="leak-bind-k-pk-of-uk">
@@ -2627,7 +2674,7 @@ collision in the KDF.<a href="#section-6.4.2.2.1-2" class="pilcrow">¶</a></p>
               </h6>
 <p id="section-6.4.2.2.2-1">Claim: If KDF is collision-resistant, then UK is LEAK-BIND-K-PK.<a href="#section-6.4.2.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.2.2-2">Justification: As described above, in the LEAK-BIND-K-PK game, to win the
-adversary must construct two ciphertexts that decapsulate to the same non-bot
+adversary must construct two ciphertexts that decapsulate to the same non-<code>reject</code>
 key, for distinct UK public keys. Again, since UK includes the public keys
 in the KDF, the distinctness condition implies a LEAK-BIND-K-PK win must
 collide the KDF.<a href="#section-6.4.2.2.2-2" class="pilcrow">¶</a></p>
@@ -2655,7 +2702,7 @@ work here; we present the PQ-KEM route for concreteness.<a href="#section-6.4.2.
 <p id="section-6.4.2.3.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
 CG is LEAK-BIND-K-CT.<a href="#section-6.4.2.3.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.3.1-2">Justification: To win the adversary must construct two distinct CG
-ciphertexts that decapsulate to the same non-bot key.  Call the CG
+ciphertexts that decapsulate to the same non-<code>reject</code> key.  Call the CG
 ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
 ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
 ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.3.1-2" class="pilcrow">¶</a></p>
@@ -2667,7 +2714,10 @@ the KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the
 KDF.<a href="#section-6.4.2.3.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.3.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
-output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
+output two distinct PQ KEM ciphertexts that decapsulate to the same key. Per
+the LEAK-BIND-K-CT game of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> (Figure 5), these two ciphertexts may be
+decapsulated under either the same key pair or the two distinct key pairs, at
+the adversary's choice; the reduction covers both cases. The
 reduction does this by generating two nominal-group key pairs and running the
 CG LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
@@ -2711,7 +2761,7 @@ reduction to the LEAK-BIND-K-PK of PQ KEM.<a href="#section-6.4.2.3.2-2" class="
 <p id="section-6.4.2.4.1-1">Claim: If KDF is collision-resistant and the PQ KEM is LEAK-BIND-K-CT, then
 CK is LEAK-BIND-K-CT.<a href="#section-6.4.2.4.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.4.1-2">Justification: To win the adversary must construct two distinct CK
-ciphertexts that decapsulate to the same non-bot key.  Call the CK
+ciphertexts that decapsulate to the same non-<code>reject</code> key.  Call the CK
 ciphertexts output by the adversary (ct_PQ^0, ct_T^0) and (ct_PQ^1,
 ct_T^1). Distinctness implies (ct_PQ^0, ct_T^0) != (ct_PQ^1, ct_T^1). Since
 ct_T is included in the KDF, if ct_T^0 != ct_T^1, a win must collide the KDF.<a href="#section-6.4.2.4.1-2" class="pilcrow">¶</a></p>
@@ -2722,7 +2772,10 @@ KEM_PQ.Decaps(dk_PQ^1, ct_PQ^1)), or they are equal. If they are not equal, the
 KDF inputs are again distinct, so a LEAK-BIND-K-CT win must collide the KDF.<a href="#section-6.4.2.4.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.4.2.4.1-4">If ss_PQ^0 = ss_PQ^1, we can show a reduction to the LEAK-BIND-K-CT security
 of the PQ KEM. The reduction is given two PQ KEM key pairs as input and must
-output two distinct PQ KEM ciphertexts that decapsulate to the same key. The
+output two distinct PQ KEM ciphertexts that decapsulate to the same key. Per
+the LEAK-BIND-K-CT game of <span>[<a href="#CDM23" class="cite xref">CDM23</a>]</span> (Figure 5), these two ciphertexts may be
+decapsulated under either the same key pair or the two distinct key pairs, at
+the adversary's choice; the reduction covers both cases. The
 reduction does this by generating two traditional KEM key pairs and running the
 CK LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
 KEM ciphertexts output by the adversary. The probability that the adversary
@@ -2775,8 +2828,8 @@ inclusion of the <code>label</code> achieves via domain separation <span>[<a hre
 in higher level protocol use separate input domains unless intentionally
 duplicating the 'label' per concrete instance with fixed parameters. This
 justifies modeling them as independent functions even if instantiated by the
-same KDF. This domain separation is achieved by using prefix-free sets of
-<code>label</code> values. Recall that a set is prefix-free if no element is a prefix of
+same KDF. This domain separation is achieved by using suffix-free sets of
+<code>label</code> values.  Recall that a set is suffix-free if no element is a suffix of
 another within the set.<a href="#section-6.5.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.5.1-3">Length differentiation is sometimes used to achieve domain separation but as
 a technique it is brittle and prone to misuse <span>[<a href="#BDG20" class="cite xref">BDG20</a>]</span> in practice so we
@@ -2838,7 +2891,7 @@ used in the hybrid KEM.<a href="#section-7-3.4.1" class="pilcrow">¶</a></p>
           <p id="section-7-3.5.1">KDF: The name of the Key Derivation Function used in the hybrid KEM.<a href="#section-7-3.5.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.6">
-          <p id="section-7-3.6.1">PRG: The name of the Pseudo-Random Generator used in the hybrid KEM.<a href="#section-7-3.6.1" class="pilcrow">¶</a></p>
+          <p id="section-7-3.6.1">PRG: The name of the Pseudorandom Generator used in the hybrid KEM.<a href="#section-7-3.6.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-3.7">
           <p id="section-7-3.7.1">Nseed: An integer representing the size of a seed for this hybrid KEM.<a href="#section-7-3.7.1" class="pilcrow">¶</a></p>
@@ -2851,7 +2904,12 @@ KEM.<a href="#section-7-3.8.1" class="pilcrow">¶</a></p>
           <p id="section-7-3.9.1">Reference (optional): The document where this hybrid KEM is defined<a href="#section-7-3.9.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-7-4">The registry should initially be empty.<a href="#section-7-4" class="pilcrow">¶</a></p>
+<p id="section-7-4">To preserve the domain separation described in <a href="#domain-separation" class="auto internal xref">Section 6.5.1</a>, the set
+of registered <code>Label</code> values <span class="bcp14">MUST</span> be suffix-free: no registered <code>Label</code> may be
+a suffix of another.  A registration request whose <code>Label</code> is a suffix of an
+already-registered <code>Label</code>, or of which an already-registered <code>Label</code> is a
+suffix, <span class="bcp14">MUST</span> be rejected.<a href="#section-7-4" class="pilcrow">¶</a></p>
+<p id="section-7-5">The registry should initially be empty.<a href="#section-7-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="out-of-scope">
@@ -2997,10 +3055,6 @@ proofs in the literature, and a complication deemed unnecessary<a href="#section
         <dd>
 <span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"</span>, <span class="seriesInfo">RFC 5869</span>, <span class="seriesInfo">DOI 10.17487/RFC5869</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5869">https://www.rfc-editor.org/rfc/rfc5869</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="I-D.ietf-pquip-pqt-hybrid-terminology">[I-D.ietf-pquip-pqt-hybrid-terminology]</dt>
-        <dd>
-<span class="refAuthor">D, F.</span>, <span class="refAuthor">P, M.</span>, and <span class="refAuthor">B. Hale</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-pquip-pqt-hybrid-terminology-06</span>, <time datetime="2025-01-10" class="refDate">10 January 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqt-hybrid-terminology-06">https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqt-hybrid-terminology-06</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="ISO18033-2">[ISO18033-2]</dt>
         <dd>
 <span class="refTitle">"Information technology -- Security techniques -- Encryption algorithms -- Part 2: Asymmetric ciphers"</span>, <time datetime="2006" class="refDate">2006</time>, <span>&lt;<a href="https://www.iso.org/standard/37971.html">https://www.iso.org/standard/37971.html</a>&gt;</span>. </dd>
@@ -3032,6 +3086,10 @@ proofs in the literature, and a complication deemed unnecessary<a href="#section
 <dt id="RFC9180">[RFC9180]</dt>
         <dd>
 <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Bhargavan, K.</span>, <span class="refAuthor">Lipp, B.</span>, and <span class="refAuthor">C. Wood</span>, <span class="refTitle">"Hybrid Public Key Encryption"</span>, <span class="seriesInfo">RFC 9180</span>, <span class="seriesInfo">DOI 10.17487/RFC9180</span>, <time datetime="2022-02" class="refDate">February 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9180">https://www.rfc-editor.org/rfc/rfc9180</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9794">[RFC9794]</dt>
+        <dd>
+<span class="refAuthor">Driscoll, F.</span>, <span class="refAuthor">Parsons, M.</span>, and <span class="refAuthor">B. Hale</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="seriesInfo">RFC 9794</span>, <span class="seriesInfo">DOI 10.17487/RFC9794</span>, <time datetime="2025-06" class="refDate">June 2025</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9794">https://www.rfc-editor.org/rfc/rfc9794</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="Rosulek">[Rosulek]</dt>
         <dd>
