@@ -296,7 +296,7 @@ but which are not treated in depth.
 
 # Notation
 
-This document is consistent with all terminology defined in {{?RFC9794}}.  In
+This document is consistent with terminology defined in {{?RFC9794}}.  In
 particular, this document defines PQ/T Hybrid KEMs, where "PQ" refers to the
 post-quantum component and "T" to the traditional component.
 
