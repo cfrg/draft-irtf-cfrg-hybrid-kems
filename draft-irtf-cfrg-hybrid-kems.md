@@ -217,6 +217,17 @@ Disallowed?"
       -
         ins: S. Schmieg
         name: Sophie Schmieg
+  SS26:
+    title: "A machine-checked analysis of the four hybrid KEM combiners of draft-irtf-cfrg-hybrid-kems"
+    target: https://github.com/ProofFrog/examples/blob/main/applications/cfrg-hybrid-kems/REPORT-CFRG-20260722.md
+    date: 2026-07-22
+    author:
+      -
+        ins: D. Stebila
+        name: Douglas Stebila
+      -
+        ins: C. Steckel
+        name: Camryn Steckel
   XWING:
     title: "X-Wing: The Hybrid KEM You’ve Been Looking For"
     target: https://eprint.iacr.org/2024/039.pdf
@@ -480,7 +491,8 @@ with fixed lengths:
   ElementToSharedSecret
 
 Groups used with the hybrid KEM framework in this document should be secure
-with respect to the strong Diffie-Hellman problem (see {{sdh}}).
+with respect to the strong Diffie-Hellman problem over shared-secret encodings
+(see {{sdh}}).
 
 ## Pseudorandom Generators {#prgs}
 
@@ -978,6 +990,39 @@ As shown in {{ABH+21}}, this problem is hard in prime-order groups such as
 the NIST elliptic curve groups P-256, P-384, and P-521, as well as in the
 Montgomery curves Curve25519 and Curve448.
 
+The IND-CCA analyses of UG and CG for the traditional component use a variant
+of this problem over shared-secret encodings {{SS26}}.  In the variant, the
+attacker must compute `ElementToSharedSecret(g^xy)`, and the oracle `DH(Y, z)`
+answers whether `ElementToSharedSecret(Y^x) = z`.  When we say that the
+strong Diffie-Hellman problem over shared-secret encodings is hard in a group,
+we mean that no efficient classical attacker solves this variant.
+
+The variant is no easier than the strong Diffie-Hellman problem when
+`ElementToSharedSecret` has few preimages that are easy to compute.  Suppose
+that for every `z`, at most `k` elements `P` satisfy
+`ElementToSharedSecret(P) = z`, and that these elements can be computed
+efficiently from `z`.  An attacker against the variant then yields an
+attacker against the strong Diffie-Hellman problem with the same success
+probability:
+
+- It answers each query `DH(Y, z)` by querying `DH(Y, P)` for each preimage
+  `P` of `z`, and returning whether any answer is positive.
+- It converts the output `z` into `g^xy` by querying `DH(g^y, P)` for each
+  preimage `P` of `z`, and returning the one that is accepted.
+
+The new attacker makes at most `k` times as many oracle queries, plus `k`.
+The groups above satisfy this property:
+
+- For Curve25519 and Curve448, the nominal group of {{ABH+21}} represents
+  elements by their u-coordinates, and `ElementToSharedSecret` is the identity
+  on these, so `k = 1` and the two problems coincide.
+- For P-256, P-384, and P-521 with the x-coordinate map, the preimages of `z`
+  are the points `(z, y)` and `(z, -y)`, where `y` is a square root computed
+  from the curve equation, so `k = 2`.
+
+A group whose `ElementToSharedSecret` lacks this property needs a separate
+argument that the variant is hard.
+
 ### Binding Properties {#binding-properties}
 
 It is often useful for a KEM to have certain "binding" properties, by which
@@ -1090,8 +1135,8 @@ security, under different assumptions about the component algorithms:
 
 * IND-CCA against a classical attacker if all of the following are true:
     * `KDF` is indifferentiable from a random oracle
-    * If using `Group_T`: The strong Diffie-Hellman problem is hard in
-      `Group_T`
+    * If using `Group_T`: The strong Diffie-Hellman problem over
+      shared-secret encodings is hard in `Group_T` ({{sdh}})
     * If using `KEM_T`: `KEM_T` is IND-CCA against a classical attacker
     * If using `C2PRICombiner`: `KEM_PQ` is C2PRI
 
@@ -1150,7 +1195,8 @@ editorial team describes the analysis of UG in detail.
 
 The first IND-CCA analysis, based on SDH, is similar to the
 corresponding analysis of CG given in {{XWING}}: it gives a straightforward
-reduction to the SDH hardness in the underlying group. Notably, since the PQ
+reduction to the hardness of SDH over shared-secret encodings in the
+underlying group ({{sdh}}). Notably, since the PQ
 KEM key and ciphertext are hashed, the C2PRI security of the PQ KEM does not
 appear in the bound.
 
@@ -1184,9 +1230,9 @@ Like UG, the CG construction has two complementary IND-CCA analyses. Both
 were given in {{XWING}}. We summarize them but elide some details.
 
 One analysis (Theorem 1) {{XWING}} shows that if the KDF is modelled as a RO,
-IND-CCA holds if the PQ KEM is broken, as long as the SDH problem holds in
-the nominal group and the PQ KEM satisfies C2PRI. The other (Theorem 2)
-{{XWING}} shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
+IND-CCA holds if the PQ KEM is broken, as long as SDH over shared-secret
+encodings ({{sdh}}) is hard in the nominal group and the PQ KEM satisfies
+C2PRI. The other (Theorem 2) {{XWING}} shows that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on
 the PQ-KEM's shared secret, IND-CCA holds.
 
 As long as the aforementioned security requirements of the component parts
