@@ -1482,6 +1482,11 @@ different from that specified in this document.
 Therefore, this specification MUST only be used with algorithms which have
 fixed-length shared secrets.
 
+Encapsulation keys and ciphertexts MUST also have fixed lengths: `Nek` and
+`Nct` for a KEM ({{kems}}), and `Nelem` for nominal group elements
+({{groups}}).  `split` separates hybrid values at these lengths, and the
+combiners concatenate component values without length prefixes.
+
 # IANA Considerations
 
 This document requests that IANA create a registry "Hybrid KEM Labels", which
