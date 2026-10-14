@@ -415,6 +415,16 @@ all byte strings, with fixed lengths:
 - `Nss`: The length in bytes of a shared secret produced by `Encaps` or
   `Decaps`
 
+For a uniformly random `seed` of length `Nseed`, the key pairs output by
+`DeriveKeyPair(seed)` MUST be distributed identically to, or computationally
+indistinguishably from, those output by `GenerateKeyPair()`.  The security
+analyses of the shared-seed key format ({{security}}) rely on this.  When the
+two distributions are only computationally indistinguishable, each such
+analysis gains one distinguishing term per component KEM.  The requirement
+holds by definition for KEMs whose `GenerateKeyPair` is `DeriveKeyPair`
+applied to fresh randomness, including ML-KEM {{FIPS203}}.  It does not follow
+from the interface above alone.
+
 ## Nominal Groups {#groups}
 
 ~~~ aasvg
@@ -1223,13 +1233,18 @@ The IND-CCA analyses of UG in {{CG26}}, CG in {{XWING}}, and CK in {{COS+26}}
 all model component key generation as sampling the two component key pairs
 independently, whereas the default key generation in this document derives both
 component key pairs from a single seed via the PRG ({{key-generation}}). This
-apparent mismatch is resolved by a standard hybrid argument: by the PRG security
-required in {{security-prgs}}, the joint distribution of component key pairs derived
-from a single seed is computationally indistinguishable from the joint
-distribution of independently generated component key pairs. Thus, any IND-CCA
-adversary against the shared-seed scheme implies an IND-CCA adversary against
-the independent-keys scheme with at most an additive PRG-distinguishing term in
-the bound. This argument needs the seed to be hidden from the adversary, as it
+apparent mismatch is resolved by a standard hybrid argument in two steps.
+First, by the PRG security required in {{security-prgs}}, the component seeds
+derived from a single seed are computationally indistinguishable from
+independent uniform seeds.  Second, by the requirement in {{kems}}, a
+component's `DeriveKeyPair` applied to a uniform seed produces key pairs
+distributed as its `GenerateKeyPair` does; for a nominal group,
+`RandomScalar` applied to a uniform seed produces a uniform scalar
+({{groups}}).  Thus, any IND-CCA adversary against the shared-seed scheme
+implies an IND-CCA adversary against the independent-keys scheme, with an
+additive PRG-distinguishing term in the bound, plus one key-generation
+distinguishing term per component when `DeriveKeyPair` is only
+computationally close to `GenerateKeyPair`. This argument needs the seed to be hidden from the adversary, as it
 is in the IND-CCA game.  It does not apply to the LEAK-BIND games of
 {{binding-analyses}}, which give the adversary the decapsulation key.  When
 the decapsulation key is the seed, the adversary can recompute the PRG output,
