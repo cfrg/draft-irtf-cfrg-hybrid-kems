@@ -1045,8 +1045,12 @@ enforced by the concrete instantiations that use HKDF as a `KDF`.
 
 Using HKDF as a KDF in the sense defined in this document requires mapping the
 single `input` defined here to the `IKM`, `salt`, and `info` inputs required by
-HKDF.  Concrete instantiations MUST define this mapping in such a way that no
-`input` value will ever map to colliding `IKM` and `info` values.
+HKDF.  Concrete instantiations MUST define this mapping so that:
+
+- the `IKM` and `info` values it produces satisfy the domain-disjointness
+  condition above, for example through the length condition given there; and
+- it is injective: distinct `input` values map to distinct (`salt`, `IKM`,
+  `info`) triples.
 
 The choice of the `KDF` security level SHOULD be made based on the security
 level provided by the constituent KEMs. The `KDF` SHOULD at least have the
