@@ -217,6 +217,17 @@ Disallowed?"
       -
         ins: S. Schmieg
         name: Sophie Schmieg
+  SS26:
+    title: "A machine-checked analysis of the four hybrid KEM combiners of draft-irtf-cfrg-hybrid-kems"
+    target: https://github.com/ProofFrog/examples/blob/main/applications/cfrg-hybrid-kems/REPORT-CFRG-20260722.md
+    date: 2026-07-22
+    author:
+      -
+        ins: D. Stebila
+        name: Douglas Stebila
+      -
+        ins: C. Steckel
+        name: Camryn Steckel
   XWING:
     title: "X-Wing: The Hybrid KEM You’ve Been Looking For"
     target: https://eprint.iacr.org/2024/039.pdf
@@ -751,15 +762,17 @@ hybrid KEM decapsulation key (other than the shared seed) introduces the risk
 of incompatibilities in cases where a private key needs to be moved from one
 system to another.
 
-Separate key generation / handling also reduces binding properties from
-MAL-BIND-P-Q to LEAK-BIND-P-Q. As discussed below, binding properties can
-address a variety of attack scenarios, including LEAK scenarios in which an
-attacker has passive access to the decapsulation key and MAL scenarios in
-which an attacker can cause the victim to use a crafted decapsulation
-key. The above hybrid KEM framework assures binding properties in the face of
-a LEAK attacker, irrespective of how key generation is done. The additional
-protection provided by the default "shared seed" key generation upgrades this to
-protection against a MAL attacker.
+The two formats also differ in their binding guarantees.  As discussed below,
+binding properties can address a variety of attack scenarios, including LEAK
+scenarios in which an attacker has passive access to the decapsulation key and
+MAL scenarios in which an attacker can cause the victim to use a crafted
+decapsulation key.  All four frameworks provide LEAK-BIND-K-PK and
+LEAK-BIND-K-CT in either format, under different assumptions: for CG and CK
+with the shared-seed format, the known proofs model `PRG` as a random oracle
+(see {{binding-analyses}}).  The shared-seed format prevents an attacker from
+choosing component keys independently, which may provide some protection
+against a MAL attacker; this document does not prove MAL binding for either
+format.
 
 Allowing for separate private key generation and handling also introduces a
 risk of inappropriate key reuse and cross-protocol attacks.  A given key pair
@@ -1216,8 +1229,11 @@ from a single seed is computationally indistinguishable from the joint
 distribution of independently generated component key pairs. Thus, any IND-CCA
 adversary against the shared-seed scheme implies an IND-CCA adversary against
 the independent-keys scheme with at most an additive PRG-distinguishing term in
-the bound. The same observation underlies the binding sketches in Section
-{{binding-analyses}}.
+the bound. This argument needs the seed to be hidden from the adversary, as it
+is in the IND-CCA game.  It does not apply to the LEAK-BIND games of
+{{binding-analyses}}, which give the adversary the decapsulation key.  When
+the decapsulation key is the seed, the adversary can recompute the PRG output,
+so PRG security cannot be invoked.
 
 ### Binding analyses
 
@@ -1230,18 +1246,25 @@ justifications here and defer rigorous proofs to a forthcoming paper.  <!--
 TODO: Also cite https://eprint.iacr.org/2025/1416.pdf which has some results
 about hybrid kem binding; unclear how they compare to ours though.-->
 
-We note that these sketches implicitly ignore the fact that in our hybrid
-KEMs, both key pairs are derived from a common random seed; we instead
-implicitly think of them as two runs of DeriveKeyPair with independent random
-seeds.  We justify this simplification by noting that in the LEAK model - in
-which the adversary is given the key pairs resulting from an honest run of
-KeyGen - the pseudorandomness of the seed expansion implies the adversary's
-input distributions in the two cases are computationally
-indistinguishable. The derivation of component scheme key pairs from the
-common random seed provides further protection against manipulation or
-corruption of keys such that it can contribute to stronger binding properties
-against a MAL adversary, as well as operational benefits in practice, but we
-do not prove that here.
+The binding guarantees differ between the two decapsulation key formats of
+{{key-generation}}:
+
+- Expanded format: all eight results below hold in the standard model.
+- Seed format, UG and UK: the results hold in the standard model.  Their
+  arguments end in a KDF collision and do not use any component key, so the
+  seed plays no role.
+- Seed format, CG and CK: the results hold when `PRG` is modeled as a
+  programmable random oracle {{SS26}}.  Their arguments reduce to a binding
+  property of `KEM_PQ`, and the reduction must produce a hybrid seed that
+  expands to the `KEM_PQ` key pair it was given.  PRG security does not
+  suffice, because the adversary holds the seed.  No standard-model proof is
+  known, and no attack is known.
+
+{{SS26}} gives machine-checked proofs of these results, modeling implicitly
+rejecting components.  Deriving the component key pairs from a common seed
+also prevents an attacker from choosing component keys independently, which
+may strengthen binding against a MAL adversary.  This document does not prove
+that.
 
 The paper that establishes the IND-CCA security of the UG construction
 ({{CG26}}) does not also include a proof of its binding properties.
