@@ -913,10 +913,13 @@ encryption.
 
 For KEMs, IND-CCA requires that no efficient adversary, given a ciphertext
 obtained by running `Encaps()` with an honestly-generated public key, can
-distinguish whether it is given the "real" secret output from `Encaps()`, or
-a random string unrelated to the `Encaps()` call that created that
-ciphertext. (Readers should note that this definition is slightly different
-than the corresponding definitions for public-key encryption {{BHK09}}.)
+distinguish whether it is given the "real" shared secret output by `Encaps()`
+or a uniformly random string of the same length.  The adversary may query
+`Decaps` on any ciphertext other than the one it was given.  The definition
+concerns only the shared secret; it places no requirement on how the
+ciphertext looks.  (Readers should note that this definition is slightly
+different than the corresponding definitions for public-key encryption
+{{BHK09}}.)
 
 Whether a given KEM provides IND-CCA depends on whether the attacker is
 assumed to have access to quantum computing capabilities or not (assuming the
