@@ -217,6 +217,17 @@ Disallowed?"
       -
         ins: S. Schmieg
         name: Sophie Schmieg
+  SS26:
+    title: "A machine-checked analysis of the four hybrid KEM combiners of draft-irtf-cfrg-hybrid-kems"
+    target: https://github.com/ProofFrog/examples/blob/main/applications/cfrg-hybrid-kems/REPORT-CFRG-20260722.md
+    date: 2026-07-22
+    author:
+      -
+        ins: D. Stebila
+        name: Douglas Stebila
+      -
+        ins: C. Steckel
+        name: Camryn Steckel
   XWING:
     title: "X-Wing: The Hybrid KEM You’ve Been Looking For"
     target: https://eprint.iacr.org/2024/039.pdf
@@ -1015,7 +1026,9 @@ frameworks require only that the `KDF` is some kind of pseudorandom function,
 but the SDH-based IND-CCA analysis of CG in {{XWING}}, and the corresponding
 analysis for UG {{CG26}} relies on the `KDF` being a RO. Proofs of our
 target binding properties for our hybrid KEMs require the `KDF` is a
-collision-resistant function.
+collision-resistant function.  Indifferentiability is needed only for the
+results that model the `KDF` as a random oracle; {{hybrid-ind-cca}} lists
+which results those are.
 
 If the `KDF` is a RO, the key derivation step in the hybrid KEMs can be
 viewed as applying a (RO-based) pseudorandom function - keyed with the shared
@@ -1099,11 +1112,17 @@ security, under different assumptions about the component algorithms:
     * `KDF` is indifferentiable from a random oracle
     * `KEM_PQ` is IND-CCA against a quantum attacker
 
-Some IND-CCA analyses do not strictly require the `KDF` to be
-indifferentiable from a random oracle; they instead only require a kind of
-PRF assumption on the KDF. For simplicity we ignore this here; the security
-analyses described below for our constructions will elaborate on this point
-when appropriate.
+Requiring the `KDF` to be indifferentiable from a random oracle is
+conservative.  The analyses in {{SS26}} need less:
+
+- For the PQ component, all four frameworks need only that `KDF` is a
+  pseudorandom function keyed by `ss_PQ`.
+- For the traditional component, UK and CK need only that `KDF` is a
+  pseudorandom function keyed by `ss_T`.  UG and CG model `KDF` as a random
+  oracle.
+- All binding results need only that `KDF` is collision-resistant.
+
+This document keeps the single, stronger requirement for simplicity.
 
 ### Binding Properties {#hybrid-binding}
 
