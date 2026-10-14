@@ -303,8 +303,11 @@ post-quantum component and "T" to the traditional component.
 
 Hexadecimal values `0x...` represent byte strings (not integers).
 
-We write `x $← {0,1}`<sup>n</sup> to denote drawing `x` uniformly at random
-from the set of `n`-bit strings, denoted {0,1}<sup>n</sup>.
+We write `x $← {0,1}^n` to denote drawing `x` uniformly at random from the
+set of `n`-bit strings, denoted `{0,1}^n`.  We write `g^x` for exponentiation
+in a group.  In the binding analyses ({{binding-analyses}}), a superscript
+instead indexes the two runs of a game: for example, `ct_PQ^0` and `ct_PQ^1`
+are the PQ ciphertexts of the first and second run.
 
 A function `f` that maps from one domain to another is denoted
 using a right arrow to separate inputs from outputs: f : inputs → outputs.
@@ -1056,10 +1059,10 @@ security level of the strongest constituent KEM.
 
 The functions used to expand a key seed to multiple key seeds is closer to a
 pseudorandom generator (`PRG`) in its security requirements {{AOB+24}}.  A
-secure PRG is an algorithm `PRG` : {0, 1}<sup>n</sup> → {0, 1}<sup>m</sup>,
-such that no polynomial-time adversary can distinguish between `PRG(r)` (for
-r $← {0, 1}<sup>n</sup>) and a random z $← {0, 1}<sup>m</sup> {{Rosulek}}.
-The uniform string r ∈ {0, 1}<sup>n</sup> is called the seed of the `PRG`.
+secure PRG is an algorithm `PRG : {0,1}^n → {0,1}^m`, such that no
+polynomial-time adversary can distinguish between `PRG(r)` (for
+`r $← {0,1}^n`) and a random `z $← {0,1}^m` {{Rosulek}}.  The uniform string
+`r ∈ {0,1}^n` is called the seed of the `PRG`.
 
 A `PRG` is not to be confused with a random (or pseudorandom) _number_
 generator (RNG): a `PRG` requires the seed randomness to be chosen uniformly
