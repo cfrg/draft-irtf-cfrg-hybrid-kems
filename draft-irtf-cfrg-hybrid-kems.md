@@ -295,7 +295,7 @@ but which are not treated in depth.
 
 {::boilerplate bcp14-tagged}
 
-# Notation
+# Notation {#notation}
 
 This document is consistent with terminology defined in {{?RFC9794}}.  In
 particular, this document defines PQ/T Hybrid KEMs, where "PQ" refers to the
@@ -328,6 +328,10 @@ The following functions are used throughout this document:
   have length `N1 + N2`. Since this function operates over secret data `x`,
   it MUST be constant-time with regard to the contents of the bytes in `x`,
   for given non-secret lengths `N1` and `N2`.
+
+The pseudocode in this document signals failure by raising an error.  An error
+raised by any step ends the enclosing algorithm, which raises an error to its
+caller.  No later step runs.  {{error-handling}} lists the steps that can fail.
 
 # Cryptographic Dependencies {#cryptographic-deps}
 
@@ -386,13 +390,14 @@ A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
   takes as input a secret decapsulation key `dk` and ciphertext `ct` and
   outputs a shared secret `ss`.
 
-In the notation above, `Decaps` is written as if it always returns an output
-`ss`; this is an artifact of the Python-like pseudocode used in this document.
-In the event of a decapsulation failure, `Decaps` MAY instead return an error.
-This allows the KEM interface to represent both implicitly rejecting KEMs --
-such as ML-KEM, which produce a deterministic pseudorandom output on invalid
-ciphertexts -- and explicitly rejecting KEMs, which return an error.  The
-security analyses in {{security}} take this variation into account.
+`Decaps` MAY raise an error instead of returning `ss`.  This lets the KEM
+interface represent both implicitly rejecting KEMs and explicitly rejecting
+KEMs.  An implicitly rejecting KEM, such as ML-KEM, returns a deterministic
+pseudorandom output for an invalid ciphertext.  An explicitly rejecting KEM
+raises an error.  `Encaps` MAY also raise an error, for example when `ek`
+fails the check in Section 7.2 of {{FIPS203}}.  A hybrid KEM raises an error
+whenever a component does, as specified in {{error-handling}}.  The security
+analyses in {{security}} take this into account.
 
 We assume that the values produced and consumed by the above functions are
 all byte strings, with fixed lengths:
@@ -453,6 +458,9 @@ nominal group comprises a set `G` together with a distinguished basis element
   uniformly pseudorandom byte string `seed`.
 - `ElementToSharedSecret(P) -> ss`: Extract a shared secret from an element
   of the group (e.g., by taking the X coordinate of an elliptic curve point).
+  A group MAY specify values of `P` for which `ElementToSharedSecret` raises an
+  error instead, such as the all-zero output of X25519 {{?RFC7748}}.  Such a
+  check MUST NOT leak information about `P` beyond whether the check failed.
 
 A scalar value of zero MUST NOT be used as a private key: it does not
 correspond to a meaningful Diffie-Hellman exchange and, for some curves such
@@ -463,11 +471,11 @@ occurs only with negligible probability.
 
 For some groups (for example P-256 and ristretto255), there exist byte
 strings of the correct length that do not decode to a valid group element.
-When `Exp` is given such an invalid element, it returns an error rather than a
-shared secret.  A hybrid KEM whose nominal group can fail in this way is an
-instance of an explicitly rejecting KEM (see {{kems}}): when `Group_T.Exp`
-returns an error during decapsulation, the hybrid `KEM_H.Decaps` returns an
-error.  This operates only on public data (the ciphertext), so failing
+When `Exp` is given such an invalid element, it raises an error rather than
+returning an element.  A hybrid KEM whose nominal group can fail in this way,
+in `Exp` or in `ElementToSharedSecret`, is an explicitly rejecting KEM (see
+{{kems}} and {{error-handling}}).  For the groups of interest, these failures
+depend only on public data (the ciphertext or encapsulation key), so failing
 explicitly rather than substituting a pseudorandom shared secret is safe.
 
 We assume that scalars and group elements are represented by byte strings
@@ -886,6 +894,33 @@ def Decaps(dk, ct):
     return ss_H
 ~~~
 
+## Error Handling {#error-handling}
+
+The following steps of the four frameworks can raise an error:
+
+- `split`, when `ek` (in `Encaps`) or `ct` (in `Decaps`) has the wrong length.
+- `KEM_PQ.Encaps` or `KEM_T.Encaps`, when the component rejects its
+  encapsulation key, as with the check in Section 7.2 of {{FIPS203}}.
+- `KEM_PQ.Decaps` or `KEM_T.Decaps`, when the component is explicitly
+  rejecting or rejects a malformed input.
+- `Group_T.Exp`, when `ek_T` (in `Encaps`) or `ct_T` (in `Decaps`) does not
+  decode to a valid group element.
+- `Group_T.ElementToSharedSecret`, for the values the group specifies as
+  invalid ({{groups}}).
+- `Group_T.RandomScalar` or a component's `DeriveKeyPair`, when the component
+  specifies a failure case, such as rejection sampling that runs out of input.
+
+Following the convention in {{notation}}, when any of these steps raises an
+error, the hybrid `Encaps` or `Decaps` raises an error and returns no shared
+secret.  It does not invoke `KDF`, and it does not substitute a value for the
+failed component.  `Decaps` SHOULD NOT indicate which step failed.
+
+A hybrid KEM is implicitly rejecting only if both components are implicitly
+rejecting and no `Group_T` operation can fail on a ciphertext of the correct
+length.  Otherwise, it is explicitly rejecting.  For example, a hybrid of ML-KEM
+with a group that rejects the all-zero X25519 output is explicitly rejecting,
+even though ML-KEM is implicitly rejecting.
+
 # Security Considerations {#security}
 
 Hybrid KEMs provide security by combining two or more schemes so that
@@ -1201,6 +1236,14 @@ substantially similar to the existing peer-reviewed analyses of the CG
 {{XWING}} and UK {{GHP18}} constructions. {{COS+26}} by the editorial team
 and collaborators describes the analysis of CK in detail.
 
+The analyses of UG in {{CG26}}, CG in {{XWING}}, and UK in {{GHP18}} model a
+`Decaps` that rejects whenever either component rejects, as specified in
+{{error-handling}}.  The analysis of CK in {{COS+26}} does not model explicit
+rejection, but its reductions extend to it.  Each reduction holds the
+decapsulation key of one component and a decapsulation oracle for the other,
+so it can detect a rejection by either component and answer as the hybrid
+`Decaps` would.
+
 Therefore all four hybrid KEMs in this document are IND-CCA when instantiated
 with cryptographic components that meet the security requirements described
 above. Any changes to the algorithms, including key generation/derivation,
@@ -1259,13 +1302,20 @@ adversary may set the second key pair equal to the first, so the analyses also
 cover the case of a single key pair (two distinct ciphertexts that decapsulate
 to the same key under one decapsulation key); the KDF-collision arguments
 cover both cases.  Second, we write `reject` for the abstract
-decapsulation-failure symbol used in {{CDM23}}.  As noted in {{kems}}, a
-`Decaps` in this document may return `reject` (for an explicitly rejecting
-KEM) or, for an implicitly rejecting KEM, return a deterministic pseudorandom
-output in place of `reject`.  The LEAK-BIND games are won only by a collision
-on non-`reject` keys -- that is, both decapsulations must succeed -- so the
-collision arguments below, which rely on distinct ciphertexts or public keys
-producing distinct KDF inputs, are unaffected by how rejection is signaled.
+decapsulation-failure symbol used in {{CDM23}}.  A hybrid `Decaps` outputs
+`reject` exactly when it raises an error ({{error-handling}}).
+
+The LEAK-BIND games are won only by a collision on non-`reject` keys, so both
+hybrid decapsulations in a winning output succeed.  By {{error-handling}}, a
+successful hybrid decapsulation implies that every component step succeeded.
+In particular, each `KEM_PQ.Decaps` call returned a key rather than `reject`.
+For an implicitly rejecting `KEM_PQ`, that key may be the pseudorandom output
+for an invalid ciphertext; the games of {{CDM23}} treat it as an ordinary key.
+The UG and UK arguments below end in a KDF collision, so they need only that
+both hybrid decapsulations succeed.  The CG and CK arguments continue into a
+reduction to a binding property of `KEM_PQ`.  They also need that both
+`KEM_PQ.Decaps` calls returned keys, which makes the reduction's output a
+valid win against `KEM_PQ`.
 
 #### UG Binding
 
@@ -1355,7 +1405,10 @@ decapsulated under either the same key pair or the two distinct key pairs, at
 the adversary's choice; the reduction covers both cases. The
 reduction does this by generating two nominal-group key pairs and running the
 CG LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
-KEM ciphertexts output by the adversary. The probability that the adversary
+KEM ciphertexts output by the adversary. Both CG decapsulations succeeded, so
+both `KEM_PQ.Decaps` calls returned the same non-`reject` key; the two
+distinct PQ KEM ciphertexts therefore win the LEAK-BIND-K-CT game against the
+PQ KEM. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
 lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
 game against the PQ KEM.
@@ -1369,13 +1422,16 @@ CG is LEAK-BIND-K-PK.
 
 Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
-(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
-nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
+(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1 != `reject`. Again, as above we argue
+that the only nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 =
+ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
 this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
-reduction to the LEAK-BIND-K-PK of PQ KEM.
+reduction to the LEAK-BIND-K-PK of PQ KEM.  Both hybrid decapsulations
+succeeded, so both `KEM_PQ.Decaps` calls returned the same non-`reject` key
+under distinct PQ encapsulation keys, which wins that game.
 
 Again, we conclude by noting that these cases are exhaustive.
 
@@ -1406,7 +1462,10 @@ decapsulated under either the same key pair or the two distinct key pairs, at
 the adversary's choice; the reduction covers both cases. The
 reduction does this by generating two traditional KEM key pairs and running the
 CK LEAK-BIND-K-CT adversary on all keys. Then the reduction outputs the PQ
-KEM ciphertexts output by the adversary. The probability that the adversary
+KEM ciphertexts output by the adversary. Both CK decapsulations succeeded, so
+both `KEM_PQ.Decaps` calls returned the same non-`reject` key; the two
+distinct PQ KEM ciphertexts therefore win the LEAK-BIND-K-CT game against the
+PQ KEM. The probability that the adversary
 wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1 is a
 lower bound on the probability of the reduction winning the LEAK-BIND-K-CT
 game against the PQ KEM.
@@ -1420,13 +1479,16 @@ CK is LEAK-BIND-K-PK.
 
 Justification: Similar to the above, we proceed by a case analysis on the win
 condition of the LEAK-BIND-K-PK game.  The condition is (ek_PQ^0, ek_T^0) !=
-(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1. Again, as above we argue that the only
-nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in
+(ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1 != `reject`. Again, as above we argue
+that the only nontrivial case is the one where ek_PQ^0 != ek_PQ^1 but ek_T^0 =
+ek_T^1: in
 the other case we can directly get a KDF collision from a winning output. In
 this case the result of KEM_PQ.Decaps for the two PQ KEM keys can either be
 the same or different. IF they are different, we again get a KDF collision
 from a win. If they are the same, in a similar way as above, we can build a
-reduction to the LEAK-BIND-K-PK of PQ KEM.
+reduction to the LEAK-BIND-K-PK of PQ KEM.  Both hybrid decapsulations
+succeeded, so both `KEM_PQ.Decaps` calls returned the same non-`reject` key
+under distinct PQ encapsulation keys, which wins that game.
 
 Again, we conclude by noting that these cases are exhaustive.
 
