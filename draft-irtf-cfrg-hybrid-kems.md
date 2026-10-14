@@ -28,7 +28,8 @@ informative:
   FIPS202: DOI.10.6028/NIST.FIPS.202
   FIPS203: DOI.10.6028/NIST.FIPS.203
   ABH+21:
-    title: "Analysing the HPKE standard."
+    title: "Analysing the HPKE Standard"
+    target: https://eprint.iacr.org/2020/1499
     date: April, 2021
     author:
       -
