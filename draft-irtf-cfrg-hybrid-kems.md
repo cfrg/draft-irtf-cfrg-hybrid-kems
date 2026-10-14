@@ -176,6 +176,7 @@ Disallowed?"
     -
       ins: K. G. Paterson
   HKDF: RFC5869
+  SP800-227: DOI.10.6028/NIST.SP.800-227
   ISO18033-2:
     title: "Information technology -- Security techniques -- Encryption algorithms -- Part 2: Asymmetric ciphers"
     date: 2006
@@ -241,7 +242,7 @@ underlying algorithms are secure.
 Post-quantum (PQ) cryptographic algorithms are based on problems that are
 conjectured to be resistant to attacks possible on a quantum computer. Key
 Encapsulation Mechanisms (KEMs) are a standardized class of cryptographic
-scheme that can be used to build protocols in lieu of traditional,
+scheme {{SP800-227}} that can be used to build protocols in lieu of traditional,
 quantum-vulnerable variants such as finite field or elliptic curve
 Diffie-Hellman (DH) based protocols.
 
@@ -370,6 +371,12 @@ hybrid KEM to be secure are discussed in {{security}}.
 
     ss        ==        ss
 ~~~
+
+The KEM syntax below corresponds to that of {{SP800-227}} for a fixed
+parameter set.  `GenerateKeyPair`, `Encaps`, and `Decaps` correspond to
+`KeyGen`, `Encaps`, and `Decaps`.  `DeriveKeyPair(seed)` corresponds to a
+derandomized `KeyGen` whose randomness is `seed`; for ML-KEM, this is
+`ML-KEM.KeyGen_internal` {{FIPS203}}.
 
 A Key Encapsulation Mechanism (KEM) comprises the following algorithms:
 
