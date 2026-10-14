@@ -209,6 +209,14 @@ Disallowed?"
     title: "The Joy of Cryptography"
     date: 2021
     target: https://joyofcryptography.com/pdf/book.pdf
+  SHOUP01:
+    title: "A Proposal for an ISO Standard for Public Key Encryption (version 2.1)"
+    target: https://eprint.iacr.org/2001/112
+    date: 2001-12
+    author:
+      -
+        ins: V. Shoup
+        name: Victor Shoup
   SCHMIEG2024:
     title: "Unbindable Kemmy Schmidt: ML-KEM is neither MAL-BIND-K-CT nor MAL-BIND-K-PK"
     target: https://eprint.iacr.org/2024/523.pdf
@@ -931,8 +939,9 @@ quantum attacker and a traditional one.
 For traditional algorithms, things are less clear.  The DHKEM construction in
 {{?RFC9180}} is an IND-CCA KEM based on Diffie-Hellman {{ABH+21}}, but "raw"
 ephemeral-static Diffie-Hellman, interpreting the ephemeral public key as the
-ciphertext, is not IND-CCA secure.  RSA-KEM is IND-CCA secure {{ISO18033-2}},
-and RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM,
+ciphertext, is not IND-CCA secure.  RSA-KEM {{ISO18033-2}} is IND-CCA secure
+in the random oracle model if the RSA problem is hard {{SHOUP01}}, and
+RSA-OAEP public-key encryption can be used to construct an IND-CCA KEM,
 but "classical" RSA encryption (RSAES-PKCS1-v1_5 as defined in {{?RFC8017}})
 is not even IND-CCA secure as a public-key encryption algorithm.
 
