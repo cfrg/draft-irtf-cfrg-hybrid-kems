@@ -286,8 +286,8 @@ The remainder of this document is structured as follows: first, in
 which the frameworks are built, and then the frameworks themselves.  Then, in
 {{security}}, we lay out the security analyses that support these frameworks,
 including the security requirements for constituent components and the
-security notions satisfied by hybrid KEMS constructed according to the
-frameworks in the document {{hybrid-ind-cca}}.  Finally, we discuss
+security notions satisfied by hybrid KEMs constructed according to the
+frameworks in this document.  Finally, we discuss
 some "path not taken", related topics that might be of interest to readers,
 but which are not treated in depth.
 
