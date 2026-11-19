@@ -5,10 +5,10 @@
 Crypto Forum                                                 D. Connolly
 Internet-Draft                                                 SandboxAQ
 Intended status: Informational                                 R. Barnes
-Expires: 17 April 2027                                             Cisco
+Expires: 23 May 2027                                               Cisco
                                                                P. Grubbs
                                                   University of Michigan
-                                                         14 October 2026
+                                                        19 November 2026
 
 
                 Hybrid PQ/T Key Encapsulation Mechanisms
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 April 2027.
+   This Internet-Draft will expire on 23 May 2027.
 
 Copyright Notice
 
@@ -81,6 +81,7 @@ Table of Contents
      5.4.  UK Framework: Universal Combiner with a KEM
      5.5.  CG Framework: C2PRI Combiner with a Nominal Group
      5.6.  CK Framework: C2PRI Combiner with a KEM
+     5.7.  Error Handling
    6.  Security Considerations
      6.1.  Security Properties for Component Algorithms
        6.1.1.  Indistinguishability under Chosen Ciphertext Attack
@@ -114,9 +115,9 @@ Table of Contents
    Post-quantum (PQ) cryptographic algorithms are based on problems that
    are conjectured to be resistant to attacks possible on a quantum
    computer.  Key Encapsulation Mechanisms (KEMs) are a standardized
-   class of cryptographic scheme that can be used to build protocols in
-   lieu of traditional, quantum-vulnerable variants such as finite field
-   or elliptic curve Diffie-Hellman (DH) based protocols.
+   class of cryptographic scheme [SP800-227] that can be used to build
+   protocols in lieu of traditional, quantum-vulnerable variants such as
+   finite field or elliptic curve Diffie-Hellman (DH) based protocols.
 
    Given the novelty of PQ algorithms, however, there is some concern
    that PQ algorithms currently believed to be secure will be broken.
@@ -162,11 +163,10 @@ Table of Contents
    frameworks are built, and then the frameworks themselves.  Then, in
    Section 6, we lay out the security analyses that support these
    frameworks, including the security requirements for constituent
-   components and the security notions satisfied by hybrid KEMS
-   constructed according to the frameworks in the document
-   Section 6.2.1.  Finally, we discuss some "path not taken", related
-   topics that might be of interest to readers, but which are not
-   treated in depth.
+   components and the security notions satisfied by hybrid KEMs
+   constructed according to the frameworks in this document.  Finally,
+   we discuss some "path not taken", related topics that might be of
+   interest to readers, but which are not treated in depth.
 
 2.  Requirements Notation
 
@@ -186,7 +186,8 @@ Table of Contents
    Hexadecimal values 0x... represent byte strings (not integers).
 
    We write x $← {0,1}^n to denote drawing x uniformly at random from
-   the set of n-bit strings, denoted {0,1}^n.
+   the set of n-bit strings, denoted {0,1}^n.  We write g^x for
+   exponentiation in a group.
 
    A function f that maps from one domain to another is denoted using a
    right arrow to separate inputs from outputs: f : inputs → outputs.
@@ -214,6 +215,11 @@ Table of Contents
       operates over secret data x, it MUST be constant-time with regard
       to the contents of the bytes in x, for given non-secret lengths N1
       and N2.
+
+   The pseudocode in this document signals failure by raising an error.
+   An error raised by any step ends the enclosing algorithm, which
+   raises an error to its caller.  No later step runs.  Section 5.7
+   lists the steps that can fail.
 
 4.  Cryptographic Dependencies
 
@@ -258,6 +264,12 @@ Table of Contents
 
        ss        ==        ss
 
+   The KEM syntax below corresponds to that of [SP800-227] for a fixed
+   parameter set.  GenerateKeyPair, Encaps, and Decaps correspond to
+   KeyGen, Encaps, and Decaps.  DeriveKeyPair(seed) corresponds to a
+   derandomized KeyGen whose randomness is seed; for ML-KEM, this is ML-
+   KEM.KeyGen_internal [FIPS203].
+
    A Key Encapsulation Mechanism (KEM) comprises the following
    algorithms:
 
@@ -278,14 +290,15 @@ Table of Contents
       which takes as input a secret decapsulation key dk and ciphertext
       ct and outputs a shared secret ss.
 
-   In the notation above, Decaps is written as if it always returns an
-   output ss; this is an artifact of the Python-like pseudocode used in
-   this document.  In the event of a decapsulation failure, Decaps MAY
-   instead return an error.  This allows the KEM interface to represent
-   both implicitly rejecting KEMs -- such as ML-KEM, which produce a
-   deterministic pseudorandom output on invalid ciphertexts -- and
-   explicitly rejecting KEMs, which return an error.  The security
-   analyses in Section 6 take this variation into account.
+   Decaps MAY raise an error instead of returning ss.  This lets the KEM
+   interface represent both implicitly rejecting KEMs and explicitly
+   rejecting KEMs.  An implicitly rejecting KEM, such as ML-KEM, returns
+   a deterministic pseudorandom output for an invalid ciphertext.  An
+   explicitly rejecting KEM raises an error.  Encaps MAY also raise an
+   error, for example when ek fails the check in Section 7.2 of
+   [FIPS203].  A hybrid KEM raises an error whenever a component does,
+   as specified in Section 5.7.  The security analyses in Section 6 take
+   this into account.
 
    We assume that the values produced and consumed by the above
    functions are all byte strings, with fixed lengths:
@@ -300,6 +313,17 @@ Table of Contents
 
    *  Nss: The length in bytes of a shared secret produced by Encaps or
       Decaps
+
+   For a uniformly random seed of length Nseed, the key pairs output by
+   DeriveKeyPair(seed) MUST be distributed identically to, or
+   computationally indistinguishably from, those output by
+   GenerateKeyPair().  The security analyses of the shared-seed key
+   format (Section 6) rely on this.  When the two distributions are only
+   computationally indistinguishable, each such analysis gains one
+   distinguishing term per component KEM.  The requirement holds by
+   definition for KEMs whose GenerateKeyPair is DeriveKeyPair applied to
+   fresh randomness, including ML-KEM [FIPS203].  It does not follow
+   from the interface above alone.
 
 4.2.  Nominal Groups
 
@@ -353,7 +377,10 @@ Table of Contents
 
    *  ElementToSharedSecret(P) -> ss: Extract a shared secret from an
       element of the group (e.g., by taking the X coordinate of an
-      elliptic curve point).
+      elliptic curve point).  A group MAY specify values of P for which
+      ElementToSharedSecret raises an error instead, such as the all-
+      zero output of X25519 [RFC7748].  Such a check MUST NOT leak
+      information about P beyond whether the check failed.
 
    A scalar value of zero MUST NOT be used as a private key: it does not
    correspond to a meaningful Diffie-Hellman exchange and, for some
@@ -365,13 +392,14 @@ Table of Contents
 
    For some groups (for example P-256 and ristretto255), there exist
    byte strings of the correct length that do not decode to a valid
-   group element.  When Exp is given such an invalid element, it returns
-   an error rather than a shared secret.  A hybrid KEM whose nominal
-   group can fail in this way is an instance of an explicitly rejecting
-   KEM (see Section 4.1): when Group_T.Exp returns an error during
-   decapsulation, the hybrid KEM_H.Decaps returns an error.  This
-   operates only on public data (the ciphertext), so failing explicitly
-   rather than substituting a pseudorandom shared secret is safe.
+   group element.  When Exp is given such an invalid element, it raises
+   an error rather than returning an element.  A hybrid KEM whose
+   nominal group can fail in this way, in Exp or in
+   ElementToSharedSecret, is an explicitly rejecting KEM (see
+   Section 4.1 and Section 5.7).  For the groups of interest, these
+   failures depend only on public data (the ciphertext or encapsulation
+   key), so failing explicitly rather than substituting a pseudorandom
+   shared secret is safe.
 
    We assume that scalars and group elements are represented by byte
    strings with fixed lengths:
@@ -386,8 +414,8 @@ Table of Contents
       ElementToSharedSecret
 
    Groups used with the hybrid KEM framework in this document should be
-   secure with respect to the strong Diffie-Hellman problem (see
-   Section 6.1.3).
+   secure with respect to the strong Diffie-Hellman problem over shared-
+   secret encodings (see Section 6.1.3).
 
 4.3.  Pseudorandom Generators
 
@@ -664,16 +692,18 @@ Table of Contents
    introduces the risk of incompatibilities in cases where a private key
    needs to be moved from one system to another.
 
-   Separate key generation / handling also reduces binding properties
-   from MAL-BIND-P-Q to LEAK-BIND-P-Q.  As discussed below, binding
-   properties can address a variety of attack scenarios, including LEAK
-   scenarios in which an attacker has passive access to the
-   decapsulation key and MAL scenarios in which an attacker can cause
-   the victim to use a crafted decapsulation key.  The above hybrid KEM
-   framework assures binding properties in the face of a LEAK attacker,
-   irrespective of how key generation is done.  The additional
-   protection provided by the default "shared seed" key generation
-   upgrades this to protection against a MAL attacker.
+   The two formats also differ in their binding guarantees.  As
+   discussed below, binding properties can address a variety of attack
+   scenarios, including LEAK scenarios in which an attacker has passive
+   access to the decapsulation key and MAL scenarios in which an
+   attacker can cause the victim to use a crafted decapsulation key.
+   All four frameworks provide LEAK-BIND-K-PK and LEAK-BIND-K-CT in
+   either format, under different assumptions: for CG and CK with the
+   shared-seed format, the known proofs model PRG as a random oracle
+   (see Section 6.4.2).  The shared-seed format prevents an attacker
+   from choosing component keys independently, which may provide some
+   protection against a MAL attacker; this document does not prove MAL
+   binding for either format.
 
    Allowing for separate private key generation and handling also
    introduces a risk of inappropriate key reuse and cross-protocol
@@ -795,6 +825,41 @@ def Decaps(dk, ct):
        ss_H = C2PRICombiner(ss_PQ, ss_T, ct_T, ek_T, Label)
        return ss_H
 
+5.7.  Error Handling
+
+   The following steps of the four frameworks can raise an error:
+
+   *  split, when ek (in Encaps) or ct (in Decaps) has the wrong length.
+
+   *  KEM_PQ.Encaps or KEM_T.Encaps, when the component rejects its
+      encapsulation key, as with the check in Section 7.2 of [FIPS203].
+
+   *  KEM_PQ.Decaps or KEM_T.Decaps, when the component is explicitly
+      rejecting or rejects a malformed input.
+
+   *  Group_T.Exp, when ek_T (in Encaps) or ct_T (in Decaps) does not
+      decode to a valid group element.
+
+   *  Group_T.ElementToSharedSecret, for the values the group specifies
+      as invalid (Section 4.2).
+
+   *  Group_T.RandomScalar or a component's DeriveKeyPair, when the
+      component specifies a failure case, such as rejection sampling
+      that runs out of input.
+
+   Following the convention in Section 3, when any of these steps raises
+   an error, the hybrid Encaps or Decaps raises an error and returns no
+   shared secret.  It does not invoke KDF, and it does not substitute a
+   value for the failed component.  Decaps SHOULD NOT indicate which
+   step failed.
+
+   A hybrid KEM is implicitly rejecting only if both components are
+   implicitly rejecting and no Group_T operation can fail on a
+   ciphertext of the correct length.  Otherwise, it is explicitly
+   rejecting.  For example, a hybrid of ML-KEM with a group that rejects
+   the all-zero X25519 output is explicitly rejecting, even though ML-
+   KEM is implicitly rejecting.
+
 6.  Security Considerations
 
    Hybrid KEMs provide security by combining two or more schemes so that
@@ -823,11 +888,11 @@ def Decaps(dk, ct):
 
    For KEMs, IND-CCA requires that no efficient adversary, given a
    ciphertext obtained by running Encaps() with an honestly-generated
-   public key, can distinguish whether it is given the "real" secret
-   output from Encaps(), or a random string unrelated to the Encaps()
-   call that created that ciphertext.  (Readers should note that this
-   definition is slightly different than the corresponding definitions
-   for public-key encryption [BHK09].)
+   public key, can distinguish whether it is given the "real" shared
+   secret output from Encaps()/Decaps(), or a random string unrelated to
+   the Encaps() call that created that ciphertext.  (Readers should note
+   that this definition is slightly different than the corresponding
+   definitions for public-key encryption [BHK09].)
 
    Whether a given KEM provides IND-CCA depends on whether the attacker
    is assumed to have access to quantum computing capabilities or not
@@ -894,6 +959,43 @@ def Decaps(dk, ct):
    as the NIST elliptic curve groups P-256, P-384, and P-521, as well as
    in the Montgomery curves Curve25519 and Curve448.
 
+   The IND-CCA analyses of UG and CG for the traditional component use a
+   variant of this problem over shared-secret encodings [SS26].  In the
+   variant, the attacker must compute ElementToSharedSecret(g^xy), and
+   the oracle DH(Y, z) answers whether ElementToSharedSecret(Y^x) = z.
+   When we say that the strong Diffie-Hellman problem over shared-secret
+   encodings is hard in a group, we mean that no efficient classical
+   attacker solves this variant.
+
+   The variant is no easier than the strong Diffie-Hellman problem when
+   ElementToSharedSecret has few preimages that are easy to compute.
+   Suppose that for every z, at most k elements P satisfy
+   ElementToSharedSecret(P) = z, and that these elements can be computed
+   efficiently from z.  An attacker against the variant then yields an
+   attacker against the strong Diffie-Hellman problem with the same
+   success probability:
+
+   *  It answers each query DH(Y, z) by querying DH(Y, P) for each
+      preimage P of z, and returning whether any answer is positive.
+
+   *  It converts the output z into g^xy by querying DH(g^y, P) for each
+      preimage P of z, and returning the one that is accepted.
+
+   The new attacker makes at most k times as many oracle queries, plus
+   k.  The groups above satisfy this property:
+
+   *  For Curve25519 and Curve448, the nominal group of [ABH_21]
+      represents elements by their u-coordinates, and
+      ElementToSharedSecret is the identity on these, so k = 1 and the
+      two problems coincide.
+
+   *  For P-256, P-384, and P-521 with the x-coordinate map, the
+      preimages of z are the points (z, y) and (z, -y), where y is a
+      square root computed from the curve equation, so k = 2.
+
+   A group whose ElementToSharedSecret lacks this property needs a
+   separate argument that the variant is hard.
+
 6.1.4.  Binding Properties
 
    It is often useful for a KEM to have certain "binding" properties, by
@@ -936,7 +1038,9 @@ def Decaps(dk, ct):
    analysis of CG in [XWING], and the corresponding analysis for UG
    [CG26] relies on the KDF being a RO.  Proofs of our target binding
    properties for our hybrid KEMs require the KDF is a collision-
-   resistant function.
+   resistant function.  Indifferentiability is needed only for the
+   results that model the KDF as a random oracle; Section 6.2.1 lists
+   which results those are.
 
    If the KDF is a RO, the key derivation step in the hybrid KEMs can be
    viewed as applying a (RO-based) pseudorandom function - keyed with
@@ -969,8 +1073,9 @@ def Decaps(dk, ct):
    Using HKDF as a KDF in the sense defined in this document requires
    mapping the single input defined here to the IKM, salt, and info
    inputs required by HKDF.  Concrete instantiations MUST define this
-   mapping in such a way that no input value will ever map to colliding
-   IKM and info values.
+   mapping so that the domains for IKM, info || 0x01, and m || info || i
+   are pairwise disjoint, i.e. don't collide, for example through the
+   length condition given above.
 
    The choice of the KDF security level SHOULD be made based on the
    security level provided by the constituent KEMs.  The KDF SHOULD at
@@ -980,10 +1085,10 @@ def Decaps(dk, ct):
 
    The functions used to expand a key seed to multiple key seeds is
    closer to a pseudorandom generator (PRG) in its security requirements
-   [AOB_24].  A secure PRG is an algorithm PRG : {0, 1}^n → {0, 1}^m,
-   such that no polynomial-time adversary can distinguish between PRG(r)
-   (for r $← {0, 1}^n) and a random z $← {0, 1}^m [Rosulek].  The
-   uniform string r ∈ {0, 1}^n is called the seed of the PRG.
+   [AOB_24].  A secure PRG is an algorithm PRG : {0,1}^n → {0,1}^m, such
+   that no polynomial-time adversary can distinguish between PRG(r) (for
+   r $← {0,1}^n) and a random z $← {0,1}^m [Rosulek].  The uniform
+   string r ∈ {0,1}^n is called the seed of the PRG.
 
    A PRG is not to be confused with a random (or pseudorandom) _number_
    generator (RNG): a PRG requires the seed randomness to be chosen
@@ -1018,8 +1123,8 @@ def Decaps(dk, ct):
 
       -  KDF is indifferentiable from a random oracle
 
-      -  If using Group_T: The strong Diffie-Hellman problem is hard in
-         Group_T
+      -  If using Group_T: The strong Diffie-Hellman problem over
+         shared-secret encodings is hard in Group_T (Section 6.1.3)
 
       -  If using KEM_T: KEM_T is IND-CCA against a classical attacker
 
@@ -1032,11 +1137,19 @@ def Decaps(dk, ct):
 
       -  KEM_PQ is IND-CCA against a quantum attacker
 
-   Some IND-CCA analyses do not strictly require the KDF to be
-   indifferentiable from a random oracle; they instead only require a
-   kind of PRF assumption on the KDF.  For simplicity we ignore this
-   here; the security analyses described below for our constructions
-   will elaborate on this point when appropriate.
+   Requiring the KDF to be indifferentiable from a random oracle is
+   conservative.  The analyses in [SS26] need less:
+
+   *  For the PQ component, all four frameworks need only that KDF is a
+      pseudorandom function keyed by ss_PQ.
+
+   *  For the traditional component, UK and CK need only that KDF is a
+      pseudorandom function keyed by ss_T.  UG and CG model KDF as a
+      random oracle.
+
+   *  All binding results need only that KDF is collision-resistant.
+
+   This document keeps the single, stronger requirement for simplicity.
 
 6.2.2.  Binding Properties
 
@@ -1086,9 +1199,10 @@ def Decaps(dk, ct):
 
    The first IND-CCA analysis, based on SDH, is similar to the
    corresponding analysis of CG given in [XWING]: it gives a
-   straightforward reduction to the SDH hardness in the underlying
-   group.  Notably, since the PQ KEM key and ciphertext are hashed, the
-   C2PRI security of the PQ KEM does not appear in the bound.
+   straightforward reduction to the hardness of SDH over shared-secret
+   encodings in the underlying group (Section 6.1.3).  Notably, since
+   the PQ KEM key and ciphertext are hashed, the C2PRI security of the
+   PQ KEM does not appear in the bound.
 
    The second IND-CCA analysis is a straightforward reduction to the
    IND-CCA security of the PQ KEM, and the PRF security of the RO when
@@ -1124,10 +1238,11 @@ def Decaps(dk, ct):
    details.
 
    One analysis (Theorem 1) [XWING] shows that if the KDF is modelled as
-   a RO, IND-CCA holds if the PQ KEM is broken, as long as the SDH
-   problem holds in the nominal group and the PQ KEM satisfies C2PRI.
-   The other (Theorem 2) [XWING] shows that if the PQ-KEM is IND-CCA and
-   the KDF is a PRF keyed on the PQ-KEM's shared secret, IND-CCA holds.
+   a RO, IND-CCA holds if the PQ KEM is broken, as long as SDH over
+   shared-secret encodings (Section 6.1.3) is hard in the nominal group
+   and the PQ KEM satisfies C2PRI.  The other (Theorem 2) [XWING] shows
+   that if the PQ-KEM is IND-CCA and the KDF is a PRF keyed on the PQ-
+   KEM's shared secret, IND-CCA holds.
 
    As long as the aforementioned security requirements of the component
    parts are met, these analyses imply that this document's CG
@@ -1142,6 +1257,14 @@ def Decaps(dk, ct):
    [COS_26] by the editorial team and collaborators describes the
    analysis of CK in detail.
 
+   The analyses of UG in [CG26], CG in [XWING], and UK in [GHP18] model
+   a Decaps that rejects whenever either component rejects, as specified
+   in Section 5.7.  The analysis of CK in [COS_26] does not model
+   explicit rejection, but its reductions extend to it.  Each reduction
+   holds the decapsulation key of one component and a decapsulation
+   oracle for the other, so it can detect a rejection by either
+   component and answer as the hybrid Decaps would.
+
    Therefore all four hybrid KEMs in this document are IND-CCA when
    instantiated with cryptographic components that meet the security
    requirements described above.  Any changes to the algorithms,
@@ -1153,14 +1276,23 @@ def Decaps(dk, ct):
    component key pairs independently, whereas the default key generation
    in this document derives both component key pairs from a single seed
    via the PRG (Section 5.2).  This apparent mismatch is resolved by a
-   standard hybrid argument: by the PRG security required in
-   Section 6.1.6, the joint distribution of component key pairs derived
-   from a single seed is computationally indistinguishable from the
-   joint distribution of independently generated component key pairs.
-   Thus, any IND-CCA adversary against the shared-seed scheme implies an
-   IND-CCA adversary against the independent-keys scheme with at most an
-   additive PRG-distinguishing term in the bound.  The same observation
-   underlies the binding sketches in Section Section 6.4.2.
+   standard hybrid argument in two steps.  First, by the PRG security
+   required in Section 6.1.6, the component seeds derived from a single
+   seed are computationally indistinguishable from independent uniform
+   seeds.  Second, by the requirement in Section 4.1, a component's
+   DeriveKeyPair applied to a uniform seed produces key pairs
+   distributed as its GenerateKeyPair does; for a nominal group,
+   RandomScalar applied to a uniform seed produces a uniform scalar
+   (Section 4.2).  Thus, any IND-CCA adversary against the shared-seed
+   scheme implies an IND-CCA adversary against the independent-keys
+   scheme, with an additive PRG-distinguishing term in the bound, plus
+   one key-generation distinguishing term per component when
+   DeriveKeyPair is only computationally close to GenerateKeyPair.  This
+   argument needs the seed to be hidden from the adversary, as it is in
+   the IND-CCA game.  It does not apply to the LEAK-BIND games of
+   Section 6.4.2, which give the adversary the decapsulation key.  When
+   the decapsulation key is the seed, the adversary can recompute the
+   PRG output, so PRG security cannot be invoked.
 
 6.4.2.  Binding analyses
 
@@ -1171,19 +1303,28 @@ def Decaps(dk, ct):
    are results by the editorial team.  We include informal
    justifications here and defer rigorous proofs to a forthcoming paper.
 
-   We note that these sketches implicitly ignore the fact that in our
-   hybrid KEMs, both key pairs are derived from a common random seed; we
-   instead implicitly think of them as two runs of DeriveKeyPair with
-   independent random seeds.  We justify this simplification by noting
-   that in the LEAK model - in which the adversary is given the key
-   pairs resulting from an honest run of KeyGen - the pseudorandomness
-   of the seed expansion implies the adversary's input distributions in
-   the two cases are computationally indistinguishable.  The derivation
-   of component scheme key pairs from the common random seed provides
-   further protection against manipulation or corruption of keys such
-   that it can contribute to stronger binding properties against a MAL
-   adversary, as well as operational benefits in practice, but we do not
-   prove that here.
+   The binding guarantees differ between the two decapsulation key
+   formats of Section 5.2:
+
+   *  Expanded format: all eight results below hold in the standard
+      model.
+
+   *  Seed format, UG and UK: the results hold in the standard model.
+      Their arguments end in a KDF collision and do not use any
+      component key, so the seed plays no role.
+
+   *  Seed format, CG and CK: the results hold when PRG is modeled as a
+      programmable random oracle [SS26].  Their arguments reduce to a
+      binding property of KEM_PQ, and the reduction must produce a
+      hybrid seed that expands to the KEM_PQ key pair it was given.  PRG
+      security does not suffice, because the adversary holds the seed.
+      No standard-model proof is known, and no attack is known.
+
+   [SS26] gives machine-checked proofs of these results, modeling
+   implicitly rejecting components.  Deriving the component key pairs
+   from a common seed also prevents an attacker from choosing component
+   keys independently, which may strengthen binding against a MAL
+   adversary.  This document does not prove that.
 
    The paper that establishes the IND-CCA security of the UG
    construction ([CG26]) does not also include a proof of its binding
@@ -1203,14 +1344,21 @@ def Decaps(dk, ct):
    distinct ciphertexts that decapsulate to the same key under one
    decapsulation key); the KDF-collision arguments cover both cases.
    Second, we write reject for the abstract decapsulation-failure symbol
-   used in [CDM23].  As noted in Section 4.1, a Decaps in this document
-   may return reject (for an explicitly rejecting KEM) or, for an
-   implicitly rejecting KEM, return a deterministic pseudorandom output
-   in place of reject.  The LEAK-BIND games are won only by a collision
-   on non-reject keys -- that is, both decapsulations must succeed -- so
-   the collision arguments below, which rely on distinct ciphertexts or
-   public keys producing distinct KDF inputs, are unaffected by how
-   rejection is signaled.
+   used in [CDM23].  A hybrid Decaps outputs reject exactly when it
+   raises an error (Section 5.7).
+
+   The LEAK-BIND games are won only by a collision on non-reject keys,
+   so both hybrid decapsulations in a winning output succeed.  By
+   Section 5.7, a successful hybrid decapsulation implies that every
+   component step succeeded.  In particular, each KEM_PQ.Decaps call
+   returned a key rather than reject.  For an implicitly rejecting
+   KEM_PQ, that key may be the pseudorandom output for an invalid
+   ciphertext; the games of [CDM23] treat it as an ordinary key.  The UG
+   and UK arguments below end in a KDF collision, so they need only that
+   both hybrid decapsulations succeed.  The CG and CK arguments continue
+   into a reduction to a binding property of KEM_PQ.  They also need
+   that both KEM_PQ.Decaps calls returned keys, which makes the
+   reduction's output a valid win against KEM_PQ.
 
 6.4.2.1.  UG Binding
 
@@ -1305,10 +1453,13 @@ def Decaps(dk, ct):
    choice; the reduction covers both cases.  The reduction does this by
    generating two nominal-group key pairs and running the CG LEAK-BIND-
    K-CT adversary on all keys.  Then the reduction outputs the PQ KEM
-   ciphertexts output by the adversary.  The probability that the
-   adversary wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and
-   ct_T^0 = ct_T^1 is a lower bound on the probability of the reduction
-   winning the LEAK-BIND-K-CT game against the PQ KEM.
+   ciphertexts output by the adversary.  Both CG decapsulations
+   succeeded, so both KEM_PQ.Decaps calls returned the same non-reject
+   key; the two distinct PQ KEM ciphertexts therefore win the LEAK-BIND-
+   K-CT game against the PQ KEM.  The probability that the adversary
+   wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1
+   is a lower bound on the probability of the reduction winning the
+   LEAK-BIND-K-CT game against the PQ KEM.
 
    We conclude by noting these cases are exhaustive.
 
@@ -1319,14 +1470,17 @@ def Decaps(dk, ct):
 
    Justification: Similar to the above, we proceed by a case analysis on
    the win condition of the LEAK-BIND-K-PK game.  The condition is
-   (ek_PQ^0, ek_T^0) != (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1.  Again,
-   as above we argue that the only nontrivial case is the one where
-   ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we can
-   directly get a KDF collision from a winning output.  In this case the
-   result of KEM_PQ.Decaps for the two PQ KEM keys can either be the
+   (ek_PQ^0, ek_T^0) != (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1 != reject.
+   Again, as above we argue that the only nontrivial case is the one
+   where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we
+   can directly get a KDF collision from a winning output.  In this case
+   the result of KEM_PQ.Decaps for the two PQ KEM keys can either be the
    same or different.  IF they are different, we again get a KDF
    collision from a win.  If they are the same, in a similar way as
    above, we can build a reduction to the LEAK-BIND-K-PK of PQ KEM.
+   Both hybrid decapsulations succeeded, so both KEM_PQ.Decaps calls
+   returned the same non-reject key under distinct PQ encapsulation
+   keys, which wins that game.
 
    Again, we conclude by noting that these cases are exhaustive.
 
@@ -1360,10 +1514,13 @@ def Decaps(dk, ct):
    choice; the reduction covers both cases.  The reduction does this by
    generating two traditional KEM key pairs and running the CK LEAK-
    BIND-K-CT adversary on all keys.  Then the reduction outputs the PQ
-   KEM ciphertexts output by the adversary.  The probability that the
-   adversary wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and
-   ct_T^0 = ct_T^1 is a lower bound on the probability of the reduction
-   winning the LEAK-BIND-K-CT game against the PQ KEM.
+   KEM ciphertexts output by the adversary.  Both CK decapsulations
+   succeeded, so both KEM_PQ.Decaps calls returned the same non-reject
+   key; the two distinct PQ KEM ciphertexts therefore win the LEAK-BIND-
+   K-CT game against the PQ KEM.  The probability that the adversary
+   wins and ss_PQ^0 = ss_PQ^1 and ct_PQ^0 != ct_PQ^1 and ct_T^0 = ct_T^1
+   is a lower bound on the probability of the reduction winning the
+   LEAK-BIND-K-CT game against the PQ KEM.
 
    We conclude by noting these cases are exhaustive.
 
@@ -1374,14 +1531,17 @@ def Decaps(dk, ct):
 
    Justification: Similar to the above, we proceed by a case analysis on
    the win condition of the LEAK-BIND-K-PK game.  The condition is
-   (ek_PQ^0, ek_T^0) != (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1.  Again,
-   as above we argue that the only nontrivial case is the one where
-   ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we can
-   directly get a KDF collision from a winning output.  In this case the
-   result of KEM_PQ.Decaps for the two PQ KEM keys can either be the
+   (ek_PQ^0, ek_T^0) != (ek_PQ^1, ek_T^1) and ss_H^0 = ss_H^1 != reject.
+   Again, as above we argue that the only nontrivial case is the one
+   where ek_PQ^0 != ek_PQ^1 but ek_T^0 = ek_T^1: in the other case we
+   can directly get a KDF collision from a winning output.  In this case
+   the result of KEM_PQ.Decaps for the two PQ KEM keys can either be the
    same or different.  IF they are different, we again get a KDF
    collision from a win.  If they are the same, in a similar way as
    above, we can build a reduction to the LEAK-BIND-K-PK of PQ KEM.
+   Both hybrid decapsulations succeeded, so both KEM_PQ.Decaps calls
+   returned the same non-reject key under distinct PQ encapsulation
+   keys, which wins that game.
 
    Again, we conclude by noting that these cases are exhaustive.
 
@@ -1430,6 +1590,11 @@ def Decaps(dk, ct):
 
    Therefore, this specification MUST only be used with algorithms which
    have fixed-length shared secrets.
+
+   Encapsulation keys and ciphertexts MUST also have fixed lengths: Nek
+   and Nct for a KEM (Section 4.1), and Nelem for nominal group elements
+   (Section 4.2).  split separates hybrid values at these lengths, and
+   the combiners concatenate component values without length prefixes.
 
 7.  IANA Considerations
 
@@ -1511,7 +1676,8 @@ def Decaps(dk, ct):
 
    [ABH_21]   Joël Alwen, Bruno Blanchet, Eduard Hauck, Eike Kiltz,
               Benjamin Lipp, and Doreen Riepel, "Analysing the HPKE
-              standard.", April 2021.
+              Standard", April 2021,
+              <https://eprint.iacr.org/2020/1499>.
 
    [ABN10]    "Robust Encryption", 2010,
               <https://eprint.iacr.org/2008/440.pdf>.
@@ -1629,6 +1795,10 @@ def Decaps(dk, ct):
               Exploiting Most-Significant-Bit-Oracles in TLS-DH(E)",
               September 2020, <https://raccoon-attack.com/>.
 
+   [RFC7748]  Langley, A., Hamburg, M., and S. Turner, "Elliptic Curves
+              for Security", RFC 7748, DOI 10.17487/RFC7748, January
+              2016, <https://www.rfc-editor.org/rfc/rfc7748>.
+
    [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,
               "PKCS #1: RSA Cryptography Specifications Version 2.2",
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
@@ -1654,6 +1824,19 @@ def Decaps(dk, ct):
    [SHOUP01]  Shoup, V., "A Proposal for an ISO Standard for Public Key
               Encryption (version 2.1)", December 2001,
               <https://eprint.iacr.org/2001/112>.
+
+   [SP800-227]
+              Alagic, G., Barker, E., Chen, L., Moody, D., Robinson, A.,
+              Silberg, H., and N. Waller, "Recommendations for key-
+              encapsulation mechanisms", National Institute of Standards
+              and Technology (U.S.), DOI 10.6028/nist.sp.800-227,
+              September 2025, <https://doi.org/10.6028/nist.sp.800-227>.
+
+   [SS26]     Stebila, D. and C. Steckel, "A machine-checked analysis of
+              the four hybrid KEM combiners of draft-irtf-cfrg-hybrid-
+              kems", 22 July 2026,
+              <https://github.com/ProofFrog/examples/blob/main/
+              applications/cfrg-hybrid-kems/REPORT-CFRG-20260722.md>.
 
    [XWING]    "X-Wing: The Hybrid KEM You’ve Been Looking For", 2024,
               <https://eprint.iacr.org/2024/039.pdf>.
